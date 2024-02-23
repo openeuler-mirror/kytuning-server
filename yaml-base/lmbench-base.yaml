@@ -16,7 +16,6 @@ tool_decompression: "   tar -vxf {tool_tgz} -C {base_path}                      
 
 maxiterations:  1
 
-
 testcase:
      configs:
          - name:     "kernel.sched_migration_cost_ns"

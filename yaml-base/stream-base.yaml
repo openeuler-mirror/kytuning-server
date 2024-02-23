@@ -10,7 +10,6 @@ tool_decompression: "tar -xvf {tool_tgz} -C {base_path}"
 
 maxiterations:  1
 
-
 testcase:
     clean:  "make clean"
     build:  "make"

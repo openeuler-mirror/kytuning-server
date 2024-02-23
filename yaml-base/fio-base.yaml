@@ -10,134 +10,15 @@ tool_decompression: "tar -xvf {tool_tgz} -C {base_path}"
 
 maxiterations:  1
 
-
-# rpm_list:
-#     - "numactl"
-#     - "jemalloc"
-
-# configs:
-#     - name:     "vm.swappiness" 
-#       desc:     "the vm.swapiness" 
-#       get :     "sysctl -a | grep vm.swappiness | awk '{print $3}'"
-#       set :     "sysctl -w vm.swappiness={value}"
-#       value:    20
-
 testcase:
-    - name:   "4K-read"
-      clean:  ""
-      build:  "make -j4"
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "4K", readwrite: "read"}
-      schemeflag:     0
-    # configs:
-    #     - name:     "kernel.sched_migration_cost_ns"
-    #       desc:     "context switch"
-    #       get :     "sysctl -n kernel.sched_migration_cost_ns"
-    #       set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
-    #       type:     "continuous"
-    #       values:
-    #           - 100000
-    #           - 500000
-    #           - 100000
-    #       items:
-
-    - name:   "4K-write"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "4K", readwrite: "write"}
-      schemeflag:     0
-
-    - name:   "4K-randread"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "4K", readwrite: "randread"}
-      schemeflag:     0
-
-    - name:   "4K-randwrite"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "4K", readwrite: "randwrite"}
-      schemeflag:     0
-
-    - name:   "16K-read"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "16K", readwrite: "read"}
-      schemeflag:     0
-
-    - name:   "16K-write"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "16K", readwrite: "write"}
-      schemeflag:     0
-
-    - name:   "64K-read"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "64K", readwrite: "read"}
-      schemeflag:     0
-
-    - name:   "64K-write"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "64K", readwrite: "write"}
-      schemeflag:     0
-
-    - name:   "128K-read"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "128K", readwrite: "read"}
-      schemeflag:     0
-
-    - name:   "128K-write"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "128K", readwrite: "write"}
-      schemeflag:     0
-
-    - name:   "1M-read"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "1M", readwrite: "read"}
-      schemeflag:     0
-
-    - name:   "1M-write"
-      clean:  "make clean"
-      build:  ""
-      run:
-          pre_cmd: "mkdir results; {command}"
-          command: "./fio -filename=./fio_test  -direct=1  -iodepth 32 -thread -rw={readwrite} -ioengine=psync -bs={blocksize} -size=1024M -runtime=60 -numjobs=4 -group_reporting -name={blocksize}_{readwrite}.result > ./results/{blocksize}_{readwrite}.result"
-          c_param: {blocksize: "1M", readwrite: "write"}
-      schemeflag:     0
+     configs:
+         - name:     "kernel.sched_migration_cost_ns"
+           desc:     "context switch"
+           get :     "sysctl -n kernel.sched_migration_cost_ns"
+           set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
+           type:     "continuous"
+           values:
+               - 100000
+               - 500000
+               - 100000
+           items:
