@@ -1,0 +1,102 @@
+project:    "cpu2006-1.2-lg64"  # 工程名称
+test_type:  "speccpu2006" 
+# base_path:  "/root/kytuning/run/cpu2006"
+log_file:   "{base_path}/kytuning.log"
+log_level:  "debug"
+
+tool_tgz:   "{base_path}/tools/cpu2006-1.2-lg64.tar.gz"
+tool_dir:   "{base_path}/cpu2006-1.2"
+
+## python在进行字符串格式化时，{}需要转义处理，转义方式为{{}}
+tool_decompression: "tar -xvf {tool_tgz} -C {base_path} && sed -i '/^makeflags/{{N;/mean_anyway/!s/\\n/\\nmean_anyway=1\\n/}}' {tool_dir}/config/loongarch64-fix.cfg"
+
+
+maxiterations:  1
+
+
+# rpm_list:
+#     - "numactl"
+#     - "jemalloc"
+
+# configs:
+#     - name:     "vm.swappiness" 
+#       desc:     "the vm.swapiness" 
+#       get :     "sysctl -a | grep vm.swappiness | awk '{print $3}'"
+#       set :     "sysctl -w vm.swappiness={value}"
+#       value:    20
+
+testcase:
+    - name: "base-single-int"
+      clean:  ""
+      build:  ""
+      run:
+          pre_cmd: ". ./shrc                                    \n
+                    relocate                                    \n
+                    runspec -V                                  \n
+                    if [ $? -ne 0 ]; then                       \n
+                        echo \"Failed to run runspec -V\"       \n
+                        exit 1                                  \n
+                    fi                                          \n
+                    {command}"
+          command: "runspec -c {FUNC_CPU2006_CONFIG} --tune={basepeak} --action=run -n 1 --rate={FUNC_THREAD_NUM} --size=ref --noreportable {intfp}"
+          c_param: {FUNC_CPU2006_CONFIG: "loongarch64-fix.cfg", basepeak: "base", FUNC_THREAD_NUM: "single", intfp: "int"}
+      schemeflag:     0
+    # configs:
+    #     - name:     "kernel.sched_migration_cost_ns"
+    #       desc:     "context switch"
+    #       get :     "sysctl -n kernel.sched_migration_cost_ns"
+    #       set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
+    #       type:     "continuous"
+    #       values:
+    #           - 100000
+    #           - 500000
+    #           - 100000
+    #       items:
+
+    - name: "base-single-fp"
+      clean:  ""
+      build:  ""
+      run:
+          pre_cmd: ". ./shrc                                    \n
+                    relocate                                    \n
+                    runspec -V                                  \n
+                    if [ $? -ne 0 ]; then                       \n
+                        echo \"Failed to run runspec -V\"       \n
+                        exit 1                                  \n
+                    fi                                          \n
+                    {command}"
+          command: "runspec -c {FUNC_CPU2006_CONFIG} --tune={basepeak} --action=run -n 1 --rate={FUNC_THREAD_NUM} --size=ref --noreportable {intfp}"
+          c_param: {FUNC_CPU2006_CONFIG: "loongarch64-fix.cfg", basepeak: "base", FUNC_THREAD_NUM: "single", intfp: "fp"}
+      schemeflag:     0
+
+    - name: "base-multi-int"
+      clean:  ""
+      build:  ""
+      run:
+          pre_cmd: ". ./shrc                                    \n
+                    relocate                                    \n
+                    runspec -V                                  \n
+                    if [ $? -ne 0 ]; then                       \n
+                        echo \"Failed to run runspec -V\"       \n
+                        exit 1                                  \n
+                    fi                                          \n
+                    {command}"
+          command: "runspec -c {FUNC_CPU2006_CONFIG} --tune={basepeak} --action=run -n 1 --rate={FUNC_THREAD_NUM} --size=ref --noreportable {intfp}"
+          c_param: {FUNC_CPU2006_CONFIG: "loongarch64-fix.cfg", basepeak: "base", FUNC_THREAD_NUM: "multi", intfp: "int"}
+      schemeflag:     0
+
+    - name: "base-multi-fp"
+      clean:  ""
+      build:  ""
+      run:
+          pre_cmd: ". ./shrc                                    \n
+                    relocate                                    \n
+                    runspec -V                                  \n
+                    if [ $? -ne 0 ]; then                       \n
+                        echo \"Failed to run runspec -V\"       \n
+                        exit 1                                  \n
+                    fi                                          \n
+                    {command}"
+          command: "runspec -c {FUNC_CPU2006_CONFIG} --tune={basepeak} --action=run -n 1 --rate={FUNC_THREAD_NUM} --size=ref --noreportable {intfp}"
+          c_param: {FUNC_CPU2006_CONFIG: "loongarch64-fix.cfg", basepeak: "base", FUNC_THREAD_NUM: "multi", intfp: "fp"}
+      schemeflag:     0
