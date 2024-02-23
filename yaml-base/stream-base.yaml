@@ -11,17 +11,6 @@ tool_decompression: "tar -xvf {tool_tgz} -C {base_path}"
 maxiterations:  1
 
 
-# rpm_list:
-#     - "numactl"
-#     - "jemalloc"
-
-# configs:
-#     - name:     "vm.swappiness" 
-#       desc:     "the vm.swapiness" 
-#       get :     "sysctl -a | grep vm.swappiness | awk '{print $3}'"
-#       set :     "sysctl -w vm.swappiness={value}"
-#       value:    20
-
 testcase:
     clean:  "make clean"
     build:  "make"
@@ -29,14 +18,4 @@ testcase:
         pre_cmd: "export GOMP_CPU_AFFINITY=`LANG=C lscpu | grep On-line | grep -o '0-[0-9]*'`; {command}"
         command: "./Run.sh"
     schemeflag:     0
-    # configs:
-    #     - name:     "kernel.sched_migration_cost_ns"
-    #       desc:     "context switch"
-    #       get :     "sysctl -n kernel.sched_migration_cost_ns"
-    #       set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
-    #       type:     "continuous"
-    #       values:
-    #           - 100000
-    #           - 500000
-    #           - 100000
-    #       items:
+
