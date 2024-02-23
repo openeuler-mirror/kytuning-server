@@ -1,0 +1,42 @@
+project:    "cpu2017"  # 工程名称
+test_type:  "speccpu2017" 
+# base_path:  "/root/kytuning/run/cpu2017"
+log_file:   "{base_path}/kytuning.log"
+log_level:  "debug"
+
+tool_tgz:   "{base_path}/tools/cpu2017-1_0_5.iso"
+tool_dir:   "{base_path}/cpu2017"
+tool_decompression:
+    command:        "   mount -o ro {tool_tgz} /mnt                                             \n
+                        if [ $? -ne 0 ]; then                                                   \n
+                            echo \"Failed to install cpu2017\"                                  \n
+                            umount /mnt                                                         \n
+                            exit 1                                                              \n
+                        fi                                                                      \n
+                        cd /mnt                                                                 \n
+                        echo yes | ./install.sh -d {tool_dir}                                   \n
+                        cd  ~                                                                   \n
+                        umount /mnt                                                             \n
+                        if [ -f {src_path}/{FUNC_CPU2017_CONFIG} ]; then                  \n
+                            cp -f {src_path}/{FUNC_CPU2017_CONFIG} {tool_dir}/config/     \n
+                            sed -i 's/^%   define  build_ncpus  xx/%   define  build_ncpus  '{FUNC_THREAD_NUM}'/g' {tool_dir}/config/{FUNC_CPU2017_CONFIG}      \n
+                        fi                                                                      \n
+                        if [ -d {src_path}/cpu2017_flags ]; then                          \n
+                            cp -f {src_path}/cpu2017_flags/* {tool_dir}/config/flags/     \n
+                        fi"
+    c_param: {FUNC_CPU2017_CONFIG: "", FUNC_THREAD_NUM: "multi"}
+
+maxiterations:  1
+
+testcase:
+     configs:
+         - name:     "kernel.sched_migration_cost_ns"
+           desc:     "context switch"
+           get :     "sysctl -n kernel.sched_migration_cost_ns"
+           set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
+           type:     "continuous"
+           values:
+               - 100000
+               - 300000
+               - 100000
+           items:
