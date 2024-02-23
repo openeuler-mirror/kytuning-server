@@ -10,42 +10,16 @@ tool_decompression:     "tar -xvf {tool_tgz} -C {base_path}"
 
 maxiterations:  1
 
-
-# rpm_list:
-#     - "numactl"
-#     - "jemalloc"
-
-# configs:
-#     - name:     "vm.swappiness" 
-#       desc:     "the vm.swapiness" 
-#       get :     "sysctl -a | grep vm.swappiness | awk '{print $3}'"
-#       set :     "sysctl -w vm.swappiness={value}"
-#       value:    20
-
 testcase:
-    - name: "single"
-      clean:  "make clean"
-      build:  "make clean; make"
-      run:
-          command: "./Run -c {FUNC_THREAD_NUM}"
-          c_param: {FUNC_THREAD_NUM: "1"}
-      schemeflag:     0
-    # configs:
-    #     - name:     "kernel.sched_migration_cost_ns"
-    #       desc:     "context switch"
-    #       get :     "sysctl -n kernel.sched_migration_cost_ns"
-    #       set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
-    #       type:     "continuous"
-    #       values:
-    #           - 100000
-    #           - 500000
-    #           - 100000
-    #       items:
+     configs:
+         - name:     "kernel.sched_migration_cost_ns"
+           desc:     "context switch"
+           get :     "sysctl -n kernel.sched_migration_cost_ns"
+           set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
+           type:     "continuous"
+           values:
+               - 100000
+               - 500000
+               - 100000
+           items:
 
-    - name: "multi"
-      clean:  "make clean"
-      build:  "make clean; make"
-      run:
-          command: "./Run -c {FUNC_THREAD_NUM}"
-          c_param: {FUNC_THREAD_NUM: "multi"}
-      schemeflag:     0
