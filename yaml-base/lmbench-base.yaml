@@ -1,0 +1,73 @@
+project:    "lmbench-3.0-a9-2"  # 工程名称
+test_type:  "lmbench" 
+# base_path:  "/root/kytuning/run/lmbench"
+log_file:   "{base_path}/kytuning.log"
+log_level:  "debug"
+
+tool_tgz:   "{base_path}/tools/lmbench-3.0-a9-2.tar.bz2"
+tool_dir:   "{base_path}/lmbench-3.0-a9-2"
+tool_decompression: "   tar -vxf {tool_tgz} -C {base_path}                              \n
+                        if [ -f {src_path}/lmbench-except-base.sh ]; then               \n
+                            cp -f {src_path}/lmbench-except-base.sh {tool_dir}          \n
+                        else                                                            \n
+                            echo \"lmbench-except-base.sh not found!\"                  \n
+                            exit -1                                                     \n
+                        fi"
+
+maxiterations:  1
+
+
+# rpm_list:
+#     - "numactl"
+#     - "jemalloc"
+
+
+# configs:
+#     - name:     "vm.swappiness" 
+#       desc:     "the vm.swapiness" 
+#       get :     "sysctl -a | grep vm.swappiness | awk '{print $3}'"
+#       set :     "sysctl -w vm.swappiness={value}"
+#       value:    20
+
+
+testcase:
+    clean:  "   if [ ! -d results_bak ]; then                                   \n
+                    mkdir results_bak                                           \n
+                    cp results/Makefile results_bak/Makefile                    \n
+                    cp results/summary.err results_bak/summary.err              \n
+                fi                                                              \n
+                make clean                                                      \n
+                rm -fr results_last                                             \n
+                mv results results_last                                         \n
+                cp -fr results_bak results"
+    build:  "   if [ ! -d results_bak ]; then                                                                                   \n
+                    mkdir results_bak                                                                                           \n
+                    cp results/Makefile results_bak/Makefile                                                                    \n
+                    cp results/summary.err results_bak/summary.err                                                              \n
+                fi                                                                                                              \n
+                ADD_ENV=\"\"                                                                                                    \n
+                if [[ \"${ARCH}\" == \"loongarch64\" ]];then                                                                    \n
+                     ADD_ENV=\"OS=lg64\"                                                                                        \n      
+                fi                                                                                                              \n
+                make ${ADD_ENV}                                                                                                 \n
+                if [ $? -ne 0 ]; then                                                                                           \n
+                    sed -i 's#^LDLIBS=-lm#LDLIBS=\"-lm -ltirpc\"\\nCFLAGS=\"$CFLAGS -I /usr/include/tirpc\"#g' scripts/build    \n
+                    make ${ADD_ENV}                                                                                             \n
+                    if [ $? -ne 0 ]; then                                                                                       \n
+                        echo \"Failed to build lmbench\"                                                                        \n
+                        exit 1                                                                                                  \n
+                    fi                                                                                                          \n
+                fi"
+    run:    "./lmbench-except-base.sh; make see"
+    schemeflag:     0
+    # configs:
+    #     - name:     "kernel.sched_migration_cost_ns"
+    #       desc:     "context switch"
+    #       get :     "sysctl -n kernel.sched_migration_cost_ns"
+    #       set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
+    #       type:     "continuous"
+    #       values:
+    #           - 100000
+    #           - 200001
+    #           - 100000
+    #       items:
