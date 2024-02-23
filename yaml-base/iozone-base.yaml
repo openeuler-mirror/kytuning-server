@@ -10,53 +10,15 @@ tool_decompression: "tar -xvf {tool_tgz} -C {base_path}"
 
 maxiterations:  1
 
-
-# rpm_list:
-#     - "numactl"
-#     - "jemalloc"
-
-# configs:
-#     - name:     "vm.swappiness" 
-#       desc:     "the vm.swapiness" 
-#       get :     "sysctl -a | grep vm.swappiness | awk '{print $3}'"
-#       set :     "sysctl -w vm.swappiness={value}"
-#       value:    20
-
 testcase:
-    - name: "half"
-      clean:  ""
-      build:  "make -C src/current linux"
-      run:
-          pre_cmd: "mkdir result; {command}"
-          command: "./src/current/iozone -i 0 -i 1 -i 2 -s {FUNC_IOZONE_MEMSIZE} -r 16m -f {FUNC_IOZONE_FILE} -Rb ./result/iozone_{FUNC_IOZONE_MEMSIZE}.xls | tee ./result/iozone_{FUNC_IOZONE_MEMSIZE}_console.log"
-          c_param: {FUNC_IOZONE_MEMSIZE: "half", FUNC_IOZONE_FILE: ""}
-      schemeflag:     0
-    # configs:
-    #     - name:     "kernel.sched_migration_cost_ns"
-    #       desc:     "context switch"
-    #       get :     "sysctl -n kernel.sched_migration_cost_ns"
-    #       set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
-    #       type:     "continuous"
-    #       values:
-    #           - 100000
-    #           - 500000
-    #           - 100000
-    #       items:
-
-    - name: "full"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: "mkdir result; {command}"
-          command: "./src/current/iozone -i 0 -i 1 -i 2 -s {FUNC_IOZONE_MEMSIZE} -r 16m -f {FUNC_IOZONE_FILE} -Rb ./result/iozone_{FUNC_IOZONE_MEMSIZE}.xls | tee ./result/iozone_{FUNC_IOZONE_MEMSIZE}_console.log"
-          c_param: {FUNC_IOZONE_MEMSIZE: "full", FUNC_IOZONE_FILE: ""}
-      schemeflag:     0
-
-    - name: "double"
-      clean:  "make -C src/current clean"
-      build:  ""
-      run:
-          pre_cmd: "mkdir result; {command}"
-          command: "./src/current/iozone -i 0 -i 1 -i 2 -s {FUNC_IOZONE_MEMSIZE} -r 16m -f {FUNC_IOZONE_FILE} -Rb ./result/iozone_{FUNC_IOZONE_MEMSIZE}.xls | tee ./result/iozone_{FUNC_IOZONE_MEMSIZE}_console.log"
-          c_param: {FUNC_IOZONE_MEMSIZE: "double", FUNC_IOZONE_FILE: ""}
-      schemeflag:     0
+     configs:
+         - name:     "kernel.sched_migration_cost_ns"
+           desc:     "context switch"
+           get :     "sysctl -n kernel.sched_migration_cost_ns"
+           set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
+           type:     "continuous"
+           values:
+               - 100000
+               - 500000
+               - 100000
+           items:

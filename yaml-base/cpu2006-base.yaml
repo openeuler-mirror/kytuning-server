@@ -23,86 +23,15 @@ tool_decompression:
     c_param: {FUNC_CPU2006_CONFIG: ""}
 maxiterations:  1
 
-
-# rpm_list:
-#     - "numactl"
-#     - "jemalloc"
-
-# configs:
-#     - name:     "vm.swappiness" 
-#       desc:     "the vm.swapiness" 
-#       get :     "sysctl -a | grep vm.swappiness | awk '{print $3}'"
-#       set :     "sysctl -w vm.swappiness={value}"
-#       value:    20
-
 testcase:
-    - name: "base-single-int"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: ". ./shrc                                    \n
-                    runspec -V                                  \n
-                    if [ $? -ne 0 ]; then                       \n
-                        echo \"Failed to run runspec -V\"       \n
-                        exit 1                                  \n
-                    fi                                          \n
-                    {command}"
-          command: "runspec -c {FUNC_CPU2006_CONFIG} --tune={basepeak} --action=run -n 1 --rate={FUNC_THREAD_NUM} --size=ref --noreportable {intfp}"
-          c_param: {FUNC_CPU2006_CONFIG: "", basepeak: "base", FUNC_THREAD_NUM: "single", intfp: "int"}
-      schemeflag:     0
-    # configs:
-    #     - name:     "kernel.sched_migration_cost_ns"
-    #       desc:     "context switch"
-    #       get :     "sysctl -n kernel.sched_migration_cost_ns"
-    #       set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
-    #       type:     "continuous"
-    #       values:
-    #           - 100000
-    #           - 500000
-    #           - 100000
-    #       items:
-
-    - name: "base-single-fp"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: ". ./shrc                                    \n
-                    runspec -V                                  \n
-                    if [ $? -ne 0 ]; then                       \n
-                        echo \"Failed to run runspec -V\"       \n
-                        exit 1                                  \n
-                    fi                                          \n
-                    {command}"
-          command: "runspec -c {FUNC_CPU2006_CONFIG} --tune={basepeak} --action=run -n 1 --rate={FUNC_THREAD_NUM} --size=ref --noreportable {intfp}"
-          c_param: {FUNC_CPU2006_CONFIG: "", basepeak: "base", FUNC_THREAD_NUM: "single", intfp: "fp"}
-      schemeflag:     0
-
-    - name: "base-multi-int"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: ". ./shrc                                    \n
-                    runspec -V                                  \n
-                    if [ $? -ne 0 ]; then                       \n
-                        echo \"Failed to run runspec -V\"       \n
-                        exit 1                                  \n
-                    fi                                          \n
-                    {command}"
-          command: "runspec -c {FUNC_CPU2006_CONFIG} --tune={basepeak} --action=run -n 1 --rate={FUNC_THREAD_NUM} --size=ref --noreportable {intfp}"
-          c_param: {FUNC_CPU2006_CONFIG: "", basepeak: "base", FUNC_THREAD_NUM: "multi", intfp: "int"}
-      schemeflag:     0
-
-    - name: "base-multi-fp"
-      clean:  ""
-      build:  ""
-      run:
-          pre_cmd: ". ./shrc                                    \n
-                    runspec -V                                  \n
-                    if [ $? -ne 0 ]; then                       \n
-                        echo \"Failed to run runspec -V\"       \n
-                        exit 1                                  \n
-                    fi                                          \n
-                    {command}"
-          command: "runspec -c {FUNC_CPU2006_CONFIG} --tune={basepeak} --action=run -n 1 --rate={FUNC_THREAD_NUM} --size=ref --noreportable {intfp}"
-          c_param: {FUNC_CPU2006_CONFIG: "", basepeak: "base", FUNC_THREAD_NUM: "multi", intfp: "fp"}
-      schemeflag:     0
+     configs:
+         - name:     "kernel.sched_migration_cost_ns"
+           desc:     "context switch"
+           get :     "sysctl -n kernel.sched_migration_cost_ns"
+           set :     "sysctl -n kernel.sched_migration_cost_ns={value}"
+           type:     "continuous"
+           values:
+               - 100000
+               - 500000
+               - 100000
+           items:
