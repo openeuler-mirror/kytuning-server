@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'appStore.cpu2006.apps.Cpu2006Config',
+    'appStore.cpu2017.apps.Cpu2017Config',
     'appStore.env.apps.EnvConfig',
 ]
 MIDDLEWARE = [
