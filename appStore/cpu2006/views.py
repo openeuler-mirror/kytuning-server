@@ -1,12 +1,9 @@
-import json
-
-from django.http import JsonResponse, request
 from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import status
 from appStore.cpu2006.serializers import Cpu2006Serializer
-from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
+from appStore.utils.common import  json_response, get_error_message, return_time
 from appStore.utils.customer_view import CusModelViewSet
 
 
