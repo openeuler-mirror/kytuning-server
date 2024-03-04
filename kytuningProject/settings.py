@@ -39,6 +39,13 @@ INSTALLED_APPS = [
     'appStore.cpu2006.apps.Cpu2006Config',
     'appStore.cpu2017.apps.Cpu2017Config',
     'appStore.env.apps.EnvConfig',
+    'appStore.fio.apps.FioConfig',
+    'appStore.iozone.apps.IozoneConfig',
+    'appStore.jvm2008.apps.Jvm2008Config',
+    'appStore.lmbench.apps.LmbenchConfig',
+    'appStore.stream.apps.StreamConfig',
+    'appStore.unixbench.apps.UnixbenchConfig',
+    'appStore.project.apps.ProjectConfig',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
