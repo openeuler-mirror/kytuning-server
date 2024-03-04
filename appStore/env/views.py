@@ -1,5 +1,9 @@
+import json
 from base64 import b64decode
+
 from django.http import JsonResponse, request, HttpRequest
+from django.shortcuts import render
+
 # Create your views here.
 from rest_framework import status
 from appStore.env.serializers import EnvSerializer
@@ -102,4 +106,78 @@ class EnvViewSet(CusModelViewSet):
         if not request.data['env_id']:
             return json_response({}, status.HTTP_400_BAD_REQUEST, '没有env_id')
 
+        """project数据处理"""
+        from appStore.project.views import ProjectViewSet
+        request_project = HttpRequest()
+        request_project.method = 'POST'
+        request_project.data_project = request.data
+        ProjectViewSet = ProjectViewSet()
+        ProjectViewSet.create(request=request_project, *args, **kwargs)
+
+        """fio数据处理"""
+        from appStore.fio.views import FioViewSet
+        request_fio = HttpRequest()
+        request_fio.method = 'POST'
+        request_fio.data_fio = request.data
+        FioViewSet = FioViewSet()
+        FioViewSet.create(request=request_fio, *args, **kwargs)
+
+        """iozone数据处理"""
+        from appStore.iozone.views import IozoneViewSet
+        request_iozone = HttpRequest()
+        request_iozone.method = 'POST'
+        request_iozone.data_iozone = request.data
+        IozoneViewSet = IozoneViewSet()
+        IozoneViewSet.create(request=request_iozone, *args, **kwargs)
+
+
+        """lmbench数据处理"""
+        from appStore.lmbench.views import LmbenchViewSet
+        request_unixbench = HttpRequest()
+        request_unixbench.method = 'POST'
+        request_unixbench.data_lmbench = request.data
+        UnixbenchViewSet = LmbenchViewSet()
+        UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
+
+        """speccpu2006数据处理"""
+        from appStore.cpu2006.views import Cpu2006ViewSet
+        request_cpu2006 = HttpRequest()
+        request_cpu2006.method = 'POST'
+        request_cpu2006.data_cpu2006 = request.data
+        Cpu2006ViewSet = Cpu2006ViewSet()
+        Cpu2006ViewSet.create(request=request_cpu2006, *args, **kwargs)
+
+        """speccpu2017数据处理"""
+        from appStore.cpu2017.views import Cpu2017ViewSet
+        request_cpu2017 = HttpRequest()
+        request_cpu2017.method = 'POST'
+        request_cpu2017.data_cpu2017= request.data
+        Cpu2017ViewSet = Cpu2017ViewSet()
+        Cpu2017ViewSet.create(request=request_cpu2017, *args, **kwargs)
+
+        """jvm2008数据处理"""
+        from appStore.jvm2008.views import Jvm2008ViewSet
+        request_jvm2008 = HttpRequest()
+        request_jvm2008.method = 'POST'
+        request_jvm2008.data_jvm2008 = request.data
+        Jvm2008ViewSet = Jvm2008ViewSet()
+        Jvm2008ViewSet.create(request=request_jvm2008, *args, **kwargs)
+
+        """stream数据处理"""
+        from appStore.stream.views import StreamViewSet
+        request_stream = HttpRequest()
+        request_stream.method = 'POST'
+        request_stream.data_stream = request.data
+        StreamViewSet = StreamViewSet()
+        StreamViewSet.create(request=request_stream, *args, **kwargs)
+
+        """unixbench数据处理"""
+        from appStore.unixbench.views import UnixbenchViewSet
+        request_unixbench = HttpRequest()
+        request_unixbench.method = 'POST'
+        request_unixbench.data_unixbench = request.data
+        UnixbenchViewSet = UnixbenchViewSet()
+        UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
+
         return json_response({}, status.HTTP_200_OK, '创建成功！')
+
