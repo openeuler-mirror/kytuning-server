@@ -1,7 +1,24 @@
 # kytuning-server
 
-#### Description
-Operating system benchmark performance tuning analysis tool-server
+#### Introduction
+
+In the process of OS benchmark performance optimization, there are often  various benchmarking tools, cumbersome data comparison, and a lack of  efficient tools for performance problem analysis. Kytuning provides a  tool to help complete tedious and repetitive tasks, freeing up manpower  and allowing engineers to focus on analyzing and solving performance  problems. 
+
+Kytuning initially plans to support the following benchmarking tools: 
+
+- unixbench
+- lmbench
+- fio
+- iozone
+- specjvm2008
+- stream
+- speccpu2006
+- speccpu2017
+
+#### Software Architecture
+Software architecture description
+There are three main roles in the overall architecture of the KyTuning test  system: the target test machine, the KyTuning test system service, and  the web management client.
+kytuning-server is used as a test management, data storage, page display terminal
 
 #### Software Architecture
 Software architecture description
