@@ -17,7 +17,7 @@ class ProjectViewSet(CusModelViewSet):
     """
     project数据管理
     """
-    # queryset = Project.objects.all().order_by('id')
+    queryset = Project.objects.all().order_by('id')
     serializer_class = ProjectSerializer
 
     # pagination_class = LimsPageSet

@@ -6,6 +6,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import status
+from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
@@ -14,9 +15,9 @@ class EnvViewSet(CusModelViewSet):
     """
     stream数据管理
     """
-    # queryset = Stream.objects.all().order_by('id')
+    queryset = Env.objects.all().order_by('id')
     serializer_class = EnvSerializer
-    # pagination_class = LimsPageSet
+    pagination_class = LimsPageSet
 
     def create(self, request, *args, **kwargs):
         """
