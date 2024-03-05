@@ -20,8 +20,10 @@ class StreamViewSet(CusModelViewSet):
     # pagination_class = LimsPageSet
 
     def create(self, request, *args, **kwargs):
-        data_stream = {}
+        serializer_stream_errors = []
+        error_message = []
         for k, stream_json in request.__dict__['data_stream'].items():
+            data_stream = {}
             if k.lower().startswith('stream'):
                 data_stream['env_id'] = request.__dict__['data_stream']['env_id']
                 # todo 所有的参数 、 cmd 是在哪里保存的
@@ -40,11 +42,15 @@ class StreamViewSet(CusModelViewSet):
                 data_stream['multi_add'] = stream_json['多线程']['Add']
                 data_stream['multi_triad'] = stream_json['多线程']['Triad']
                 data_stream['test_time'] = return_time(stream_json['time'])
-        serializer_stream = StreamSerializer(data=data_stream)
-        if serializer_stream.is_valid():
-            pass
-            # todo 放开
-            # self.perform_create(serializer_stream)
-        print(serializer_stream.errors,"stream")
-        return json_response(serializer_stream.errors, status.HTTP_400_BAD_REQUEST,
-                             get_error_message(serializer_stream))
+            serializer_stream = StreamSerializer(data=data_stream)
+            if serializer_stream.is_valid():
+                pass
+                # todo 放开
+                # self.perform_create(serializer_stream)
+            print(serializer_stream.errors,"stream")
+            serializer_stream_errors.append(serializer_stream.errors)
+            error_message.append(get_error_message(serializer_stream))
+
+        if serializer_stream_errors:
+            print(serializer_stream_errors, "stream")
+            return json_response(serializer_stream_errors, status.HTTP_400_BAD_REQUEST, error_message)

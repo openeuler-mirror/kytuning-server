@@ -20,7 +20,7 @@ class LmbenchViewSet(CusModelViewSet):
     # pagination_class = LimsPageSet
 
     def create(self, request, *args, **kwargs):
-        serializer_error = []
+        serializer_lmbench_error = []
         error_message = []
         for k, all_json in request.__dict__['data_lmbench'].items():
             if k.lower().startswith('lmbench'):
@@ -123,8 +123,8 @@ class LmbenchViewSet(CusModelViewSet):
                         # todo 放开
                         pass
                         # self.perform_create(serializer_lmbench)
-                    serializer_error.append(serializer_lmbench.errors)
+                    serializer_lmbench_error.append(serializer_lmbench.errors)
                     error_message.append(get_error_message(serializer_lmbench))
-        if serializer_error:
-            print(serializer_error,"lmbench")
-            return json_response(serializer_error, status.HTTP_400_BAD_REQUEST, error_message)
+        if serializer_lmbench_error:
+            print(serializer_lmbench_error,"lmbench")
+            return json_response(serializer_lmbench_error, status.HTTP_400_BAD_REQUEST, error_message)
