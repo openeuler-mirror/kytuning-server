@@ -63,6 +63,11 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'djangoProject.urls'
 CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8080',  # 允许从这个地址发出跨域请求
+    # ...
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

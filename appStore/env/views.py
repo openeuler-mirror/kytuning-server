@@ -94,12 +94,13 @@ class EnvViewSet(CusModelViewSet):
         data_env['swinfo_software_ver_pythonversion'] = request.data['envinfo']['swinfo']['software_ver'][
             'pythonversion']
         data_env['nwinfo_nic_nicname'] = str(request.data['envinfo']['nwinfo']['nic'])
+        data_env['nwinfo_nic'] = str(request.data['envinfo']['nwinfo']['nic'])
         serializer_env = self.get_serializer(data=data_env)
         # env_id = ''
         request.data['env_id'] = ''
         if serializer_env.is_valid():
             # todo 放开
-            # self.perform_create(serializer_env)
+            self.perform_create(serializer_env)
             # todo 查到当前数据的id供后面使用
             request.data['env_id'] = 2
         if serializer_env.errors:
