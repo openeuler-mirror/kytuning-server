@@ -1,3 +1,8 @@
+import json
+
+from django.http import JsonResponse, request
+from django.shortcuts import render
+
 # Create your views here.
 from rest_framework import status
 from appStore.lmbench.serializers import LmbenchSerializer
@@ -17,18 +22,18 @@ class LmbenchViewSet(CusModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer_error = []
         error_message = []
-        for k, lmbench_json in request.__dict__['data_lmbench'].items():
+        for k, all_json in request.__dict__['data_lmbench'].items():
             if k.lower().startswith('lmbench'):
-                for unixbench_json in lmbench_json['items']:
+                for lmbench_json in all_json['items']:
                     # 每一条lmbench数据
                     lmbench = {}
                     lmbench['env_id'] = request.__dict__['data_lmbench']['env_id']
-                    lmbench['test_time'] = return_time(lmbench_json['time'])
+                    lmbench['test_time'] = return_time(all_json['time'])
                     lmbench['execute_cmd'] = 'xxx'
                     lmbench['modify_parameters'] = 'xxx'
                     # 处理数据，原始数据每个一级标就是一个json，把所有以及字段放到一个json中
                     new_lmbench = {}
-                    for i in unixbench_json:
+                    for i in lmbench_json:
                         new_lmbench.update(i)
                     for key, value in new_lmbench.items():
                         if key == "Basic system parameters":
