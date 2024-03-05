@@ -13,7 +13,7 @@ class Stream(models.Model):
     execute_cmd = models.CharField(null=True, blank=True, max_length=255, verbose_name='执行命令')
     modify_parameters = models.CharField(null=True, blank=True, max_length=255, verbose_name='修改参数')
     # modify_parameters = models.TextField(null=True, blank=True, verbose_name='修改参数') #如果是很多的化可以使用text文本类型
-    thread = models.CharField(choices=ThreadType, max_length=10, verbose_name='单线程')
+    single_thread = models.CharField(choices=ThreadType, max_length=10, verbose_name='单线程')
     single_array_size = models.IntegerField(verbose_name='single_array_size')
     single_copy = models.FloatField(verbose_name='single_copy')
     single_scale = models.FloatField(verbose_name='single_scale')
