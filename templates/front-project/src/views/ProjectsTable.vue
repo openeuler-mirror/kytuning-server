@@ -90,6 +90,8 @@ export default {
           if (this.selectedType === "env") {
             // this.$router.push({name: 'env', "params": {projectId: env_id[0], selectedType: this.selectedType}});
             this.$router.push({name: 'env', "params": {envId: env_id[0]}});
+          }else if(this.selectedType === "stream"){
+            this.$router.push({name: 'stream', "params": {envId: env_id[0]}});
           }
 
         }
