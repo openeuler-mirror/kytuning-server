@@ -24,13 +24,13 @@ const routes = [
         component: () => import('@/views/EnvsTable'),
         // props: true
     },
-    // {
-    //     name: 'stream',
-    //     // path: '/env/:projectId :selectedType',
-    //     path: '/stream/:envId',
-    //     component: () => import('@/views/EnvsTable'),
-    //     // props: true
-    // }
+    {
+        name: 'stream',
+        path: '/stream/:envId',
+        component: () => import('@/views/StreamTable'),
+        // props: true
+    }
+
 ]
 export default createRouter({
     history: createWebHistory(),
