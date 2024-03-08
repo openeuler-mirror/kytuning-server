@@ -1,0 +1,68 @@
+#tatle-div {
+  display: flex; /* 将 div 设置为弹性容器 */
+  justify-content: center; /* 将按钮水平居中对齐 */
+  align-items: center; /* 将按钮垂直居中对齐 */
+}
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+
+button {
+  border: none;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-family: Arial, 微软雅黑;
+  color: white;
+  background: #447aa8;
+  border-radius: 3px;
+}
+
+#bt1 {
+  background: red;
+}
+
+#bt2 {
+  background: blue;
+  margin-left: 30px;
+  margin-right: 100px;
+}
+
+
+.custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.custom-table th,
+.custom-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.custom-table th:first-child,
+.custom-table td:first-child {
+  position: sticky;
+  left: 0;
+  background-color: #f5f5f5;
+  border-right: none;
+}
+
+.custom-table th:last-child,
+.custom-table td:last-child {
+  border-right: none;
+}
+
+.custom-table th {
+  font-weight: bold;
+  background-color: #f5f5f5;
+  border-top: none;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
