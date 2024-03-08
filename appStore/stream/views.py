@@ -1,10 +1,6 @@
-import json
-
-from django.http import JsonResponse, request
-from django.shortcuts import render
-
 # Create your views here.
 from rest_framework import status
+from appStore.stream.models import Stream
 from appStore.stream.serializers import StreamSerializer
 from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
 from appStore.utils.customer_view import CusModelViewSet
@@ -14,10 +10,8 @@ class StreamViewSet(CusModelViewSet):
     """
     stream数据管理
     """
-    # queryset = Stream.objects.all().order_by('id')
+    queryset = Stream.objects.all().order_by('id')
     serializer_class = StreamSerializer
-
-    # pagination_class = LimsPageSet
 
     def create(self, request, *args, **kwargs):
         serializer_stream_errors = []
