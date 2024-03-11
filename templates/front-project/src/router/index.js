@@ -29,7 +29,13 @@ const routes = [
         path: '/stream/:envId',
         component: () => import('@/views/StreamTable'),
         // props: true
-    }
+    },
+    {
+        name: 'unixbench',
+        path: '/unixbench/:envId',
+        component: () => import('@/views/UnixbenchTable'),
+    },
+
 
 ]
 export default createRouter({
