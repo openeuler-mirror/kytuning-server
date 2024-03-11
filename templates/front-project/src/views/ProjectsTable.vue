@@ -82,7 +82,6 @@ export default {
           return project.env_id
         })
         if (env_id.length !== 1) {
-          console.log(env_id, "选择一条数据作为详细信息查询")
           this.oneData = true
           return
         } else {
@@ -92,6 +91,8 @@ export default {
             this.$router.push({name: 'env', "params": {envId: env_id[0]}});
           }else if(this.selectedType === "stream"){
             this.$router.push({name: 'stream', "params": {envId: env_id[0]}});
+          }else if(this.selectedType === "unixbench"){
+            this.$router.push({name: 'unixbench', "params": {envId: env_id[0]}});
           }
 
         }

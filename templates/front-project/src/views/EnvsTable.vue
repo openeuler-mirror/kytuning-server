@@ -316,8 +316,6 @@ export default {
   created() {
     axios.get('/api/env/' + this.$route.params.envId + '/').then((response) => {
       this.getEnvDatas = response.data.data
-      console.log(this.getEnvDatas, 111)
-      console.log(this.getEnvDatas.hwinfo_machineinfo_manufacturer, 222)
       this.env_datas.hwinfo_machineinfo_manufacturer = this.getEnvDatas.hwinfo_machineinfo_manufacturer
       this.env_datas.hwinfo_machineinfo_product = this.getEnvDatas.hwinfo_machineinfo_product
       this.env_datas.hwinfo_machineinfo_serialnumber = this.getEnvDatas.hwinfo_machineinfo_serialnumber
@@ -375,10 +373,8 @@ export default {
       this.env_datas.hwinfo_disk_mntpoint_2 = this.disk_datas[0]["mntpoint=/"];
       this.env_datas.hwinfo_disk_mntpoint_home_2 = this.disk_datas[0]["mntpoint=/home"]
       // 处理nicinfo数据，目前写死的1组数据，后期在实现自动化遍历,并且使用方法和disk的还不一样后期在看使用哪一种.
-      console.log(this.getEnvDatas.hwinfo_nicinfo, 444)
       const nicinfo_json_str = this.getEnvDatas.hwinfo_nicinfo.replace(/'/g, '"').replace(/True/g, 'true').replace(/None/g, 'null');
       this.nicinfo_datas = JSON.parse(nicinfo_json_str);
-      console.log("nicinfo list = ",this.nicinfo_datas[0],55555555555);
       this.env_datas.hwinfo_nicinfo_logicalname = this.nicinfo_datas[0].logicalname
       this.env_datas.hwinfo_nicinfo_product =this.nicinfo_datas[0].product
       this.env_datas.hwinfo_nicinfo_speed =this.nicinfo_datas[0].speed
@@ -410,7 +406,6 @@ export default {
       // 处理nwinfo_nic数据，目前写死的1组数据，后期在实现自动化遍历,并且使用方法和disk的还不一样后期在看使用哪一种.
       const nwinfo_nic_json_str = this.getEnvDatas.nwinfo_nic.replace(/'/g, '"').replace(/True/g, 'true').replace(/None/g, 'null');
       this.nwinfo_nic_datas = JSON.parse(nwinfo_nic_json_str);
-      console.log("nwinfo nic value list = ",this.nwinfo_nic_datas[0],6666666111);
       this.env_datas.nwinfo_nic_nicname = this.nwinfo_nic_datas[0].nicname
       this.env_datas.nwinfo_nic_ip = this.nwinfo_nic_datas[0].ip
       this.env_datas.nwinfo_nic_hwaddr = this.nwinfo_nic_datas[0].hwaddr
@@ -424,7 +419,6 @@ export default {
       // this.env_datas.nwinfo_nic_hwaddr = this.getEnvDatas.nwinfo_nic_hwaddr
       // this.env_datas.nwinfo_nic_gateway = this.getEnvDatas.nwinfo_nic_gateway
       // this.env_datas.nwinfo_nic_mtu = this.getEnvDatas.nwinfo_nic_mtu
-      console.log(this.env_datas.hwinfo_machineinfo_manufacturer, 3333)
     });
   },
   methods: {
