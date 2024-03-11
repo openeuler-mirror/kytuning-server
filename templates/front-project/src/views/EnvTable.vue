@@ -314,7 +314,7 @@ export default {
     }
   },
   created() {
-    axios.get('/api/env/' + this.$route.params.envId + '/').then((response) => {
+    axios.get('/api/env/' + this.$route.params.baseId + '/').then((response) => {
       this.getEnvDatas = response.data.data
       this.env_datas.hwinfo_machineinfo_manufacturer = this.getEnvDatas.hwinfo_machineinfo_manufacturer
       this.env_datas.hwinfo_machineinfo_product = this.getEnvDatas.hwinfo_machineinfo_product
@@ -441,8 +441,8 @@ export default {
         if (index === 0) {
           spanOneArr.push(1);
         } else {
-          //first second 分别表示表格数据第一列和第二列对应的参数字段，根据实际参数修改
           if (colIndex === 0) {
+            //first second 分别表示表格数据第一列和第二列对应的参数字段，根据实际参数修改
             if (item.first === arr[index - 1].first) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);

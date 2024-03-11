@@ -15,13 +15,13 @@ const routes = [
     {
         path: '/project',
         name: 'project',
-        component: () => import('@/views/ProjectsTable'),
+        component: () => import('@/views/ProjectTable.vue'),
     },
     {
         name: 'env',
         // path: '/env/:projectId :selectedType',
         path: '/env/:envId',
-        component: () => import('@/views/EnvsTable'),
+        component: () => import('@/views/EnvTable.vue'),
         // props: true
     },
     {
