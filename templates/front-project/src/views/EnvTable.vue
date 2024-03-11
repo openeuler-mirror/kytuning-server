@@ -373,8 +373,10 @@ export default {
       this.env_datas.hwinfo_disk_mntpoint_2 = this.disk_datas[0]["mntpoint=/"];
       this.env_datas.hwinfo_disk_mntpoint_home_2 = this.disk_datas[0]["mntpoint=/home"]
       // 处理nicinfo数据，目前写死的1组数据，后期在实现自动化遍历,并且使用方法和disk的还不一样后期在看使用哪一种.
+      console.log('getEnvDatas-hwinfo_nicinfo=',this.getEnvDatas.hwinfo_nicinfo)
       const nicinfo_json_str = this.getEnvDatas.hwinfo_nicinfo.replace(/'/g, '"').replace(/True/g, 'true').replace(/None/g, 'null');
       this.nicinfo_datas = JSON.parse(nicinfo_json_str);
+      console.log("nicinfo list = ",this.nicinfo_datas[0]);
       this.env_datas.hwinfo_nicinfo_logicalname = this.nicinfo_datas[0].logicalname
       this.env_datas.hwinfo_nicinfo_product =this.nicinfo_datas[0].product
       this.env_datas.hwinfo_nicinfo_speed =this.nicinfo_datas[0].speed
@@ -406,6 +408,7 @@ export default {
       // 处理nwinfo_nic数据，目前写死的1组数据，后期在实现自动化遍历,并且使用方法和disk的还不一样后期在看使用哪一种.
       const nwinfo_nic_json_str = this.getEnvDatas.nwinfo_nic.replace(/'/g, '"').replace(/True/g, 'true').replace(/None/g, 'null');
       this.nwinfo_nic_datas = JSON.parse(nwinfo_nic_json_str);
+      console.log("nwinfo nic value list = ",this.nwinfo_nic_datas[0]);
       this.env_datas.nwinfo_nic_nicname = this.nwinfo_nic_datas[0].nicname
       this.env_datas.nwinfo_nic_ip = this.nwinfo_nic_datas[0].ip
       this.env_datas.nwinfo_nic_hwaddr = this.nwinfo_nic_datas[0].hwaddr
@@ -442,7 +445,7 @@ export default {
           spanOneArr.push(1);
         } else {
           if (colIndex === 0) {
-            //first second 分别表示表格数据第一列和第二列对应的参数字段，根据实际参数修改
+            //first second 分别表示表格数据第一列和第二列对应的参数字段名称，而不是第几个，根据实际参数修改
             if (item.first === arr[index - 1].first) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);
