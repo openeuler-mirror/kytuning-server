@@ -60,8 +60,10 @@ export default {
     }
   },
   created() {
-    axios.get('/api/stream/?env_id=' + this.$route.params.envId).then((response) => {
+    axios.get('/api/stream/?env_id=' + this.$route.params.baseId).then((response) => {
       this.getStreamDatas = response.data.data[0]
+      this.other_list[0].second = this.getStreamDatas.execute_cmd
+      this.other_list[1].second = this.getStreamDatas.modify_parameters
       this.stream_datas.single_array_size = this.getStreamDatas.single_array_size
       this.stream_datas.single_copy = this.getStreamDatas.single_copy
       this.stream_datas.single_scale = this.getStreamDatas.single_scale
