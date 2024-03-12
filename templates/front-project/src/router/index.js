@@ -15,28 +15,66 @@ const routes = [
     {
         path: '/project',
         name: 'project',
-        component: () => import('@/views/ProjectTable.vue'),
+        component: () => import('@/views/ProjectTable'),
     },
     {
         name: 'env',
-        // path: '/env/:projectId :selectedType',
-        path: '/env/:envId',
-        component: () => import('@/views/EnvTable.vue'),
-        // props: true
-    },
-    {
-        name: 'stream',
-        path: '/stream/:envId',
-        component: () => import('@/views/StreamTable'),
+        // path: '/env/:env_id :selectedType',
+        path: '/env/:baseId',
+        component: () => import('@/views/EnvTable'),
         // props: true
     },
     {
         name: 'unixbench',
-        path: '/unixbench/:envId',
+        path: '/unixbench/:baseId',
         component: () => import('@/views/UnixbenchTable'),
     },
-
-
+    {
+        name: 'unixbenchComparison',
+        path: '/unixbenchComparison/:baseId/:comparativeIds?',
+        component: () => import('@/views/UnxibenchComparisonTable'),
+        props: true,
+    },
+    {
+        name: 'stream',
+        path: '/stream/:baseId',
+        component: () => import('@/views/StreamTable'),
+    },
+    {
+        name: 'streamComparison',
+        path: '/streamComparison/:baseId/:comparativeIds?',
+        component: () => import('@/views/StreamComparisonTable'),
+    },
+    {
+        name: 'lmbench',
+        path: '/lmbench/:baseId',
+        component: () => import('@/views/LmbenchTable'),
+    },
+    {
+        name: 'fio',
+        path: '/fio/:baseId',
+        component: () => import('@/views/FioTable'),
+    },
+    {
+        name: 'fioComparison',
+        path: '/fioComparison/:baseId/:comparativeIds?',
+        component: () => import('@/views/FioComparisonTable'),
+    },
+    {
+        name: 'iozone',
+        path: '/iozone/:baseId',
+        component: () => import('@/views/IozoneTable'),
+    },
+    {
+        name: 'cpu2006',
+        path: '/cpu2006/:baseId',
+        component: () => import('@/views/Cpu2006Table'),
+    },
+    // {
+    //     name: 'jvm2008',
+    //     path: '/jvm2008/:baseId',
+    //     component: () => import('@/views/Jvm2008sTable'),
+    // },
 ]
 export default createRouter({
     history: createWebHistory(),
