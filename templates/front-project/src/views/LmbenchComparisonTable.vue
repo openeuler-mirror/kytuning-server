@@ -34,8 +34,7 @@ export default {
     }
   },
   created() {
-    axios.get('/api/lmbench/?env_id=' + this.$route.params.baseId + '&comparativeIds=' + this.$route.params.comparativeIds).then((response) => {
-      console.log(response.data.data, 11111)
+    axios.get('/api/lmbench/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
       this.tableDatas = response.data.data.data
       this.other_list = response.data.data.others
       this.numColumns = Object.keys(response.data.data.others[0]).length
