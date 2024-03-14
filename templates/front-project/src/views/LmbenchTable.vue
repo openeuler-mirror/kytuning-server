@@ -109,9 +109,9 @@ export default {
     return [
         {first:'Basic system parameters',second:'Mhz',third:this.lmbench_datas.basic_Mhz},
         {first:'Basic system parameters',second:'tlb pages',third:this.lmbench_datas.basic_tlb_pages},
-      {first:'Basic system parameters',second:'cache line bytes',third:this.lmbench_datas.basic_cache_line_bytes},
-      {first:'Basic system parameters',second:'mem par',third:this.lmbench_datas.basic_mem_par},
-      {first:'Basic system parameters',second:'scal load',third:this.lmbench_datas.basic_scal_load},
+        {first:'Basic system parameters',second:'cache line bytes',third:this.lmbench_datas.basic_cache_line_bytes},
+        {first:'Basic system parameters',second:'mem par',third:this.lmbench_datas.basic_mem_par},
+        {first:'Basic system parameters',second:'scal load',third:this.lmbench_datas.basic_scal_load},
         {first:'Processor',second:'Mhz',third:this.lmbench_datas.processor_null_call},
         {first:'Processor',second:'null call',third:this.lmbench_datas.processor_null_I_O},
         {first:'Processor',second:'null I/O',third:this.lmbench_datas.processor_stat},
