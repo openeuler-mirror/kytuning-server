@@ -30,9 +30,11 @@
         <th>对比数据</th>
         <th>系统版本</th>
         <th>项目名称</th>
+        <th>上传人员</th>
         <th>第几次</th>
         <th>架构</th>
         <th>serialnumber</th>
+        <th>测试时间</th>
       </tr>
       </thead>
       <tbody>
@@ -49,9 +51,12 @@
         </td>
         <td>{{ project.os_version }}</td>
         <td>{{ project.project_name }}</td>
+        <td>{{ project.user_name }}</td>
         <td>{{ project.times }}</td>
         <td>{{ project.arm }}</td>
         <td>{{ project.hwinfo_machineinfo_serialnumber }}</td>
+<!--        <td>{{project.test_time.replace(/T/g, ' ').replace(/./, ' ')}}</td>-->
+        <td>{{ project.test_time}}</td>
       </tr>
       </tbody>
     </table>
@@ -101,12 +106,11 @@ export default {
           return project.env_id
         })
         // 获取对比页面数据的参数
-        const comparativeIds = ''
+        const comparsionIds = ''
         const b = env_ids.map((item) => {
-          return comparativeIds + item
+          return comparsionIds + item
         })
-        const comparativeIdsToStr = b.join(',')
-        console.log(comparativeIdsToStr, 11111111)
+        const comparsionIdsToStr = b.join(',')
         if (env_id.length !== 1) {
           this.oneData = true
           return
@@ -137,24 +141,33 @@ export default {
           } else if (this.selectedType === "unixbench") {
             this.$router.push({
               name: 'unixbenchComparison',
-              "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
             });
           } else if (this.selectedType === "stream") {
             this.$router.push({
               name: 'streamComparison',
-              "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
             });
           } else if (this.selectedType === "lmbench") {
-            this.$router.push({name: 'lmbench', "params": {baseId: env_id[0]}});
+            this.$router.push({
+              name: 'lmbenchComparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
           } else if (this.selectedType === "fio") {
             this.$router.push({
-            name: 'fioComparison',
-            "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
-          });
+              name: 'fioComparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
           } else if (this.selectedType === "iozone") {
-            this.$router.push({name: 'iozone', "params": {baseId: env_id[0]}});
+            this.$router.push({
+              name: 'iozoneComparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
           } else if (this.selectedType === "jvm2008") {
-            this.$router.push({name: 'jvm2008', "params": {baseId: env_id[0]}});
+            this.$router.push({
+              name: 'jvm2008Comparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
           } else if (this.selectedType === "cpu2006") {
             this.$router.push({name: 'cpu2006', "params": {baseId: env_id[0]}});
           }
@@ -174,33 +187,43 @@ export default {
           return project.env_id
         })
         // 获取对比页面数据的参数
-        const comparativeIds = ''
+        const comparsionIds = ''
         const b = env_ids.map((item) => {
-          return comparativeIds + item
+          return comparsionIds + item
         })
-        const comparativeIdsToStr = b.join(',')
-        console.log(comparativeIdsToStr, 11111111)
+        const comparsionIdsToStr = b.join(',')
+        console.log(comparsionIdsToStr, 11111111)
         if (this.selectedType === "unixbench") {
           // 跳转数据对比页面
           this.$router.push({
             name: 'unixbenchComparison',
-            "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
+            "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
           });
         } else if (this.selectedType === "stream") {
           this.$router.push({
             name: 'streamComparison',
-            "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
+            "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
           });
         } else if (this.selectedType === "fio") {
           this.$router.push({
             name: 'fioComparison',
-            "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
+            "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
           });
-          } else if (this.selectedType === "lmbench") {
+        } else if (this.selectedType === "lmbench") {
           this.$router.push({
             name: 'lmbenchComparison',
-            "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
+            "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
           });
+        } else if (this.selectedType === "iozone11111") {
+          this.$router.push({
+            name: 'iozoneComparison',
+            "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+          });
+        }  else if (this.selectedType === "jvm2008") {
+            this.$router.push({
+              name: 'jvm2008Comparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
         }
       } else {
         console.log("请选择数据类型")
