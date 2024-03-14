@@ -51,6 +51,11 @@ const routes = [
         component: () => import('@/views/LmbenchTable'),
     },
     {
+        name: 'lmbenchComparison',
+        path: '/lmbench/:baseId',
+        component: () => import('@/views/LmbenchComparisonTable'),
+    },
+    {
         name: 'fio',
         path: '/fio/:baseId',
         component: () => import('@/views/FioTable'),

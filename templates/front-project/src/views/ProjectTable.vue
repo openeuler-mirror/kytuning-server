@@ -147,7 +147,10 @@ export default {
           } else if (this.selectedType === "lmbench") {
             this.$router.push({name: 'lmbench', "params": {baseId: env_id[0]}});
           } else if (this.selectedType === "fio") {
-            this.$router.push({name: 'fio', "params": {baseId: env_id[0]}});
+            this.$router.push({
+            name: 'fioComparison',
+            "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
+          });
           } else if (this.selectedType === "iozone") {
             this.$router.push({name: 'iozone', "params": {baseId: env_id[0]}});
           } else if (this.selectedType === "jvm2008") {
@@ -191,6 +194,11 @@ export default {
         } else if (this.selectedType === "fio") {
           this.$router.push({
             name: 'fioComparison',
+            "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
+          });
+          } else if (this.selectedType === "lmbench") {
+          this.$router.push({
+            name: 'lmbenchComparison',
             "params": {baseId: env_id[0], comparativeIds: comparativeIdsToStr}
           });
         }
