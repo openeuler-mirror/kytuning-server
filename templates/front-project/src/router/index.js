@@ -8,6 +8,11 @@ const routes = [
         component: () => import('@/components/HelloWorld')
     },
     {
+        name: 'Test',
+        path: '/test',
+        component: () => import('@/views/test_1'),
+    },
+    {
         name: 'Home',
         path: '/',
         component: () => import('@/views/KylinHome'),
@@ -24,51 +29,56 @@ const routes = [
         component: () => import('@/views/EnvTable'),
         // props: true
     },
-    {
-        name: 'unixbench',
-        path: '/unixbench/:baseId',
-        component: () => import('@/views/UnixbenchTable'),
-    },
+    // {
+    //     name: 'unixbench',
+    //     path: '/unixbench/:baseId',
+    //     component: () => import('@/views/UnixbenchTable'),
+    // },
     {
         name: 'unixbenchComparison',
-        path: '/unixbenchComparison/:baseId/:comparativeIds?',
+        path: '/unixbenchComparison/:baseId/:comparsionIds?',
         component: () => import('@/views/UnxibenchComparisonTable'),
         props: true,
     },
-    {
-        name: 'stream',
-        path: '/stream/:baseId',
-        component: () => import('@/views/StreamTable'),
-    },
+    // {
+    //     name: 'stream',
+    //     path: '/stream/:baseId',
+    //     component: () => import('@/views/StreamTable'),
+    // },
     {
         name: 'streamComparison',
-        path: '/streamComparison/:baseId/:comparativeIds?',
+        path: '/streamComparison/:baseId/:comparsionIds?',
         component: () => import('@/views/StreamComparisonTable'),
     },
-    {
-        name: 'lmbench',
-        path: '/lmbench/:baseId',
-        component: () => import('@/views/LmbenchTable'),
-    },
+    // {
+    //     name: 'lmbench',
+    //     path: '/lmbench/:baseId',
+    //     component: () => import('@/views/LmbenchTable'),
+    // },
     {
         name: 'lmbenchComparison',
-        path: '/lmbench/:baseId',
+        path: '/lmbenchComparison/:baseId/:comparsionIds?',
         component: () => import('@/views/LmbenchComparisonTable'),
     },
-    {
-        name: 'fio',
-        path: '/fio/:baseId',
-        component: () => import('@/views/FioTable'),
-    },
+    // {
+    //     name: 'fio',
+    //     path: '/fio/:baseId',
+    //     component: () => import('@/views/FioTable'),
+    // },
     {
         name: 'fioComparison',
-        path: '/fioComparison/:baseId/:comparativeIds?',
+        path: '/fioComparison/:baseId/:comparsionIds?',
         component: () => import('@/views/FioComparisonTable'),
     },
+    // {
+    //     name: 'iozone',
+    //     path: '/iozone/:baseId',
+    //     component: () => import('@/views/IozoneTable'),
+    // },
     {
-        name: 'iozone',
-        path: '/iozone/:baseId',
-        component: () => import('@/views/IozoneTable'),
+        name: 'iozoneComparison',
+        path: '/iozoneComparison/:baseId/:comparsionIds?',
+        component: () => import('@/views/IozoneComparisonTable'),
     },
     {
         name: 'cpu2006',
@@ -80,6 +90,11 @@ const routes = [
     //     path: '/jvm2008/:baseId',
     //     component: () => import('@/views/Jvm2008sTable'),
     // },
+    {
+        name: 'jvm2008Comparison',
+        path: '/jvm2008Comparison/:baseId/:comparsionIds?',
+        component: () => import('@/views/Jvm2008ComparisonTable'),
+    },
 ]
 export default createRouter({
     history: createWebHistory(),
