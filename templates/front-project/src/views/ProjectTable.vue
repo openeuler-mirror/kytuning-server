@@ -169,7 +169,15 @@ export default {
               "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
             });
           } else if (this.selectedType === "cpu2006") {
-            this.$router.push({name: 'cpu2006', "params": {baseId: env_id[0]}});
+            this.$router.push({
+              name: 'cpu2006Comparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
+          } else if (this.selectedType === "cpu2017") {
+            this.$router.push({
+              name: 'cpu2017Comparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
           }
         }
       } else {
@@ -219,12 +227,22 @@ export default {
             name: 'iozoneComparison',
             "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
           });
-        }  else if (this.selectedType === "jvm2008") {
+        } else if (this.selectedType === "jvm2008") {
             this.$router.push({
               name: 'jvm2008Comparison',
               "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
             });
-        }
+        } else if (this.selectedType === "cpu2006") {
+            this.$router.push({
+              name: 'cpu2006Comparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
+        } else if (this.selectedType === "cpu2017") {
+            this.$router.push({
+              name: 'cpu2017Comparison',
+              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+            });
+          }
       } else {
         console.log("请选择数据类型")
       }
