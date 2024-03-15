@@ -24,7 +24,6 @@ const routes = [
     },
     {
         name: 'env',
-        // path: '/env/:env_id :selectedType',
         path: '/env/:baseId',
         component: () => import('@/views/EnvTable'),
         // props: true
@@ -80,11 +79,6 @@ const routes = [
         path: '/iozoneComparison/:baseId/:comparsionIds?',
         component: () => import('@/views/IozoneComparisonTable'),
     },
-    {
-        name: 'cpu2006',
-        path: '/cpu2006/:baseId',
-        component: () => import('@/views/Cpu2006Table'),
-    },
     // {
     //     name: 'jvm2008',
     //     path: '/jvm2008/:baseId',
@@ -94,6 +88,21 @@ const routes = [
         name: 'jvm2008Comparison',
         path: '/jvm2008Comparison/:baseId/:comparsionIds?',
         component: () => import('@/views/Jvm2008ComparisonTable'),
+    },
+    {
+        name: 'cpu2006',
+        path: '/cpu2006/:baseId',
+        component: () => import('@/views/Cpu2006Table'),
+    },
+    {
+        name: 'cpu2006Comparison',
+        path: '/cpu2006Comparison/:baseId/:comparsionIds?',
+        component: () => import('@/views/Cpu2006ComparisonTable'),
+    },
+    {
+        name: 'cpu2017Comparison',
+        path: '/cpu2017Comparison/:baseId/:comparsionIds?',
+        component: () => import('@/views/Cpu2017ComparisonTable'),
     },
 ]
 export default createRouter({
