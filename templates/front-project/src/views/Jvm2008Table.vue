@@ -90,7 +90,6 @@ export default {
   created() {
     axios.get('/api/jvm2008/?env_id=' + this.$route.params.baseId).then((response) => {
       this.getJvmData = response.data.data
-      console.log(this.getJvmData,111111)
       if (this.getJvmData[0].tune_type === 'base') {
         this.baseData = this.getJvmData[0]
         this.peakData = this.getJvmData[1]

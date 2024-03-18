@@ -35,7 +35,6 @@ export default {
   },
   created() {
     axios.get('/api/iozone/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
-      console.log(response.data.data, 11111)
       this.tableDatas = response.data.data.data
       this.other_list = response.data.data.others
       this.numColumns = Object.keys(response.data.data.others[0]).length
