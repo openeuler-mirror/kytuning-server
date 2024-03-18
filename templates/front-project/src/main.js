@@ -5,10 +5,6 @@ import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 
 
-// const app = createApp(App)
-// app.use(router)
-// app.mount('#app')
-
 //解决屏幕改变大小报错问题
 const debounce = (fn, delay) => {
   let timer = null;
@@ -30,8 +26,6 @@ window.ResizeObserver = class ResizeObserver extends _ResizeObserver{
   }
 }
 
-
-// createApp(App).use(router).mount('#app')
 createApp(App).use(ElementPlus).use(router).mount('#app')
 
 
