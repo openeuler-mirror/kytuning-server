@@ -16,12 +16,6 @@
       <option value="jvm2008">jvm2008</option>
     </select>
   </div>
-  <div v-if="oneData">
-    一次性只能查看一条数据信息
-  </div>
-  <div v-if="twoData">
-    数据超过两条，请重新选择
-  </div>
   <div class="table-container">
     <table class="custom-table">
       <thead>
@@ -34,7 +28,16 @@
         <th>第几次</th>
         <th>架构</th>
         <th>serialnumber</th>
-        <th>测试时间</th>
+        <th>cpu2006</th>
+        <th>cpu2017</th>
+        <th>fio</th>
+        <th>iozone</th>
+        <th>jvm2008</th>
+        <th>lmbench</th>
+        <th>stream</th>
+        <th>unixbench</th>
+        <th>录入时间</th>
+        <th>描述</th>
       </tr>
       </thead>
       <tbody>
@@ -55,8 +58,16 @@
         <td>{{ project.times }}</td>
         <td>{{ project.arm }}</td>
         <td>{{ project.hwinfo_machineinfo_serialnumber }}</td>
-<!--        <td>{{project.test_time.replace(/T/g, ' ').replace(/./, ' ')}}</td>-->
+        <td>{{ project.cpu2006}}</td>
+        <td>{{ project.cpu2017}}</td>
+        <td>{{ project.fio}}</td>
+        <td>{{ project.iozone}}</td>
+        <td>{{ project.jvm2008}}</td>
+        <td>{{ project.lmbench}}</td>
+        <td>{{ project.stream}}</td>
+        <td>{{ project.unixbench}}</td>
         <td>{{ project.test_time}}</td>
+        <td>{{ project.message}}</td>
       </tr>
       </tbody>
     </table>
@@ -65,6 +76,7 @@
 
 <script>
 import axios from 'axios'
+import { ElMessage } from 'element-plus';
 
 export default {
   data() {
@@ -74,8 +86,6 @@ export default {
       comparativeData: [], // 用户选择的对比数据
       selected: '',
       selectedType: '',
-      twoData: false,
-      oneData: false,
     }
   },
   created() {
@@ -112,28 +122,9 @@ export default {
         })
         const comparsionIdsToStr = b.join(',')
         if (env_id.length !== 1) {
-          this.oneData = true
+          ElMessage.error('请选择基准数据');
           return
         } else {
-          // // 跳转env详情页面
-          // if (this.selectedType === "env") {
-          //   // this.$router.push({name: 'env', "params": {env_id: env_id[0], selectedType: this.selectedType}});
-          //   this.$router.push({name: 'env', "params": {baseId: env_id[0]}});
-          // } else if (this.selectedType === "stream") {
-          //   this.$router.push({name: 'stream', "params": {baseId: env_id[0]}});
-          // } else if (this.selectedType === "unixbench") {
-          //   this.$router.push({name: 'unixbench', "params": {baseId: env_id[0]}});
-          // } else if (this.selectedType === "lmbench") {
-          //   this.$router.push({name: 'lmbench', "params": {baseId: env_id[0]}});
-          // } else if (this.selectedType === "fio") {
-          //   this.$router.push({name: 'fio', "params": {baseId: env_id[0]}});
-          // } else if (this.selectedType === "iozone") {
-          //   this.$router.push({name: 'iozone', "params": {baseId: env_id[0]}});
-          // } else if (this.selectedType === "jvm2008") {
-          //   this.$router.push({name: 'jvm2008', "params": {baseId: env_id[0]}});
-          // } else if (this.selectedType === "cpu2006") {
-          //   this.$router.push({name: 'cpu2006', "params": {baseId: env_id[0]}});
-          // }
           // 跳转env详情页面
           if (this.selectedType === "env") {
             // this.$router.push({name: 'env', "params": {env_id: env_id[0], selectedType: this.selectedType}});
@@ -173,16 +164,16 @@ export default {
               name: 'cpu2006Comparison',
               "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
             });
-          } else if (this.selectedType === "cpu2017") {
-            this.$router.push({
-              name: 'cpu2017Comparison',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
-            });
+          // } else if (this.selectedType === "cpu2017") {
+          //   this.$router.push({
+          //     name: 'cpu2017Comparison',
+          //     "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+          //   });
           }
         }
       } else {
-        console.log("请选择数据类型")
-        return
+        ElMessage.error('请选择数据类型');
+        // return
       }
       console.log("跳转成功")
     },
@@ -200,7 +191,6 @@ export default {
           return comparsionIds + item
         })
         const comparsionIdsToStr = b.join(',')
-        console.log(comparsionIdsToStr, 11111111)
         if (this.selectedType === "unixbench") {
           // 跳转数据对比页面
           this.$router.push({
@@ -222,7 +212,7 @@ export default {
             name: 'lmbenchComparison',
             "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
           });
-        } else if (this.selectedType === "iozone11111") {
+        } else if (this.selectedType === "iozone") {
           this.$router.push({
             name: 'iozoneComparison',
             "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
@@ -237,14 +227,14 @@ export default {
               name: 'cpu2006Comparison',
               "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
             });
-        } else if (this.selectedType === "cpu2017") {
-            this.$router.push({
-              name: 'cpu2017Comparison',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
-            });
+        // } else if (this.selectedType === "cpu2017") {
+        //     this.$router.push({
+        //       name: 'cpu2017Comparison',
+        //       "params": {baseId: env_id[0], comparsionIds: comparsionIdsToStr}
+        //     });
           }
       } else {
-        console.log("请选择数据类型")
+        ElMessage.error('请选择数据类型');
       }
     },
   }
