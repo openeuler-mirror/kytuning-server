@@ -184,9 +184,6 @@ export default {
       }
       this.other_list[0].second = this.singleThreaddata.execute_cmd
       this.other_list[1].second = this.singleThreaddata.modify_parameters
-      console.log(this.singleThreaddata,111111)
-      console.log(this.singleThreaddata.int_400_perlbench,222)
-      console.log(this.singleThreaddata.fp_433_milc,222)
       this.cpu2006_datas.single_int_400_perlbench = this.singleThreaddata.int_400_perlbench
       this.cpu2006_datas.single_int_401_bzip2 = this.singleThreaddata.int_401_bzip2Precision
       this.cpu2006_datas.single_int_403_gcc = this.singleThreaddata.int_403_gcchroughput
