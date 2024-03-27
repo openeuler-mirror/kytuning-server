@@ -5,7 +5,10 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import status
+
+from appStore.cpu2017.models import Cpu2017
 from appStore.cpu2017.serializers import Cpu2017Serializer
+from appStore.utils import constants
 from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -14,18 +17,32 @@ class Cpu2017ViewSet(CusModelViewSet):
     """
     Cpu2017数据管理
     """
-    # queryset = Stream.objects.all().order_by('id')
+    queryset = Cpu2017.objects.all().order_by('id')
     serializer_class = Cpu2017Serializer
+
+    def list(self, request, *args, **kwargs):
+        """
+        返回列表
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        env_id = request.GET.get('env_id')
+        queryset = Cpu2017.objects.filter(env_id=env_id).all()
+        queryset = self.filter_queryset(queryset)
+        serializer = self.get_serializer(queryset, many=True)
+        return json_response(serializer.data, status.HTTP_200_OK, '列表')
+
 
     def create(self, request, *args, **kwargs):
         serializer_cpu2017_errors = []
         error_message = []
         for k, cpu2017_json in request.__dict__['data_cpu2017'].items():
-            # print(k, k.lower().startswith('cpu2017'), 111)
             if k.lower().startswith('cpu2017'):
-                # print(cpu2017_json, 222)
+                constants.CPU2017_BOOL = True
                 for key, value in cpu2017_json['items'].items():
-                    data_cpu2017 = {}                                                   
+                    data_cpu2017 = {}
                     data_cpu2017['env_id'] = request.__dict__['data_cpu2017']['env_id']
                     data_cpu2017['thread'] = key.split("_")[0]
                     if key.split("_")[1] == "fp":
@@ -51,11 +68,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                             data_cpu2017['test_time'] = return_time(cpu2017_json['time'])
                             serializer_cpu2017 = Cpu2017Serializer(data=data_cpu2017)
                             if serializer_cpu2017.is_valid():
-                                #todo 放开
-                                pass
-                                # print(data_cpu2017,"-----fp------",key1)
-                                # self.perform_create(serializer_cpu2017)
-                            # print(serializer_cpu2017.errors)
+                                self.perform_create(serializer_cpu2017)
                             serializer_cpu2017_errors.append(serializer_cpu2017.errors)
                             error_message.append(get_error_message(serializer_cpu2017))
                     elif key.split("_")[1] == "int":
@@ -78,10 +91,8 @@ class Cpu2017ViewSet(CusModelViewSet):
                             data_cpu2017['test_time'] = return_time(cpu2017_json['time'])
                             serializer_cpu2017 = Cpu2017Serializer(data=data_cpu2017)
                             if serializer_cpu2017.is_valid():
-                                # todo 放开
-                                pass
-                                # print(data_cpu2017,"------int-----",key1)
                                 # self.perform_create(serializer_cpu2017)
+                                pass
                             serializer_cpu2017_errors.append(serializer_cpu2017.errors)
                             error_message.append(get_error_message(serializer_cpu2017))
 
