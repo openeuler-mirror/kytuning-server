@@ -34,6 +34,342 @@ class Cpu2017ViewSet(CusModelViewSet):
     #     serializer = self.get_serializer(queryset, many=True)
     #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
 
+    def get_data(self, serializer):
+        # 初始化数据为空 否则如果下面只获取的单线程或者多线程另外一组获取不到可能会报错
+        execute_cmd = serializer.data[0]['execute_cmd']
+        modify_parameters = serializer.data[0]['modify_parameters']
+
+        base_single_int_rate_500_perlbench_r = ''
+        base_single_int_rate_502_gcc_r = ''
+        base_single_int_rate_505_mcf_r = ''
+        base_single_int_rate_520_omnetpp_r = ''
+        base_single_int_rate_523_xalancbmk_r = ''
+        base_single_int_rate_525_x264_r = ''
+        base_single_int_rate_531_deepsjeng_r = ''
+        base_single_int_rate_541_leela_r = ''
+        base_single_int_rate_548_exchange2_r = ''
+        base_single_int_rate_557_xz_r = ''
+        base_single_int_rate_SPECrate2017_int = ''
+        base_single_fp_rate_503_bwaves_r = ''
+        base_single_fp_rate_507_cactuBSSN_r = ''
+        base_single_fp_rate_508_namd_r = ''
+        base_single_fp_rate_510_parest_r = ''
+        base_single_fp_rate_511_povray_r = ''
+        base_single_fp_rate_519_lbm_r = ''
+        base_single_fp_rate_521_wrf_r = ''
+        base_single_fp_rate_526_blender_r = ''
+        base_single_fp_rate_527_cam4_r = ''
+        base_single_fp_rate_538_imagick_r = ''
+        base_single_fp_rate_544_nab_r = ''
+        base_single_fp_rate_549_fotonik3d_r = ''
+        base_single_fp_rate_554_roms_r = ''
+        base_single_fp_rate_PECrate2017_fp = ''
+
+        base_multi_int_rate_500_perlbench_r = ''
+        base_multi_int_rate_502_gcc_r = ''
+        base_multi_int_rate_505_mcf_r = ''
+        base_multi_int_rate_520_omnetpp_r = ''
+        base_multi_int_rate_523_xalancbmk_r = ''
+        base_multi_int_rate_525_x264_r = ''
+        base_multi_int_rate_531_deepsjeng_r = ''
+        base_multi_int_rate_541_leela_r = ''
+        base_multi_int_rate_548_exchange2_r = ''
+        base_multi_int_rate_557_xz_r = ''
+        base_multi_int_rate_SPECrate2017_int = ''
+        base_multi_fp_rate_503_bwaves_r = ''
+        base_multi_fp_rate_507_cactuBSSN_r = ''
+        base_multi_fp_rate_508_namd_r = ''
+        base_multi_fp_rate_510_parest_r = ''
+        base_multi_fp_rate_511_povray_r = ''
+        base_multi_fp_rate_519_lbm_r = ''
+        base_multi_fp_rate_521_wrf_r = ''
+        base_multi_fp_rate_526_blender_r = ''
+        base_multi_fp_rate_527_cam4_r = ''
+        base_multi_fp_rate_538_imagick_r = ''
+        base_multi_fp_rate_544_nab_r = ''
+        base_multi_fp_rate_549_fotonik3d_r = ''
+        base_multi_fp_rate_554_roms_r = ''
+        base_multi_fp_rate_PECrate2017_fp = ''
+
+        peak_single_int_rate_500_perlbench_r = ''
+        peak_single_int_rate_502_gcc_r = ''
+        peak_single_int_rate_505_mcf_r = ''
+        peak_single_int_rate_520_omnetpp_r = ''
+        peak_single_int_rate_523_xalancbmk_r = ''
+        peak_single_int_rate_525_x264_r = ''
+        peak_single_int_rate_531_deepsjeng_r = ''
+        peak_single_int_rate_541_leela_r = ''
+        peak_single_int_rate_548_exchange2_r = ''
+        peak_single_int_rate_557_xz_r = ''
+        peak_single_int_rate_SPECrate2017_int = ''
+        peak_single_fp_rate_503_bwaves_r = ''
+        peak_single_fp_rate_507_cactuBSSN_r = ''
+        peak_single_fp_rate_508_namd_r = ''
+        peak_single_fp_rate_510_parest_r = ''
+        peak_single_fp_rate_511_povray_r = ''
+        peak_single_fp_rate_519_lbm_r = ''
+        peak_single_fp_rate_521_wrf_r = ''
+        peak_single_fp_rate_526_blender_r = ''
+        peak_single_fp_rate_527_cam4_r = ''
+        peak_single_fp_rate_538_imagick_r = ''
+        peak_single_fp_rate_544_nab_r = ''
+        peak_single_fp_rate_549_fotonik3d_r = ''
+        peak_single_fp_rate_554_roms_r = ''
+        peak_single_fp_rate_PECrate2017_fp = ''
+
+        peak_multi_int_rate_500_perlbench_r = ''
+        peak_multi_int_rate_502_gcc_r = ''
+        peak_multi_int_rate_505_mcf_r = ''
+        peak_multi_int_rate_520_omnetpp_r = ''
+        peak_multi_int_rate_523_xalancbmk_r = ''
+        peak_multi_int_rate_525_x264_r = ''
+        peak_multi_int_rate_531_deepsjeng_r = ''
+        peak_multi_int_rate_541_leela_r = ''
+        peak_multi_int_rate_548_exchange2_r = ''
+        peak_multi_int_rate_557_xz_r = ''
+        peak_multi_int_rate_SPECrate2017_int = ''
+        peak_multi_fp_rate_503_bwaves_r = ''
+        peak_multi_fp_rate_507_cactuBSSN_r = ''
+        peak_multi_fp_rate_508_namd_r = ''
+        peak_multi_fp_rate_510_parest_r = ''
+        peak_multi_fp_rate_511_povray_r = ''
+        peak_multi_fp_rate_519_lbm_r = ''
+        peak_multi_fp_rate_521_wrf_r = ''
+        peak_multi_fp_rate_526_blender_r = ''
+        peak_multi_fp_rate_527_cam4_r = ''
+        peak_multi_fp_rate_538_imagick_r = ''
+        peak_multi_fp_rate_544_nab_r = ''
+        peak_multi_fp_rate_549_fotonik3d_r = ''
+        peak_multi_fp_rate_554_roms_r = ''
+        peak_multi_fp_rate_PECrate2017_fp = ''
+
+        # thread dtype tuneType
+        # 先判断数据的TuneType确定是base还是peak
+        # 在判断数据的thread确定是单线程还是多线程
+        # 在判断tuneType确定是int还是fp
+        for data in serializer.data:
+            # 判断数据的TuneType确定是base还是peak
+            if data['tuneType'] == 'base':
+                if data['thread'] == '单线程':
+                    if data['dtype'] == 'int':
+                        base_single_int_rate_500_perlbench_r = data['int_500_perlbench_r']
+                        base_single_int_rate_502_gcc_r = data['int_502_gcc_r']
+                        base_single_int_rate_505_mcf_r = data['int_505_mcf_r']
+                        base_single_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
+                        base_single_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
+                        base_single_int_rate_525_x264_r = data['int_525_x264_r']
+                        base_single_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
+                        base_single_int_rate_541_leela_r = data['int_541_leela_r']
+                        base_single_int_rate_548_exchange2_r = data['int_548_exchange2_r']
+                        base_single_int_rate_557_xz_r = data['int_557_xz_r']
+                        base_single_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
+                    elif data['dtype'] == 'fp':
+                        base_single_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
+                        base_single_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
+                        base_single_fp_rate_508_namd_r = data['fp_508_namd_r']
+                        base_single_fp_rate_510_parest_r = data['fp_510_parest_r']
+                        base_single_fp_rate_511_povray_r = data['fp_511_povray_r']
+                        base_single_fp_rate_519_lbm_r = data['fp_519_lbm_r']
+                        base_single_fp_rate_521_wrf_r = data['fp_521_wrf_r']
+                        base_single_fp_rate_526_blender_r = data['fp_526_blender_r']
+                        base_single_fp_rate_527_cam4_r = data['fp_527_cam4_r']
+                        base_single_fp_rate_538_imagick_r = data['fp_538_imagick_r']
+                        base_single_fp_rate_544_nab_r = data['fp_544_nab_r']
+                        base_single_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
+                        base_single_fp_rate_554_roms_r = data['fp_554_roms_r']
+                        base_single_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+                elif data['thread'] == '多线程':
+                    if data['dtype'] == 'int':
+                        base_multi_int_rate_500_perlbench_r = data['int_500_perlbench_r']
+                        base_multi_int_rate_502_gcc_r = data['int_502_gcc_r']
+                        base_multi_int_rate_505_mcf_r = data['int_505_mcf_r']
+                        base_multi_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
+                        base_multi_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
+                        base_multi_int_rate_525_x264_r = data['int_525_x264_r']
+                        base_multi_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
+                        base_multi_int_rate_541_leela_r = data['int_541_leela_r']
+                        base_multi_int_rate_548_exchange2_r = data['int_548_exchange2_r']
+                        base_multi_int_rate_557_xz_r = data['int_557_xz_r']
+                        base_multi_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
+                    elif data['dtype'] == 'fp':
+                        base_multi_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
+                        base_multi_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
+                        base_multi_fp_rate_508_namd_r = data['fp_508_namd_r']
+                        base_multi_fp_rate_510_parest_r = data['fp_510_parest_r']
+                        base_multi_fp_rate_511_povray_r = data['fp_511_povray_r']
+                        base_multi_fp_rate_519_lbm_r = data['fp_519_lbm_r']
+                        base_multi_fp_rate_521_wrf_r = data['fp_521_wrf_r']
+                        base_multi_fp_rate_526_blender_r = data['fp_526_blender_r']
+                        base_multi_fp_rate_527_cam4_r = data['fp_527_cam4_r']
+                        base_multi_fp_rate_538_imagick_r = data['fp_538_imagick_r']
+                        base_multi_fp_rate_544_nab_r = data['fp_544_nab_r']
+                        base_multi_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
+                        base_multi_fp_rate_554_roms_r = data['fp_554_roms_r']
+                        base_multi_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+            elif data['tuneType'] == 'peak':
+                if data['thread'] == '单线程':
+                    if data['dtype'] == 'int':
+                        peak_single_int_rate_500_perlbench_r = data['int_500_perlbench_r']
+                        peak_single_int_rate_502_gcc_r = data['int_502_gcc_r']
+                        peak_single_int_rate_505_mcf_r = data['int_505_mcf_r']
+                        peak_single_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
+                        peak_single_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
+                        peak_single_int_rate_525_x264_r = data['int_525_x264_r']
+                        peak_single_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
+                        peak_single_int_rate_541_leela_r = data['int_541_leela_r']
+                        peak_single_int_rate_548_exchange2_r = data['int_548_exchange2_r']
+                        peak_single_int_rate_557_xz_r = data['int_557_xz_r']
+                        peak_single_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
+                    elif data['dtype'] == 'fp':
+                        peak_single_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
+                        peak_single_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
+                        peak_single_fp_rate_508_namd_r = data['fp_508_namd_r']
+                        peak_single_fp_rate_510_parest_r = data['fp_510_parest_r']
+                        peak_single_fp_rate_511_povray_r = data['fp_511_povray_r']
+                        peak_single_fp_rate_519_lbm_r = data['fp_519_lbm_r']
+                        peak_single_fp_rate_521_wrf_r = data['fp_521_wrf_r']
+                        peak_single_fp_rate_526_blender_r = data['fp_526_blender_r']
+                        peak_single_fp_rate_527_cam4_r = data['fp_527_cam4_r']
+                        peak_single_fp_rate_538_imagick_r = data['fp_538_imagick_r']
+                        peak_single_fp_rate_544_nab_r = data['fp_544_nab_r']
+                        peak_single_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
+                        peak_single_fp_rate_554_roms_r = data['fp_554_roms_r']
+                        peak_single_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+                elif data['thread'] == '多线程':
+                    if data['dtype'] == 'int':
+                        peak_multi_int_rate_500_perlbench_r = data['int_500_perlbench_r']
+                        peak_multi_int_rate_502_gcc_r = data['int_502_gcc_r']
+                        peak_multi_int_rate_505_mcf_r = data['int_505_mcf_r']
+                        peak_multi_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
+                        peak_multi_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
+                        peak_multi_int_rate_525_x264_r = data['int_525_x264_r']
+                        peak_multi_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
+                        peak_multi_int_rate_541_leela_r = data['int_541_leela_r']
+                        peak_multi_int_rate_548_exchange2_r = data['int_548_exchange2_r']
+                        peak_multi_int_rate_557_xz_r = data['int_557_xz_r']
+                        peak_multi_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
+                    elif data['dtype'] == 'fp':
+                        peak_multi_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
+                        peak_multi_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
+                        peak_multi_fp_rate_508_namd_r = data['fp_508_namd_r']
+                        peak_multi_fp_rate_510_parest_r = data['fp_510_parest_r']
+                        peak_multi_fp_rate_511_povray_r = data['fp_511_povray_r']
+                        peak_multi_fp_rate_519_lbm_r = data['fp_519_lbm_r']
+                        peak_multi_fp_rate_521_wrf_r = data['fp_521_wrf_r']
+                        peak_multi_fp_rate_526_blender_r = data['fp_526_blender_r']
+                        peak_multi_fp_rate_527_cam4_r = data['fp_527_cam4_r']
+                        peak_multi_fp_rate_538_imagick_r = data['fp_538_imagick_r']
+                        peak_multi_fp_rate_544_nab_r = data['fp_544_nab_r']
+                        peak_multi_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
+                        peak_multi_fp_rate_554_roms_r = data['fp_554_roms_r']
+                        peak_multi_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+
+        new_data = {'execute_cmd': execute_cmd,
+                    'modify_parameters': modify_parameters,
+
+                    'base_single_int_rate_500_perlbench_r': base_single_int_rate_500_perlbench_r,
+                    'base_single_int_rate_502_gcc_r': base_single_int_rate_502_gcc_r,
+                    'base_single_int_rate_505_mcf_r': base_single_int_rate_505_mcf_r,
+                    'base_single_int_rate_520_omnetpp_r': base_single_int_rate_520_omnetpp_r,
+                    'base_single_int_rate_523_xalancbmk_r': base_single_int_rate_523_xalancbmk_r,
+                    'base_single_int_rate_525_x264_r': base_single_int_rate_525_x264_r,
+                    'base_single_int_rate_531_deepsjeng_r': base_single_int_rate_531_deepsjeng_r,
+                    'base_single_int_rate_541_leela_r': base_single_int_rate_541_leela_r,
+                    'base_single_int_rate_548_exchange2_r': base_single_int_rate_548_exchange2_r,
+                    'base_single_int_rate_557_xz_r': base_single_int_rate_557_xz_r,
+                    'base_single_int_rate_SPECrate2017_int': base_single_int_rate_SPECrate2017_int,
+                    'base_single_fp_rate_503_bwaves_r': base_single_fp_rate_503_bwaves_r,
+                    'base_single_fp_rate_507_cactuBSSN_r': base_single_fp_rate_507_cactuBSSN_r,
+                    'base_single_fp_rate_508_namd_r': base_single_fp_rate_508_namd_r,
+                    'base_single_fp_rate_510_parest_r': base_single_fp_rate_510_parest_r,
+                    'base_single_fp_rate_511_povray_r': base_single_fp_rate_511_povray_r,
+                    'base_single_fp_rate_519_lbm_r': base_single_fp_rate_519_lbm_r,
+                    'base_single_fp_rate_521_wrf_r': base_single_fp_rate_521_wrf_r,
+                    'base_single_fp_rate_526_blender_r': base_single_fp_rate_526_blender_r,
+                    'base_single_fp_rate_527_cam4_r': base_single_fp_rate_527_cam4_r,
+                    'base_single_fp_rate_538_imagick_r': base_single_fp_rate_538_imagick_r,
+                    'base_single_fp_rate_544_nab_r': base_single_fp_rate_544_nab_r,
+                    'base_single_fp_rate_549_fotonik3d_r': base_single_fp_rate_549_fotonik3d_r,
+                    'base_single_fp_rate_554_roms_r': base_single_fp_rate_554_roms_r,
+                    'base_single_fp_rate_PECrate2017_fp': base_single_fp_rate_PECrate2017_fp,
+                    'base_multi_int_rate_500_perlbench_r': base_multi_int_rate_500_perlbench_r,
+                    'base_multi_int_rate_502_gcc_r': base_multi_int_rate_502_gcc_r,
+                    'base_multi_int_rate_505_mcf_r': base_multi_int_rate_505_mcf_r,
+                    'base_multi_int_rate_520_omnetpp_r': base_multi_int_rate_520_omnetpp_r,
+                    'base_multi_int_rate_523_xalancbmk_r': base_multi_int_rate_523_xalancbmk_r,
+                    'base_multi_int_rate_525_x264_r': base_multi_int_rate_525_x264_r,
+                    'base_multi_int_rate_531_deepsjeng_r': base_multi_int_rate_531_deepsjeng_r,
+                    'base_multi_int_rate_541_leela_r': base_multi_int_rate_541_leela_r,
+                    'base_multi_int_rate_548_exchange2_r': base_multi_int_rate_548_exchange2_r,
+                    'base_multi_int_rate_557_xz_r': base_multi_int_rate_557_xz_r,
+                    'base_multi_int_rate_SPECrate2017_int': base_multi_int_rate_SPECrate2017_int,
+                    'base_multi_fp_rate_503_bwaves_r': base_multi_fp_rate_503_bwaves_r,
+                    'base_multi_fp_rate_507_cactuBSSN_r': base_multi_fp_rate_507_cactuBSSN_r,
+                    'base_multi_fp_rate_508_namd_r': base_multi_fp_rate_508_namd_r,
+                    'base_multi_fp_rate_510_parest_r': base_multi_fp_rate_510_parest_r,
+                    'base_multi_fp_rate_511_povray_r': base_multi_fp_rate_511_povray_r,
+                    'base_multi_fp_rate_519_lbm_r': base_multi_fp_rate_519_lbm_r,
+                    'base_multi_fp_rate_521_wrf_r': base_multi_fp_rate_521_wrf_r,
+                    'base_multi_fp_rate_526_blender_r': base_multi_fp_rate_526_blender_r,
+                    'base_multi_fp_rate_527_cam4_r': base_multi_fp_rate_527_cam4_r,
+                    'base_multi_fp_rate_538_imagick_r': base_multi_fp_rate_538_imagick_r,
+                    'base_multi_fp_rate_544_nab_r': base_multi_fp_rate_544_nab_r,
+                    'base_multi_fp_rate_549_fotonik3d_r': base_multi_fp_rate_549_fotonik3d_r,
+                    'base_multi_fp_rate_554_roms_r': base_multi_fp_rate_554_roms_r,
+                    'base_multi_fp_rate_PECrate2017_fp': base_multi_fp_rate_PECrate2017_fp,
+                    'peak_single_int_rate_500_perlbench_r': peak_single_int_rate_500_perlbench_r,
+                    'peak_single_int_rate_502_gcc_r': peak_single_int_rate_502_gcc_r,
+                    'peak_single_int_rate_505_mcf_r': peak_single_int_rate_505_mcf_r,
+                    'peak_single_int_rate_520_omnetpp_r': peak_single_int_rate_520_omnetpp_r,
+                    'peak_single_int_rate_523_xalancbmk_r': peak_single_int_rate_523_xalancbmk_r,
+                    'peak_single_int_rate_525_x264_r': peak_single_int_rate_525_x264_r,
+                    'peak_single_int_rate_531_deepsjeng_r': peak_single_int_rate_531_deepsjeng_r,
+                    'peak_single_int_rate_541_leela_r': peak_single_int_rate_541_leela_r,
+                    'peak_single_int_rate_548_exchange2_r': peak_single_int_rate_548_exchange2_r,
+                    'peak_single_int_rate_557_xz_r': peak_single_int_rate_557_xz_r,
+                    'peak_single_int_rate_SPECrate2017_int': peak_single_int_rate_SPECrate2017_int,
+                    'peak_single_fp_rate_503_bwaves_r': peak_single_fp_rate_503_bwaves_r,
+                    'peak_single_fp_rate_507_cactuBSSN_r': peak_single_fp_rate_507_cactuBSSN_r,
+                    'peak_single_fp_rate_508_namd_r': peak_single_fp_rate_508_namd_r,
+                    'peak_single_fp_rate_510_parest_r': peak_single_fp_rate_510_parest_r,
+                    'peak_single_fp_rate_511_povray_r': peak_single_fp_rate_511_povray_r,
+                    'peak_single_fp_rate_519_lbm_r': peak_single_fp_rate_519_lbm_r,
+                    'peak_single_fp_rate_521_wrf_r': peak_single_fp_rate_521_wrf_r,
+                    'peak_single_fp_rate_526_blender_r': peak_single_fp_rate_526_blender_r,
+                    'peak_single_fp_rate_527_cam4_r': peak_single_fp_rate_527_cam4_r,
+                    'peak_single_fp_rate_538_imagick_r': peak_single_fp_rate_538_imagick_r,
+                    'peak_single_fp_rate_544_nab_r': peak_single_fp_rate_544_nab_r,
+                    'peak_single_fp_rate_549_fotonik3d_r': peak_single_fp_rate_549_fotonik3d_r,
+                    'peak_single_fp_rate_554_roms_r': peak_single_fp_rate_554_roms_r,
+                    'peak_single_fp_rate_PECrate2017_fp': peak_single_fp_rate_PECrate2017_fp,
+                    'peak_multi_int_rate_500_perlbench_r': peak_multi_int_rate_500_perlbench_r,
+                    'peak_multi_int_rate_502_gcc_r': peak_multi_int_rate_502_gcc_r,
+                    'peak_multi_int_rate_505_mcf_r': peak_multi_int_rate_505_mcf_r,
+                    'peak_multi_int_rate_520_omnetpp_r': peak_multi_int_rate_520_omnetpp_r,
+                    'peak_multi_int_rate_523_xalancbmk_r': peak_multi_int_rate_523_xalancbmk_r,
+                    'peak_multi_int_rate_525_x264_r': peak_multi_int_rate_525_x264_r,
+                    'peak_multi_int_rate_531_deepsjeng_r': peak_multi_int_rate_531_deepsjeng_r,
+                    'peak_multi_int_rate_541_leela_r': peak_multi_int_rate_541_leela_r,
+                    'peak_multi_int_rate_548_exchange2_r': peak_multi_int_rate_548_exchange2_r,
+                    'peak_multi_int_rate_557_xz_r': peak_multi_int_rate_557_xz_r,
+                    'peak_multi_int_rate_SPECrate2017_int': peak_multi_int_rate_SPECrate2017_int,
+                    'peak_multi_fp_rate_503_bwaves_r': peak_multi_fp_rate_503_bwaves_r,
+                    'peak_multi_fp_rate_507_cactuBSSN_r': peak_multi_fp_rate_507_cactuBSSN_r,
+                    'peak_multi_fp_rate_508_namd_r': peak_multi_fp_rate_508_namd_r,
+                    'peak_multi_fp_rate_510_parest_r': peak_multi_fp_rate_510_parest_r,
+                    'peak_multi_fp_rate_511_povray_r': peak_multi_fp_rate_511_povray_r,
+                    'peak_multi_fp_rate_519_lbm_r': peak_multi_fp_rate_519_lbm_r,
+                    'peak_multi_fp_rate_521_wrf_r': peak_multi_fp_rate_521_wrf_r,
+                    'peak_multi_fp_rate_526_blender_r': peak_multi_fp_rate_526_blender_r,
+                    'peak_multi_fp_rate_527_cam4_r': peak_multi_fp_rate_527_cam4_r,
+                    'peak_multi_fp_rate_538_imagick_r': peak_multi_fp_rate_538_imagick_r,
+                    'peak_multi_fp_rate_544_nab_r': peak_multi_fp_rate_544_nab_r,
+                    'peak_multi_fp_rate_549_fotonik3d_r': peak_multi_fp_rate_549_fotonik3d_r,
+                    'peak_multi_fp_rate_554_roms_r': peak_multi_fp_rate_554_roms_r,
+                    'peak_multi_fp_rate_PECrate2017_fp': peak_multi_fp_rate_PECrate2017_fp,
+                    }
+        return new_data
+
     def list(self, request, *args, **kwargs):
         """
         返回列表
