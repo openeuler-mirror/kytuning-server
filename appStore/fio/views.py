@@ -36,6 +36,16 @@ class FioViewSet(CusModelViewSet):
     #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
 
 
+    def do_base_data(self, datas):
+        new_data = []
+        for index, value in enumerate(datas):
+            data = [{'column1': value['rw'], 'column2': 'bs', 'column3': value['bs']},
+                    {'column1': value['rw'], 'column2': 'io', 'column3': value['io']},
+                    {'column1': value['rw'], 'column2': 'iops', 'column3': value['iops']},
+                    {'column1': value['rw'], 'column2': 'bw', 'column3': value['bw']}]
+            new_data.extend(data)
+        return new_data
+
     def list(self, request, *args, **kwargs):
         """
         返回列表
