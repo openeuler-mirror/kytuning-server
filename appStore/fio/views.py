@@ -35,6 +35,16 @@ class FioViewSet(CusModelViewSet):
     #     serializer = self.get_serializer(queryset, many=True)
     #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
 
+    def get_data(self, serializer):
+        datas = []
+        for data in serializer.data:
+            data = {'rw': data['rw'] + '(' + str(data['bs'] + ')'),
+                    'bs': data['bs'],
+                    'io': data['io'],
+                    'iops': data['iops'],
+                    'bw': data['bw'], }
+            datas.append(data)
+        return datas
 
     def do_base_data(self, datas):
         new_data = []
