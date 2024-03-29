@@ -6,9 +6,11 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import status
+
 from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
+from appStore.utils import constants
 from appStore.utils.customer_view import CusModelViewSet
 
 class EnvViewSet(CusModelViewSet):
@@ -19,6 +21,175 @@ class EnvViewSet(CusModelViewSet):
     serializer_class = EnvSerializer
     pagination_class = LimsPageSet
 
+    def list(self, request, *args, **kwargs):
+        """
+        返回列表
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        env_id = request.GET.get('env_id')
+        # comparsionIds = request.GET.get('comparsionIds')
+        # comparsionIds = comparsionIds.split(',')
+        queryset = Env.objects.filter(id=env_id).all()
+        serializer = self.get_serializer(queryset, many=True)
+        data_ = serializer.data[0]
+
+        print(data_['hwinfo_disk'],111)
+        print(data_['hwinfo_nicinfo'],222)
+        print(data_['nwinfo_nic'],333)
+
+        #[{'name': 'sda', 'part_type': 'gpt', 'vendor': 'VMware', 'model': 'Virtual_disk', 'size': '50G', 'rota': True, 'sched': 'mq-deadline',
+        # 'rq_size': 256, 'tran': None, 'mntpoint=/': '/      xfs    44G    77%    /dev/mapper/klas-root', 'mntpoint=/home': None}] 111
+        #[{'logicalname': 'ens32', 'product': '82545EM Gigabit Ethernet Controller (Copper)', 'speed': '1Gbit/s'}] 222
+        #[{'nicname': 'ens32', 'ip': '172.29.220.200', 'hwaddr': '00:0c:29:94:94:8a', 'gateway': '172.29.223.254', 'mtu': '1500'}] 333
+
+        disks = []
+        for value in eval(data_['hwinfo_disk']):
+            print(value,444)
+            disk = [{'column1': 'hwinfo', 'column2': 'disk', 'column3': 'name','column4': value['name']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'part_type', 'column4': value['part_type']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'vendor', 'column4': value['vendor']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'model', 'column4': value['model']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'size', 'column4': value['size']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rota', 'column4': value['rota']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'sched', 'column4': value['sched']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rq_size', 'column4': value['rq_size']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'tran', 'column4': value['tran']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/', 'column4': value['mntpoint=/']},
+                    {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/home', 'column4': value['mntpoint=/home']},
+                    ]
+            disks.extend(disk)
+        print(disks,555)
+
+        # disk_datas=[
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'name', 'column4': data_['hwinfo_disk_name']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'part_type', 'column4': data_['hwinfo_disk_part_type']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'vendor', 'column4': data_['hwinfo_disk_vendor']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'model', 'column4': data_['hwinfo_disk_model']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'size', 'column4': data_['hwinfo_disk_size']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rota', 'column4': data_['hwinfo_disk_rota']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'sched', 'column4': data_['hwinfo_disk_sched']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rq_size', 'column4': data_['hwinfo_disk_rq_size']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'tran', 'column4': data_['hwinfo_disk_tran']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/', 'column4': data_['hwinfo_disk_mntpoint']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/home', 'column4': data_['hwinfo_disk_mntpoint_home']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'name', 'column4': data_['hwinfo_disk_name_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'part_type', 'column4': data_['hwinfo_disk_part_type_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'vendor', 'column4': data_['hwinfo_disk_name_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'model', 'column4': data_['hwinfo_disk_part_type_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'size', 'column4': data_['hwinfo_disk_vendor_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rota', 'column4': data_['hwinfo_disk_model_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'sched', 'column4': data_['hwinfo_disk_size_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rq_size', 'column4': data_['hwinfo_disk_rota_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'tran', 'column4': data_['hwinfo_disk_sched_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/', 'column4': data_['hwinfo_disk_rq_size_2']},
+        #     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/home', 'column4': data_['hwinfo_disk_tran_2']}]
+        nicinfo_datas= [],      #后期把disk、nic等都放到这里面，下面在遍历  1个
+        nwinfo_nic_datas= [],      #后期把disk、nic等都放到这里面，下面在遍历  1个
+
+
+        datas = [{'column1': 'hwinfo','column2': 'machineinfo','column3': 'manufacturer','column4': data_['hwinfo_machineinfo_manufacturer']},
+            {'column1': 'hwinfo', 'column2': 'machineinfo', 'column3': 'product','column4': data_['hwinfo_machineinfo_product']},
+            {'column1': 'hwinfo','column2': 'machineinfo','column3': 'serialnumber','column4': data_['hwinfo_machineinfo_serialnumber']},
+            {'column1': 'hwinfo', 'column2': 'bios', 'column3': 'vendor', 'column4': data_['hwinfo_bios_vendor']},
+            {'column1': 'hwinfo', 'column2': 'bios', 'column3': 'version', 'column4': data_['hwinfo_bios_version']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Vendor ID', 'column4': data_['hwinfo_cpu_Vendor_ID']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU family', 'column4': data_['hwinfo_cpu_CPU_family']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'model_name', 'column4': data_['hwinfo_cpu_model_name']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU MHz', 'column4': data_['hwinfo_cpu_CPU_MHz']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU(s)', 'column4': data_['hwinfo_cpu_CPUs']},
+            {'column1': 'hwinfo','column2': 'cpu','column3': 'Thread(s) per core','column4': data_['hwinfo_cpu_Threads_per_core']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU Arch', 'column4': data_['hwinfo_cpu_CPU_Arch']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU op-mode', 'column4': data_['hwinfo_cpu_CPU_op_mode']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Byte Order', 'column4': data_['hwinfo_cpu_Byte_Order']},
+            {'column1': 'hwinfo','column2': 'cpu','column3': 'On-line CPU(s) list','column4': data_['hwinfo_cpu_On_line_CPUs_list']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Virtualization', 'column4': data_['hwinfo_cpu_Virtualization']},
+            {'column1': 'hwinfo','column2': 'cpu','column3': 'Virtualization type','column4': data_['hwinfo_cpu_Virtualization_type']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L1d cache:', 'column4': data_['hwinfo_cpu_L1d_cache']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L1i cache', 'column4': data_['hwinfo_cpu_L1i_cache']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L2 cache', 'column4': data_['hwinfo_cpu_L2_cache']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L3 cache', 'column4': data_['hwinfo_cpu_L3_cache']},
+            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Flags', 'column4': data_['hwinfo_memory_Flags']},
+            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'vendor', 'column4': data_['hwinfo_memory_vendor']},
+            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_type', 'column4': data_['hwinfo_memory_mem_type']},
+            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'total_size', 'column4': data_['hwinfo_memory_total_size']},
+            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_used', 'column4': data_['hwinfo_memory_mem_used']},
+            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_count', 'column4': data_['hwinfo_memory_mem_count']},
+            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_free', 'column4': data_['hwinfo_memory_mem_free']},
+            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_freq', 'column4': data_['hwinfo_memory_mem_freq']},
+            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'swap', 'column4': data_['hwinfo_memory_swap']},
+
+            #todo 处理多组ndisk数据
+            disk_datas,
+
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'part_type','column4': disk_datas[0].part_type}, hwinfo_disk_part_type
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'name', 'column4': data_['hwinfo_disk_name']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'part_type', 'column4': data_['hwinfo_disk_part_type']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'vendor', 'column4': data_['hwinfo_disk_vendor']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'model', 'column4': data_['hwinfo_disk_model']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'size', 'column4': data_['hwinfo_disk_size']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rota', 'column4': data_['hwinfo_disk_rota']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'sched', 'column4': data_['hwinfo_disk_sched']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rq_size', 'column4': data_['hwinfo_disk_rq_size']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'tran', 'column4': data_['hwinfo_disk_tran']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/', 'column4': data_['hwinfo_disk_mntpoint']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/home', 'column4': data_['hwinfo_disk_mntpoint_home']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'name', 'column4': data_['hwinfo_disk_name_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'part_type', 'column4': data_['hwinfo_disk_part_type_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'vendor', 'column4': data_['hwinfo_disk_name_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'model', 'column4': data_['hwinfo_disk_part_type_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'size', 'column4': data_['hwinfo_disk_vendor_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rota', 'column4': data_['hwinfo_disk_model_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'sched', 'column4': data_['hwinfo_disk_size_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'rq_size', 'column4': data_['hwinfo_disk_rota_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'tran', 'column4': data_['hwinfo_disk_sched_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/', 'column4': data_['hwinfo_disk_rq_size_2']},
+            # {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/home', 'column4': data_['hwinfo_disk_tran_2']},
+
+            # todo 处理多组nicinfo数据
+
+           # {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'logicalname', 'column4': data_['hwinfo_nicinfo_logicalname']},
+           # {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'product', 'column4': data_['hwinfo_nicinfo_product']},
+           # {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'speed', 'column4': data_['hwinfo_nicinfo_speed']},
+           {'column1': 'swinfo', 'column2': 'os', 'column3': 'curr UTC time', 'column4': data_['swinfo_os_curr_UTC_time']},
+           {'column1': 'swinfo', 'column2': 'os', 'column3': 'os_id', 'column4': data_['swinfo_os_os_id']},
+           {'column1': 'swinfo', 'column2': 'os', 'column3': 'os_arch', 'column4': data_['swinfo_os_os_arch']},
+           {'column1': 'swinfo', 'column2': 'os', 'column3': 'osversion', 'column4': data_['swinfo_os_osversion']},
+           {'column1': 'swinfo', 'column2': 'os', 'column3': 'kernel', 'column4': data_['swinfo_os_kernel']},
+           {'column1': 'swinfo', 'column2': 'os', 'column3': 'grub', 'column4': data_['swinfo_os_grub']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysconf', 'column4': data_['swinfo_runtime_sysconf']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysctl', 'column4': data_['swinfo_runtime_sysctl']},
+           {'column1': 'swinfo','column2': 'runtime','column3': 'systemctlinfo','column4': data_['swinfo_runtime_systemctlinfo']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'driverinfo', 'column4': data_['swinfo_runtime_driverinfo']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'rpmlist', 'column4': data_['swinfo_runtime_rpmlist']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'ipclist', 'column4': data_['swinfo_runtime_ipclist']},
+           {'column1': 'swinfo','column2': 'runtime','column3': 'selinux_status','column4': data_['swinfo_runtime_selinux_status']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'power_status','column4': data_['swinfo_runtime_power_status']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'cpu_sched', 'column4': data_['swinfo_runtime_cpu_sched']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'loadavg', 'column4': data_['swinfo_runtime_loadavg']},
+           {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'uptime', 'column4': data_['swinfo_runtime_uptime']},
+           {'column1': 'swinfo','column2': 'software_ver','column3': 'gccversion','column4': data_['swinfo_software_ver_gccversion']},
+           {'column1': 'swinfo','column2': 'software_ver','column3': 'glibcversion','column4': data_['swinfo_software_ver_glibcversion']},
+           {'column1': 'swinfo','column2': 'software_ver','column3': 'javaversion','column4': data_['swinfo_software_ver_javaversion']},
+           {'column1': 'swinfo','column2': 'software_ver','column3': 'g++version','column4': data_['swinfo_software_ver_g_version']},
+           {'column1': 'swinfo','column2': 'software_ver','column3': 'gfortranversion','column4': data_['swinfo_software_ver_gfortranversion']},
+           {'column1': 'swinfo','column2': 'software_ver','column3': 'pythonversion','column4': data_['swinfo_software_ver_pythonversion']},
+            #todo 处理多组nic数据
+           # {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'nicname', 'column4': data_['nwinfo_nic_nicname']},
+           # {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'ip', 'column4': data_['nwinfo_nic_ip']},
+           # {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'hwaddr', 'column4': data_['nwinfo_nic_hwaddr']},
+           # {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'gateway', 'column4': data_['nwinfo_nic_gateway']},
+           # {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'mtu', 'column4': data_['nwinfo_nic_mtu']},
+        ]
+
+
+
+        env_data = {'data': datas}
+        return json_response(env_data, status.HTTP_200_OK, '列表')
+
+
     def create(self, request, *args, **kwargs):
         """
             接收json文件，创建所有数据
@@ -27,7 +198,6 @@ class EnvViewSet(CusModelViewSet):
             :param kwargs:
             :return:
         """
-        """项目表处理"""
         """环境数据处理"""
         data_env = {}
         data_env['hwinfo_machineinfo_manufacturer'] = request.data['envinfo']['hwinfo']['machineinfo']['manufacturer']
@@ -93,53 +263,18 @@ class EnvViewSet(CusModelViewSet):
             'gfortranversion']
         data_env['swinfo_software_ver_pythonversion'] = request.data['envinfo']['swinfo']['software_ver'][
             'pythonversion']
-        data_env['nwinfo_nic_nicname'] = str(request.data['envinfo']['nwinfo']['nic'])
         data_env['nwinfo_nic'] = str(request.data['envinfo']['nwinfo']['nic'])
         serializer_env = self.get_serializer(data=data_env)
-        # env_id = ''
-        request.data['env_id'] = ''
+        request.data['env_id'] = '1'
         if serializer_env.is_valid():
             # todo 放开
-            self.perform_create(serializer_env)
-            # todo 查到当前数据的id供后面使用
-            request.data['env_id'] = 2
+            # self.perform_create(serializer_env)
+            # request.data['env_id'] = serializer_env.data['id']
+            pass
         if serializer_env.errors:
             return json_response(serializer_env.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_env))
         if not request.data['env_id']:
             return json_response({}, status.HTTP_400_BAD_REQUEST, '没有env_id')
-
-        """project数据处理"""
-        from appStore.project.views import ProjectViewSet
-        request_project = HttpRequest()
-        request_project.method = 'POST'
-        request_project.data_project = request.data
-        ProjectViewSet = ProjectViewSet()
-        ProjectViewSet.create(request=request_project, *args, **kwargs)
-
-        """fio数据处理"""
-        from appStore.fio.views import FioViewSet
-        request_fio = HttpRequest()
-        request_fio.method = 'POST'
-        request_fio.data_fio = request.data
-        FioViewSet = FioViewSet()
-        FioViewSet.create(request=request_fio, *args, **kwargs)
-
-        """iozone数据处理"""
-        from appStore.iozone.views import IozoneViewSet
-        request_iozone = HttpRequest()
-        request_iozone.method = 'POST'
-        request_iozone.data_iozone = request.data
-        IozoneViewSet = IozoneViewSet()
-        IozoneViewSet.create(request=request_iozone, *args, **kwargs)
-
-
-        """lmbench数据处理"""
-        from appStore.lmbench.views import LmbenchViewSet
-        request_unixbench = HttpRequest()
-        request_unixbench.method = 'POST'
-        request_unixbench.data_lmbench = request.data
-        UnixbenchViewSet = LmbenchViewSet()
-        UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
 
         """speccpu2006数据处理"""
         from appStore.cpu2006.views import Cpu2006ViewSet
@@ -157,6 +292,22 @@ class EnvViewSet(CusModelViewSet):
         Cpu2017ViewSet = Cpu2017ViewSet()
         Cpu2017ViewSet.create(request=request_cpu2017, *args, **kwargs)
 
+        """fio数据处理"""
+        from appStore.fio.views import FioViewSet
+        request_fio = HttpRequest()
+        request_fio.method = 'POST'
+        request_fio.data_fio = request.data
+        FioViewSet = FioViewSet()
+        FioViewSet.create(request=request_fio, *args, **kwargs)
+
+        """iozone数据处理"""
+        from appStore.iozone.views import IozoneViewSet
+        request_iozone = HttpRequest()
+        request_iozone.method = 'POST'
+        request_iozone.data_iozone = request.data
+        IozoneViewSet = IozoneViewSet()
+        IozoneViewSet.create(request=request_iozone, *args, **kwargs)
+
         """jvm2008数据处理"""
         from appStore.jvm2008.views import Jvm2008ViewSet
         request_jvm2008 = HttpRequest()
@@ -164,6 +315,14 @@ class EnvViewSet(CusModelViewSet):
         request_jvm2008.data_jvm2008 = request.data
         Jvm2008ViewSet = Jvm2008ViewSet()
         Jvm2008ViewSet.create(request=request_jvm2008, *args, **kwargs)
+
+        """lmbench数据处理"""
+        from appStore.lmbench.views import LmbenchViewSet
+        request_unixbench = HttpRequest()
+        request_unixbench.method = 'POST'
+        request_unixbench.data_lmbench = request.data
+        UnixbenchViewSet = LmbenchViewSet()
+        UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
 
         """stream数据处理"""
         from appStore.stream.views import StreamViewSet
@@ -180,6 +339,14 @@ class EnvViewSet(CusModelViewSet):
         request_unixbench.data_unixbench = request.data
         UnixbenchViewSet = UnixbenchViewSet()
         UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
+
+        """project数据处理"""
+        from appStore.project.views import ProjectViewSet
+        request_project = HttpRequest()
+        request_project.method = 'POST'
+        request_project.data_project = request.data
+        ProjectViewSet = ProjectViewSet()
+        ProjectViewSet.create(request=request_project, *args, **kwargs)
 
         return json_response({}, status.HTTP_200_OK, '创建成功！')
 
