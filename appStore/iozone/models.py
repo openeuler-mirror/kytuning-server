@@ -11,8 +11,8 @@ class Iozone(models.Model):
     testcase_name = models.CharField(max_length=10, verbose_name='testcase name') #testcase_name=haif、full、double
     file_size = models.FloatField(verbose_name="文件大小")
     block_size = models.FloatField(verbose_name="块大小")
-    Write_test = models.FloatField(verbose_name="写测试（KB/s）")
-    Rewrite_test = models.FloatField(verbose_name="重写测试（KB/s）")
+    write_test = models.FloatField(verbose_name="写测试（KB/s）")
+    rewrite_test = models.FloatField(verbose_name="重写测试（KB/s）")
     read_test = models.FloatField(verbose_name="读测试（KB/s）")
     reread_test = models.FloatField(verbose_name="重读测试（KB/s）")
     random_read_test = models.FloatField(verbose_name="随机读测试（KB/s）")
