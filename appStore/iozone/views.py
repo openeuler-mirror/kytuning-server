@@ -65,6 +65,51 @@ class IozoneViewSet(CusModelViewSet):
             datas.extend(data_)
         return datas
 
+    def list(self, request, *args, **kwargs):
+        """
+        返回列表
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        env_id = request.GET.get('env_id')
+        comparsionIds = request.GET.get('comparsionIds')
+        comparsionIds = comparsionIds.split(',')
+        base_queryset = Iozone.objects.filter(env_id=env_id).all()
+        base_serializer = self.get_serializer(base_queryset, many=True)
+        datas = self.get_data(base_serializer)
+        others = [{'column1': 'Iozone', 'column2': '', 'column3': 'Iozone#1'},
+                  {'column1': '执行命令', 'column2': '', 'column3': base_serializer.data[0]['execute_cmd']},
+                  {'column1': '修改参数：', 'column2': '', 'column3': base_serializer.data[0]['modify_parameters']}]
+
+        if comparsionIds != ['']:
+            # 处理对比数据
+            for index, comparativeId in enumerate(comparsionIds):
+                new_index = 2 * index + 4
+                comparsion_queryset = Iozone.objects.filter(env_id=comparativeId).all()
+                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
+                comparsion_datas = self.get_data(comparsion_serializer)
+                others[0]['column' + str(new_index)] = 'Iozone#'+str(index + 2)
+                others[1]['column' + str(new_index)] = comparsion_serializer.data[0]['execute_cmd']
+                others[2]['column' + str(new_index)] = comparsion_serializer.data[0]['modify_parameters']
+                others[0]['column' + str(new_index + 1)] = ''
+                others[1]['column' + str(new_index + 1)] = ''
+                others[2]['column' + str(new_index + 1)] = ''
+
+                for value in comparsion_datas:
+                    # 判断comparsion_datas数据中的column1字段和datas中的column1字段相同，则在datas中增加值对应值
+                    for index2, data_ in enumerate(datas):
+                        if data_['column1'] == value['column1']:
+                            # 在datas中增加对比数据
+                            datas[index2]['column' + str(new_index)] = value['column3']
+                            # 在datas中增加计算数据
+                            datas[index2]['column' + str(new_index + 1)] = "%.2f%%" % (
+                                        (datas[index2]['column' + str(new_index)] - datas[index2]['column3']) /
+                                        datas[index2]['column3'] * 100)
+                            break
+        iozone_data = {'others': others, 'data': datas}
+        return json_response(iozone_data, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         for k, iozone_json in request.__dict__['data_iozone'].items():
