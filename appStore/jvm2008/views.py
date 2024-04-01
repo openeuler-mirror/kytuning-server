@@ -36,6 +36,90 @@ class Jvm2008ViewSet(CusModelViewSet):
     #     serializer = self.get_serializer(queryset, many=True)
     #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
 
+    def get_data(self, serializer):
+        execute_cmd = serializer.data[0]['execute_cmd']
+        modify_parameters = serializer.data[0]['modify_parameters']
+        base_compiler = ''
+        base_compress = ''
+        base_crypto = ''
+        base_derby = ''
+        base_mpegaudio = ''
+        base_scimark_large = ''
+        base_scimark_small = ''
+        base_serial = ''
+        base_startup = ''
+        base_sunflow = ''
+        base_xml = ''
+        base_Noncompliant_pomposite_result = ''
+        peak_compiler = ''
+        peak_compress = ''
+        peak_crypto = ''
+        peak_derby = ''
+        peak_mpegaudio = ''
+        peak_scimark_large = ''
+        peak_scimark_small = ''
+        peak_serial = ''
+        peak_startup = ''
+        peak_sunflow = ''
+        peak_xml = ''
+        peak_Noncompliant_pomposite_result = ''
+        for data in serializer.data:
+            if data['tune_type'] == 'base':
+                base_compiler = data['compiler']
+                base_compress = data['compress']
+                base_crypto = data['crypto']
+                base_derby = data['derby']
+                base_mpegaudio = data['mpegaudio']
+                base_scimark_large = data['scimark_large']
+                base_scimark_small = data['scimark_small']
+                base_serial = data['serial']
+                base_startup = data['startup']
+                base_sunflow = data['sunflow']
+                base_xml = data['xml']
+                base_Noncompliant_pomposite_result = data['Noncompliant_pomposite_result']
+            elif data['tune_type'] == 'peak':
+                peak_compiler = data['compiler']
+                peak_compress = data['compress']
+                peak_crypto = data['crypto']
+                peak_derby = data['derby']
+                peak_mpegaudio = data['mpegaudio']
+                peak_scimark_large = data['scimark_large']
+                peak_scimark_small = data['scimark_small']
+                peak_serial = data['serial']
+                peak_startup = data['startup']
+                peak_sunflow = data['sunflow']
+                peak_xml = data['xml']
+                peak_Noncompliant_pomposite_result = data['Noncompliant_pomposite_result']
+        new_data = {
+            'execute_cmd': execute_cmd,
+            'modify_parameters': modify_parameters,
+            'base_compiler': base_compiler,
+            'base_compress': base_compress,
+            'base_crypto': base_crypto,
+            'base_derby': base_derby,
+            'base_mpegaudio': base_mpegaudio,
+            'base_scimark_large': base_scimark_large,
+            'base_scimark_small': base_scimark_small,
+            'base_serial': base_serial,
+            'base_startup': base_startup,
+            'base_sunflow': base_sunflow,
+            'base_xml': base_xml,
+            'base_Noncompliant_pomposite_result': base_Noncompliant_pomposite_result,
+            'peak_compiler': peak_compiler,
+            'peak_compress': peak_compress,
+            'peak_crypto': peak_crypto,
+            'peak_derby': peak_derby,
+            'peak_mpegaudio': peak_mpegaudio,
+            'peak_scimark_large': peak_scimark_large,
+            'peak_scimark_small': peak_scimark_small,
+            'peak_serial': peak_serial,
+            'peak_startup': peak_startup,
+            'peak_sunflow': peak_sunflow,
+            'peak_xml': peak_xml,
+            'peak_Noncompliant_pomposite_result': peak_Noncompliant_pomposite_result,
+        }
+        return new_data
+
     def list(self, request, *args, **kwargs):
         """
         返回列表
