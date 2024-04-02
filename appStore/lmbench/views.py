@@ -5,7 +5,10 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import status
+
+from appStore.lmbench.models import Lmbench
 from appStore.lmbench.serializers import LmbenchSerializer
+from appStore.utils import constants
 from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -14,16 +17,31 @@ class LmbenchViewSet(CusModelViewSet):
     """
     Lmbench数据管理
     """
-    # queryset = Stream.objects.all().order_by('id')
+    queryset = Lmbench.objects.all().order_by('id')
     serializer_class = LmbenchSerializer
 
-    # pagination_class = LimsPageSet
+    pagination_class = LimsPageSet
+    def list(self, request, *args, **kwargs):
+        """
+        返回列表
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        env_id = request.GET.get('env_id')
+        queryset = Lmbench.objects.filter(env_id=env_id).all()
+        queryset = self.filter_queryset(queryset)
+        serializer = self.get_serializer(queryset, many=True)
+        return json_response(serializer.data, status.HTTP_200_OK, '列表')
+
 
     def create(self, request, *args, **kwargs):
         serializer_lmbench_error = []
         error_message = []
         for k, all_json in request.__dict__['data_lmbench'].items():
             if k.lower().startswith('lmbench'):
+                constants.LMBENCH_BOOL = True
                 for lmbench_json in all_json['items']:
                     # 每一条lmbench数据
                     lmbench = {}
@@ -120,9 +138,8 @@ class LmbenchViewSet(CusModelViewSet):
                             lmbench['memory_Rand_mem'] = value['Rand mem']
                     serializer_lmbench = LmbenchSerializer(data=lmbench)
                     if serializer_lmbench.is_valid():
-                        # todo 放开
-                        pass
                         # self.perform_create(serializer_lmbench)
+                        pass
                     serializer_lmbench_error.append(serializer_lmbench.errors)
                     error_message.append(get_error_message(serializer_lmbench))
         if serializer_lmbench_error:
