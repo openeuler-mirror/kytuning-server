@@ -20,8 +20,6 @@ class StreamViewSet(CusModelViewSet):
     queryset = Stream.objects.all().order_by('id')
     serializer_class = StreamSerializer
 
-    pagination_class = LimsPageSet
-
     def list(self, request, *args, **kwargs):
         """
         返回列表
@@ -31,10 +29,66 @@ class StreamViewSet(CusModelViewSet):
         :return:
         """
         env_id = request.GET.get('env_id')
-        queryset = Stream.objects.filter(env_id=env_id).all()
-        queryset = self.filter_queryset(queryset)
-        serializer = self.get_serializer(queryset, many=True)
-        return json_response(serializer.data, status.HTTP_200_OK, '列表')
+        comparsionIds = request.GET.get('comparsionIds')
+        comparsionIds = comparsionIds.split(',')
+        base_queryset = Stream.objects.filter(env_id=env_id).all()
+        base_serializer = self.get_serializer(base_queryset, many=True)
+        # 判断数据超过两条，不显示
+        if len(base_queryset) > 1:
+            return json_response({}, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE, '数据存储有问题，存一条以上的数据了')
+        data = self.get_data(base_serializer)
+        others = [{'column1':'Stream','column2':'', 'column3':'Stream#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
+        datas = [
+            {'column1': '单线程', 'column2': 'Array size', 'column3': data['single_array_size']},
+            {'column1': '单线程', 'column2': 'Copy', 'column3': data['single_copy']},
+            {'column1': '单线程', 'column2': 'Scale', 'column3': data['single_scale']},
+            {'column1': '单线程', 'column2': 'Add', 'column3': data['single_add']},
+            {'column1': '单线程', 'column2': 'Triad', 'column3': data['single_triad']},
+            {'column1': '多线程', 'column2': 'Array size', 'column3': data['multi_array_size']},
+            {'column1': '多线程', 'column2': 'Copy', 'column3': data['multi_copy']},
+            {'column1': '多线程', 'column2': 'Scale', 'column3': data['multi_scale']},
+            {'column1': '多线程', 'column2': 'Add', 'column3': data['multi_add']},
+            {'column1': '多线程', 'column2': 'Triad', 'column3': data['multi_triad']}
+            ]
+
+        if comparsionIds != ['']:
+            # 处理对比数据
+            for index ,comparativeId in enumerate(comparsionIds):
+                new_index = 2 * index + 4
+                comparsion_queryset = Stream.objects.filter(env_id=comparativeId).all()
+                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
+                comparsion_datas = self.get_data(comparsion_serializer)
+                others[0]['column'+str(new_index)] = 'Stream#'+str(index + 2)
+                others[1]['column'+str(new_index)] = comparsion_datas['execute_cmd']
+                others[2]['column'+str(new_index)] = comparsion_datas['modify_parameters']
+                others[0]['column'+str(new_index+1)] = ''
+                others[1]['column'+str(new_index+1)] = ''
+                others[2]['column'+str(new_index+1)] = ''
+
+                datas[0]['column'+str(new_index)] = comparsion_datas['single_array_size']
+                datas[1]['column'+str(new_index)] = comparsion_datas['single_copy']
+                datas[2]['column'+str(new_index)] = comparsion_datas['single_scale']
+                datas[3]['column'+str(new_index)] = comparsion_datas['single_add']
+                datas[4]['column'+str(new_index)] = comparsion_datas['single_triad']
+                datas[5]['column'+str(new_index)] = comparsion_datas['multi_array_size']
+                datas[6]['column'+str(new_index)] = comparsion_datas['multi_copy']
+                datas[7]['column'+str(new_index)] = comparsion_datas['multi_scale']
+                datas[8]['column'+str(new_index)] = comparsion_datas['multi_add']
+                datas[9]['column'+str(new_index)] = comparsion_datas['multi_triad']
+
+                datas[0]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[0]['column'+str(new_index)] - datas[0]['column3'])/datas[0]['column3'] * 100)
+                datas[1]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[1]['column'+str(new_index)] - datas[1]['column3'])/datas[1]['column3'] * 100)
+                datas[2]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[2]['column'+str(new_index)] - datas[2]['column3'])/datas[2]['column3'] * 100)
+                datas[3]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[3]['column'+str(new_index)] - datas[3]['column3'])/datas[3]['column3'] * 100)
+                datas[4]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[4]['column'+str(new_index)] - datas[4]['column3'])/datas[4]['column3'] * 100)
+                datas[5]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[5]['column'+str(new_index)] - datas[5]['column3'])/datas[5]['column3'] * 100)
+                datas[6]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[6]['column'+str(new_index)] - datas[6]['column3'])/datas[6]['column3'] * 100)
+                datas[7]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[7]['column'+str(new_index)] - datas[7]['column3'])/datas[7]['column3'] * 100)
+                datas[8]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[8]['column'+str(new_index)] - datas[8]['column3'])/datas[8]['column3'] * 100)
+                datas[9]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[9]['column'+str(new_index)] - datas[9]['column3'])/datas[9]['column3'] * 100)
+
+        stream_data = {'others': others, 'data': datas}
+        return json_response(stream_data, status.HTTP_200_OK, '列表')
 
 
     def create(self, request, *args, **kwargs):
