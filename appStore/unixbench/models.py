@@ -9,7 +9,7 @@ class Unixbench(models.Model):
         ("多线程", "多线程"),
     )
     env_id = models.IntegerField(verbose_name='环境id')
-    thread = models.CharField(choices=ThreadType, max_length=10, verbose_name='单线程')
+    thread = models.CharField(choices=ThreadType, max_length=10, verbose_name='线程数')
     execute_cmd = models.CharField(null=True, blank=True, max_length=255, verbose_name='执行命令')
     modify_parameters = models.CharField(null=True, blank=True, max_length=255, verbose_name='修改参数')
     Dhrystone = models.FloatField(verbose_name='Dhrystone 2 using register variables(lps)')
