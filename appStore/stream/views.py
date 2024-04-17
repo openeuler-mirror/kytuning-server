@@ -20,6 +20,23 @@ class StreamViewSet(CusModelViewSet):
     queryset = Stream.objects.all().order_by('id')
     serializer_class = StreamSerializer
 
+    def get_data(self, serializer):
+        # todo 目前先做project只对应一个stream
+        data = {'single_array_size': serializer.data[0]['single_array_size'],
+                'single_copy': serializer.data[0]['single_copy'],
+                'single_scale': serializer.data[0]['single_scale'],
+                'single_add': serializer.data[0]['single_add'],
+                'single_triad': serializer.data[0]['single_triad'],
+                'multi_array_size': serializer.data[0]['multi_array_size'],
+                'multi_copy': serializer.data[0]['multi_copy'],
+                'multi_scale': serializer.data[0]['multi_scale'],
+                'multi_add': serializer.data[0]['multi_add'],
+                'multi_triad': serializer.data[0]['multi_triad'],
+                'execute_cmd': serializer.data[0]['execute_cmd'],
+                'modify_parameters': serializer.data[0]['modify_parameters']
+                }
+        return data
+
     def list(self, request, *args, **kwargs):
         """
         返回列表
