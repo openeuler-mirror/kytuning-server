@@ -973,8 +973,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                             data_cpu2017['test_time'] = return_time(cpu2017_json['time'])
                             serializer_cpu2017 = Cpu2017Serializer(data=data_cpu2017)
                             if serializer_cpu2017.is_valid():
-                                # self.perform_create(serializer_cpu2017)
-                                pass
+                                self.perform_create(serializer_cpu2017)
                             serializer_cpu2017_errors.append(serializer_cpu2017.errors)
                             error_message.append(get_error_message(serializer_cpu2017))
 

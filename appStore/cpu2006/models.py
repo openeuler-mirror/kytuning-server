@@ -1,6 +1,8 @@
 from django.db import models
 import django.utils.timezone as timezone
 
+
+
 # Create your models here.
 
 class Cpu2006(models.Model):
@@ -19,8 +21,8 @@ class Cpu2006(models.Model):
     )
     env_id = models.IntegerField(verbose_name='环境id')
     thread = models.CharField(choices=ThreadType, max_length=10, verbose_name='线程数')
-    execute_cmd = models.CharField(null=True, blank=True, max_length=255, verbose_name='执行命令')
-    modify_parameters = models.CharField(null=True, blank=True, max_length=255, verbose_name='修改参数')
+    execute_cmd = models.CharField(max_length=255, verbose_name='执行命令',null=True, blank=True)
+    modify_parameters = models.CharField(max_length=255, verbose_name='修改参数',null=True, blank=True)
     dtype = models.CharField(choices=DType, max_length=10, verbose_name='dtype')
     tuneType = models.CharField(choices=TuneType, max_length=10, verbose_name='tune')
     int_400_perlbench = models.FloatField(verbose_name="400.perlbench",null=True,blank=True)
@@ -55,61 +57,6 @@ class Cpu2006(models.Model):
     fp_482_sphinx3 = models.FloatField(verbose_name="482.sphinx3",null=True,blank=True)
     fp_SPECfp_2006 = models.FloatField(verbose_name="SPECfp_2006",null=True,blank=True)
     test_time = models.DateTimeField(verbose_name="测试时间", default=timezone.now)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     class Meta:
         db_table = 'cpu2006'

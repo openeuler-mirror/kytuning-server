@@ -884,7 +884,6 @@ class Cpu2006ViewSet(CusModelViewSet):
                             serializer_cpu2006 = Cpu2006Serializer(data=data_cpu2006)
                             if serializer_cpu2006.is_valid():
                                 self.perform_create(serializer_cpu2006)
-                                pass
                             serializer_cpu2006_errors.append(serializer_cpu2006.errors)
                             error_message.append(get_error_message(serializer_cpu2006))
                     elif key.split("_")[1] == "int":
@@ -909,8 +908,7 @@ class Cpu2006ViewSet(CusModelViewSet):
                             data_cpu2006['test_time'] = return_time(cpu2006_json['time'])
                             serializer_cpu2006 = Cpu2006Serializer(data=data_cpu2006)
                             if serializer_cpu2006.is_valid():
-                                pass
-                                # self.perform_create(serializer_cpu2006)
+                                self.perform_create(serializer_cpu2006)
                             serializer_cpu2006_errors.append(serializer_cpu2006.errors)
                             error_message.append(get_error_message(serializer_cpu2006))
 
