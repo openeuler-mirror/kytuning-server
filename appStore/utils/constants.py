@@ -1,8 +1,9 @@
-import datetime
-
-NOW_TIME = datetime.datetime.now()
-
-# 最近一天时间戳
-LAST_DAY = 86400000
-
-TODAY = ' 23:59:59'
+# 是否记录对应数据，默认为
+CPU2006_BOOL = False
+CPU2017_BOOL = False
+FIO_BOOL = False
+IOZONE_BOOL = False
+JVM2008_BOOL = False
+LMBENCH_BOOL = False
+STREAM_BOOL = False
+UNIXBENCH_BOOL = False
