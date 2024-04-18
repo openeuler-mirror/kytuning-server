@@ -131,8 +131,7 @@ class IozoneViewSet(CusModelViewSet):
                 data_iozone['test_time'] = return_time(iozone_json['time'])
                 serializer_iozone = IozoneSerializer(data=data_iozone)
                 if serializer_iozone.is_valid():
-                    # self.perform_create(serializer_iozone)
-                    pass
+                    self.perform_create(serializer_iozone)
                 else:
                     print(serializer_iozone.errors, "iozone")
                     return json_response(serializer_iozone.errors, status.HTTP_400_BAD_REQUEST,
