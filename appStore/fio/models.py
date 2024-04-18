@@ -12,8 +12,8 @@ class Fio(models.Model):
         ("randwrite", "randwrite"),
     )
     env_id = models.IntegerField(verbose_name='环境id')
-    execute_cmd = models.CharField(null=True, blank=True, max_length=255, verbose_name='执行命令')
-    modify_parameters = models.CharField(null=True, blank=True, max_length=255, verbose_name='修改参数')
+    execute_cmd = models.CharField(max_length=255, verbose_name='执行命令',null=True,blank=True)
+    modify_parameters = models.CharField(max_length=255, verbose_name='修改参数',null=True,blank=True)
     rw = models.CharField(choices=RwType, max_length=20, verbose_name="rw")
     bs = models.CharField(max_length=20, verbose_name="bs")
     io = models.CharField(max_length=20, verbose_name="io")

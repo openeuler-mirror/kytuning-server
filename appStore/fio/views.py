@@ -149,8 +149,7 @@ class FioViewSet(CusModelViewSet):
                 data_fio['test_time'] = return_time(fio_json['time'])
                 serializer_fio = FioSerializer(data=data_fio)
                 if serializer_fio.is_valid():
-                    pass
-                    # self.perform_create(serializer_fio)
+                    self.perform_create(serializer_fio)
                     continue
                 print(serializer_fio.errors, "fio")
                 return json_response(serializer_fio.errors, status.HTTP_400_BAD_REQUEST,
