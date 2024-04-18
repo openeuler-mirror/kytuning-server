@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'appStore.stream.apps.StreamConfig',
     'appStore.unixbench.apps.UnixbenchConfig',
     'appStore.project.apps.ProjectConfig',
+    'corsheaders',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
