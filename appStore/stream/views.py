@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 from django.http import JsonResponse, request
 from django.shortcuts import render
@@ -20,22 +21,73 @@ class StreamViewSet(CusModelViewSet):
     queryset = Stream.objects.all().order_by('id')
     serializer_class = StreamSerializer
 
-    def get_data(self, serializer):
-        # todo 目前先做project只对应一个stream
-        data = {'single_array_size': serializer.data[0]['single_array_size'],
-                'single_copy': serializer.data[0]['single_copy'],
-                'single_scale': serializer.data[0]['single_scale'],
-                'single_add': serializer.data[0]['single_add'],
-                'single_triad': serializer.data[0]['single_triad'],
-                'multi_array_size': serializer.data[0]['multi_array_size'],
-                'multi_copy': serializer.data[0]['multi_copy'],
-                'multi_scale': serializer.data[0]['multi_scale'],
-                'multi_add': serializer.data[0]['multi_add'],
-                'multi_triad': serializer.data[0]['multi_triad'],
-                'execute_cmd': serializer.data[0]['execute_cmd'],
-                'modify_parameters': serializer.data[0]['modify_parameters']
+    def get_data(self, count,serializer):
+        # 当大于两条数据时展示平均数
+        single_array_size = ''
+        single_copy = ''
+        single_scale = ''
+        single_add = ''
+        single_triad = ''
+        multi_array_size = ''
+        multi_copy = ''
+        multi_scale = ''
+        multi_add = ''
+        multi_triad = ''
+        execute_cmd = serializer.data[0]['execute_cmd'],
+        modify_parameters = serializer.data[0]['modify_parameters']
+        if count == 0:
+            # todo 后期做优化考虑怎么未查找到的情况
+            pass
+        elif count== 1:
+            single_array_size = serializer.data[0]['single_array_size']
+            single_copy = serializer.data[0]['single_copy']
+            single_scale = serializer.data[0]['single_scale']
+            single_add = serializer.data[0]['single_add']
+            single_triad = serializer.data[0]['single_triad']
+            multi_array_size = serializer.data[0]['multi_array_size']
+            multi_copy = serializer.data[0]['multi_copy']
+            multi_scale = serializer.data[0]['multi_scale']
+            multi_add = serializer.data[0]['multi_add']
+            multi_triad = serializer.data[0]['multi_triad']
+        else:
+            # 将每个字典转换为NumPy数组
+            single_array_size_list = np.array([d['single_array_size'] for d in serializer.data])
+            single_copy_list = np.array([d['single_copy'] for d in serializer.data])
+            single_scale_list = np.array([d['single_scale'] for d in serializer.data])
+            single_add_list = np.array([d['single_add'] for d in serializer.data])
+            single_triad_list = np.array([d['single_triad'] for d in serializer.data])
+            multi_array_size_list = np.array([d['multi_array_size'] for d in serializer.data])
+            multi_copy_list = np.array([d['multi_copy'] for d in serializer.data])
+            multi_scale_list = np.array([d['multi_scale'] for d in serializer.data])
+            multi_add_list = np.array([d['multi_add'] for d in serializer.data])
+            multi_triad_list = np.array([d['multi_triad'] for d in serializer.data])
+
+            # 计算每个数组的平均值
+            single_array_size = np.mean(single_array_size_list)
+            single_copy = np.mean(single_copy_list)
+            single_scale = np.mean(single_scale_list)
+            single_add = np.mean(single_add_list)
+            single_triad = np.mean(single_triad_list)
+            multi_array_size = np.mean(multi_array_size_list)
+            multi_copy = np.mean(multi_copy_list)
+            multi_scale = np.mean(multi_scale_list)
+            multi_add = np.mean(multi_add_list)
+            multi_triad = np.mean(multi_triad_list)
+
+        new_data = {'single_array_size':single_array_size,
+                'single_copy':single_copy,
+                'single_scale':single_scale,
+                'single_add':single_add,
+                'single_triad':single_triad,
+                'multi_array_size':multi_array_size,
+                'multi_copy':multi_copy,
+                'multi_scale':multi_scale,
+                'multi_add':multi_add,
+                'multi_triad':multi_triad,
+                'execute_cmd':execute_cmd,
+                'modify_parameters':modify_parameters,
                 }
-        return data
+        return new_data
 
     def list(self, request, *args, **kwargs):
         """
@@ -51,8 +103,8 @@ class StreamViewSet(CusModelViewSet):
         base_queryset = Stream.objects.filter(env_id=env_id).all()
         base_serializer = self.get_serializer(base_queryset, many=True)
         base_count = len(base_queryset)
-        # 当大于两条数据是展示平均数
-        data = self.get_data(base_count, base_serializer)
+        #当大于两条数据是展示平均数
+        data = self.get_data(base_count,base_serializer)
         others = [{'column1':'Stream','column2':'', 'column3':'Stream#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
             {'column1': '单线程', 'column2': 'Array size', 'column3': data['single_array_size']},
@@ -74,7 +126,7 @@ class StreamViewSet(CusModelViewSet):
                 comparsion_queryset = Stream.objects.filter(env_id=comparativeId).all()
                 comparsion_count = len(comparsion_queryset)
                 comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_count, comparsion_serializer)
+                comparsion_datas = self.get_data(comparsion_count,comparsion_serializer)
                 others[0]['column'+str(new_index)] = 'Stream#'+str(index + 2)
                 others[1]['column'+str(new_index)] = comparsion_datas['execute_cmd']
                 others[2]['column'+str(new_index)] = comparsion_datas['modify_parameters']
