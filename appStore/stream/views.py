@@ -50,10 +50,9 @@ class StreamViewSet(CusModelViewSet):
         comparsionIds = comparsionIds.split(',')
         base_queryset = Stream.objects.filter(env_id=env_id).all()
         base_serializer = self.get_serializer(base_queryset, many=True)
-        # 判断数据超过两条，不显示
-        if len(base_queryset) > 1:
-            return json_response({}, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE, '数据存储有问题，存一条以上的数据了')
-        data = self.get_data(base_serializer)
+        base_count = len(base_queryset)
+        # 当大于两条数据是展示平均数
+        data = self.get_data(base_count, base_serializer)
         others = [{'column1':'Stream','column2':'', 'column3':'Stream#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
             {'column1': '单线程', 'column2': 'Array size', 'column3': data['single_array_size']},
@@ -73,8 +72,9 @@ class StreamViewSet(CusModelViewSet):
             for index ,comparativeId in enumerate(comparsionIds):
                 new_index = 2 * index + 4
                 comparsion_queryset = Stream.objects.filter(env_id=comparativeId).all()
+                comparsion_count = len(comparsion_queryset)
                 comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_serializer)
+                comparsion_datas = self.get_data(comparsion_count, comparsion_serializer)
                 others[0]['column'+str(new_index)] = 'Stream#'+str(index + 2)
                 others[1]['column'+str(new_index)] = comparsion_datas['execute_cmd']
                 others[2]['column'+str(new_index)] = comparsion_datas['modify_parameters']
@@ -134,8 +134,7 @@ class StreamViewSet(CusModelViewSet):
                 data_stream['test_time'] = return_time(stream_json['time'])
                 serializer_stream = StreamSerializer(data=data_stream)
                 if serializer_stream.is_valid():
-                    # self.perform_create(serializer_stream)
-                    pass
+                    self.perform_create(serializer_stream)
                 serializer_stream_errors.append(serializer_stream.errors)
                 error_message.append(get_error_message(serializer_stream))
 
