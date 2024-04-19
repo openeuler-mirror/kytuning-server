@@ -135,11 +135,7 @@ class UnixbenchViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Unixbench.objects.filter(env_id=env_id).all()
-        base_serializer = self.get_serializer(base_queryset, many=True)
-        # 判断数据超过两条，不显示
-        if len(base_queryset) > 2:
-            return json_response({}, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE, '数据存储有问题，存两条以上的数据了')
-        data = self.get_data(base_serializer)
+        data = self.get_data(base_queryset)
         others = [{'column1':'Unxibench','column2':'', 'column3':'Unixbench#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
             {'column1': '单线程', 'column2': 'Dhrystone 2 using register variables(lps)', 'column3': data['single_Dhrystone']},
@@ -175,8 +171,7 @@ class UnixbenchViewSet(CusModelViewSet):
             for index ,comparativeId in enumerate(comparsionIds):
                 new_index = 2 * index + 4
                 comparsion_queryset = Unixbench.objects.filter(env_id=comparativeId).all()
-                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_data = self.get_data(comparsion_serializer)
+                comparsion_data = self.get_data(comparsion_queryset)
                 others[0]['column'+str(new_index)] = 'Unixbench#'+str(index + 2)
                 others[1]['column'+str(new_index)] = comparsion_data['execute_cmd']
                 others[2]['column'+str(new_index)] = comparsion_data['modify_parameters']
@@ -256,6 +251,7 @@ class UnixbenchViewSet(CusModelViewSet):
                 data_unixbench['thread'] = thread
                 data_unixbench['execute_cmd'] = 'xx'
                 data_unixbench['modify_parameters'] = '参数'
+                data_unixbench['mark_name'] = '-'.join(k.split('-')[-2:])
                 data_unixbench['Dhrystone'] = unixbench_json[thread]['Dhrystone 2 using register variables(lps)']
                 data_unixbench['Double_Precision'] = unixbench_json[thread]['Double-Precision Whetstone(MWIPS)']
                 data_unixbench['execl_throughput'] = unixbench_json[thread]['Execl Throughput(lps)']
@@ -272,8 +268,7 @@ class UnixbenchViewSet(CusModelViewSet):
                 data_unixbench['test_time'] = return_time(unixbench_json['time'])
                 serializer_unixbench = UnixbenchSerializer(data=data_unixbench)
                 if serializer_unixbench.is_valid():
-                    # self.perform_create(serializer_unixbench)
-                    pass
+                    self.perform_create(serializer_unixbench)
                 serializer_unixbench_errors.append(serializer_unixbench.errors)
                 error_message.append(get_error_message(serializer_unixbench))
         return json_response(serializer_unixbench_errors, status.HTTP_400_BAD_REQUEST, error_message)
