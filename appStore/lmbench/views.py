@@ -20,6 +20,21 @@ class LmbenchViewSet(CusModelViewSet):
     queryset = Lmbench.objects.all().order_by('id')
     serializer_class = LmbenchSerializer
 
+    # pagination_class = LimsPageSet
+    # def list(self, request, *args, **kwargs):
+    #     """
+    #     返回列表
+    #     :param request:
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     env_id = request.GET.get('env_id')
+    #     queryset = Lmbench.objects.filter(env_id=env_id).all()
+    #     queryset = self.filter_queryset(queryset)
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
+
     def get_data(self, serializer):
         data = {'execute_cmd': serializer.data[0]['execute_cmd'],
                 'modify_parameters': serializer.data[0]['modify_parameters'],
@@ -452,8 +467,7 @@ class LmbenchViewSet(CusModelViewSet):
                             lmbench['memory_Rand_mem'] = value['Rand mem']
                     serializer_lmbench = LmbenchSerializer(data=lmbench)
                     if serializer_lmbench.is_valid():
-                        # self.perform_create(serializer_lmbench)
-                        pass
+                        self.perform_create(serializer_lmbench)
                     serializer_lmbench_error.append(serializer_lmbench.errors)
                     error_message.append(get_error_message(serializer_lmbench))
         if serializer_lmbench_error:
