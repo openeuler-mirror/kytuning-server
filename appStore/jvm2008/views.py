@@ -287,8 +287,7 @@ class Jvm2008ViewSet(CusModelViewSet):
                 data_jvm2008['test_time'] = return_time(jvm2008_json['time'])
                 serializer_jvm2008 = Jvm2008Serializer(data=data_jvm2008)
                 if serializer_jvm2008.is_valid():
-                    # self.perform_create(serializer_jvm2008)
-                    pass
+                    self.perform_create(serializer_jvm2008)
                 else:
                     print(serializer_jvm2008.errors, "jvm2008")
                     serializer_jvm2008_errors.append(serializer_jvm2008.errors)
