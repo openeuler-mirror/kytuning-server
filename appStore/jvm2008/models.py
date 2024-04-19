@@ -11,38 +11,20 @@ class Jvm2008(models.Model):
     )
     env_id = models.IntegerField(verbose_name='环境id')
     tune_type= models.CharField(choices=TuneType, max_length=10, verbose_name='TuneType')
-    execute_cmd = models.CharField(null=True, blank=True, max_length=255, verbose_name='执行命令')
-    modify_parameters = models.CharField(null=True, blank=True, max_length=255, verbose_name='修改参数')
-    compiler = models.FloatField(verbose_name="compiler")
-    compress = models.FloatField(verbose_name="compress")
-    crypto = models.FloatField(verbose_name="crypto")
-    derby = models.FloatField(verbose_name="derby")
-    mpegaudio = models.FloatField(verbose_name="mpegaudio")
-    scimark_large = models.FloatField(verbose_name="scimark.large")
-    scimark_small = models.FloatField(verbose_name="scimark.small")
-    serial = models.FloatField(verbose_name="serial")
-    startup = models.FloatField(verbose_name="startup")
-    sunflow = models.FloatField(verbose_name="sunflow")
-    xml = models.FloatField(verbose_name="xml")
-    Noncompliant_pomposite_result = models.FloatField(verbose_name="Noncompliant pomposite result")
+    execute_cmd = models.CharField(max_length=255, verbose_name='执行命令',null=True,blank=True)
+    modify_parameters = models.CharField(max_length=255, verbose_name='修改参数',null=True,blank=True)
+    compiler = models.FloatField(verbose_name="compiler",null=True,blank=True)
+    compress = models.FloatField(verbose_name="compress",null=True,blank=True)
+    crypto = models.FloatField(verbose_name="crypto",null=True,blank=True)
+    derby = models.FloatField(verbose_name="derby",null=True,blank=True)
+    mpegaudio = models.FloatField(verbose_name="mpegaudio",null=True,blank=True)
+    scimark_large = models.FloatField(verbose_name="scimark.large",null=True,blank=True)
+    scimark_small = models.FloatField(verbose_name="scimark.small",null=True,blank=True)
+    serial = models.FloatField(verbose_name="serial",null=True,blank=True)
+    startup = models.FloatField(verbose_name="startup",null=True,blank=True)
+    sunflow = models.FloatField(verbose_name="sunflow",null=True,blank=True)
+    xml = models.FloatField(verbose_name="xml",null=True,blank=True)
+    Noncompliant_pomposite_result = models.FloatField(verbose_name="Noncompliant pomposite result",null=True,blank=True)
 
     class Meta:
         db_table = 'jvm2008'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
