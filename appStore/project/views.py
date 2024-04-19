@@ -48,8 +48,7 @@ class ProjectViewSet(CusModelViewSet):
             data_project['times'] = queryset.times + 1
         serializer_project = ProjectSerializer(data=data_project)
         if serializer_project.is_valid():
-            # self.perform_create(serializer_project)
-            pass
+            self.perform_create(serializer_project)
         else:
             print(serializer_project.errors, "project")
             return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
