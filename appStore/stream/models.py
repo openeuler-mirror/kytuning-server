@@ -1,31 +1,29 @@
+from datetime import datetime
+
 from django.db import models
 import django.utils.timezone as timezone
 
 
 # Create your models here.
-class Stream(models.Model):
-    """stream表"""
-    ThreadType = (
-        ("单线程", "单线程"),
-        ("多线程", "多线程"),
-    )
+class Project(models.Model):
+    """Project表"""
     env_id = models.IntegerField(verbose_name='环境id')
-    execute_cmd = models.CharField(null=True, blank=True, max_length=255, verbose_name='执行命令')
-    modify_parameters = models.CharField(null=True, blank=True, max_length=255, verbose_name='修改参数')
-    # modify_parameters = models.TextField(null=True, blank=True, verbose_name='修改参数') #如果是很多的化可以使用text文本类型
-    single_thread = models.CharField(choices=ThreadType, max_length=10, verbose_name='单线程')
-    single_array_size = models.IntegerField(verbose_name='single_array_size')
-    single_copy = models.FloatField(verbose_name='single_copy')
-    single_scale = models.FloatField(verbose_name='single_scale')
-    single_add = models.FloatField(verbose_name='single_add')
-    single_triad = models.FloatField(verbose_name='single_triad')
-    multi_threading = models.CharField(choices=ThreadType, max_length=10, verbose_name='多线程')
-    multi_array_size = models.IntegerField(verbose_name='multi_array_size')
-    multi_copy = models.FloatField(verbose_name='multi_copy')
-    multi_scale = models.FloatField(verbose_name='multi_scale')
-    multi_add = models.FloatField(verbose_name='multi_add')
-    multi_triad = models.FloatField(verbose_name='multi_triad')
-    test_time = models.DateTimeField(verbose_name="测试时间", default=timezone.now)
+    user_name = models.CharField(max_length=255, verbose_name='测试人员名称')
+    project_name = models.CharField(max_length=255, verbose_name='项目名称',null=True,blank=True)
+    arm = models.CharField( max_length=255, verbose_name='架构',null=True,blank=True)
+    hwinfo_machineinfo_serialnumber = models.CharField(max_length=255,verbose_name='环境表中的hwinfo_machineinfo_serialnumber',null=True,blank=True)
+    os_version = models.CharField(max_length=255, verbose_name='操作系统版本',null=True,blank=True)
+    message = models.CharField(max_length=255, verbose_name='项目描述',null=True,blank=True)
+    times = models.IntegerField(verbose_name='第几次测试')
+    cpu2006 = models.BooleanField(default=False, verbose_name='cpu2006数据')
+    cpu2017 = models.BooleanField(default=False, verbose_name='cpu2017数据')
+    fio = models.BooleanField(default=False, verbose_name='fio数据')
+    iozone = models.BooleanField(default=False, verbose_name='iozone数据')
+    jvm2008 = models.BooleanField(default=False, verbose_name='jvm2008数据')
+    lmbench = models.BooleanField(default=False, verbose_name='lmbench数据')
+    stream = models.BooleanField(default=False, verbose_name='stream数据')
+    unixbench = models.BooleanField(default=False, verbose_name='unxibench数据')
+    test_time = models.DateTimeField(verbose_name="记录时间", default=timezone.now)
 
     class Meta:
-        db_table = 'stream'
+        db_table = 'project'
