@@ -10,6 +10,7 @@ class Jvm2008(models.Model):
         ("peak", "peak"),
     )
     env_id = models.IntegerField(verbose_name='环境id')
+    mark_name = models.CharField(max_length=50, verbose_name='文件名称，确保哪两条数据是一组')
     tune_type= models.CharField(choices=TuneType, max_length=10, verbose_name='TuneType')
     execute_cmd = models.CharField(max_length=255, verbose_name='执行命令',null=True,blank=True)
     modify_parameters = models.CharField(max_length=255, verbose_name='修改参数',null=True,blank=True)

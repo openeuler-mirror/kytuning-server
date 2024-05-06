@@ -8,7 +8,8 @@ class Iozone(models.Model):
     env_id = models.IntegerField(verbose_name='环境id')
     execute_cmd = models.CharField(max_length=255, verbose_name='执行命令',null=True,blank=True)
     modify_parameters = models.CharField(max_length=255, verbose_name='修改参数',null=True,blank=True)
-    testcase_name = models.CharField(max_length=10, verbose_name='testcase name') #testcase_name=haif、full、double
+    mark_name = models.CharField(max_length=50, verbose_name='文件名称，确保哪几条数据是一组')
+    testcase_name = models.CharField(max_length=10, verbose_name='testcase name')  # testcase_name=half、full、double
     file_size = models.FloatField(verbose_name="文件大小")
     block_size = models.FloatField(verbose_name="块大小",null=True,blank=True)
     write_test = models.FloatField(verbose_name="写测试（KB/s）",null=True,blank=True)
