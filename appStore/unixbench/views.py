@@ -72,7 +72,7 @@ class UnixbenchViewSet(CusModelViewSet):
         if len(groups) == 1:
             for data in serializer.data:
                 if data['thread'] == '单线程':
-                    # 查询基准数据的单线程数据
+                    # 单线程数据
                     single_Dhrystone = data['Dhrystone']
                     single_Double_Precision = data['Double_Precision']
                     single_execl_throughput = data['execl_throughput']
@@ -87,7 +87,7 @@ class UnixbenchViewSet(CusModelViewSet):
                     single_system_call_overhead = data['system_call_overhead']
                     single_index_score = data['index_score']
                 if data['thread'] == '多线程':
-                    # 查询基准数据的多线程数据
+                    # 多线程数据
                     multi_Dhrystone = data['Dhrystone']
                     multi_Double_Precision = data['Double_Precision']
                     multi_execl_throughput = data['execl_throughput']
@@ -204,6 +204,8 @@ class UnixbenchViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Unixbench.objects.filter(env_id=env_id).all()
+        if not base_queryset:
+            return json_response({}, status.HTTP_200_OK, '列表')
         data = self.get_data(base_queryset)
         others = [{'column1':'Unxibench','column2':'', 'column3':'Unixbench#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
