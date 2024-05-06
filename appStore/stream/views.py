@@ -1,4 +1,3 @@
-import json
 import numpy as np
 
 from django.http import JsonResponse, request
@@ -21,7 +20,8 @@ class StreamViewSet(CusModelViewSet):
     queryset = Stream.objects.all().order_by('id')
     serializer_class = StreamSerializer
 
-    def get_data(self, count,serializer):
+    def get_data(self, serializer_):
+        serializer = self.get_serializer(serializer_, many=True)
         # 当大于两条数据时展示平均数
         single_array_size = ''
         single_copy = ''
@@ -35,10 +35,10 @@ class StreamViewSet(CusModelViewSet):
         multi_triad = ''
         execute_cmd = serializer.data[0]['execute_cmd'],
         modify_parameters = serializer.data[0]['modify_parameters']
-        if count == 0:
+        if len(serializer_) == 0:
             # todo 后期做优化考虑怎么未查找到的情况
             pass
-        elif count== 1:
+        elif len(serializer_)== 1:
             single_array_size = serializer.data[0]['single_array_size']
             single_copy = serializer.data[0]['single_copy']
             single_scale = serializer.data[0]['single_scale']
@@ -101,10 +101,8 @@ class StreamViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Stream.objects.filter(env_id=env_id).all()
-        base_serializer = self.get_serializer(base_queryset, many=True)
-        base_count = len(base_queryset)
         #当大于两条数据是展示平均数
-        data = self.get_data(base_count,base_serializer)
+        data = self.get_data(base_queryset)
         others = [{'column1':'Stream','column2':'', 'column3':'Stream#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
             {'column1': '单线程', 'column2': 'Array size', 'column3': data['single_array_size']},
@@ -124,9 +122,7 @@ class StreamViewSet(CusModelViewSet):
             for index ,comparativeId in enumerate(comparsionIds):
                 new_index = 2 * index + 4
                 comparsion_queryset = Stream.objects.filter(env_id=comparativeId).all()
-                comparsion_count = len(comparsion_queryset)
-                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_count,comparsion_serializer)
+                comparsion_datas = self.get_data(comparsion_queryset)
                 others[0]['column'+str(new_index)] = 'Stream#'+str(index + 2)
                 others[1]['column'+str(new_index)] = comparsion_datas['execute_cmd']
                 others[2]['column'+str(new_index)] = comparsion_datas['modify_parameters']
