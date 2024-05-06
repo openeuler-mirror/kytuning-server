@@ -1,4 +1,4 @@
-import json
+import numpy as np
 
 from django.http import JsonResponse, request
 from django.shortcuts import render
@@ -35,81 +35,379 @@ class LmbenchViewSet(CusModelViewSet):
     #     serializer = self.get_serializer(queryset, many=True)
     #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
 
-    def get_data(self, serializer):
-        data = {'execute_cmd': serializer.data[0]['execute_cmd'],
-                'modify_parameters': serializer.data[0]['modify_parameters'],
-                'basic_Mhz': serializer.data[0]['basic_Mhz'],
-                'basic_tlb_pages': serializer.data[0]['basic_tlb_pages'],
-                'basic_cache_line_bytes': serializer.data[0]['basic_cache_line_bytes'],
-                'basic_mem_par': serializer.data[0]['basic_mem_par'],
-                'basic_scal_load': serializer.data[0]['basic_scal_load'],
-                'processor_null_call': serializer.data[0]['processor_null_call'],
-                'processor_null_I_O': serializer.data[0]['processor_null_I_O'],
-                'processor_stat': serializer.data[0]['processor_stat'],
-                'processor_open_clo': serializer.data[0]['processor_open_clo'],
-                'processor_slct_TCP': serializer.data[0]['processor_slct_TCP'],
-                'processor_sig_inst': serializer.data[0]['processor_sig_inst'],
-                'processor_sig_hndl': serializer.data[0]['processor_sig_hndl'],
-                'processor_fork_proc': serializer.data[0]['processor_fork_proc'],
-                'processor_exec_proc': serializer.data[0]['processor_exec_proc'],
-                'processor_sh_proc': serializer.data[0]['processor_sh_proc'],
-                'processor_Mhz': serializer.data[0]['processor_Mhz'],
-                'basic_intgr_bit': serializer.data[0]['basic_intgr_bit'],
-                'basic_intgr_add': serializer.data[0]['basic_intgr_add'],
-                'basic_intgr_mul': serializer.data[0]['basic_intgr_mul'],
-                'basic_intgr_div': serializer.data[0]['basic_intgr_div'],
-                'basic_intgr_mod': serializer.data[0]['basic_intgr_mod'],
-                'basic_int64_bit': serializer.data[0]['basic_int64_bit'],
-                'basic_int64_add': serializer.data[0]['basic_int64_add'],
-                'basic_int64_mul': serializer.data[0]['basic_int64_mul'],
-                'basic_int64_div': serializer.data[0]['basic_int64_div'],
-                'basic_int64_mod': serializer.data[0]['basic_int64_mod'],
-                'basic_float_add': serializer.data[0]['basic_float_add'],
-                'basic_float_mul': serializer.data[0]['basic_float_mul'],
-                'basic_float_div': serializer.data[0]['basic_float_div'],
-                'basic_float_bogo': serializer.data[0]['basic_float_bogo'],
-                'basic_double_add': serializer.data[0]['basic_double_add'],
-                'basic_double_mul': serializer.data[0]['basic_double_mul'],
-                'basic_double_div': serializer.data[0]['basic_double_div'],
-                'basic_double_bogo': serializer.data[0]['basic_double_bogo'],
-                'context_2p_0K': serializer.data[0]['context_2p_0K'],
-                'context_2p_16K': serializer.data[0]['context_2p_16K'],
-                'context_2p_64K': serializer.data[0]['context_2p_64K'],
-                'context_8p_16K': serializer.data[0]['context_8p_16K'],
-                'context_8p_64K': serializer.data[0]['context_8p_64K'],
-                'context_16p_16K': serializer.data[0]['context_16p_16K'],
-                'context_16p_64K': serializer.data[0]['context_16p_64K'],
-                'local_2p_0K': serializer.data[0]['local_2p_0K'],
-                'local_Pipe': serializer.data[0]['local_Pipe'],
-                'local_AF_UNIX': serializer.data[0]['local_AF_UNIX'],
-                'local_UDP': serializer.data[0]['local_UDP'],
-                'local_TCP': serializer.data[0]['local_TCP'],
-                'local_TCP_conn': serializer.data[0]['local_TCP_conn'],
-                'local_RPC_TCP': serializer.data[0]['local_RPC_TCP'],
-                'local_RPC_UDP': serializer.data[0]['local_RPC_UDP'],
-                'local_bigger_Mmap_Latency': serializer.data[0]['local_bigger_Mmap_Latency'],
-                'local_bigger_Prot_Fault': serializer.data[0]['local_bigger_Prot_Fault'],
-                'local_bigger_Page_Fault': serializer.data[0]['local_bigger_Page_Fault'],
-                'local_bigger_100fd_selct': serializer.data[0]['local_bigger_100fd_selct'],
-                'local_bigger_0K_File_create': serializer.data[0]['local_bigger_0K_File_create'],
-                'local_bigger_0K_File_delete': serializer.data[0]['local_bigger_0K_File_delete'],
-                'local_bigger_10K_File_create': serializer.data[0]['local_bigger_10K_File_create'],
-                'local_bigger_10K_File_delete': serializer.data[0]['local_bigger_10K_File_delete'],
-                'local_bigger_Pipe': serializer.data[0]['local_bigger_Pipe'],
-                'local_bigger_AF_UNIX': serializer.data[0]['local_bigger_AF_UNIX'],
-                'local_bigger_TCP': serializer.data[0]['local_bigger_TCP'],
-                'local_bigger_File_reread': serializer.data[0]['local_bigger_File_reread'],
-                'local_bigger_Mmap_reread': serializer.data[0]['local_bigger_Mmap_reread'],
-                'local_bigger_Bcopy_libc': serializer.data[0]['local_bigger_Bcopy_libc'],
-                'local_bigger_Bcopy_hand': serializer.data[0]['local_bigger_Bcopy_hand'],
-                'local_bigger_Mem_read': serializer.data[0]['local_bigger_Mem_read'],
-                'local_bigger_Mem_write': serializer.data[0]['local_bigger_Mem_write'],
-                'memory_Mhz': serializer.data[0]['memory_Mhz'],
-                'memory_L1': serializer.data[0]['memory_L1'],
-                'memory_L2': serializer.data[0]['memory_L2'],
-                'memory_Main_mem': serializer.data[0]['memory_Main_mem'],
-                'memory_Rand_mem': serializer.data[0]['memory_Rand_mem'],
-                }
+    def get_data(self, serializer_):
+        serializer = self.get_serializer(serializer_, many=True)
+        # print(serializer,111)
+        execute_cmd = serializer.data[0]['execute_cmd']
+        modify_parameters = serializer.data[0]['modify_parameters']
+        basic_Mhz = ''
+        basic_tlb_pages = ''
+        basic_cache_line_bytes = ''
+        basic_mem_par = ''
+        basic_scal_load = ''
+        processor_null_call = ''
+        processor_null_I_O = ''
+        processor_stat = ''
+        processor_open_clo = ''
+        processor_slct_TCP = ''
+        processor_sig_inst = ''
+        processor_sig_hndl = ''
+        processor_fork_proc = ''
+        processor_exec_proc = ''
+        processor_sh_proc = ''
+        processor_Mhz = ''
+        basic_intgr_bit = ''
+        basic_intgr_add = ''
+        basic_intgr_mul = ''
+        basic_intgr_div = ''
+        basic_intgr_mod = ''
+        basic_int64_bit = ''
+        basic_int64_add = ''
+        basic_int64_mul = ''
+        basic_int64_div = ''
+        basic_int64_mod = ''
+        basic_float_add = ''
+        basic_float_mul = ''
+        basic_float_div = ''
+        basic_float_bogo = ''
+        basic_double_add = ''
+        basic_double_mul = ''
+        basic_double_div = ''
+        basic_double_bogo = ''
+        context_2p_0K = ''
+        context_2p_16K = ''
+        context_2p_64K = ''
+        context_8p_16K = ''
+        context_8p_64K = ''
+        context_16p_16K = ''
+        context_16p_64K = ''
+        local_2p_0K = ''
+        local_Pipe = ''
+        local_AF_UNIX = ''
+        local_UDP = ''
+        local_TCP = ''
+        local_TCP_conn = ''
+        local_RPC_TCP = ''
+        local_RPC_UDP = ''
+        local_bigger_Mmap_Latency = ''
+        local_bigger_Prot_Fault = ''
+        local_bigger_Page_Fault = ''
+        local_bigger_100fd_selct = ''
+        local_bigger_0K_File_create = ''
+        local_bigger_0K_File_delete = ''
+        local_bigger_10K_File_create = ''
+        local_bigger_10K_File_delete = ''
+        local_bigger_Pipe = ''
+        local_bigger_AF_UNIX = ''
+        local_bigger_TCP = ''
+        local_bigger_File_reread = ''
+        local_bigger_Mmap_reread = ''
+        local_bigger_Bcopy_libc = ''
+        local_bigger_Bcopy_hand = ''
+        local_bigger_Mem_read = ''
+        local_bigger_Mem_write = ''
+        memory_Mhz = ''
+        memory_L1 = ''
+        memory_L2 = ''
+        memory_Main_mem = ''
+        memory_Rand_mem = ''
+
+        if len(serializer_) == 0:
+            # todo 后期做优化考虑怎么未查找到的情况
+            pass
+        elif len(serializer_) == 1:
+            basic_Mhz = serializer.data[0]['basic_Mhz']
+            basic_tlb_pages = serializer.data[0]['basic_tlb_pages']
+            basic_cache_line_bytes = serializer.data[0]['basic_cache_line_bytes']
+            basic_mem_par = serializer.data[0]['basic_mem_par']
+            basic_scal_load = serializer.data[0]['basic_scal_load']
+            processor_null_call = serializer.data[0]['processor_null_call']
+            processor_null_I_O = serializer.data[0]['processor_null_I_O']
+            processor_stat = serializer.data[0]['processor_stat']
+            processor_open_clo = serializer.data[0]['processor_open_clo']
+            processor_slct_TCP = serializer.data[0]['processor_slct_TCP']
+            processor_sig_inst = serializer.data[0]['processor_sig_inst']
+            processor_sig_hndl = serializer.data[0]['processor_sig_hndl']
+            processor_fork_proc = serializer.data[0]['processor_fork_proc']
+            processor_exec_proc = serializer.data[0]['processor_exec_proc']
+            processor_sh_proc = serializer.data[0]['processor_sh_proc']
+            processor_Mhz = serializer.data[0]['processor_Mhz']
+            basic_intgr_bit = serializer.data[0]['basic_intgr_bit']
+            basic_intgr_add = serializer.data[0]['basic_intgr_add']
+            basic_intgr_mul = serializer.data[0]['basic_intgr_mul']
+            basic_intgr_div = serializer.data[0]['basic_intgr_div']
+            basic_intgr_mod = serializer.data[0]['basic_intgr_mod']
+            basic_int64_bit = serializer.data[0]['basic_int64_bit']
+            basic_int64_add = serializer.data[0]['basic_int64_add']
+            basic_int64_mul = serializer.data[0]['basic_int64_mul']
+            basic_int64_div = serializer.data[0]['basic_int64_div']
+            basic_int64_mod = serializer.data[0]['basic_int64_mod']
+            basic_float_add = serializer.data[0]['basic_float_add']
+            basic_float_mul = serializer.data[0]['basic_float_mul']
+            basic_float_div = serializer.data[0]['basic_float_div']
+            basic_float_bogo = serializer.data[0]['basic_float_bogo']
+            basic_double_add = serializer.data[0]['basic_double_add']
+            basic_double_mul = serializer.data[0]['basic_double_mul']
+            basic_double_div = serializer.data[0]['basic_double_div']
+            basic_double_bogo = serializer.data[0]['basic_double_bogo']
+            context_2p_0K = serializer.data[0]['context_2p_0K']
+            context_2p_16K = serializer.data[0]['context_2p_16K']
+            context_2p_64K = serializer.data[0]['context_2p_64K']
+            context_8p_16K = serializer.data[0]['context_8p_16K']
+            context_8p_64K = serializer.data[0]['context_8p_64K']
+            context_16p_16K = serializer.data[0]['context_16p_16K']
+            context_16p_64K = serializer.data[0]['context_16p_64K']
+            local_2p_0K = serializer.data[0]['local_2p_0K']
+            local_Pipe = serializer.data[0]['local_Pipe']
+            local_AF_UNIX = serializer.data[0]['local_AF_UNIX']
+            local_UDP = serializer.data[0]['local_UDP']
+            local_TCP = serializer.data[0]['local_TCP']
+            local_TCP_conn = serializer.data[0]['local_TCP_conn']
+            local_RPC_TCP = serializer.data[0]['local_RPC_TCP']
+            local_RPC_UDP = serializer.data[0]['local_RPC_UDP']
+            local_bigger_Mmap_Latency = serializer.data[0]['local_bigger_Mmap_Latency']
+            local_bigger_Prot_Fault = serializer.data[0]['local_bigger_Prot_Fault']
+            local_bigger_Page_Fault = serializer.data[0]['local_bigger_Page_Fault']
+            local_bigger_100fd_selct = serializer.data[0]['local_bigger_100fd_selct']
+            local_bigger_0K_File_create = serializer.data[0]['local_bigger_0K_File_create']
+            local_bigger_0K_File_delete = serializer.data[0]['local_bigger_0K_File_delete']
+            local_bigger_10K_File_create = serializer.data[0]['local_bigger_10K_File_create']
+            local_bigger_10K_File_delete = serializer.data[0]['local_bigger_10K_File_delete']
+            local_bigger_Pipe = serializer.data[0]['local_bigger_Pipe']
+            local_bigger_AF_UNIX = serializer.data[0]['local_bigger_AF_UNIX']
+            local_bigger_TCP = serializer.data[0]['local_bigger_TCP']
+            local_bigger_File_reread = serializer.data[0]['local_bigger_File_reread']
+            local_bigger_Mmap_reread = serializer.data[0]['local_bigger_Mmap_reread']
+            local_bigger_Bcopy_libc = serializer.data[0]['local_bigger_Bcopy_libc']
+            local_bigger_Bcopy_hand = serializer.data[0]['local_bigger_Bcopy_hand']
+            local_bigger_Mem_read = serializer.data[0]['local_bigger_Mem_read']
+            local_bigger_Mem_write = serializer.data[0]['local_bigger_Mem_write']
+            memory_Mhz = serializer.data[0]['memory_Mhz']
+            memory_L1 = serializer.data[0]['memory_L1']
+            memory_L2 = serializer.data[0]['memory_L2']
+            memory_Main_mem = serializer.data[0]['memory_Main_mem']
+            memory_Rand_mem = serializer.data[0]['memory_Rand_mem']
+        else:
+             # 将每个字典转换为NumPy数组
+             basic_Mhz_list = np.array([d['basic_Mhz'] for d in serializer.data])
+             basic_tlb_pages_list = np.array([d['basic_tlb_pages'] for d in serializer.data])
+             basic_cache_line_bytes_list = np.array([d['basic_cache_line_bytes'] for d in serializer.data])
+             basic_mem_par_list = np.array([d['basic_mem_par'] for d in serializer.data])
+             basic_scal_load_list = np.array([d['basic_scal_load'] for d in serializer.data])
+             processor_null_call_list = np.array([d['processor_null_call'] for d in serializer.data])
+             processor_null_I_O_list = np.array([d['processor_null_I_O'] for d in serializer.data])
+             processor_stat_list = np.array([d['processor_stat'] for d in serializer.data])
+             processor_open_clo_list = np.array([d['processor_open_clo'] for d in serializer.data])
+             processor_slct_TCP_list = np.array([d['processor_slct_TCP'] for d in serializer.data])
+             processor_sig_inst_list = np.array([d['processor_sig_inst'] for d in serializer.data])
+             processor_sig_hndl_list = np.array([d['processor_sig_hndl'] for d in serializer.data])
+             processor_fork_proc_list = np.array([d['processor_fork_proc'] for d in serializer.data])
+             processor_exec_proc_list = np.array([d['processor_exec_proc'] for d in serializer.data])
+             processor_sh_proc_list = np.array([d['processor_sh_proc'] for d in serializer.data])
+             processor_Mhz_list = np.array([d['processor_Mhz'] for d in serializer.data])
+             basic_intgr_bit_list = np.array([d['basic_intgr_bit'] for d in serializer.data])
+             basic_intgr_add_list = np.array([d['basic_intgr_add'] for d in serializer.data])
+             basic_intgr_mul_list = np.array([d['basic_intgr_mul'] for d in serializer.data])
+             basic_intgr_div_list = np.array([d['basic_intgr_div'] for d in serializer.data])
+             basic_intgr_mod_list = np.array([d['basic_intgr_mod'] for d in serializer.data])
+             basic_int64_bit_list = np.array([d['basic_int64_bit'] for d in serializer.data])
+             basic_int64_add_list = np.array([d['basic_int64_add'] for d in serializer.data])
+             basic_int64_mul_list = np.array([d['basic_int64_mul'] for d in serializer.data])
+             basic_int64_div_list = np.array([d['basic_int64_div'] for d in serializer.data])
+             basic_int64_mod_list = np.array([d['basic_int64_mod'] for d in serializer.data])
+             basic_float_add_list = np.array([d['basic_float_add'] for d in serializer.data])
+             basic_float_mul_list = np.array([d['basic_float_mul'] for d in serializer.data])
+             basic_float_div_list = np.array([d['basic_float_div'] for d in serializer.data])
+             basic_float_bogo_list = np.array([d['basic_float_bogo'] for d in serializer.data])
+             basic_double_add_list = np.array([d['basic_double_add'] for d in serializer.data])
+             basic_double_mul_list = np.array([d['basic_double_mul'] for d in serializer.data])
+             basic_double_div_list = np.array([d['basic_double_div'] for d in serializer.data])
+             basic_double_bogo_list = np.array([d['basic_double_bogo'] for d in serializer.data])
+             context_2p_0K_list = np.array([d['context_2p_0K'] for d in serializer.data])
+             context_2p_16K_list = np.array([d['context_2p_16K'] for d in serializer.data])
+             context_2p_64K_list = np.array([d['context_2p_64K'] for d in serializer.data])
+             context_8p_16K_list = np.array([d['context_8p_16K'] for d in serializer.data])
+             context_8p_64K_list = np.array([d['context_8p_64K'] for d in serializer.data])
+             context_16p_16K_list = np.array([d['context_16p_16K'] for d in serializer.data])
+             context_16p_64K_list = np.array([d['context_16p_64K'] for d in serializer.data])
+             local_2p_0K_list = np.array([d['local_2p_0K'] for d in serializer.data])
+             local_Pipe_list = np.array([d['local_Pipe'] for d in serializer.data])
+             local_AF_UNIX_list = np.array([d['local_AF_UNIX'] for d in serializer.data])
+             local_UDP_list = np.array([d['local_UDP'] for d in serializer.data])
+             local_TCP_list = np.array([d['local_TCP'] for d in serializer.data])
+             local_TCP_conn_list = np.array([d['local_TCP_conn'] for d in serializer.data])
+             local_RPC_TCP_list = np.array([d['local_RPC_TCP'] for d in serializer.data])
+             local_RPC_UDP_list = np.array([d['local_RPC_UDP'] for d in serializer.data])
+             local_bigger_Mmap_Latency_list = np.array([d['local_bigger_Mmap_Latency'] for d in serializer.data])
+             local_bigger_Prot_Fault_list = np.array([d['local_bigger_Prot_Fault'] for d in serializer.data])
+             local_bigger_Page_Fault_list = np.array([d['local_bigger_Page_Fault'] for d in serializer.data])
+             local_bigger_100fd_selct_list = np.array([d['local_bigger_100fd_selct'] for d in serializer.data])
+             local_bigger_0K_File_create_list = np.array([d['local_bigger_0K_File_create'] for d in serializer.data])
+             local_bigger_0K_File_delete_list = np.array([d['local_bigger_0K_File_delete'] for d in serializer.data])
+             local_bigger_10K_File_create_list = np.array([d['local_bigger_10K_File_create'] for d in serializer.data])
+             local_bigger_10K_File_delete_list = np.array([d['local_bigger_10K_File_delete'] for d in serializer.data])
+             local_bigger_Pipe_list = np.array([d['local_bigger_Pipe'] for d in serializer.data])
+             local_bigger_AF_UNIX_list = np.array([d['local_bigger_AF_UNIX'] for d in serializer.data])
+             local_bigger_TCP_list = np.array([d['local_bigger_TCP'] for d in serializer.data])
+             local_bigger_File_reread_list = np.array([d['local_bigger_File_reread'] for d in serializer.data])
+             local_bigger_Mmap_reread_list = np.array([d['local_bigger_Mmap_reread'] for d in serializer.data])
+             local_bigger_Bcopy_libc_list = np.array([d['local_bigger_Bcopy_libc'] for d in serializer.data])
+             local_bigger_Bcopy_hand_list = np.array([d['local_bigger_Bcopy_hand'] for d in serializer.data])
+             local_bigger_Mem_read_list = np.array([d['local_bigger_Mem_read'] for d in serializer.data])
+             local_bigger_Mem_write_list = np.array([d['local_bigger_Mem_write'] for d in serializer.data])
+             memory_Mhz_list = np.array([d['memory_Mhz'] for d in serializer.data])
+             memory_L1_list = np.array([d['memory_L1'] for d in serializer.data])
+             memory_L2_list = np.array([d['memory_L2'] for d in serializer.data])
+             memory_Main_mem_list = np.array([d['memory_Main_mem'] for d in serializer.data])
+             memory_Rand_mem_list = np.array([d['memory_Rand_mem'] for d in serializer.data])
+             # 计算每个数组的平均值
+             basic_Mhz = np.mean(basic_Mhz_list)
+             basic_tlb_pages = np.mean(basic_tlb_pages_list)
+             basic_cache_line_bytes = np.mean(basic_cache_line_bytes_list)
+             basic_mem_par = np.mean(basic_mem_par_list)
+             basic_scal_load = np.mean(basic_scal_load_list)
+             processor_null_call = np.mean(processor_null_call_list)
+             processor_null_I_O = np.mean(processor_null_I_O_list)
+             processor_stat = np.mean(processor_stat_list)
+             processor_open_clo = np.mean(processor_open_clo_list)
+             processor_slct_TCP = np.mean(processor_slct_TCP_list)
+             processor_sig_inst = np.mean(processor_sig_inst_list)
+             processor_sig_hndl = np.mean(processor_sig_hndl_list)
+             processor_fork_proc = np.mean(processor_fork_proc_list)
+             processor_exec_proc = np.mean(processor_exec_proc_list)
+             processor_sh_proc = np.mean(processor_sh_proc_list)
+             processor_Mhz = np.mean(processor_Mhz_list)
+             basic_intgr_bit = np.mean(basic_intgr_bit_list)
+             basic_intgr_add = np.mean(basic_intgr_add_list)
+             basic_intgr_mul = np.mean(basic_intgr_mul_list)
+             basic_intgr_div = np.mean(basic_intgr_div_list)
+             basic_intgr_mod = np.mean(basic_intgr_mod_list)
+             basic_int64_bit = np.mean(basic_int64_bit_list)
+             basic_int64_add = np.mean(basic_int64_add_list)
+             basic_int64_mul = np.mean(basic_int64_mul_list)
+             basic_int64_div = np.mean(basic_int64_div_list)
+             basic_int64_mod = np.mean(basic_int64_mod_list)
+             basic_float_add = np.mean(basic_float_add_list)
+             basic_float_mul = np.mean(basic_float_mul_list)
+             basic_float_div = np.mean(basic_float_div_list)
+             basic_float_bogo = np.mean(basic_float_bogo_list)
+             basic_double_add = np.mean(basic_double_add_list)
+             basic_double_mul = np.mean(basic_double_mul_list)
+             basic_double_div = np.mean(basic_double_div_list)
+             basic_double_bogo = np.mean(basic_double_bogo_list)
+             context_2p_0K = np.mean(context_2p_0K_list)
+             context_2p_16K = np.mean(context_2p_16K_list)
+             context_2p_64K = np.mean(context_2p_64K_list)
+             context_8p_16K = np.mean(context_8p_16K_list)
+             context_8p_64K = np.mean(context_8p_64K_list)
+             context_16p_16K = np.mean(context_16p_16K_list)
+             context_16p_64K = np.mean(context_16p_64K_list)
+             local_2p_0K = np.mean(local_2p_0K_list)
+             local_Pipe = np.mean(local_Pipe_list)
+             local_AF_UNIX = np.mean(local_AF_UNIX_list)
+             local_UDP = np.mean(local_UDP_list)
+             local_TCP = np.mean(local_TCP_list)
+             local_TCP_conn = np.mean(local_TCP_conn_list)
+             local_RPC_TCP = np.mean(local_RPC_TCP_list)
+             local_RPC_UDP = np.mean(local_RPC_UDP_list)
+             local_bigger_Mmap_Latency = np.mean(local_bigger_Mmap_Latency_list)
+             local_bigger_Prot_Fault = np.mean(local_bigger_Prot_Fault_list)
+             local_bigger_Page_Fault = np.mean(local_bigger_Page_Fault_list)
+             local_bigger_100fd_selct = np.mean(local_bigger_100fd_selct_list)
+             local_bigger_0K_File_create = np.mean(local_bigger_0K_File_create_list)
+             local_bigger_0K_File_delete = np.mean(local_bigger_0K_File_delete_list)
+             local_bigger_10K_File_create = np.mean(local_bigger_10K_File_create_list)
+             local_bigger_10K_File_delete = np.mean(local_bigger_10K_File_delete_list)
+             local_bigger_Pipe = np.mean(local_bigger_Pipe_list)
+             local_bigger_AF_UNIX = np.mean(local_bigger_AF_UNIX_list)
+             local_bigger_TCP = np.mean(local_bigger_TCP_list)
+             local_bigger_File_reread = np.mean(local_bigger_File_reread_list)
+             local_bigger_Mmap_reread = np.mean(local_bigger_Mmap_reread_list)
+             local_bigger_Bcopy_libc = np.mean(local_bigger_Bcopy_libc_list)
+             local_bigger_Bcopy_hand = np.mean(local_bigger_Bcopy_hand_list)
+             local_bigger_Mem_read = np.mean(local_bigger_Mem_read_list)
+             local_bigger_Mem_write = np.mean(local_bigger_Mem_write_list)
+             memory_Mhz = np.mean(memory_Mhz_list)
+             memory_L1 = np.mean(memory_L1_list)
+             memory_L2 = np.mean(memory_L2_list)
+             memory_Main_mem = np.mean(memory_Main_mem_list)
+             memory_Rand_mem = np.mean(memory_Rand_mem_list)
+        data = {
+            'execute_cmd': execute_cmd,
+            'modify_parameters': modify_parameters,
+            'basic_Mhz': basic_Mhz,
+            'basic_tlb_pages': basic_tlb_pages,
+            'basic_cache_line_bytes': basic_cache_line_bytes,
+            'basic_mem_par': basic_mem_par,
+            'basic_scal_load': basic_scal_load,
+            'processor_null_call': processor_null_call,
+            'processor_null_I_O': processor_null_I_O,
+            'processor_stat': processor_stat,
+            'processor_open_clo': processor_open_clo,
+            'processor_slct_TCP': processor_slct_TCP,
+            'processor_sig_inst': processor_sig_inst,
+            'processor_sig_hndl': processor_sig_hndl,
+            'processor_fork_proc': processor_fork_proc,
+            'processor_exec_proc': processor_exec_proc,
+            'processor_sh_proc': processor_sh_proc,
+            'processor_Mhz': processor_Mhz,
+            'basic_intgr_bit': basic_intgr_bit,
+            'basic_intgr_add': basic_intgr_add,
+            'basic_intgr_mul': basic_intgr_mul,
+            'basic_intgr_div': basic_intgr_div,
+            'basic_intgr_mod': basic_intgr_mod,
+            'basic_int64_bit': basic_int64_bit,
+            'basic_int64_add': basic_int64_add,
+            'basic_int64_mul': basic_int64_mul,
+            'basic_int64_div': basic_int64_div,
+            'basic_int64_mod': basic_int64_mod,
+            'basic_float_add': basic_float_add,
+            'basic_float_mul': basic_float_mul,
+            'basic_float_div': basic_float_div,
+            'basic_float_bogo': basic_float_bogo,
+            'basic_double_add': basic_double_add,
+            'basic_double_mul': basic_double_mul,
+            'basic_double_div': basic_double_div,
+            'basic_double_bogo': basic_double_bogo,
+            'context_2p_0K': context_2p_0K,
+            'context_2p_16K': context_2p_16K,
+            'context_2p_64K': context_2p_64K,
+            'context_8p_16K': context_8p_16K,
+            'context_8p_64K': context_8p_64K,
+            'context_16p_16K': context_16p_16K,
+            'context_16p_64K': context_16p_64K,
+            'local_2p_0K': local_2p_0K,
+            'local_Pipe': local_Pipe,
+            'local_AF_UNIX': local_AF_UNIX,
+            'local_UDP': local_UDP,
+            'local_TCP': local_TCP,
+            'local_TCP_conn': local_TCP_conn,
+            'local_RPC_TCP': local_RPC_TCP,
+            'local_RPC_UDP': local_RPC_UDP,
+            'local_bigger_Mmap_Latency': local_bigger_Mmap_Latency,
+            'local_bigger_Prot_Fault': local_bigger_Prot_Fault,
+            'local_bigger_Page_Fault': local_bigger_Page_Fault,
+            'local_bigger_100fd_selct': local_bigger_100fd_selct,
+            'local_bigger_0K_File_create': local_bigger_0K_File_create,
+            'local_bigger_0K_File_delete': local_bigger_0K_File_delete,
+            'local_bigger_10K_File_create': local_bigger_10K_File_create,
+            'local_bigger_10K_File_delete': local_bigger_10K_File_delete,
+            'local_bigger_Pipe': local_bigger_Pipe,
+            'local_bigger_AF_UNIX': local_bigger_AF_UNIX,
+            'local_bigger_TCP': local_bigger_TCP,
+            'local_bigger_File_reread': local_bigger_File_reread,
+            'local_bigger_Mmap_reread': local_bigger_Mmap_reread,
+            'local_bigger_Bcopy_libc': local_bigger_Bcopy_libc,
+            'local_bigger_Bcopy_hand': local_bigger_Bcopy_hand,
+            'local_bigger_Mem_read': local_bigger_Mem_read,
+            'local_bigger_Mem_write': local_bigger_Mem_write,
+            'memory_Mhz': memory_Mhz,
+            'memory_L1': memory_L1,
+            'memory_L2': memory_L2,
+            'memory_Main_mem': memory_Main_mem,
+            'memory_Rand_mem': memory_Rand_mem,
+        }
+
         return data
 
     def list(self, request, *args, **kwargs):
@@ -124,11 +422,7 @@ class LmbenchViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Lmbench.objects.filter(env_id=env_id).all()
-        base_serializer = self.get_serializer(base_queryset, many=True)
-        # 判断数据超过两条，不显示
-        if len(base_queryset) > 1:
-            return json_response({}, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE, '数据存储有问题，存一条以上的数据了')
-        data = self.get_data(base_serializer)
+        data = self.get_data(base_queryset)
         others = [{'column1':'Lmbench','column2':'', 'column3':'Lmbench#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
         {'column1':'Basic system parameters','column2':'Mhz','column3':data['basic_Mhz']},
@@ -208,8 +502,7 @@ class LmbenchViewSet(CusModelViewSet):
             for index ,comparativeId in enumerate(comparsionIds):
                 new_index = 2 * index + 4
                 comparsion_queryset = Lmbench.objects.filter(env_id=comparativeId).all()
-                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_serializer)
+                comparsion_datas = self.get_data(comparsion_queryset)
                 others[0]['column'+str(new_index)] = 'Lmbench#'+str(index + 2)
                 others[1]['column'+str(new_index)] = comparsion_datas['execute_cmd']
                 others[2]['column'+str(new_index)] = comparsion_datas['modify_parameters']
