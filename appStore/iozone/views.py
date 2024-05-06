@@ -1,7 +1,4 @@
-import json
-
-from django.http import JsonResponse, request
-from django.shortcuts import render
+import numpy as np
 
 # Create your views here.
 from rest_framework import status
@@ -15,54 +12,67 @@ from appStore.utils.customer_view import CusModelViewSet
 
 class IozoneViewSet(CusModelViewSet):
     """
-    stream数据管理
+    iozone数据管理
     """
     queryset = Iozone.objects.all().order_by('id')
     serializer_class = IozoneSerializer
 
-    # pagination_class = LimsPageSet
-
-    # def list(self, request, *args, **kwargs):
-    #     """
-    #     返回列表
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     env_id = request.GET.get('env_id')
-    #     queryset = Iozone.objects.filter(env_id=env_id).all()
-    #     queryset = self.filter_queryset(queryset)
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     datas=[]
-    #     for data in serializer.data:
-    #         data = [{'first': '写测试（KB/s）', 'second': data['file_size'], 'third': data['write_test']},
-    #                 {'first': '重写测试（KB/s）', 'second': data['file_size'], 'third': data['rewrite_test']},
-    #                 {'first': '读测试（KB/s）', 'second': data['file_size'], 'third': data['read_test']},
-    #                 {'first': '重读测试（KB/s）', 'second': data['file_size'], 'third': data['reread_test']},
-    #                 {'first': '随机读测试（KB/s）', 'second': data['file_size'], 'third': data['random_read_test']},
-    #                 {'first': '随机写测试（KB/s）', 'second': data['file_size'], 'third': data['random_write_test']}]
-    #         datas.append(data)
-    #     # return json_response(serializer.data, status.HTTP_200_OK, '列表')
-    #     return json_response(datas, status.HTTP_200_OK, '列表')
-
-    def get_data(self, serializer):
+    def get_data(self, serializer_):
+        serializer = self.get_serializer(serializer_, many=True)
         datas = []
-        for data in serializer.data:
-            data_ = [
-                {'column1': data['testcase_name'] + '-' + '写测试（KB/s）', 'column2': data['file_size'],
-                 'column3': data['write_test']},
-                {'column1': data['testcase_name'] + '-' + '重写测试（KB/s）', 'column2': data['file_size'],
-                 'column3': data['rewrite_test']},
-                {'column1': data['testcase_name'] + '-' + '读测试（KB/s）', 'column2': data['file_size'],
-                 'column3': data['read_test']},
-                {'column1': data['testcase_name'] + '-' + '重读测试（KB/s）', 'column2': data['file_size'],
-                 'column3': data['reread_test']},
-                {'column1': data['testcase_name'] + '-' + '随机读测试（KB/s）', 'column2': data['file_size'],
-                 'column3': data['random_read_test']},
-                {'column1': data['testcase_name'] + '-' + '随机写测试（KB/s）', 'column2': data['file_size'],
-                 'column3': data['random_write_test']}]
-            datas.extend(data_)
+        groups = set([d['mark_name'] for d in serializer.data])
+        # 计算这些的平均值 data['write_test']
+        if len(groups) == 1:
+            for data in serializer.data:
+                data_ = [
+                    {'column1': data['testcase_name'] + '-' + '写测试（KB/s）', 'column2': data['file_size'],
+                     'column3': data['write_test']},
+                    {'column1': data['testcase_name'] + '-' + '重写测试（KB/s）', 'column2': data['file_size'],
+                     'column3': data['rewrite_test']},
+                    {'column1': data['testcase_name'] + '-' + '读测试（KB/s）', 'column2': data['file_size'],
+                     'column3': data['read_test']},
+                    {'column1': data['testcase_name'] + '-' + '重读测试（KB/s）', 'column2': data['file_size'],
+                     'column3': data['reread_test']},
+                    {'column1': data['testcase_name'] + '-' + '随机读测试（KB/s）', 'column2': data['file_size'],
+                     'column3': data['random_read_test']},
+                    {'column1': data['testcase_name'] + '-' + '随机写测试（KB/s）', 'column2': data['file_size'],
+                     'column3': data['random_write_test']}]
+                datas.extend(data_)
+        else:
+            test_types = set([d['testcase_name'] for d in serializer.data])
+            for test_type in test_types:
+                test_type_data_ = serializer_.filter(testcase_name=test_type)
+                # 处理half数据，将每个字典转换为NumPy数组
+                file_size_list = [d.file_size for d in test_type_data_]
+                write_test_list = [d.write_test for d in test_type_data_]
+                rewrite_test_list = [d.rewrite_test for d in test_type_data_]
+                read_test_list = [d.read_test for d in test_type_data_]
+                reread_test_list = [d.reread_test for d in test_type_data_]
+                random_read_test_list = [d.random_read_test for d in test_type_data_]
+                random_write_test_list = [d.random_write_test for d in test_type_data_]
+                # 计算每个数组的平均值
+                file_size = np.mean(file_size_list)
+                # print(file_size_list,file_size,222)
+                write_test = np.mean(write_test_list)
+                rewrite_test = np.mean(rewrite_test_list)
+                read_test = np.mean(read_test_list)
+                reread_test = np.mean(reread_test_list)
+                random_read_test = np.mean(random_read_test_list)
+                random_write_test = np.mean(random_write_test_list)
+                data_ = [
+                    {'column1': test_type + '-' + '写测试（KB/s）', 'column2': file_size,
+                     'column3': write_test},
+                    {'column1': test_type + '-' + '重写测试（KB/s）', 'column2': file_size,
+                     'column3': rewrite_test},
+                    {'column1': test_type + '-' + '读测试（KB/s）', 'column2': file_size,
+                     'column3': read_test},
+                    {'column1': test_type + '-' + '重读测试（KB/s）', 'column2': file_size,
+                     'column3': reread_test},
+                    {'column1': test_type + '-' + '随机读测试（KB/s）', 'column2': file_size,
+                     'column3': random_read_test},
+                    {'column1': test_type + '-' + '随机写测试（KB/s）', 'column2': file_size,
+                     'column3': random_write_test}]
+                datas.extend(data_)
         return datas
 
     def list(self, request, *args, **kwargs):
@@ -78,7 +88,9 @@ class IozoneViewSet(CusModelViewSet):
         comparsionIds = comparsionIds.split(',')
         base_queryset = Iozone.objects.filter(env_id=env_id).all()
         base_serializer = self.get_serializer(base_queryset, many=True)
-        datas = self.get_data(base_serializer)
+        if not base_queryset:
+            return json_response({}, status.HTTP_200_OK, '未获取到数据')
+        datas = self.get_data(base_queryset)
         others = [{'column1': 'Iozone', 'column2': '', 'column3': 'Iozone#1'},
                   {'column1': '执行命令', 'column2': '', 'column3': base_serializer.data[0]['execute_cmd']},
                   {'column1': '修改参数：', 'column2': '', 'column3': base_serializer.data[0]['modify_parameters']}]
@@ -89,7 +101,9 @@ class IozoneViewSet(CusModelViewSet):
                 new_index = 2 * index + 4
                 comparsion_queryset = Iozone.objects.filter(env_id=comparativeId).all()
                 comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_serializer)
+                if not base_queryset:
+                    return json_response({}, status.HTTP_200_OK, '未获取到数据')
+                comparsion_datas = self.get_data(comparsion_queryset)
                 others[0]['column' + str(new_index)] = 'Iozone#'+str(index + 2)
                 others[1]['column' + str(new_index)] = comparsion_serializer.data[0]['execute_cmd']
                 others[2]['column' + str(new_index)] = comparsion_serializer.data[0]['modify_parameters']
