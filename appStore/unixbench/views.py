@@ -1,4 +1,5 @@
 # Create your views here.
+import numpy as np
 from rest_framework import status
 
 from appStore.unixbench.models import Unixbench
@@ -32,8 +33,12 @@ class UnixbenchViewSet(CusModelViewSet):
     #     serializer = self.get_serializer(queryset, many=True)
     #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
 
-    def get_data(self, serializer):
+    def get_data(self, serializer_):
+        serializer = self.get_serializer(serializer_, many=True)
         # 初始化数据为空 否则如果下面只获取的单线程或者多线程另外一组获取不到可能会报错
+        # todo 后期做优化考虑怎么未查找到的情况
+        execute_cmd = serializer.data[0]['execute_cmd']
+        modify_parameters = serializer.data[0]['modify_parameters']
         single_Dhrystone = ''
         single_Double_Precision = ''
         single_execl_throughput = ''
@@ -60,39 +65,103 @@ class UnixbenchViewSet(CusModelViewSet):
         multi_shell_scripts_8 = ''
         multi_system_call_overhead = ''
         multi_index_score = ''
-        execute_cmd = serializer.data[0]['execute_cmd']
-        modify_parameters = serializer.data[0]['modify_parameters']
-        for data in serializer.data:
-            if data['thread'] == '单线程':
-                # 查询基准数据的单线程数据]
-                single_Dhrystone = data['Dhrystone']
-                single_Double_Precision = data['Double_Precision']
-                single_execl_throughput = data['execl_throughput']
-                single_file_copy_1024 = data['file_copy_1024']
-                single_file_copy_256 = data['file_copy_256']
-                single_file_copy_4096 = data['file_copy_4096']
-                single_pipe_throughput = data['pipe_throughput']
-                single_pipe_based = data['pipe_based']
-                single_process_creation = data['process_creation']
-                single_shell_scripts_1 = data['shell_scripts_1']
-                single_shell_scripts_8 = data['shell_scripts_8']
-                single_system_call_overhead = data['system_call_overhead']
-                single_index_score = data['index_score']
-            if data['thread'] == '多线程':
-                # 查询基准数据的多线程数据
-                multi_Dhrystone = data['Dhrystone']
-                multi_Double_Precision = data['Double_Precision']
-                multi_execl_throughput = data['execl_throughput']
-                multi_file_copy_1024 = data['file_copy_1024']
-                multi_file_copy_256 = data['file_copy_256']
-                multi_file_copy_4096 = data['file_copy_4096']
-                multi_pipe_throughput = data['pipe_throughput']
-                multi_pipe_based = data['pipe_based']
-                multi_process_creation = data['process_creation']
-                multi_shell_scripts_1 = data['shell_scripts_1']
-                multi_shell_scripts_8 = data['shell_scripts_8']
-                multi_system_call_overhead = data['system_call_overhead']
-                multi_index_score = data['index_score']
+
+        # 0-0 或者0-1这样的数据有几组，以此来判断需不需要计算平均值
+        groups = set([d['mark_name'] for d in serializer.data])
+
+        if len(groups) == 1:
+            for data in serializer.data:
+                if data['thread'] == '单线程':
+                    # 查询基准数据的单线程数据
+                    single_Dhrystone = data['Dhrystone']
+                    single_Double_Precision = data['Double_Precision']
+                    single_execl_throughput = data['execl_throughput']
+                    single_file_copy_1024 = data['file_copy_1024']
+                    single_file_copy_256 = data['file_copy_256']
+                    single_file_copy_4096 = data['file_copy_4096']
+                    single_pipe_throughput = data['pipe_throughput']
+                    single_pipe_based = data['pipe_based']
+                    single_process_creation = data['process_creation']
+                    single_shell_scripts_1 = data['shell_scripts_1']
+                    single_shell_scripts_8 = data['shell_scripts_8']
+                    single_system_call_overhead = data['system_call_overhead']
+                    single_index_score = data['index_score']
+                if data['thread'] == '多线程':
+                    # 查询基准数据的多线程数据
+                    multi_Dhrystone = data['Dhrystone']
+                    multi_Double_Precision = data['Double_Precision']
+                    multi_execl_throughput = data['execl_throughput']
+                    multi_file_copy_1024 = data['file_copy_1024']
+                    multi_file_copy_256 = data['file_copy_256']
+                    multi_file_copy_4096 = data['file_copy_4096']
+                    multi_pipe_throughput = data['pipe_throughput']
+                    multi_pipe_based = data['pipe_based']
+                    multi_process_creation = data['process_creation']
+                    multi_shell_scripts_1 = data['shell_scripts_1']
+                    multi_shell_scripts_8 = data['shell_scripts_8']
+                    multi_system_call_overhead = data['system_call_overhead']
+                    multi_index_score = data['index_score']
+        else:
+            # 数据分组
+            single_data_ = serializer_.filter(thread='单线程')
+            multi_data_ = serializer_.filter(thread='多线程')
+            # 单线程数据
+            single_Dhrystone_list = [d.Dhrystone for d in single_data_]
+            single_Double_Precision_list = [d.Double_Precision for d in single_data_]
+            single_execl_throughput_list = [d.execl_throughput for d in single_data_]
+            single_file_copy_1024_list = [d.file_copy_1024 for d in single_data_]
+            single_file_copy_256_list = [d.file_copy_256 for d in single_data_]
+            single_file_copy_4096_list = [d.file_copy_4096 for d in single_data_]
+            single_pipe_throughput_list = [d.pipe_throughput for d in single_data_]
+            single_pipe_based_list = [d.pipe_based for d in single_data_]
+            single_process_creation_list = [d.process_creation for d in single_data_]
+            single_shell_scripts_1_list = [d.shell_scripts_1 for d in single_data_]
+            single_shell_scripts_8_list = [d.shell_scripts_8 for d in single_data_]
+            single_system_call_overhead_list = [d.system_call_overhead for d in single_data_]
+            single_index_score_list = [d.index_score for d in single_data_]
+            # 计算每个数组的平均值
+            single_Dhrystone = np.mean(single_Dhrystone_list)
+            single_Double_Precision = np.mean(single_Double_Precision_list)
+            single_execl_throughput = np.mean(single_execl_throughput_list)
+            single_file_copy_1024 = np.mean(single_file_copy_1024_list)
+            single_file_copy_256 = np.mean(single_file_copy_256_list)
+            single_file_copy_4096 = np.mean(single_file_copy_4096_list)
+            single_pipe_throughput = np.mean(single_pipe_throughput_list)
+            single_pipe_based = np.mean(single_pipe_based_list)
+            single_process_creation = np.mean(single_process_creation_list)
+            single_shell_scripts_1 = np.mean(single_shell_scripts_1_list)
+            single_shell_scripts_8 = np.mean(single_shell_scripts_8_list)
+            single_system_call_overhead = np.mean(single_system_call_overhead_list)
+            single_index_score = np.mean(single_index_score_list)
+            # 多线程数据
+            multi_Dhrystone_list = [d.Dhrystone for d in multi_data_]
+            multi_Double_Precision_list = [d.Double_Precision for d in multi_data_]
+            multi_execl_throughput_list = [d.execl_throughput for d in multi_data_]
+            multi_file_copy_1024_list = [d.file_copy_1024 for d in multi_data_]
+            multi_file_copy_256_list = [d.file_copy_256 for d in multi_data_]
+            multi_file_copy_4096_list = [d.file_copy_4096 for d in multi_data_]
+            multi_pipe_throughput_list = [d.pipe_throughput for d in multi_data_]
+            multi_pipe_based_list = [d.pipe_based for d in multi_data_]
+            multi_process_creation_list = [d.process_creation for d in multi_data_]
+            multi_shell_scripts_1_list = [d.shell_scripts_1 for d in multi_data_]
+            multi_shell_scripts_8_list = [d.shell_scripts_8 for d in multi_data_]
+            multi_system_call_overhead_list = [d.system_call_overhead for d in multi_data_]
+            multi_index_score_list = [d.index_score for d in multi_data_]
+            # 计算每个数组的平均值
+            multi_Dhrystone = np.mean(multi_Dhrystone_list)
+            multi_Double_Precision = np.mean(multi_Double_Precision_list)
+            multi_execl_throughput = np.mean(multi_execl_throughput_list)
+            multi_file_copy_1024 = np.mean(multi_file_copy_1024_list)
+            multi_file_copy_256 = np.mean(multi_file_copy_256_list)
+            multi_file_copy_4096 = np.mean(multi_file_copy_4096_list)
+            multi_pipe_throughput = np.mean(multi_pipe_throughput_list)
+            multi_pipe_based = np.mean(multi_pipe_based_list)
+            multi_process_creation = np.mean(multi_process_creation_list)
+            multi_shell_scripts_1 = np.mean(multi_shell_scripts_1_list)
+            multi_shell_scripts_8 = np.mean(multi_shell_scripts_8_list)
+            multi_system_call_overhead = np.mean(multi_system_call_overhead_list)
+            multi_index_score = np.mean(multi_index_score_list)
+
         new_data = {'single_Dhrystone': single_Dhrystone,
                 'single_Double_Precision': single_Double_Precision,
                 'single_execl_throughput': single_execl_throughput,
