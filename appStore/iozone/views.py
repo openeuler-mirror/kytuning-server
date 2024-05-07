@@ -17,27 +17,22 @@ class IozoneViewSet(CusModelViewSet):
     queryset = Iozone.objects.all().order_by('id')
     serializer_class = IozoneSerializer
 
-    def get_data(self, serializer_):
+    def get_data(self,serializer_):
         serializer = self.get_serializer(serializer_, many=True)
         datas = []
         groups = set([d['mark_name'] for d in serializer.data])
         # 计算这些的平均值 data['write_test']
         if len(groups) == 1:
             for data in serializer.data:
-                data_ = [
-                    {'column1': data['testcase_name'] + '-' + '写测试（KB/s）', 'column2': data['file_size'],
-                     'column3': data['write_test']},
-                    {'column1': data['testcase_name'] + '-' + '重写测试（KB/s）', 'column2': data['file_size'],
-                     'column3': data['rewrite_test']},
-                    {'column1': data['testcase_name'] + '-' + '读测试（KB/s）', 'column2': data['file_size'],
-                     'column3': data['read_test']},
-                    {'column1': data['testcase_name'] + '-' + '重读测试（KB/s）', 'column2': data['file_size'],
-                     'column3': data['reread_test']},
-                    {'column1': data['testcase_name'] + '-' + '随机读测试（KB/s）', 'column2': data['file_size'],
-                     'column3': data['random_read_test']},
-                    {'column1': data['testcase_name'] + '-' + '随机写测试（KB/s）', 'column2': data['file_size'],
-                     'column3': data['random_write_test']}]
-                datas.extend(data_)
+                data = {'testcase_name': data['testcase_name'],
+                        'file_size': data['file_size'],
+                        'write_test': data['write_test'],
+                        'rewrite_test': data['rewrite_test'],
+                        'read_test': data['read_test'],
+                        'reread_test': data['reread_test'],
+                        'random_read_test': data['random_read_test'],
+                        'random_write_test': data['random_write_test'],}
+                datas.append(data)
         else:
             test_types = set([d['testcase_name'] for d in serializer.data])
             for test_type in test_types:
@@ -52,28 +47,38 @@ class IozoneViewSet(CusModelViewSet):
                 random_write_test_list = [d.random_write_test for d in test_type_data_]
                 # 计算每个数组的平均值
                 file_size = np.mean(file_size_list)
-                # print(file_size_list,file_size,222)
                 write_test = np.mean(write_test_list)
                 rewrite_test = np.mean(rewrite_test_list)
                 read_test = np.mean(read_test_list)
                 reread_test = np.mean(reread_test_list)
                 random_read_test = np.mean(random_read_test_list)
                 random_write_test = np.mean(random_write_test_list)
-                data_ = [
-                    {'column1': test_type + '-' + '写测试（KB/s）', 'column2': file_size,
-                     'column3': write_test},
-                    {'column1': test_type + '-' + '重写测试（KB/s）', 'column2': file_size,
-                     'column3': rewrite_test},
-                    {'column1': test_type + '-' + '读测试（KB/s）', 'column2': file_size,
-                     'column3': read_test},
-                    {'column1': test_type + '-' + '重读测试（KB/s）', 'column2': file_size,
-                     'column3': reread_test},
-                    {'column1': test_type + '-' + '随机读测试（KB/s）', 'column2': file_size,
-                     'column3': random_read_test},
-                    {'column1': test_type + '-' + '随机写测试（KB/s）', 'column2': file_size,
-                     'column3': random_write_test}]
-                datas.extend(data_)
+
+                data = {'testcase_name': test_type,
+                        'file_size': file_size,
+                        'write_test': write_test,
+                        'rewrite_test': rewrite_test,
+                        'read_test': read_test,
+                        'reread_test': reread_test,
+                        'random_read_test': random_read_test,
+                        'random_write_test': random_write_test, }
+                datas.append(data)
         return datas
+
+    def do_base_data(self, datas):
+        new_data = []
+        for value in datas:
+            data = [
+                {'column1': value['testcase_name'] + '-' + '写测试（KB/s）', 'column2':  value['file_size'], 'column3': value['write_test']},
+                {'column1': value['testcase_name'] + '-' + '重写测试（KB/s）', 'column2':  value['file_size'], 'column3': value['rewrite_test']},
+                {'column1': value['testcase_name'] + '-' + '读测试（KB/s）', 'column2':  value['file_size'], 'column3': value['read_test']},
+                {'column1': value['testcase_name'] + '-' + '重读测试（KB/s）', 'column2':  value['file_size'], 'column3': value['reread_test']},
+                {'column1': value['testcase_name'] + '-' + '随机读测试（KB/s）', 'column2':  value['file_size'], 'column3': value['random_read_test']},
+                {'column1': value['testcase_name'] + '-' + '随机写测试（KB/s）', 'column2':  value['file_size'], 'column3': value['random_write_test']},
+                    ]
+            new_data.extend(data)
+        return new_data
+
 
     def list(self, request, *args, **kwargs):
         """
@@ -90,7 +95,8 @@ class IozoneViewSet(CusModelViewSet):
         base_serializer = self.get_serializer(base_queryset, many=True)
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '未获取到数据')
-        datas = self.get_data(base_queryset)
+        base_datas = self.get_data(base_queryset)
+        datas = self.do_base_data(base_datas)
         others = [{'column1': 'Iozone', 'column2': '', 'column3': 'Iozone#1'},
                   {'column1': '执行命令', 'column2': '', 'column3': base_serializer.data[0]['execute_cmd']},
                   {'column1': '修改参数：', 'column2': '', 'column3': base_serializer.data[0]['modify_parameters']}]
@@ -114,13 +120,21 @@ class IozoneViewSet(CusModelViewSet):
                 for value in comparsion_datas:
                     # 判断comparsion_datas数据中的column1字段和datas中的column1字段相同，则在datas中增加值对应值
                     for index2, data_ in enumerate(datas):
-                        if data_['column1'] == value['column1']:
+                        if data_['column1'].split('-')[0] == value['testcase_name']:
                             # 在datas中增加对比数据
-                            datas[index2]['column' + str(new_index)] = value['column3']
+                            datas[index2]['column' + str(new_index)] = value['write_test']
+                            datas[index2 + 1]['column' + str(new_index)] = value['rewrite_test']
+                            datas[index2 + 2]['column' + str(new_index)] = value['read_test']
+                            datas[index2 + 3]['column' + str(new_index)] = value['reread_test']
+                            datas[index2 + 4]['column' + str(new_index)] = value['random_read_test']
+                            datas[index2 + 5]['column' + str(new_index)] = value['random_write_test']
                             # 在datas中增加计算数据
-                            datas[index2]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (datas[index2]['column' + str(new_index)] - datas[index2]['column3']) /
-                                        datas[index2]['column3'] * 100)
+                            datas[index2]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
+                            datas[index2 + 1]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
+                            datas[index2 + 2]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
+                            datas[index2 + 3]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
+                            datas[index2 + 4]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
+                            datas[index2 + 5]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
                             break
         iozone_data = {'others': others, 'data': datas}
         return json_response(iozone_data, status.HTTP_200_OK, '列表')

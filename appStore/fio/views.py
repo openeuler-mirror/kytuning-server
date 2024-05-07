@@ -48,7 +48,7 @@ class FioViewSet(CusModelViewSet):
 
     def do_base_data(self, datas):
         new_data = []
-        for index, value in enumerate(datas):
+        for value in datas:
             data = [{'column1': value['rw'], 'column2': 'bs', 'column3': value['bs']},
                     {'column1': value['rw'], 'column2': 'io', 'column3': value['io']},
                     {'column1': value['rw'], 'column2': 'iops', 'column3': value['iops']},
