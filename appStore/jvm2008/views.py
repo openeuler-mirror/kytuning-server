@@ -1,7 +1,4 @@
-import json
-
-from django.http import JsonResponse, request
-from django.shortcuts import render
+import numpy as np
 
 # Create your views here.
 from rest_framework import status
@@ -20,23 +17,9 @@ class Jvm2008ViewSet(CusModelViewSet):
     queryset = Jvm2008.objects.all().order_by('id')
     serializer_class = Jvm2008Serializer
 
-    # pagination_class = LimsPageSet
 
-    # def list(self, request, *args, **kwargs):
-    #     """
-    #     返回列表
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     env_id = request.GET.get('env_id')
-    #     queryset = Jvm2008.objects.filter(env_id=env_id).all()
-    #     queryset = self.filter_queryset(queryset)
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
-
-    def get_data(self, serializer):
+    def get_data(self, serializer_):
+        serializer = self.get_serializer(serializer_, many=True)
         execute_cmd = serializer.data[0]['execute_cmd']
         modify_parameters = serializer.data[0]['modify_parameters']
         base_compiler = ''
@@ -63,33 +46,95 @@ class Jvm2008ViewSet(CusModelViewSet):
         peak_sunflow = ''
         peak_xml = ''
         peak_Noncompliant_pomposite_result = ''
-        for data in serializer.data:
-            if data['tune_type'] == 'base':
-                base_compiler = data['compiler']
-                base_compress = data['compress']
-                base_crypto = data['crypto']
-                base_derby = data['derby']
-                base_mpegaudio = data['mpegaudio']
-                base_scimark_large = data['scimark_large']
-                base_scimark_small = data['scimark_small']
-                base_serial = data['serial']
-                base_startup = data['startup']
-                base_sunflow = data['sunflow']
-                base_xml = data['xml']
-                base_Noncompliant_pomposite_result = data['Noncompliant_pomposite_result']
-            elif data['tune_type'] == 'peak':
-                peak_compiler = data['compiler']
-                peak_compress = data['compress']
-                peak_crypto = data['crypto']
-                peak_derby = data['derby']
-                peak_mpegaudio = data['mpegaudio']
-                peak_scimark_large = data['scimark_large']
-                peak_scimark_small = data['scimark_small']
-                peak_serial = data['serial']
-                peak_startup = data['startup']
-                peak_sunflow = data['sunflow']
-                peak_xml = data['xml']
-                peak_Noncompliant_pomposite_result = data['Noncompliant_pomposite_result']
+
+        # 0-0 或者0-1这样的数据有几组，以此来判断需不需要计算平均值
+        groups = set([d['mark_name'] for d in serializer.data])
+        if len(groups) == 1:
+            for data in serializer.data:
+                if data['tune_type'] == 'base':
+                    base_compiler = data['compiler']
+                    base_compress = data['compress']
+                    base_crypto = data['crypto']
+                    base_derby = data['derby']
+                    base_mpegaudio = data['mpegaudio']
+                    base_scimark_large = data['scimark_large']
+                    base_scimark_small = data['scimark_small']
+                    base_serial = data['serial']
+                    base_startup = data['startup']
+                    base_sunflow = data['sunflow']
+                    base_xml = data['xml']
+                    base_Noncompliant_pomposite_result = data['Noncompliant_pomposite_result']
+                elif data['tune_type'] == 'peak':
+                    peak_compiler = data['compiler']
+                    peak_compress = data['compress']
+                    peak_crypto = data['crypto']
+                    peak_derby = data['derby']
+                    peak_mpegaudio = data['mpegaudio']
+                    peak_scimark_large = data['scimark_large']
+                    peak_scimark_small = data['scimark_small']
+                    peak_serial = data['serial']
+                    peak_startup = data['startup']
+                    peak_sunflow = data['sunflow']
+                    peak_xml = data['xml']
+                    peak_Noncompliant_pomposite_result = data['Noncompliant_pomposite_result']
+        else:
+            # 数据分组
+            base_data_ = serializer_.filter(tune_type='base')
+            peak_data_ = serializer_.filter(tune_type='peak')
+            # base数据，将每个字典转换为NumPy数组
+            base_compiler_list = [d.compiler for d in base_data_]
+            base_compress_list = [d.compress for d in base_data_]
+            base_crypto_list = [d.crypto for d in base_data_]
+            base_derby_list = [d.derby for d in base_data_]
+            base_mpegaudio_list = [d.mpegaudio for d in base_data_]
+            base_scimark_large_list = [d.scimark_large for d in base_data_]
+            base_scimark_small_list = [d.scimark_small for d in base_data_]
+            base_serial_list = [d.serial for d in base_data_]
+            base_startup_list = [d.startup for d in base_data_]
+            base_sunflow_list = [d.sunflow for d in base_data_]
+            base_xml_list = [d.xml for d in base_data_]
+            base_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in base_data_]
+            # 计算每个数组的平均值
+            base_compiler = np.mean(base_compiler_list)
+            base_compress = np.mean(base_compress_list)
+            base_crypto = np.mean(base_crypto_list)
+            base_derby = np.mean(base_derby_list)
+            base_mpegaudio = np.mean(base_mpegaudio_list)
+            base_scimark_large = np.mean(base_scimark_large_list)
+            base_scimark_small = np.mean(base_scimark_small_list)
+            base_serial = np.mean(base_serial_list)
+            base_startup = np.mean(base_startup_list)
+            base_sunflow = np.mean(base_sunflow_list)
+            base_xml = np.mean(base_xml_list)
+            base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list)
+            # peak数据，将每个字典转换为NumPy数组
+            peak_compiler_list = [d.compiler for d in peak_data_]
+            peak_compress_list = [d.compress for d in peak_data_]
+            peak_crypto_list = [d.crypto for d in peak_data_]
+            peak_derby_list = [d.derby for d in peak_data_]
+            peak_mpegaudio_list = [d.mpegaudio for d in peak_data_]
+            peak_scimark_large_list = [d.scimark_large for d in peak_data_]
+            peak_scimark_small_list = [d.scimark_small for d in peak_data_]
+            peak_serial_list = [d.serial for d in peak_data_]
+            peak_startup_list = [d.startup for d in peak_data_]
+            peak_sunflow_list = [d.sunflow for d in peak_data_]
+            peak_xml_list = [d.xml for d in peak_data_]
+            peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_]
+            # 计算每个数组的平均值
+            peak_compiler = np.mean(peak_compiler_list)
+            print(peak_compiler_list,111,peak_compiler)
+            peak_compress = np.mean(peak_compress_list)
+            peak_crypto = np.mean(peak_crypto_list)
+            peak_derby = np.mean(peak_derby_list)
+            peak_mpegaudio = np.mean(peak_mpegaudio_list)
+            peak_scimark_large = np.mean(peak_scimark_large_list)
+            peak_scimark_small = np.mean(peak_scimark_small_list)
+            peak_serial = np.mean(peak_serial_list)
+            peak_startup = np.mean(peak_startup_list)
+            peak_sunflow = np.mean(peak_sunflow_list)
+            peak_xml = np.mean(peak_xml_list)
+            peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list)
+
         new_data = {
             'execute_cmd': execute_cmd,
             'modify_parameters': modify_parameters,
@@ -132,11 +177,7 @@ class Jvm2008ViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Jvm2008.objects.filter(env_id=env_id).all()
-        base_serializer = self.get_serializer(base_queryset, many=True)
-        # 判断数据超过两条，不显示
-        if len(base_queryset) > 2:
-            return json_response({}, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE, '数据存储有问题，存两条以上的数据了')
-        data = self.get_data(base_serializer)
+        data = self.get_data(base_queryset)
         others = [{'column1': 'Jvm2008', 'column2': '', 'column3': 'Jvm2008m#1'},
                   {'column1': '执行命令', 'column2': '', 'column3': data['execute_cmd']},
                   {'column1': '修改参数：', 'column2': '', 'column3': data['modify_parameters']}]
@@ -174,8 +215,7 @@ class Jvm2008ViewSet(CusModelViewSet):
             for index, comparativeId in enumerate(comparsionIds):
                 new_index = 2 * index + 4
                 comparsion_queryset = Jvm2008.objects.filter(env_id=comparativeId).all()
-                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_serializer)
+                comparsion_datas = self.get_data(comparsion_queryset)
                 others[0]['column' + str(new_index)] = 'Jvm2008#' + str(index + 2)
                 others[1]['column' + str(new_index)] = comparsion_datas['execute_cmd']
                 others[2]['column' + str(new_index)] = comparsion_datas['modify_parameters']
@@ -270,7 +310,8 @@ class Jvm2008ViewSet(CusModelViewSet):
                 data_jvm2008['env_id'] = request.__dict__['data_jvm2008']['env_id']
                 data_jvm2008['tune_type'] = tune_type
                 data_jvm2008['execute_cmd'] = 'xxx'
-                data_jvm2008['modify_parameters'] = 'xxx'
+                data_jvm2008['modify_parameters'] = '参数'
+                data_jvm2008['mark_name'] = '-'.join(k.split('-')[-2:])
                 data_jvm2008['compiler'] = jvm2008_json['items'][tune_type]['compiler']
                 data_jvm2008['compress'] = jvm2008_json['items'][tune_type]['compress']
                 data_jvm2008['crypto'] = jvm2008_json['items'][tune_type]['crypto']
