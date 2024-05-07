@@ -1,7 +1,4 @@
-import json
-
-from django.http import JsonResponse, request
-from django.shortcuts import render
+import numpy as np
 
 # Create your views here.
 from rest_framework import status
@@ -34,8 +31,9 @@ class Cpu2017ViewSet(CusModelViewSet):
     #     serializer = self.get_serializer(queryset, many=True)
     #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
 
-    def get_data(self, serializer):
+    def get_data(self, serializer_):
         # 初始化数据为空 否则如果下面只获取的单线程或者多线程另外一组获取不到可能会报错
+        serializer = self.get_serializer(serializer_, many=True)
         execute_cmd = serializer.data[0]['execute_cmd']
         modify_parameters = serializer.data[0]['modify_parameters']
 
@@ -147,122 +145,333 @@ class Cpu2017ViewSet(CusModelViewSet):
         # 先判断数据的TuneType确定是base还是peak
         # 在判断数据的thread确定是单线程还是多线程
         # 在判断tuneType确定是int还是fp
-        for data in serializer.data:
-            # 判断数据的TuneType确定是base还是peak
-            if data['tuneType'] == 'base':
-                if data['thread'] == '单线程':
-                    if data['dtype'] == 'int':
-                        base_single_int_rate_500_perlbench_r = data['int_500_perlbench_r']
-                        base_single_int_rate_502_gcc_r = data['int_502_gcc_r']
-                        base_single_int_rate_505_mcf_r = data['int_505_mcf_r']
-                        base_single_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
-                        base_single_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
-                        base_single_int_rate_525_x264_r = data['int_525_x264_r']
-                        base_single_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
-                        base_single_int_rate_541_leela_r = data['int_541_leela_r']
-                        base_single_int_rate_548_exchange2_r = data['int_548_exchange2_r']
-                        base_single_int_rate_557_xz_r = data['int_557_xz_r']
-                        base_single_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
-                    elif data['dtype'] == 'fp':
-                        base_single_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
-                        base_single_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
-                        base_single_fp_rate_508_namd_r = data['fp_508_namd_r']
-                        base_single_fp_rate_510_parest_r = data['fp_510_parest_r']
-                        base_single_fp_rate_511_povray_r = data['fp_511_povray_r']
-                        base_single_fp_rate_519_lbm_r = data['fp_519_lbm_r']
-                        base_single_fp_rate_521_wrf_r = data['fp_521_wrf_r']
-                        base_single_fp_rate_526_blender_r = data['fp_526_blender_r']
-                        base_single_fp_rate_527_cam4_r = data['fp_527_cam4_r']
-                        base_single_fp_rate_538_imagick_r = data['fp_538_imagick_r']
-                        base_single_fp_rate_544_nab_r = data['fp_544_nab_r']
-                        base_single_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
-                        base_single_fp_rate_554_roms_r = data['fp_554_roms_r']
-                        base_single_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
-                elif data['thread'] == '多线程':
-                    if data['dtype'] == 'int':
-                        base_multi_int_rate_500_perlbench_r = data['int_500_perlbench_r']
-                        base_multi_int_rate_502_gcc_r = data['int_502_gcc_r']
-                        base_multi_int_rate_505_mcf_r = data['int_505_mcf_r']
-                        base_multi_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
-                        base_multi_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
-                        base_multi_int_rate_525_x264_r = data['int_525_x264_r']
-                        base_multi_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
-                        base_multi_int_rate_541_leela_r = data['int_541_leela_r']
-                        base_multi_int_rate_548_exchange2_r = data['int_548_exchange2_r']
-                        base_multi_int_rate_557_xz_r = data['int_557_xz_r']
-                        base_multi_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
-                    elif data['dtype'] == 'fp':
-                        base_multi_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
-                        base_multi_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
-                        base_multi_fp_rate_508_namd_r = data['fp_508_namd_r']
-                        base_multi_fp_rate_510_parest_r = data['fp_510_parest_r']
-                        base_multi_fp_rate_511_povray_r = data['fp_511_povray_r']
-                        base_multi_fp_rate_519_lbm_r = data['fp_519_lbm_r']
-                        base_multi_fp_rate_521_wrf_r = data['fp_521_wrf_r']
-                        base_multi_fp_rate_526_blender_r = data['fp_526_blender_r']
-                        base_multi_fp_rate_527_cam4_r = data['fp_527_cam4_r']
-                        base_multi_fp_rate_538_imagick_r = data['fp_538_imagick_r']
-                        base_multi_fp_rate_544_nab_r = data['fp_544_nab_r']
-                        base_multi_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
-                        base_multi_fp_rate_554_roms_r = data['fp_554_roms_r']
-                        base_multi_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
-            elif data['tuneType'] == 'peak':
-                if data['thread'] == '单线程':
-                    if data['dtype'] == 'int':
-                        peak_single_int_rate_500_perlbench_r = data['int_500_perlbench_r']
-                        peak_single_int_rate_502_gcc_r = data['int_502_gcc_r']
-                        peak_single_int_rate_505_mcf_r = data['int_505_mcf_r']
-                        peak_single_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
-                        peak_single_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
-                        peak_single_int_rate_525_x264_r = data['int_525_x264_r']
-                        peak_single_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
-                        peak_single_int_rate_541_leela_r = data['int_541_leela_r']
-                        peak_single_int_rate_548_exchange2_r = data['int_548_exchange2_r']
-                        peak_single_int_rate_557_xz_r = data['int_557_xz_r']
-                        peak_single_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
-                    elif data['dtype'] == 'fp':
-                        peak_single_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
-                        peak_single_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
-                        peak_single_fp_rate_508_namd_r = data['fp_508_namd_r']
-                        peak_single_fp_rate_510_parest_r = data['fp_510_parest_r']
-                        peak_single_fp_rate_511_povray_r = data['fp_511_povray_r']
-                        peak_single_fp_rate_519_lbm_r = data['fp_519_lbm_r']
-                        peak_single_fp_rate_521_wrf_r = data['fp_521_wrf_r']
-                        peak_single_fp_rate_526_blender_r = data['fp_526_blender_r']
-                        peak_single_fp_rate_527_cam4_r = data['fp_527_cam4_r']
-                        peak_single_fp_rate_538_imagick_r = data['fp_538_imagick_r']
-                        peak_single_fp_rate_544_nab_r = data['fp_544_nab_r']
-                        peak_single_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
-                        peak_single_fp_rate_554_roms_r = data['fp_554_roms_r']
-                        peak_single_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
-                elif data['thread'] == '多线程':
-                    if data['dtype'] == 'int':
-                        peak_multi_int_rate_500_perlbench_r = data['int_500_perlbench_r']
-                        peak_multi_int_rate_502_gcc_r = data['int_502_gcc_r']
-                        peak_multi_int_rate_505_mcf_r = data['int_505_mcf_r']
-                        peak_multi_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
-                        peak_multi_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
-                        peak_multi_int_rate_525_x264_r = data['int_525_x264_r']
-                        peak_multi_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
-                        peak_multi_int_rate_541_leela_r = data['int_541_leela_r']
-                        peak_multi_int_rate_548_exchange2_r = data['int_548_exchange2_r']
-                        peak_multi_int_rate_557_xz_r = data['int_557_xz_r']
-                        peak_multi_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
-                    elif data['dtype'] == 'fp':
-                        peak_multi_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
-                        peak_multi_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
-                        peak_multi_fp_rate_508_namd_r = data['fp_508_namd_r']
-                        peak_multi_fp_rate_510_parest_r = data['fp_510_parest_r']
-                        peak_multi_fp_rate_511_povray_r = data['fp_511_povray_r']
-                        peak_multi_fp_rate_519_lbm_r = data['fp_519_lbm_r']
-                        peak_multi_fp_rate_521_wrf_r = data['fp_521_wrf_r']
-                        peak_multi_fp_rate_526_blender_r = data['fp_526_blender_r']
-                        peak_multi_fp_rate_527_cam4_r = data['fp_527_cam4_r']
-                        peak_multi_fp_rate_538_imagick_r = data['fp_538_imagick_r']
-                        peak_multi_fp_rate_544_nab_r = data['fp_544_nab_r']
-                        peak_multi_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
-                        peak_multi_fp_rate_554_roms_r = data['fp_554_roms_r']
-                        peak_multi_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+        groups = set([d['mark_name'] for d in serializer.data])
+        if len(groups) == 1:
+            for data in serializer.data:
+                # 判断数据的TuneType确定是base还是peak
+                if data['tuneType'] == 'base':
+                    if data['thread'] == '单线程':
+                        if data['dtype'] == 'int':
+                            base_single_int_rate_500_perlbench_r = data['int_500_perlbench_r']
+                            base_single_int_rate_502_gcc_r = data['int_502_gcc_r']
+                            base_single_int_rate_505_mcf_r = data['int_505_mcf_r']
+                            base_single_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
+                            base_single_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
+                            base_single_int_rate_525_x264_r = data['int_525_x264_r']
+                            base_single_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
+                            base_single_int_rate_541_leela_r = data['int_541_leela_r']
+                            base_single_int_rate_548_exchange2_r = data['int_548_exchange2_r']
+                            base_single_int_rate_557_xz_r = data['int_557_xz_r']
+                            base_single_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
+                        elif data['dtype'] == 'fp':
+                            base_single_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
+                            base_single_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
+                            base_single_fp_rate_508_namd_r = data['fp_508_namd_r']
+                            base_single_fp_rate_510_parest_r = data['fp_510_parest_r']
+                            base_single_fp_rate_511_povray_r = data['fp_511_povray_r']
+                            base_single_fp_rate_519_lbm_r = data['fp_519_lbm_r']
+                            base_single_fp_rate_521_wrf_r = data['fp_521_wrf_r']
+                            base_single_fp_rate_526_blender_r = data['fp_526_blender_r']
+                            base_single_fp_rate_527_cam4_r = data['fp_527_cam4_r']
+                            base_single_fp_rate_538_imagick_r = data['fp_538_imagick_r']
+                            base_single_fp_rate_544_nab_r = data['fp_544_nab_r']
+                            base_single_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
+                            base_single_fp_rate_554_roms_r = data['fp_554_roms_r']
+                            base_single_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+                    elif data['thread'] == '多线程':
+                        if data['dtype'] == 'int':
+                            base_multi_int_rate_500_perlbench_r = data['int_500_perlbench_r']
+                            base_multi_int_rate_502_gcc_r = data['int_502_gcc_r']
+                            base_multi_int_rate_505_mcf_r = data['int_505_mcf_r']
+                            base_multi_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
+                            base_multi_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
+                            base_multi_int_rate_525_x264_r = data['int_525_x264_r']
+                            base_multi_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
+                            base_multi_int_rate_541_leela_r = data['int_541_leela_r']
+                            base_multi_int_rate_548_exchange2_r = data['int_548_exchange2_r']
+                            base_multi_int_rate_557_xz_r = data['int_557_xz_r']
+                            base_multi_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
+                        elif data['dtype'] == 'fp':
+                            base_multi_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
+                            base_multi_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
+                            base_multi_fp_rate_508_namd_r = data['fp_508_namd_r']
+                            base_multi_fp_rate_510_parest_r = data['fp_510_parest_r']
+                            base_multi_fp_rate_511_povray_r = data['fp_511_povray_r']
+                            base_multi_fp_rate_519_lbm_r = data['fp_519_lbm_r']
+                            base_multi_fp_rate_521_wrf_r = data['fp_521_wrf_r']
+                            base_multi_fp_rate_526_blender_r = data['fp_526_blender_r']
+                            base_multi_fp_rate_527_cam4_r = data['fp_527_cam4_r']
+                            base_multi_fp_rate_538_imagick_r = data['fp_538_imagick_r']
+                            base_multi_fp_rate_544_nab_r = data['fp_544_nab_r']
+                            base_multi_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
+                            base_multi_fp_rate_554_roms_r = data['fp_554_roms_r']
+                            base_multi_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+                elif data['tuneType'] == 'peak':
+                    if data['thread'] == '单线程':
+                        if data['dtype'] == 'int':
+                            peak_single_int_rate_500_perlbench_r = data['int_500_perlbench_r']
+                            peak_single_int_rate_502_gcc_r = data['int_502_gcc_r']
+                            peak_single_int_rate_505_mcf_r = data['int_505_mcf_r']
+                            peak_single_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
+                            peak_single_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
+                            peak_single_int_rate_525_x264_r = data['int_525_x264_r']
+                            peak_single_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
+                            peak_single_int_rate_541_leela_r = data['int_541_leela_r']
+                            peak_single_int_rate_548_exchange2_r = data['int_548_exchange2_r']
+                            peak_single_int_rate_557_xz_r = data['int_557_xz_r']
+                            peak_single_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
+                        elif data['dtype'] == 'fp':
+                            peak_single_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
+                            peak_single_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
+                            peak_single_fp_rate_508_namd_r = data['fp_508_namd_r']
+                            peak_single_fp_rate_510_parest_r = data['fp_510_parest_r']
+                            peak_single_fp_rate_511_povray_r = data['fp_511_povray_r']
+                            peak_single_fp_rate_519_lbm_r = data['fp_519_lbm_r']
+                            peak_single_fp_rate_521_wrf_r = data['fp_521_wrf_r']
+                            peak_single_fp_rate_526_blender_r = data['fp_526_blender_r']
+                            peak_single_fp_rate_527_cam4_r = data['fp_527_cam4_r']
+                            peak_single_fp_rate_538_imagick_r = data['fp_538_imagick_r']
+                            peak_single_fp_rate_544_nab_r = data['fp_544_nab_r']
+                            peak_single_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
+                            peak_single_fp_rate_554_roms_r = data['fp_554_roms_r']
+                            peak_single_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+                    elif data['thread'] == '多线程':
+                        if data['dtype'] == 'int':
+                            peak_multi_int_rate_500_perlbench_r = data['int_500_perlbench_r']
+                            peak_multi_int_rate_502_gcc_r = data['int_502_gcc_r']
+                            peak_multi_int_rate_505_mcf_r = data['int_505_mcf_r']
+                            peak_multi_int_rate_520_omnetpp_r = data['int_520_omnetpp_r']
+                            peak_multi_int_rate_523_xalancbmk_r = data['int_523_xalancbmk_r']
+                            peak_multi_int_rate_525_x264_r = data['int_525_x264_r']
+                            peak_multi_int_rate_531_deepsjeng_r = data['int_531_deepsjeng_r']
+                            peak_multi_int_rate_541_leela_r = data['int_541_leela_r']
+                            peak_multi_int_rate_548_exchange2_r = data['int_548_exchange2_r']
+                            peak_multi_int_rate_557_xz_r = data['int_557_xz_r']
+                            peak_multi_int_rate_SPECrate2017_int = data['int_SPECrate2017_int']
+                        elif data['dtype'] == 'fp':
+                            peak_multi_fp_rate_503_bwaves_r = data['fp_503_bwaves_r']
+                            peak_multi_fp_rate_507_cactuBSSN_r = data['fp_507_cactuBSSN_r']
+                            peak_multi_fp_rate_508_namd_r = data['fp_508_namd_r']
+                            peak_multi_fp_rate_510_parest_r = data['fp_510_parest_r']
+                            peak_multi_fp_rate_511_povray_r = data['fp_511_povray_r']
+                            peak_multi_fp_rate_519_lbm_r = data['fp_519_lbm_r']
+                            peak_multi_fp_rate_521_wrf_r = data['fp_521_wrf_r']
+                            peak_multi_fp_rate_526_blender_r = data['fp_526_blender_r']
+                            peak_multi_fp_rate_527_cam4_r = data['fp_527_cam4_r']
+                            peak_multi_fp_rate_538_imagick_r = data['fp_538_imagick_r']
+                            peak_multi_fp_rate_544_nab_r = data['fp_544_nab_r']
+                            peak_multi_fp_rate_549_fotonik3d_r = data['fp_549_fotonik3d_r']
+                            peak_multi_fp_rate_554_roms_r = data['fp_554_roms_r']
+                            peak_multi_fp_rate_PECrate2017_fp = data['fp_PECrate2017_fp']
+        else:
+            base_single_data_ = serializer_.filter(tuneType='base').filter(thread='单线程')
+            base_multi_data_ = serializer_.filter(tuneType='base').filter(thread='多线程')
+            peak_single_data_ = serializer_.filter(tuneType='peak').filter(thread='单线程')
+            peak_multi_data_ = serializer_.filter(tuneType='peak').filter(thread='多线程')
+            # 将每个字典转换为NumPy数组
+            base_single_int_rate_500_perlbench_r_list = [d.int_500_perlbench_r for d in base_single_data_ if d.int_500_perlbench_r is not None]
+
+            base_single_int_rate_502_gcc_r_list = [d.int_502_gcc_r for d in base_single_data_ if d.int_502_gcc_r is not None]
+            base_single_int_rate_505_mcf_r_list = [d.int_505_mcf_r for d in base_single_data_ if d.int_505_mcf_r is not None]
+            base_single_int_rate_520_omnetpp_r_list = [d.int_520_omnetpp_r for d in base_single_data_ if d.int_520_omnetpp_r is not None]
+            base_single_int_rate_523_xalancbmk_r_list = [d.int_523_xalancbmk_r for d in base_single_data_ if d.int_523_xalancbmk_r is not None]
+            base_single_int_rate_525_x264_r_list = [d.int_525_x264_r for d in base_single_data_ if d.int_525_x264_r is not None]
+            base_single_int_rate_531_deepsjeng_r_list = [d.int_531_deepsjeng_r for d in base_single_data_ if d.int_531_deepsjeng_r is not None]
+            base_single_int_rate_541_leela_r_list = [d.int_541_leela_r for d in base_single_data_ if d.int_541_leela_r is not None]
+            base_single_int_rate_548_exchange2_r_list = [d.int_548_exchange2_r for d in base_single_data_ if d.int_548_exchange2_r is not None]
+            base_single_int_rate_557_xz_r_list = [d.int_557_xz_r for d in base_single_data_ if d.int_557_xz_r is not None]
+            base_single_int_rate_SPECrate2017_int_list = [d.int_SPECrate2017_int for d in base_single_data_ if d.int_SPECrate2017_int is not None]
+            base_single_fp_rate_503_bwaves_r_list = [d.fp_503_bwaves_r for d in base_single_data_ if d.fp_503_bwaves_r is not None]
+            base_single_fp_rate_507_cactuBSSN_r_list = [d.fp_507_cactuBSSN_r for d in base_single_data_ if d.fp_507_cactuBSSN_r is not None]
+            base_single_fp_rate_508_namd_r_list = [d.fp_508_namd_r for d in base_single_data_ if d.fp_508_namd_r is not None]
+            base_single_fp_rate_510_parest_r_list = [d.fp_510_parest_r for d in base_single_data_ if d.fp_510_parest_r is not None]
+            base_single_fp_rate_511_povray_r_list = [d.fp_511_povray_r for d in base_single_data_ if d.fp_511_povray_r is not None]
+            base_single_fp_rate_519_lbm_r_list = [d.fp_519_lbm_r for d in base_single_data_ if d.fp_519_lbm_r is not None]
+            base_single_fp_rate_521_wrf_r_list = [d.fp_521_wrf_r for d in base_single_data_ if d.fp_521_wrf_r is not None]
+            base_single_fp_rate_526_blender_r_list = [d.fp_526_blender_r for d in base_single_data_ if d.fp_526_blender_r is not None]
+            base_single_fp_rate_527_cam4_r_list = [d.fp_527_cam4_r for d in base_single_data_ if d.fp_527_cam4_r is not None]
+            base_single_fp_rate_538_imagick_r_list = [d.fp_538_imagick_r for d in base_single_data_ if d.fp_538_imagick_r is not None]
+            base_single_fp_rate_544_nab_r_list = [d.fp_544_nab_r for d in base_single_data_ if d.fp_544_nab_r is not None]
+            base_single_fp_rate_549_fotonik3d_r_list = [d.fp_549_fotonik3d_r for d in base_single_data_ if d.fp_549_fotonik3d_r is not None]
+            base_single_fp_rate_554_roms_r_list = [d.fp_554_roms_r for d in base_single_data_ if d.fp_554_roms_r is not None]
+            base_single_fp_rate_PECrate2017_fp_list = [d.fp_PECrate2017_fp for d in base_single_data_ if d.fp_PECrate2017_fp is not None]
+            base_multi_int_rate_500_perlbench_r_list = [d.int_500_perlbench_r for d in base_multi_data_ if d.int_500_perlbench_r is not None]
+            base_multi_int_rate_502_gcc_r_list = [d.int_502_gcc_r for d in base_multi_data_ if d.int_502_gcc_r is not None]
+            base_multi_int_rate_505_mcf_r_list = [d.int_505_mcf_r for d in base_multi_data_ if d.int_505_mcf_r is not None]
+            base_multi_int_rate_520_omnetpp_r_list = [d.int_520_omnetpp_r for d in base_multi_data_ if d.int_520_omnetpp_r is not None]
+            base_multi_int_rate_523_xalancbmk_r_list = [d.int_523_xalancbmk_r for d in base_multi_data_ if d.int_523_xalancbmk_r is not None]
+            base_multi_int_rate_525_x264_r_list = [d.int_525_x264_r for d in base_multi_data_ if d.int_525_x264_r is not None]
+            base_multi_int_rate_531_deepsjeng_r_list = [d.int_531_deepsjeng_r for d in base_multi_data_ if d.int_531_deepsjeng_r is not None]
+            base_multi_int_rate_541_leela_r_list = [d.int_541_leela_r for d in base_multi_data_ if d.int_541_leela_r is not None]
+            base_multi_int_rate_548_exchange2_r_list = [d.int_548_exchange2_r for d in base_multi_data_ if d.int_548_exchange2_r is not None]
+            base_multi_int_rate_557_xz_r_list = [d.int_557_xz_r for d in base_multi_data_ if d.int_557_xz_r is not None]
+            base_multi_int_rate_SPECrate2017_int_list = [d.int_SPECrate2017_int for d in base_multi_data_ if d.int_SPECrate2017_int is not None]
+            base_multi_fp_rate_503_bwaves_r_list = [d.fp_503_bwaves_r for d in base_multi_data_ if d.fp_503_bwaves_r is not None]
+            base_multi_fp_rate_507_cactuBSSN_r_list = [d.fp_507_cactuBSSN_r for d in base_multi_data_ if d.fp_507_cactuBSSN_r is not None]
+            base_multi_fp_rate_508_namd_r_list = [d.fp_508_namd_r for d in base_multi_data_ if d.fp_508_namd_r is not None]
+            base_multi_fp_rate_510_parest_r_list = [d.fp_510_parest_r for d in base_multi_data_ if d.fp_510_parest_r is not None]
+            base_multi_fp_rate_511_povray_r_list = [d.fp_511_povray_r for d in base_multi_data_ if d.fp_511_povray_r is not None]
+            base_multi_fp_rate_519_lbm_r_list = [d.fp_519_lbm_r for d in base_multi_data_ if d.fp_519_lbm_r is not None]
+            base_multi_fp_rate_521_wrf_r_list = [d.fp_521_wrf_r for d in base_multi_data_ if d.fp_521_wrf_r is not None]
+            base_multi_fp_rate_526_blender_r_list = [d.fp_526_blender_r for d in base_multi_data_ if d.fp_526_blender_r is not None]
+            base_multi_fp_rate_527_cam4_r_list = [d.fp_527_cam4_r for d in base_multi_data_ if d.fp_527_cam4_r is not None]
+            base_multi_fp_rate_538_imagick_r_list = [d.fp_538_imagick_r for d in base_multi_data_ if d.fp_538_imagick_r is not None]
+            base_multi_fp_rate_544_nab_r_list = [d.fp_544_nab_r for d in base_multi_data_ if d.fp_544_nab_r is not None]
+            base_multi_fp_rate_549_fotonik3d_r_list = [d.fp_549_fotonik3d_r for d in base_multi_data_ if d.fp_549_fotonik3d_r is not None]
+            base_multi_fp_rate_554_roms_r_list = [d.fp_554_roms_r for d in base_multi_data_ if d.fp_554_roms_r is not None]
+            base_multi_fp_rate_PECrate2017_fp_list = [d.fp_PECrate2017_fp for d in base_multi_data_ if d.fp_PECrate2017_fp is not None]
+            peak_single_int_rate_500_perlbench_r_list = [d.int_500_perlbench_r for d in peak_single_data_ if d.int_500_perlbench_r is not None]
+            peak_single_int_rate_502_gcc_r_list = [d.int_502_gcc_r for d in peak_single_data_ if d.int_502_gcc_r is not None]
+            peak_single_int_rate_505_mcf_r_list = [d.int_505_mcf_r for d in peak_single_data_ if d.int_505_mcf_r is not None]
+            peak_single_int_rate_520_omnetpp_r_list = [d.int_520_omnetpp_r for d in peak_single_data_ if d.int_520_omnetpp_r is not None]
+            peak_single_int_rate_523_xalancbmk_r_list = [d.int_523_xalancbmk_r for d in peak_single_data_ if d.int_523_xalancbmk_r is not None]
+            peak_single_int_rate_525_x264_r_list = [d.int_525_x264_r for d in peak_single_data_ if d.int_525_x264_r is not None]
+            peak_single_int_rate_531_deepsjeng_r_list = [d.int_531_deepsjeng_r for d in peak_single_data_ if d.int_531_deepsjeng_r is not None]
+            peak_single_int_rate_541_leela_r_list = [d.int_541_leela_r for d in peak_single_data_ if d.int_541_leela_r is not None]
+            peak_single_int_rate_548_exchange2_r_list = [d.int_548_exchange2_r for d in peak_single_data_ if d.int_548_exchange2_r is not None]
+            peak_single_int_rate_557_xz_r_list = [d.int_557_xz_r for d in peak_single_data_ if d.int_557_xz_r is not None]
+            peak_single_int_rate_SPECrate2017_int_list = [d.int_SPECrate2017_int for d in peak_single_data_ if d.int_SPECrate2017_int is not None]
+            peak_single_fp_rate_503_bwaves_r_list = [d.fp_503_bwaves_r for d in peak_single_data_ if d.fp_503_bwaves_r is not None]
+            peak_single_fp_rate_507_cactuBSSN_r_list = [d.fp_507_cactuBSSN_r for d in peak_single_data_ if d.fp_507_cactuBSSN_r is not None]
+            peak_single_fp_rate_508_namd_r_list = [d.fp_508_namd_r for d in peak_single_data_ if d.fp_508_namd_r is not None]
+            peak_single_fp_rate_510_parest_r_list = [d.fp_510_parest_r for d in peak_single_data_ if d.fp_510_parest_r is not None]
+            peak_single_fp_rate_511_povray_r_list = [d.fp_511_povray_r for d in peak_single_data_ if d.fp_511_povray_r is not None]
+            peak_single_fp_rate_519_lbm_r_list = [d.fp_519_lbm_r for d in peak_single_data_ if d.fp_519_lbm_r is not None]
+            peak_single_fp_rate_521_wrf_r_list = [d.fp_521_wrf_r for d in peak_single_data_ if d.fp_521_wrf_r is not None]
+            peak_single_fp_rate_526_blender_r_list = [d.fp_526_blender_r for d in peak_single_data_ if d.fp_526_blender_r is not None]
+            peak_single_fp_rate_527_cam4_r_list = [d.fp_527_cam4_r for d in peak_single_data_ if d.fp_527_cam4_r is not None]
+            peak_single_fp_rate_538_imagick_r_list = [d.fp_538_imagick_r for d in peak_single_data_ if d.fp_538_imagick_r is not None]
+            peak_single_fp_rate_544_nab_r_list = [d.fp_544_nab_r for d in peak_single_data_ if d.fp_544_nab_r is not None]
+            peak_single_fp_rate_549_fotonik3d_r_list = [d.fp_549_fotonik3d_r for d in peak_single_data_ if d.fp_549_fotonik3d_r is not None]
+            peak_single_fp_rate_554_roms_r_list = [d.fp_554_roms_r for d in peak_single_data_ if d.fp_554_roms_r is not None]
+            peak_single_fp_rate_PECrate2017_fp_list = [d.fp_PECrate2017_fp for d in peak_single_data_ if d.fp_PECrate2017_fp is not None]
+            peak_multi_int_rate_500_perlbench_r_list = [d.int_500_perlbench_r for d in peak_multi_data_ if d.int_500_perlbench_r is not None]
+            peak_multi_int_rate_502_gcc_r_list = [d.int_502_gcc_r for d in peak_multi_data_ if d.int_502_gcc_r is not None]
+            peak_multi_int_rate_505_mcf_r_list = [d.int_505_mcf_r for d in peak_multi_data_ if d.int_505_mcf_r is not None]
+            peak_multi_int_rate_520_omnetpp_r_list = [d.int_520_omnetpp_r for d in peak_multi_data_ if d.int_520_omnetpp_r is not None]
+            peak_multi_int_rate_523_xalancbmk_r_list = [d.int_523_xalancbmk_r for d in peak_multi_data_ if d.int_523_xalancbmk_r is not None]
+            peak_multi_int_rate_525_x264_r_list = [d.int_525_x264_r for d in peak_multi_data_ if d.int_525_x264_r is not None]
+            peak_multi_int_rate_531_deepsjeng_r_list = [d.int_531_deepsjeng_r for d in peak_multi_data_ if d.int_531_deepsjeng_r is not None]
+            peak_multi_int_rate_541_leela_r_list = [d.int_541_leela_r for d in peak_multi_data_ if d.int_541_leela_r is not None]
+            peak_multi_int_rate_548_exchange2_r_list = [d.int_548_exchange2_r for d in peak_multi_data_ if d.int_548_exchange2_r is not None]
+            peak_multi_int_rate_557_xz_r_list = [d.int_557_xz_r for d in peak_multi_data_ if d.int_557_xz_r is not None]
+            peak_multi_int_rate_SPECrate2017_int_list = [d.int_SPECrate2017_int for d in peak_multi_data_ if d.int_SPECrate2017_int is not None]
+            peak_multi_fp_rate_503_bwaves_r_list = [d.fp_503_bwaves_r for d in peak_multi_data_ if d.fp_503_bwaves_r is not None]
+            peak_multi_fp_rate_507_cactuBSSN_r_list = [d.fp_507_cactuBSSN_r for d in peak_multi_data_ if d.fp_507_cactuBSSN_r is not None]
+            peak_multi_fp_rate_508_namd_r_list = [d.fp_508_namd_r for d in peak_multi_data_ if d.fp_508_namd_r is not None]
+            peak_multi_fp_rate_510_parest_r_list = [d.fp_510_parest_r for d in peak_multi_data_ if d.fp_510_parest_r is not None]
+            peak_multi_fp_rate_511_povray_r_list = [d.fp_511_povray_r for d in peak_multi_data_ if d.fp_511_povray_r is not None]
+            peak_multi_fp_rate_519_lbm_r_list = [d.fp_519_lbm_r for d in peak_multi_data_ if d.fp_519_lbm_r is not None]
+            peak_multi_fp_rate_521_wrf_r_list = [d.fp_521_wrf_r for d in peak_multi_data_ if d.fp_521_wrf_r is not None]
+            peak_multi_fp_rate_526_blender_r_list = [d.fp_526_blender_r for d in peak_multi_data_ if d.fp_526_blender_r is not None]
+            peak_multi_fp_rate_527_cam4_r_list = [d.fp_527_cam4_r for d in peak_multi_data_ if d.fp_527_cam4_r is not None]
+            peak_multi_fp_rate_538_imagick_r_list = [d.fp_538_imagick_r for d in peak_multi_data_ if d.fp_538_imagick_r is not None]
+            peak_multi_fp_rate_544_nab_r_list = [d.fp_544_nab_r for d in peak_multi_data_ if d.fp_544_nab_r is not None]
+            peak_multi_fp_rate_549_fotonik3d_r_list = [d.fp_549_fotonik3d_r for d in peak_multi_data_ if d.fp_549_fotonik3d_r is not None]
+            peak_multi_fp_rate_554_roms_r_list = [d.fp_554_roms_r for d in peak_multi_data_ if d.fp_554_roms_r is not None]
+            peak_multi_fp_rate_PECrate2017_fp_list = [d.fp_PECrate2017_fp for d in peak_multi_data_ if d.fp_PECrate2017_fp is not None]
+
+            # 计算每个数组的平均值
+            base_single_int_rate_500_perlbench_r = np.mean(base_single_int_rate_500_perlbench_r_list)
+            base_single_int_rate_502_gcc_r = np.mean(base_single_int_rate_502_gcc_r_list)
+            base_single_int_rate_505_mcf_r = np.mean(base_single_int_rate_505_mcf_r_list)
+            base_single_int_rate_520_omnetpp_r = np.mean(base_single_int_rate_520_omnetpp_r_list)
+            base_single_int_rate_523_xalancbmk_r = np.mean(base_single_int_rate_523_xalancbmk_r_list)
+            base_single_int_rate_525_x264_r = np.mean(base_single_int_rate_525_x264_r_list)
+            base_single_int_rate_531_deepsjeng_r = np.mean(base_single_int_rate_531_deepsjeng_r_list)
+            base_single_int_rate_541_leela_r = np.mean(base_single_int_rate_541_leela_r_list)
+            base_single_int_rate_548_exchange2_r = np.mean(base_single_int_rate_548_exchange2_r_list)
+            base_single_int_rate_557_xz_r = np.mean(base_single_int_rate_557_xz_r_list)
+            base_single_int_rate_SPECrate2017_int = np.mean(base_single_int_rate_SPECrate2017_int_list)
+            base_single_fp_rate_503_bwaves_r = np.mean(base_single_fp_rate_503_bwaves_r_list)
+            base_single_fp_rate_507_cactuBSSN_r = np.mean(base_single_fp_rate_507_cactuBSSN_r_list)
+            base_single_fp_rate_508_namd_r = np.mean(base_single_fp_rate_508_namd_r_list)
+            base_single_fp_rate_510_parest_r = np.mean(base_single_fp_rate_510_parest_r_list)
+            base_single_fp_rate_511_povray_r = np.mean(base_single_fp_rate_511_povray_r_list)
+            base_single_fp_rate_519_lbm_r = np.mean(base_single_fp_rate_519_lbm_r_list)
+            base_single_fp_rate_521_wrf_r = np.mean(base_single_fp_rate_521_wrf_r_list)
+            base_single_fp_rate_526_blender_r = np.mean(base_single_fp_rate_526_blender_r_list)
+            base_single_fp_rate_527_cam4_r = np.mean(base_single_fp_rate_527_cam4_r_list)
+            base_single_fp_rate_538_imagick_r = np.mean(base_single_fp_rate_538_imagick_r_list)
+            base_single_fp_rate_544_nab_r = np.mean(base_single_fp_rate_544_nab_r_list)
+            base_single_fp_rate_549_fotonik3d_r = np.mean(base_single_fp_rate_549_fotonik3d_r_list)
+            base_single_fp_rate_554_roms_r = np.mean(base_single_fp_rate_554_roms_r_list)
+            base_single_fp_rate_PECrate2017_fp = np.mean(base_single_fp_rate_PECrate2017_fp_list)
+            base_multi_int_rate_500_perlbench_r = np.mean(base_multi_int_rate_500_perlbench_r_list)
+            base_multi_int_rate_502_gcc_r = np.mean(base_multi_int_rate_502_gcc_r_list)
+            base_multi_int_rate_505_mcf_r = np.mean(base_multi_int_rate_505_mcf_r_list)
+            base_multi_int_rate_520_omnetpp_r = np.mean(base_multi_int_rate_520_omnetpp_r_list)
+            base_multi_int_rate_523_xalancbmk_r = np.mean(base_multi_int_rate_523_xalancbmk_r_list)
+            base_multi_int_rate_525_x264_r = np.mean(base_multi_int_rate_525_x264_r_list)
+            base_multi_int_rate_531_deepsjeng_r = np.mean(base_multi_int_rate_531_deepsjeng_r_list)
+            base_multi_int_rate_541_leela_r = np.mean(base_multi_int_rate_541_leela_r_list)
+            base_multi_int_rate_548_exchange2_r = np.mean(base_multi_int_rate_548_exchange2_r_list)
+            base_multi_int_rate_557_xz_r = np.mean(base_multi_int_rate_557_xz_r_list)
+            base_multi_int_rate_SPECrate2017_int = np.mean(base_multi_int_rate_SPECrate2017_int_list)
+            base_multi_fp_rate_503_bwaves_r = np.mean(base_multi_fp_rate_503_bwaves_r_list)
+            base_multi_fp_rate_507_cactuBSSN_r = np.mean(base_multi_fp_rate_507_cactuBSSN_r_list)
+            base_multi_fp_rate_508_namd_r = np.mean(base_multi_fp_rate_508_namd_r_list)
+            base_multi_fp_rate_510_parest_r = np.mean(base_multi_fp_rate_510_parest_r_list)
+            base_multi_fp_rate_511_povray_r = np.mean(base_multi_fp_rate_511_povray_r_list)
+            base_multi_fp_rate_519_lbm_r = np.mean(base_multi_fp_rate_519_lbm_r_list)
+            base_multi_fp_rate_521_wrf_r = np.mean(base_multi_fp_rate_521_wrf_r_list)
+            base_multi_fp_rate_526_blender_r = np.mean(base_multi_fp_rate_526_blender_r_list)
+            base_multi_fp_rate_527_cam4_r = np.mean(base_multi_fp_rate_527_cam4_r_list)
+            base_multi_fp_rate_538_imagick_r = np.mean(base_multi_fp_rate_538_imagick_r_list)
+            base_multi_fp_rate_544_nab_r = np.mean(base_multi_fp_rate_544_nab_r_list)
+            base_multi_fp_rate_549_fotonik3d_r = np.mean(base_multi_fp_rate_549_fotonik3d_r_list)
+            base_multi_fp_rate_554_roms_r = np.mean(base_multi_fp_rate_554_roms_r_list)
+            base_multi_fp_rate_PECrate2017_fp = np.mean(base_multi_fp_rate_PECrate2017_fp_list)
+            peak_single_int_rate_500_perlbench_r = np.mean(peak_single_int_rate_500_perlbench_r_list)
+            peak_single_int_rate_502_gcc_r = np.mean(peak_single_int_rate_502_gcc_r_list)
+            peak_single_int_rate_505_mcf_r = np.mean(peak_single_int_rate_505_mcf_r_list)
+            peak_single_int_rate_520_omnetpp_r = np.mean(peak_single_int_rate_520_omnetpp_r_list)
+            peak_single_int_rate_523_xalancbmk_r = np.mean(peak_single_int_rate_523_xalancbmk_r_list)
+            peak_single_int_rate_525_x264_r = np.mean(peak_single_int_rate_525_x264_r_list)
+            peak_single_int_rate_531_deepsjeng_r = np.mean(peak_single_int_rate_531_deepsjeng_r_list)
+            peak_single_int_rate_541_leela_r = np.mean(peak_single_int_rate_541_leela_r_list)
+            peak_single_int_rate_548_exchange2_r = np.mean(peak_single_int_rate_548_exchange2_r_list)
+            peak_single_int_rate_557_xz_r = np.mean(peak_single_int_rate_557_xz_r_list)
+            peak_single_int_rate_SPECrate2017_int = np.mean(peak_single_int_rate_SPECrate2017_int_list)
+            peak_single_fp_rate_503_bwaves_r = np.mean(peak_single_fp_rate_503_bwaves_r_list)
+            peak_single_fp_rate_507_cactuBSSN_r = np.mean(peak_single_fp_rate_507_cactuBSSN_r_list)
+            peak_single_fp_rate_508_namd_r = np.mean(peak_single_fp_rate_508_namd_r_list)
+            peak_single_fp_rate_510_parest_r = np.mean(peak_single_fp_rate_510_parest_r_list)
+            peak_single_fp_rate_511_povray_r = np.mean(peak_single_fp_rate_511_povray_r_list)
+            peak_single_fp_rate_519_lbm_r = np.mean(peak_single_fp_rate_519_lbm_r_list)
+            peak_single_fp_rate_521_wrf_r = np.mean(peak_single_fp_rate_521_wrf_r_list)
+            peak_single_fp_rate_526_blender_r = np.mean(peak_single_fp_rate_526_blender_r_list)
+            peak_single_fp_rate_527_cam4_r = np.mean(peak_single_fp_rate_527_cam4_r_list)
+            peak_single_fp_rate_538_imagick_r = np.mean(peak_single_fp_rate_538_imagick_r_list)
+            peak_single_fp_rate_544_nab_r = np.mean(peak_single_fp_rate_544_nab_r_list)
+            peak_single_fp_rate_549_fotonik3d_r = np.mean(peak_single_fp_rate_549_fotonik3d_r_list)
+            peak_single_fp_rate_554_roms_r = np.mean(peak_single_fp_rate_554_roms_r_list)
+            peak_single_fp_rate_PECrate2017_fp = np.mean(peak_single_fp_rate_PECrate2017_fp_list)
+            peak_multi_int_rate_500_perlbench_r = np.mean(peak_multi_int_rate_500_perlbench_r_list)
+            peak_multi_int_rate_502_gcc_r = np.mean(peak_multi_int_rate_502_gcc_r_list)
+            peak_multi_int_rate_505_mcf_r = np.mean(peak_multi_int_rate_505_mcf_r_list)
+            peak_multi_int_rate_520_omnetpp_r = np.mean(peak_multi_int_rate_520_omnetpp_r_list)
+            peak_multi_int_rate_523_xalancbmk_r = np.mean(peak_multi_int_rate_523_xalancbmk_r_list)
+            peak_multi_int_rate_525_x264_r = np.mean(peak_multi_int_rate_525_x264_r_list)
+            peak_multi_int_rate_531_deepsjeng_r = np.mean(peak_multi_int_rate_531_deepsjeng_r_list)
+            peak_multi_int_rate_541_leela_r = np.mean(peak_multi_int_rate_541_leela_r_list)
+            peak_multi_int_rate_548_exchange2_r = np.mean(peak_multi_int_rate_548_exchange2_r_list)
+            peak_multi_int_rate_557_xz_r = np.mean(peak_multi_int_rate_557_xz_r_list)
+            peak_multi_int_rate_SPECrate2017_int = np.mean(peak_multi_int_rate_SPECrate2017_int_list)
+            peak_multi_fp_rate_503_bwaves_r = np.mean(peak_multi_fp_rate_503_bwaves_r_list)
+            peak_multi_fp_rate_507_cactuBSSN_r = np.mean(peak_multi_fp_rate_507_cactuBSSN_r_list)
+            peak_multi_fp_rate_508_namd_r = np.mean(peak_multi_fp_rate_508_namd_r_list)
+            peak_multi_fp_rate_510_parest_r = np.mean(peak_multi_fp_rate_510_parest_r_list)
+            peak_multi_fp_rate_511_povray_r = np.mean(peak_multi_fp_rate_511_povray_r_list)
+            peak_multi_fp_rate_519_lbm_r = np.mean(peak_multi_fp_rate_519_lbm_r_list)
+            peak_multi_fp_rate_521_wrf_r = np.mean(peak_multi_fp_rate_521_wrf_r_list)
+            peak_multi_fp_rate_526_blender_r = np.mean(peak_multi_fp_rate_526_blender_r_list)
+            peak_multi_fp_rate_527_cam4_r = np.mean(peak_multi_fp_rate_527_cam4_r_list)
+            peak_multi_fp_rate_538_imagick_r = np.mean(peak_multi_fp_rate_538_imagick_r_list)
+            peak_multi_fp_rate_544_nab_r = np.mean(peak_multi_fp_rate_544_nab_r_list)
+            peak_multi_fp_rate_549_fotonik3d_r = np.mean(peak_multi_fp_rate_549_fotonik3d_r_list)
+            peak_multi_fp_rate_554_roms_r = np.mean(peak_multi_fp_rate_554_roms_r_list)
+            peak_multi_fp_rate_PECrate2017_fp = np.mean(peak_multi_fp_rate_PECrate2017_fp_list)
 
         new_data = {'execute_cmd': execute_cmd,
                     'modify_parameters': modify_parameters,
@@ -368,6 +577,12 @@ class Cpu2017ViewSet(CusModelViewSet):
                     'peak_multi_fp_rate_554_roms_r': peak_multi_fp_rate_554_roms_r,
                     'peak_multi_fp_rate_PECrate2017_fp': peak_multi_fp_rate_PECrate2017_fp,
                     }
+        # 将值为 NaN 的项转换为 None，其他值保持不变
+        for key, value in new_data.items():
+            if key not in ['execute_cmd','modify_parameters']:
+                if value is not None:
+                    if np.isnan(value):
+                        new_data[key] = None
         return new_data
 
     def do_base_data(self, data):
@@ -588,7 +803,7 @@ class Cpu2017ViewSet(CusModelViewSet):
         comparsionIds = comparsionIds.split(',')
         base_queryset = Cpu2017.objects.filter(env_id=env_id).all()
         base_serializer = self.get_serializer(base_queryset, many=True)
-        json_datas = self.get_data(base_serializer)
+        json_datas = self.get_data(base_queryset)
         base_datas = self.do_base_data(json_datas)
         others = [{'column1': 'Cpu2006', 'column2': '', 'column3': '', 'column4': '', 'column5': '',
                    'column6': 'Cpu2006#1'},
@@ -603,7 +818,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                 new_index = 2 * index + 7
                 comparsion_queryset = Cpu2017.objects.filter(env_id=comparativeId).all()
                 comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_serializer)
+                comparsion_datas = self.get_data(comparsion_queryset)
 
                 others[0]['column' + str(new_index)] = 'Cpu2017#' + str(index + 2)
                 others[1]['column' + str(new_index)] = comparsion_serializer.data[0]['execute_cmd']
