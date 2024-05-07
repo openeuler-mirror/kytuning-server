@@ -51,16 +51,16 @@ class StreamViewSet(CusModelViewSet):
             multi_triad = serializer.data[0]['multi_triad']
         else:
             # 将每个字典转换为NumPy数组
-            single_array_size_list = np.array([d['single_array_size'] for d in serializer.data])
-            single_copy_list = np.array([d['single_copy'] for d in serializer.data])
-            single_scale_list = np.array([d['single_scale'] for d in serializer.data])
-            single_add_list = np.array([d['single_add'] for d in serializer.data])
-            single_triad_list = np.array([d['single_triad'] for d in serializer.data])
-            multi_array_size_list = np.array([d['multi_array_size'] for d in serializer.data])
-            multi_copy_list = np.array([d['multi_copy'] for d in serializer.data])
-            multi_scale_list = np.array([d['multi_scale'] for d in serializer.data])
-            multi_add_list = np.array([d['multi_add'] for d in serializer.data])
-            multi_triad_list = np.array([d['multi_triad'] for d in serializer.data])
+            single_array_size_list = np.array([d.single_array_size for d in serializer_])
+            single_copy_list = np.array([d.single_copy for d in serializer_])
+            single_scale_list = np.array([d.single_scale for d in serializer_])
+            single_add_list = np.array([d.single_add for d in serializer_])
+            single_triad_list = np.array([d.single_triad for d in serializer_])
+            multi_array_size_list = np.array([d.multi_array_size for d in serializer_])
+            multi_copy_list = np.array([d.multi_copy for d in serializer_])
+            multi_scale_list = np.array([d.multi_scale for d in serializer_])
+            multi_add_list = np.array([d.multi_add for d in serializer_])
+            multi_triad_list = np.array([d.multi_triad for d in serializer_])
 
             # 计算每个数组的平均值
             single_array_size = np.mean(single_array_size_list)
@@ -101,6 +101,8 @@ class StreamViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Stream.objects.filter(env_id=env_id).all()
+        if not base_queryset:
+            return json_response({}, status.HTTP_200_OK, '列表')
         #当大于两条数据是展示平均数
         data = self.get_data(base_queryset)
         others = [{'column1':'Stream','column2':'', 'column3':'Stream#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
