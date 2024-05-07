@@ -34,16 +34,88 @@ class FioViewSet(CusModelViewSet):
     #     queryset = self.filter_queryset(queryset)
     #     serializer = self.get_serializer(queryset, many=True)
     #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
+    def get_unit(self, data):
+        # value是值，unit是单位
+        unit = data.split("".join(filter(lambda s: s in '0123456789.', data)))[-1]
+        if unit:
+            value = data.split(unit)[0]
+        else:
+            value = data
+        return value, unit
 
-    def get_data(self, serializer):
+    def get_bw_unit(self,data):
+        unit1 = data.split('(')[0].split(
+            "".join(filter(lambda s: s in '0123456789.', data.split('(')[0])))[-1]
+        # 这里是kB/s)，后面就不需要再次拼接了
+        unit2 = data.split('(')[-1].split(
+            "".join(filter(lambda s: s in '0123456789.', data.split('(')[-1])))[-1]
+        value1 = float(data.split('(')[0].split(unit1)[0])
+        value2 = float(data.split('(')[1].split(unit2)[0])
+        return value1, value2, unit1, unit2
+
+    def get_data(self, serializer_):
+        serializer = self.get_serializer(serializer_, many=True)
         datas = []
-        for data in serializer.data:
-            data = {'rw': data['rw'] + '(' + str(data['bs'] + ')'),
-                    'bs': data['bs'],
-                    'io': data['io'],
-                    'iops': data['iops'],
-                    'bw': data['bw'], }
-            datas.append(data)
+        groups = set([d['mark_name'] for d in serializer.data])
+        if len(groups) == 1:
+            for data in serializer.data:
+                data = {'rw': data['rw'] + '(' + str(data['bs'] + ')'),
+                        'bs': data['bs'],
+                        'io': data['io'],
+                        'iops': data['iops'],
+                        'bw': data['bw'], }
+                datas.append(data)
+        else:
+            # 当有多条数据时计算平均值
+            # 判断bs的大小，方便按照bs的大小分组
+            bs_size = set([d['bs'] for d in serializer.data])
+            rw_types = set([d['rw'] for d in serializer.data])
+            new_datas = []
+            for test_type in bs_size:
+                for rw_type in rw_types:
+                    data_ = serializer_.filter(bs=test_type).filter(rw=rw_type)
+                    if data_:
+                        new_datas.append(data_)
+            # new_datas是12组数据
+            for data_ in new_datas:
+                bs_list = [d.bs for d in data_]
+                io_list = [d.io for d in data_]
+                iops_list = [d.iops for d in data_]
+                bw_list = [d.bw for d in data_]
+                # 获取bs、io、iops的平均值
+
+                bs = 0
+                for bs_ in bs_list:
+                    value, bs_unit = self.get_unit(bs_)
+                    bs += float(value)
+                bs = bs / len(bs_list)
+                io = 0
+                for io_ in io_list:
+                    value, io_unit = self.get_unit(io_)
+                    io += float(value)
+                io = io / len(io_list)
+                iops = 0
+                for iops_ in iops_list:
+                    value, iops_unit = self.get_unit(iops_)
+                    iops += float(value)
+                iops = iops / len(iops_list)
+                # 获取bw的平均值
+                value1 = 0
+                value2 = 0
+                for bw_ in bw_list:
+                    value1_, value2_, bw_unit1, bw_unit2 = self.get_bw_unit(bw_)
+                    value1 += float(value1_)
+                    value2 += float(value2_)
+                value1 = value1 / len(bw_list)
+                value2 = value2 / len(bw_list)
+                bw = str(value1) + bw_unit1 + '(' + str(value2) +bw_unit2
+
+                data = {'rw': data_[0].rw + '(' + str(data_[0].bs + ')'),
+                        'bs': str(bs) + bs_unit,
+                        'io': str(io) + io_unit,
+                        'iops': str(iops) + iops_unit,
+                        'bw': bw, }
+                datas.append(data)
         return datas
 
     def do_base_data(self, datas):
@@ -69,7 +141,7 @@ class FioViewSet(CusModelViewSet):
         comparsionIds = comparsionIds.split(',')
         base_queryset = Fio.objects.filter(env_id=env_id).all()
         base_serializer = self.get_serializer(base_queryset, many=True)
-        base_datas = self.get_data(base_serializer)
+        base_datas = self.get_data(base_queryset)
         datas = self.do_base_data(base_datas)
         others = [{'column1': 'Fio', 'column2': '', 'column3': 'Fio#1'},
                   {'column1': '执行命令', 'column2': '', 'column3': base_serializer.data[0]['execute_cmd']},
@@ -81,7 +153,7 @@ class FioViewSet(CusModelViewSet):
                 new_index = 2 * index + 4
                 comparsion_queryset = Fio.objects.filter(env_id=comparativeId).all()
                 comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_serializer)
+                comparsion_datas = self.get_data(comparsion_queryset)
                 others[0]['column' + str(new_index)] = 'Fio#'+str(index + 2)
                 others[1]['column' + str(new_index)] = comparsion_serializer.data[0]['execute_cmd']
                 others[2]['column' + str(new_index)] = comparsion_serializer.data[0]['modify_parameters']
@@ -100,35 +172,31 @@ class FioViewSet(CusModelViewSet):
                             datas[index2 + 2]['column' + str(new_index)] = value['iops']
                             datas[index2 + 3]['column' + str(new_index)] = value['bw']
                             # 在datas中增加计算数据
-                            datas[index2]['column' + str(new_index + 1)] = value['bs']
-                            datas[index2 + 1]['column' + str(new_index + 1)] = value['io']
-                            datas[index2 + 2]['column' + str(new_index + 1)] = value['iops']
-                            datas[index2 + 3]['column' + str(new_index + 1)] = value['bw']
-                            value0 = int(
-                                "".join(filter(lambda s: s in '0123456789.', datas[0]['column' + str(new_index)])))
-                            value0_colum3 = int("".join(filter(lambda s: s in '0123456789.', datas[0]['column3'])))
-                            value1 = int(
-                                "".join(filter(lambda s: s in '0123456789.', datas[1]['column' + str(new_index)])))
-                            value1_colum3 = int("".join(filter(lambda s: s in '0123456789.', datas[1]['column3'])))
-                            value2 = int(
-                                "".join(filter(lambda s: s in '0123456789.', datas[2]['column' + str(new_index)])))
-                            value2_colum3 = int("".join(filter(lambda s: s in '0123456789.', datas[2]['column3'])))
-                            value3 = int("".join(filter(lambda s: s in '0123456789.',
-                                                        datas[3]['column' + str(new_index)].split('(')[-1])))
-                            value3_colum3 = int("".join(
-                                filter(lambda s: s in '0123456789.', datas[3]['column3'].split('(')[-1])))
+                            value0 = float(
+                                "".join(filter(lambda s: s in '0123456789.', datas[index2]['column' + str(new_index)])))
+                            value0_colum3 = float("".join(filter(lambda s: s in '0123456789.', datas[index2]['column3'])))
+                            value1 = float(
+                                "".join(filter(lambda s: s in '0123456789.', datas[index2 + 1]['column' + str(new_index)])))
+                            value1_colum3 = float("".join(filter(lambda s: s in '0123456789.', datas[index2 + 1]['column3'])))
+                            value2 = float(
+                                "".join(filter(lambda s: s in '0123456789.', datas[index2 + 2]['column' + str(new_index)])))
+                            value2_colum3 = float("".join(filter(lambda s: s in '0123456789.', datas[index2 + 2]['column3'])))
+                            value3 = float("".join(filter(lambda s: s in '0123456789.',
+                                                        datas[index2 + 3]['column' + str(new_index)].split(' ')[-1])))
+                            value3_colum3 = float("".join(
+                                filter(lambda s: s in '0123456789.', datas[index2 + 3]['column3'].split(' ')[-1])))
                             # bs数据
                             datas[index2]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (value0 - value0_colum3) / value0_colum3 * 100)
+                                        (value0 - value0_colum3) / value0_colum3 )
                             # io数据
                             datas[index2 + 1]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (value1 - value1_colum3) / value1_colum3 * 100)
+                                        (value1 - value1_colum3) / value1_colum3 )
                             # iops数据
                             datas[index2 + 2]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (value2 - value2_colum3) / value2_colum3 * 100)
+                                        (value2 - value2_colum3) / value2_colum3)
                             # bw数据
                             datas[index2 + 3]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (value3 - value3_colum3) / value3_colum3 * 100)
+                                        (value3 - value3_colum3) / value3_colum3)
                             break
         unixbench_data = {'others': others, 'data': datas}
         return json_response(unixbench_data, status.HTTP_200_OK, '列表')
