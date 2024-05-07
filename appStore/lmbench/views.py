@@ -1,8 +1,5 @@
 import numpy as np
 
-from django.http import JsonResponse, request
-from django.shortcuts import render
-
 # Create your views here.
 from rest_framework import status
 

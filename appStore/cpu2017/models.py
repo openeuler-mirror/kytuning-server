@@ -23,6 +23,7 @@ class Cpu2017(models.Model):
     thread = models.CharField(choices=ThreadType, max_length=10, verbose_name='线程数')
     execute_cmd = models.CharField(null=True, blank=True, max_length=255, verbose_name='执行命令')
     modify_parameters = models.CharField(null=True, blank=True, max_length=255, verbose_name='修改参数')
+    mark_name = models.CharField(max_length=50, verbose_name='文件名称，确保哪几条数据是一组')
     dtype = models.CharField(choices=DType, max_length=10, verbose_name='dtype')
     tuneType = models.CharField(choices=TuneType, max_length=10, verbose_name='tune')
     int_500_perlbench_r = models.FloatField(verbose_name="500.perlbench_r", null=True, blank=True)
