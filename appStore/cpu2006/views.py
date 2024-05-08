@@ -1,7 +1,4 @@
-import json
-
-from django.http import JsonResponse, request
-from django.shortcuts import render
+import numpy as np
 
 # Create your views here.
 from rest_framework import status
@@ -20,7 +17,22 @@ class Cpu2006ViewSet(CusModelViewSet):
     queryset = Cpu2006.objects.all().order_by('id')
     serializer_class = Cpu2006Serializer
 
-    def get_data(self, serializer):
+    # def list(self, request, *args, **kwargs):
+    #     """
+    #     返回列表
+    #     :param request:
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     env_id = request.GET.get('env_id')
+    #     queryset = Cpu2006.objects.filter(env_id=env_id).all()
+    #     queryset = self.filter_queryset(queryset)
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
+
+    def get_data(self, serializer_):
+        serializer = self.get_serializer(serializer_, many=True)
         # 初始化数据为空 否则如果下面只获取的单线程或者多线程另外一组获取不到可能会报错
         execute_cmd = serializer.data[0]['execute_cmd']
         modify_parameters = serializer.data[0]['modify_parameters']
@@ -157,147 +169,406 @@ class Cpu2006ViewSet(CusModelViewSet):
         # 先判断数据的TuneType确定是base还是peak
         # 在判断数据的thread确定是单线程还是多线程
         # 在判断tuneType确定是int还是fp
-        for data in serializer.data:
-            # 判断数据的TuneType确定是base还是peak
-            if data['tuneType'] == 'base':
-                if data['thread'] == '单线程':
-                    if data['dtype'] == 'int':
-                        base_single_int_400_perlbench = data['int_400_perlbench']
-                        base_single_int_401_bzip2 = data['int_401_bzip2']
-                        base_single_int_403_gcc = data['int_403_gcc']
-                        base_single_int_429_mcf = data['int_429_mcf']
-                        base_single_int_445_gobmk = data['int_445_gobmk']
-                        base_single_int_456_hmmer = data['int_456_hmmer']
-                        base_single_int_458_sjeng = data['int_458_sjeng']
-                        base_single_int_462_libquantum = data['int_462_libquantum']
-                        base_single_int_464_h264ref = data['int_464_h264ref']
-                        base_single_int_471_omnetpp = data['int_471_omnetpp']
-                        base_single_int_473_astar = data['int_473_astar']
-                        base_single_int_483_xalancbmk = data['int_483_xalancbmk']
-                        base_single_int_SPECint_2006 = data['int_SPECint_2006']
-                    elif data['dtype'] == 'fp':
-                        base_single_fp_410_bwaves = data['fp_410_bwaves']
-                        base_single_fp_416_gamess = data['fp_416_gamess']
-                        base_single_fp_433_milc = data['fp_433_milc']
-                        base_single_fp_434_zeusmp = data['fp_434_zeusmp']
-                        base_single_fp_435_gromacs = data['fp_435_gromacs']
-                        base_single_fp_436_cactusADM = data['fp_436_cactusADM']
-                        base_single_fp_437_leslie3d = data['fp_437_leslie3d']
-                        base_single_fp_444_namd = data['fp_444_namd']
-                        base_single_fp_447_dealII = data['fp_447_dealII']
-                        base_single_fp_450_soplex = data['fp_450_soplex']
-                        base_single_fp_453_povray = data['fp_453_povray']
-                        base_single_fp_454_calculix = data['fp_454_calculix']
-                        base_single_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
-                        base_single_fp_465_tonto = data['fp_465_tonto']
-                        base_single_fp_470_lbm = data['fp_470_lbm']
-                        base_single_fp_481_wrf = data['fp_481_wrf']
-                        base_single_fp_482_sphinx3 = data['fp_482_sphinx3']
-                        base_single_fp_SPECfp_2006 = data['fp_SPECfp_2006']
-                elif data['thread'] == '多线程':
-                    if data['dtype'] == 'int':
-                        base_multi_int_400_perlbench = data['int_400_perlbench']
-                        base_multi_int_401_bzip2 = data['int_401_bzip2']
-                        base_multi_int_403_gcc = data['int_403_gcc']
-                        base_multi_int_429_mcf = data['int_429_mcf']
-                        base_multi_int_445_gobmk = data['int_445_gobmk']
-                        base_multi_int_456_hmmer = data['int_456_hmmer']
-                        base_multi_int_458_sjeng = data['int_458_sjeng']
-                        base_multi_int_462_libquantum = data['int_462_libquantum']
-                        base_multi_int_464_h264ref = data['int_464_h264ref']
-                        base_multi_int_471_omnetpp = data['int_471_omnetpp']
-                        base_multi_int_473_astar = data['int_473_astar']
-                        base_multi_int_483_xalancbmk = data['int_483_xalancbmk']
-                        base_multi_int_SPECint_2006 = data['int_SPECint_2006']
+        groups = set([d['mark_name'] for d in serializer.data])
+        if len(groups) == 1:
+            for data in serializer.data:
+                # 判断数据的TuneType确定是base还是peak
+                if data['tuneType'] == 'base':
+                    if data['thread'] == '单线程':
+                        if data['dtype'] == 'int':
+                            base_single_int_400_perlbench = data['int_400_perlbench']
+                            base_single_int_401_bzip2 = data['int_401_bzip2']
+                            base_single_int_403_gcc = data['int_403_gcc']
+                            base_single_int_429_mcf = data['int_429_mcf']
+                            base_single_int_445_gobmk = data['int_445_gobmk']
+                            base_single_int_456_hmmer = data['int_456_hmmer']
+                            base_single_int_458_sjeng = data['int_458_sjeng']
+                            base_single_int_462_libquantum = data['int_462_libquantum']
+                            base_single_int_464_h264ref = data['int_464_h264ref']
+                            base_single_int_471_omnetpp = data['int_471_omnetpp']
+                            base_single_int_473_astar = data['int_473_astar']
+                            base_single_int_483_xalancbmk = data['int_483_xalancbmk']
+                            base_single_int_SPECint_2006 = data['int_SPECint_2006']
+                        elif data['dtype'] == 'fp':
+                            base_single_fp_410_bwaves = data['fp_410_bwaves']
+                            base_single_fp_416_gamess = data['fp_416_gamess']
+                            base_single_fp_433_milc = data['fp_433_milc']
+                            base_single_fp_434_zeusmp = data['fp_434_zeusmp']
+                            base_single_fp_435_gromacs = data['fp_435_gromacs']
+                            base_single_fp_436_cactusADM = data['fp_436_cactusADM']
+                            base_single_fp_437_leslie3d = data['fp_437_leslie3d']
+                            base_single_fp_444_namd = data['fp_444_namd']
+                            base_single_fp_447_dealII = data['fp_447_dealII']
+                            base_single_fp_450_soplex = data['fp_450_soplex']
+                            base_single_fp_453_povray = data['fp_453_povray']
+                            base_single_fp_454_calculix = data['fp_454_calculix']
+                            base_single_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
+                            base_single_fp_465_tonto = data['fp_465_tonto']
+                            base_single_fp_470_lbm = data['fp_470_lbm']
+                            base_single_fp_481_wrf = data['fp_481_wrf']
+                            base_single_fp_482_sphinx3 = data['fp_482_sphinx3']
+                            base_single_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+                    elif data['thread'] == '多线程':
+                        if data['dtype'] == 'int':
+                            base_multi_int_400_perlbench = data['int_400_perlbench']
+                            base_multi_int_401_bzip2 = data['int_401_bzip2']
+                            base_multi_int_403_gcc = data['int_403_gcc']
+                            base_multi_int_429_mcf = data['int_429_mcf']
+                            base_multi_int_445_gobmk = data['int_445_gobmk']
+                            base_multi_int_456_hmmer = data['int_456_hmmer']
+                            base_multi_int_458_sjeng = data['int_458_sjeng']
+                            base_multi_int_462_libquantum = data['int_462_libquantum']
+                            base_multi_int_464_h264ref = data['int_464_h264ref']
+                            base_multi_int_471_omnetpp = data['int_471_omnetpp']
+                            base_multi_int_473_astar = data['int_473_astar']
+                            base_multi_int_483_xalancbmk = data['int_483_xalancbmk']
+                            base_multi_int_SPECint_2006 = data['int_SPECint_2006']
 
-                    elif data['dtype'] == 'fp':
-                        base_multi_fp_410_bwaves = data['fp_410_bwaves']
-                        base_multi_fp_416_gamess = data['fp_416_gamess']
-                        base_multi_fp_433_milc = data['fp_433_milc']
-                        base_multi_fp_434_zeusmp = data['fp_434_zeusmp']
-                        base_multi_fp_435_gromacs = data['fp_435_gromacs']
-                        base_multi_fp_436_cactusADM = data['fp_436_cactusADM']
-                        base_multi_fp_437_leslie3d = data['fp_437_leslie3d']
-                        base_multi_fp_444_namd = data['fp_444_namd']
-                        base_multi_fp_447_dealII = data['fp_447_dealII']
-                        base_multi_fp_450_soplex = data['fp_450_soplex']
-                        base_multi_fp_453_povray = data['fp_453_povray']
-                        base_multi_fp_454_calculix = data['fp_454_calculix']
-                        base_multi_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
-                        base_multi_fp_465_tonto = data['fp_465_tonto']
-                        base_multi_fp_470_lbm = data['fp_470_lbm']
-                        base_multi_fp_481_wrf = data['fp_481_wrf']
-                        base_multi_fp_482_sphinx3 = data['fp_482_sphinx3']
-                        base_multi_fp_SPECfp_2006 = data['fp_SPECfp_2006']
-            elif data['tuneType'] == 'peak':
-                if data['thread'] == '单线程':
-                    if data['dtype'] == 'int':
-                        peak_single_int_400_perlbench = data['int_400_perlbench']
-                        peak_single_int_401_bzip2 = data['int_401_bzip2']
-                        peak_single_int_403_gcc = data['int_403_gcc']
-                        peak_single_int_429_mcf = data['int_429_mcf']
-                        peak_single_int_445_gobmk = data['int_445_gobmk']
-                        peak_single_int_456_hmmer = data['int_456_hmmer']
-                        peak_single_int_458_sjeng = data['int_458_sjeng']
-                        peak_single_int_462_libquantum = data['int_462_libquantum']
-                        peak_single_int_464_h264ref = data['int_464_h264ref']
-                        peak_single_int_471_omnetpp = data['int_471_omnetpp']
-                        peak_single_int_473_astar = data['int_473_astar']
-                        peak_single_int_483_xalancbmk = data['int_483_xalancbmk']
-                        peak_single_int_SPECint_2006 = data['int_SPECint_2006']
-                    elif data['dtype'] == 'fp':
-                        peak_single_fp_410_bwaves = data['fp_410_bwaves']
-                        peak_single_fp_416_gamess = data['fp_416_gamess']
-                        peak_single_fp_433_milc = data['fp_433_milc']
-                        peak_single_fp_434_zeusmp = data['fp_434_zeusmp']
-                        peak_single_fp_435_gromacs = data['fp_435_gromacs']
-                        peak_single_fp_436_cactusADM = data['fp_436_cactusADM']
-                        peak_single_fp_437_leslie3d = data['fp_437_leslie3d']
-                        peak_single_fp_444_namd = data['fp_444_namd']
-                        peak_single_fp_447_dealII = data['fp_447_dealII']
-                        peak_single_fp_450_soplex = data['fp_450_soplex']
-                        peak_single_fp_453_povray = data['fp_453_povray']
-                        peak_single_fp_454_calculix = data['fp_454_calculix']
-                        peak_single_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
-                        peak_single_fp_465_tonto = data['fp_465_tonto']
-                        peak_single_fp_470_lbm = data['fp_470_lbm']
-                        peak_single_fp_481_wrf = data['fp_481_wrf']
-                        peak_single_fp_482_sphinx3 = data['fp_482_sphinx3']
-                        peak_single_fp_SPECfp_2006 = data['fp_SPECfp_2006']
-                elif data['thread'] == '多线程':
-                    if data['dtype'] == 'int':
-                        peak_multi_int_400_perlbench = data['int_400_perlbench']
-                        peak_multi_int_401_bzip2 = data['int_401_bzip2']
-                        peak_multi_int_403_gcc = data['int_403_gcc']
-                        peak_multi_int_429_mcf = data['int_429_mcf']
-                        peak_multi_int_445_gobmk = data['int_445_gobmk']
-                        peak_multi_int_456_hmmer = data['int_456_hmmer']
-                        peak_multi_int_458_sjeng = data['int_458_sjeng']
-                        peak_multi_int_462_libquantum = data['int_462_libquantum']
-                        peak_multi_int_464_h264ref = data['int_464_h264ref']
-                        peak_multi_int_471_omnetpp = data['int_471_omnetpp']
-                        peak_multi_int_473_astar = data['int_473_astar']
-                        peak_multi_int_483_xalancbmk = data['int_483_xalancbmk']
-                        peak_multi_int_SPECint_2006 = data['int_SPECint_2006']
-                    elif data['dtype'] == 'fp':
-                        peak_multi_fp_410_bwaves = data['fp_410_bwaves']
-                        peak_multi_fp_416_gamess = data['fp_416_gamess']
-                        peak_multi_fp_433_milc = data['fp_433_milc']
-                        peak_multi_fp_434_zeusmp = data['fp_434_zeusmp']
-                        peak_multi_fp_435_gromacs = data['fp_435_gromacs']
-                        peak_multi_fp_436_cactusADM = data['fp_436_cactusADM']
-                        peak_multi_fp_437_leslie3d = data['fp_437_leslie3d']
-                        peak_multi_fp_444_namd = data['fp_444_namd']
-                        peak_multi_fp_447_dealII = data['fp_447_dealII']
-                        peak_multi_fp_450_soplex = data['fp_450_soplex']
-                        peak_multi_fp_453_povray = data['fp_453_povray']
-                        peak_multi_fp_454_calculix = data['fp_454_calculix']
-                        peak_multi_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
-                        peak_multi_fp_465_tonto = data['fp_465_tonto']
-                        peak_multi_fp_470_lbm = data['fp_470_lbm']
-                        peak_multi_fp_481_wrf = data['fp_481_wrf']
-                        peak_multi_fp_482_sphinx3 = data['fp_482_sphinx3']
-                        peak_multi_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+                        elif data['dtype'] == 'fp':
+                            base_multi_fp_410_bwaves = data['fp_410_bwaves']
+                            base_multi_fp_416_gamess = data['fp_416_gamess']
+                            base_multi_fp_433_milc = data['fp_433_milc']
+                            base_multi_fp_434_zeusmp = data['fp_434_zeusmp']
+                            base_multi_fp_435_gromacs = data['fp_435_gromacs']
+                            base_multi_fp_436_cactusADM = data['fp_436_cactusADM']
+                            base_multi_fp_437_leslie3d = data['fp_437_leslie3d']
+                            base_multi_fp_444_namd = data['fp_444_namd']
+                            base_multi_fp_447_dealII = data['fp_447_dealII']
+                            base_multi_fp_450_soplex = data['fp_450_soplex']
+                            base_multi_fp_453_povray = data['fp_453_povray']
+                            base_multi_fp_454_calculix = data['fp_454_calculix']
+                            base_multi_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
+                            base_multi_fp_465_tonto = data['fp_465_tonto']
+                            base_multi_fp_470_lbm = data['fp_470_lbm']
+                            base_multi_fp_481_wrf = data['fp_481_wrf']
+                            base_multi_fp_482_sphinx3 = data['fp_482_sphinx3']
+                            base_multi_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+                elif data['tuneType'] == 'peak':
+                    if data['thread'] == '单线程':
+                        if data['dtype'] == 'int':
+                            peak_single_int_400_perlbench = data['int_400_perlbench']
+                            peak_single_int_401_bzip2 = data['int_401_bzip2']
+                            peak_single_int_403_gcc = data['int_403_gcc']
+                            peak_single_int_429_mcf = data['int_429_mcf']
+                            peak_single_int_445_gobmk = data['int_445_gobmk']
+                            peak_single_int_456_hmmer = data['int_456_hmmer']
+                            peak_single_int_458_sjeng = data['int_458_sjeng']
+                            peak_single_int_462_libquantum = data['int_462_libquantum']
+                            peak_single_int_464_h264ref = data['int_464_h264ref']
+                            peak_single_int_471_omnetpp = data['int_471_omnetpp']
+                            peak_single_int_473_astar = data['int_473_astar']
+                            peak_single_int_483_xalancbmk = data['int_483_xalancbmk']
+                            peak_single_int_SPECint_2006 = data['int_SPECint_2006']
+                        elif data['dtype'] == 'fp':
+                            peak_single_fp_410_bwaves = data['fp_410_bwaves']
+                            peak_single_fp_416_gamess = data['fp_416_gamess']
+                            peak_single_fp_433_milc = data['fp_433_milc']
+                            peak_single_fp_434_zeusmp = data['fp_434_zeusmp']
+                            peak_single_fp_435_gromacs = data['fp_435_gromacs']
+                            peak_single_fp_436_cactusADM = data['fp_436_cactusADM']
+                            peak_single_fp_437_leslie3d = data['fp_437_leslie3d']
+                            peak_single_fp_444_namd = data['fp_444_namd']
+                            peak_single_fp_447_dealII = data['fp_447_dealII']
+                            peak_single_fp_450_soplex = data['fp_450_soplex']
+                            peak_single_fp_453_povray = data['fp_453_povray']
+                            peak_single_fp_454_calculix = data['fp_454_calculix']
+                            peak_single_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
+                            peak_single_fp_465_tonto = data['fp_465_tonto']
+                            peak_single_fp_470_lbm = data['fp_470_lbm']
+                            peak_single_fp_481_wrf = data['fp_481_wrf']
+                            peak_single_fp_482_sphinx3 = data['fp_482_sphinx3']
+                            peak_single_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+                    elif data['thread'] == '多线程':
+                        if data['dtype'] == 'int':
+                            peak_multi_int_400_perlbench = data['int_400_perlbench']
+                            peak_multi_int_401_bzip2 = data['int_401_bzip2']
+                            peak_multi_int_403_gcc = data['int_403_gcc']
+                            peak_multi_int_429_mcf = data['int_429_mcf']
+                            peak_multi_int_445_gobmk = data['int_445_gobmk']
+                            peak_multi_int_456_hmmer = data['int_456_hmmer']
+                            peak_multi_int_458_sjeng = data['int_458_sjeng']
+                            peak_multi_int_462_libquantum = data['int_462_libquantum']
+                            peak_multi_int_464_h264ref = data['int_464_h264ref']
+                            peak_multi_int_471_omnetpp = data['int_471_omnetpp']
+                            peak_multi_int_473_astar = data['int_473_astar']
+                            peak_multi_int_483_xalancbmk = data['int_483_xalancbmk']
+                            peak_multi_int_SPECint_2006 = data['int_SPECint_2006']
+                        elif data['dtype'] == 'fp':
+                            peak_multi_fp_410_bwaves = data['fp_410_bwaves']
+                            peak_multi_fp_416_gamess = data['fp_416_gamess']
+                            peak_multi_fp_433_milc = data['fp_433_milc']
+                            peak_multi_fp_434_zeusmp = data['fp_434_zeusmp']
+                            peak_multi_fp_435_gromacs = data['fp_435_gromacs']
+                            peak_multi_fp_436_cactusADM = data['fp_436_cactusADM']
+                            peak_multi_fp_437_leslie3d = data['fp_437_leslie3d']
+                            peak_multi_fp_444_namd = data['fp_444_namd']
+                            peak_multi_fp_447_dealII = data['fp_447_dealII']
+                            peak_multi_fp_450_soplex = data['fp_450_soplex']
+                            peak_multi_fp_453_povray = data['fp_453_povray']
+                            peak_multi_fp_454_calculix = data['fp_454_calculix']
+                            peak_multi_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
+                            peak_multi_fp_465_tonto = data['fp_465_tonto']
+                            peak_multi_fp_470_lbm = data['fp_470_lbm']
+                            peak_multi_fp_481_wrf = data['fp_481_wrf']
+                            peak_multi_fp_482_sphinx3 = data['fp_482_sphinx3']
+                            peak_multi_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+        else:
+            base_single_data_ = serializer_.filter(tuneType='base').filter(thread='单线程')
+            base_multi_data_ = serializer_.filter(tuneType='base').filter(thread='多线程')
+            peak_single_data_ = serializer_.filter(tuneType='peak').filter(thread='单线程')
+            peak_multi_data_ = serializer_.filter(tuneType='peak').filter(thread='多线程')
+
+            # 将每个字典转换为NumPy数组
+            base_single_int_400_perlbench_list = [d.int_400_perlbench for d in base_single_data_ if d.int_400_perlbench is not None]
+            base_single_int_401_bzip2_list = [d.int_401_bzip2 for d in base_single_data_ if d.int_401_bzip2 is not None]
+            base_single_int_403_gcc_list = [d.int_403_gcc for d in base_single_data_ if d.int_403_gcc is not None]
+            base_single_int_429_mcf_list = [d.int_429_mcf for d in base_single_data_ if d.int_429_mcf is not None]
+            base_single_int_445_gobmk_list = [d.int_445_gobmk for d in base_single_data_ if d.int_445_gobmk is not None]
+            base_single_int_456_hmmer_list = [d.int_456_hmmer for d in base_single_data_ if d.int_456_hmmer is not None]
+            base_single_int_458_sjeng_list = [d.int_458_sjeng for d in base_single_data_ if d.int_458_sjeng is not None]
+            base_single_int_462_libquantum_list = [d.int_462_libquantum for d in base_single_data_ if d.int_462_libquantum is not None]
+            base_single_int_464_h264ref_list = [d.int_464_h264ref for d in base_single_data_ if d.int_464_h264ref is not None]
+            base_single_int_471_omnetpp_list = [d.int_471_omnetpp for d in base_single_data_ if d.int_471_omnetpp is not None]
+            base_single_int_473_astar_list = [d.int_473_astar for d in base_single_data_ if d.int_473_astar is not None]
+            base_single_int_483_xalancbmk_list = [d.int_483_xalancbmk for d in base_single_data_ if d.int_483_xalancbmk is not None]
+            base_single_int_SPECint_2006_list = [d.int_SPECint_2006 for d in base_single_data_ if d.int_SPECint_2006 is not None]
+            base_single_fp_410_bwaves_list = [d.fp_410_bwaves for d in base_single_data_ if d.fp_410_bwaves is not None]
+            base_single_fp_416_gamess_list = [d.fp_416_gamess for d in base_single_data_ if d.fp_416_gamess is not None]
+            base_single_fp_433_milc_list = [d.fp_433_milc for d in base_single_data_ if d.fp_433_milc is not None]
+            base_single_fp_434_zeusmp_list = [d.fp_434_zeusmp for d in base_single_data_ if d.fp_434_zeusmp is not None]
+            base_single_fp_435_gromacs_list = [d.fp_435_gromacs for d in base_single_data_ if d.fp_435_gromacs is not None]
+            base_single_fp_436_cactusADM_list = [d.fp_436_cactusADM for d in base_single_data_ if d.fp_436_cactusADM is not None]
+            base_single_fp_437_leslie3d_list = [d.fp_437_leslie3d for d in base_single_data_ if d.fp_437_leslie3d is not None]
+            base_single_fp_444_namd_list = [d.fp_444_namd for d in base_single_data_ if d.fp_444_namd is not None]
+            base_single_fp_447_dealII_list = [d.fp_447_dealII for d in base_single_data_ if d.fp_447_dealII is not None]
+            base_single_fp_450_soplex_list = [d.fp_450_soplex for d in base_single_data_ if d.fp_450_soplex is not None]
+            base_single_fp_453_povray_list = [d.fp_453_povray for d in base_single_data_ if d.fp_453_povray is not None]
+            base_single_fp_454_calculix_list = [d.fp_454_calculix for d in base_single_data_ if d.fp_454_calculix is not None]
+            base_single_fp_459_GemsFDTD_list = [d.fp_459_GemsFDTD for d in base_single_data_ if d.fp_459_GemsFDTD is not None]
+            base_single_fp_465_tonto_list = [d.fp_465_tonto for d in base_single_data_ if d.fp_465_tonto is not None]
+            base_single_fp_470_lbm_list = [d.fp_470_lbm for d in base_single_data_ if d.fp_470_lbm is not None]
+            base_single_fp_481_wrf_list = [d.fp_481_wrf for d in base_single_data_ if d.fp_481_wrf is not None]
+            base_single_fp_482_sphinx3_list = [d.fp_482_sphinx3 for d in base_single_data_ if d.fp_482_sphinx3 is not None]
+            base_single_fp_SPECfp_2006_list = [d.fp_SPECfp_2006 for d in base_single_data_ if d.fp_SPECfp_2006 is not None]
+            base_multi_int_400_perlbench_list = [d.int_400_perlbench for d in base_multi_data_ if d.int_400_perlbench is not None]
+            base_multi_int_401_bzip2_list = [d.int_401_bzip2 for d in base_multi_data_ if d.int_401_bzip2 is not None]
+            base_multi_int_403_gcc_list = [d.int_403_gcc for d in base_multi_data_ if d.int_403_gcc is not None]
+            base_multi_int_429_mcf_list = [d.int_429_mcf for d in base_multi_data_ if d.int_429_mcf is not None]
+            base_multi_int_445_gobmk_list = [d.int_445_gobmk for d in base_multi_data_ if d.int_445_gobmk is not None]
+            base_multi_int_456_hmmer_list = [d.int_456_hmmer for d in base_multi_data_ if d.int_456_hmmer is not None]
+            base_multi_int_458_sjeng_list = [d.int_458_sjeng for d in base_multi_data_ if d.int_458_sjeng is not None]
+            base_multi_int_462_libquantum_list = [d.int_462_libquantum for d in base_multi_data_ if d.int_462_libquantum is not None]
+            base_multi_int_464_h264ref_list = [d.int_464_h264ref for d in base_multi_data_ if d.int_464_h264ref is not None]
+            base_multi_int_471_omnetpp_list = [d.int_471_omnetpp for d in base_multi_data_ if d.int_471_omnetpp is not None]
+            base_multi_int_473_astar_list = [d.int_473_astar for d in base_multi_data_ if d.int_473_astar is not None]
+            base_multi_int_483_xalancbmk_list = [d.int_483_xalancbmk for d in base_multi_data_ if d.int_483_xalancbmk is not None]
+            base_multi_int_SPECint_2006_list = [d.int_SPECint_2006 for d in base_multi_data_ if d.int_SPECint_2006 is not None]
+            base_multi_fp_410_bwaves_list = [d.fp_410_bwaves for d in base_multi_data_ if d.fp_410_bwaves is not None]
+            base_multi_fp_416_gamess_list = [d.fp_416_gamess for d in base_multi_data_ if d.fp_416_gamess is not None]
+            base_multi_fp_433_milc_list = [d.fp_433_milc for d in base_multi_data_ if d.fp_433_milc is not None]
+            base_multi_fp_434_zeusmp_list = [d.fp_434_zeusmp for d in base_multi_data_ if d.fp_434_zeusmp is not None]
+            base_multi_fp_435_gromacs_list = [d.fp_435_gromacs for d in base_multi_data_ if d.fp_435_gromacs is not None]
+            base_multi_fp_436_cactusADM_list = [d.fp_436_cactusADM for d in base_multi_data_ if d.fp_436_cactusADM is not None]
+            base_multi_fp_437_leslie3d_list = [d.fp_437_leslie3d for d in base_multi_data_ if d.fp_437_leslie3d is not None]
+            base_multi_fp_444_namd_list = [d.fp_444_namd for d in base_multi_data_ if d.fp_444_namd is not None]
+            base_multi_fp_447_dealII_list = [d.fp_447_dealII for d in base_multi_data_ if d.fp_447_dealII is not None]
+            base_multi_fp_450_soplex_list = [d.fp_450_soplex for d in base_multi_data_ if d.fp_450_soplex is not None]
+            base_multi_fp_453_povray_list = [d.fp_453_povray for d in base_multi_data_ if d.fp_453_povray is not None]
+            base_multi_fp_454_calculix_list = [d.fp_454_calculix for d in base_multi_data_ if d.fp_454_calculix is not None]
+            base_multi_fp_459_GemsFDTD_list = [d.fp_459_GemsFDTD for d in base_multi_data_ if d.fp_459_GemsFDTD is not None]
+            base_multi_fp_465_tonto_list = [d.fp_465_tonto for d in base_multi_data_ if d.fp_465_tonto is not None]
+            base_multi_fp_470_lbm_list = [d.fp_470_lbm for d in base_multi_data_ if d.fp_470_lbm is not None]
+            base_multi_fp_481_wrf_list = [d.fp_481_wrf for d in base_multi_data_ if d.fp_481_wrf is not None]
+            base_multi_fp_482_sphinx3_list = [d.fp_482_sphinx3 for d in base_multi_data_ if d.fp_482_sphinx3 is not None]
+            base_multi_fp_SPECfp_2006_list = [d.fp_SPECfp_2006 for d in base_multi_data_ if d.fp_SPECfp_2006 is not None]
+            peak_single_int_400_perlbench_list = [d.int_400_perlbench for d in peak_single_data_ if d.int_400_perlbench is not None]
+            peak_single_int_401_bzip2_list = [d.int_401_bzip2 for d in peak_single_data_ if d.int_401_bzip2 is not None]
+            peak_single_int_403_gcc_list = [d.int_403_gcc for d in peak_single_data_ if d.int_403_gcc is not None]
+            peak_single_int_429_mcf_list = [d.int_429_mcf for d in peak_single_data_ if d.int_429_mcf is not None]
+            peak_single_int_445_gobmk_list = [d.int_445_gobmk for d in peak_single_data_ if d.int_445_gobmk is not None]
+            peak_single_int_456_hmmer_list = [d.int_456_hmmer for d in peak_single_data_ if d.int_456_hmmer is not None]
+            peak_single_int_458_sjeng_list = [d.int_458_sjeng for d in peak_single_data_ if d.int_458_sjeng is not None]
+            peak_single_int_462_libquantum_list = [d.int_462_libquantum for d in peak_single_data_ if d.int_462_libquantum is not None]
+            peak_single_int_464_h264ref_list = [d.int_464_h264ref for d in peak_single_data_ if d.int_464_h264ref is not None]
+            peak_single_int_471_omnetpp_list = [d.int_471_omnetpp for d in peak_single_data_ if d.int_471_omnetpp is not None]
+            peak_single_int_473_astar_list = [d.int_473_astar for d in peak_single_data_ if d.int_473_astar is not None]
+            peak_single_int_483_xalancbmk_list = [d.int_483_xalancbmk for d in peak_single_data_ if d.int_483_xalancbmk is not None]
+            peak_single_int_SPECint_2006_list = [d.int_SPECint_2006 for d in peak_single_data_ if d.int_SPECint_2006 is not None]
+            peak_single_fp_410_bwaves_list = [d.fp_410_bwaves for d in peak_single_data_ if d.fp_410_bwaves is not None]
+            peak_single_fp_416_gamess_list = [d.fp_416_gamess for d in peak_single_data_ if d.fp_416_gamess is not None]
+            peak_single_fp_433_milc_list = [d.fp_433_milc for d in peak_single_data_ if d.fp_433_milc is not None]
+            peak_single_fp_434_zeusmp_list = [d.fp_434_zeusmp for d in peak_single_data_ if d.fp_434_zeusmp is not None]
+            peak_single_fp_435_gromacs_list = [d.fp_435_gromacs for d in peak_single_data_ if d.fp_435_gromacs is not None]
+            peak_single_fp_436_cactusADM_list = [d.fp_436_cactusADM for d in peak_single_data_ if d.fp_436_cactusADM is not None]
+            peak_single_fp_437_leslie3d_list = [d.fp_437_leslie3d for d in peak_single_data_ if d.fp_437_leslie3d is not None]
+            peak_single_fp_444_namd_list = [d.fp_444_namd for d in peak_single_data_ if d.fp_444_namd is not None]
+            peak_single_fp_447_dealII_list = [d.fp_447_dealII for d in peak_single_data_ if d.fp_447_dealII is not None]
+            peak_single_fp_450_soplex_list = [d.fp_450_soplex for d in peak_single_data_ if d.fp_450_soplex is not None]
+            peak_single_fp_453_povray_list = [d.fp_453_povray for d in peak_single_data_ if d.fp_453_povray is not None]
+            peak_single_fp_454_calculix_list = [d.fp_454_calculix for d in peak_single_data_ if d.fp_454_calculix is not None]
+            peak_single_fp_459_GemsFDTD_list = [d.fp_459_GemsFDTD for d in peak_single_data_ if d.fp_459_GemsFDTD is not None]
+            peak_single_fp_465_tonto_list = [d.fp_465_tonto for d in peak_single_data_ if d.fp_465_tonto is not None]
+            peak_single_fp_470_lbm_list = [d.fp_470_lbm for d in peak_single_data_ if d.fp_470_lbm is not None]
+            peak_single_fp_481_wrf_list = [d.fp_481_wrf for d in peak_single_data_ if d.fp_481_wrf is not None]
+            peak_single_fp_482_sphinx3_list = [d.fp_482_sphinx3 for d in peak_single_data_ if d.fp_482_sphinx3 is not None]
+            peak_single_fp_SPECfp_2006_list = [d.fp_SPECfp_2006 for d in peak_single_data_ if d.fp_SPECfp_2006 is not None]
+            peak_multi_int_400_perlbench_list = [d.int_400_perlbench for d in peak_multi_data_ if d.int_400_perlbench is not None]
+            peak_multi_int_401_bzip2_list = [d.int_401_bzip2 for d in peak_multi_data_ if d.int_401_bzip2 is not None]
+            peak_multi_int_403_gcc_list = [d.int_403_gcc for d in peak_multi_data_ if d.int_403_gcc is not None]
+            peak_multi_int_429_mcf_list = [d.int_429_mcf for d in peak_multi_data_ if d.int_429_mcf is not None]
+            peak_multi_int_445_gobmk_list = [d.int_445_gobmk for d in peak_multi_data_ if d.int_445_gobmk is not None]
+            peak_multi_int_456_hmmer_list = [d.int_456_hmmer for d in peak_multi_data_ if d.int_456_hmmer is not None]
+            peak_multi_int_458_sjeng_list = [d.int_458_sjeng for d in peak_multi_data_ if d.int_458_sjeng is not None]
+            peak_multi_int_462_libquantum_list = [d.int_462_libquantum for d in peak_multi_data_ if d.int_462_libquantum is not None]
+            peak_multi_int_464_h264ref_list = [d.int_464_h264ref for d in peak_multi_data_ if d.int_464_h264ref is not None]
+            peak_multi_int_471_omnetpp_list = [d.int_471_omnetpp for d in peak_multi_data_ if d.int_471_omnetpp is not None]
+            peak_multi_int_473_astar_list = [d.int_473_astar for d in peak_multi_data_ if d.int_473_astar is not None]
+            peak_multi_int_483_xalancbmk_list = [d.int_483_xalancbmk for d in peak_multi_data_ if d.int_483_xalancbmk is not None]
+            peak_multi_int_SPECint_2006_list = [d.int_SPECint_2006 for d in peak_multi_data_ if d.int_SPECint_2006 is not None]
+            peak_multi_fp_410_bwaves_list = [d.fp_410_bwaves for d in peak_multi_data_ if d.fp_410_bwaves is not None]
+            peak_multi_fp_416_gamess_list = [d.fp_416_gamess for d in peak_multi_data_ if d.fp_416_gamess is not None]
+            peak_multi_fp_433_milc_list = [d.fp_433_milc for d in peak_multi_data_ if d.fp_433_milc is not None]
+            peak_multi_fp_434_zeusmp_list = [d.fp_434_zeusmp for d in peak_multi_data_ if d.fp_434_zeusmp is not None]
+            peak_multi_fp_435_gromacs_list = [d.fp_435_gromacs for d in peak_multi_data_ if d.fp_435_gromacs is not None]
+            peak_multi_fp_436_cactusADM_list = [d.fp_436_cactusADM for d in peak_multi_data_ if d.fp_436_cactusADM is not None]
+            peak_multi_fp_437_leslie3d_list = [d.fp_437_leslie3d for d in peak_multi_data_ if d.fp_437_leslie3d is not None]
+            peak_multi_fp_444_namd_list = [d.fp_444_namd for d in peak_multi_data_ if d.fp_444_namd is not None]
+            peak_multi_fp_447_dealII_list = [d.fp_447_dealII for d in peak_multi_data_ if d.fp_447_dealII is not None]
+            peak_multi_fp_450_soplex_list = [d.fp_450_soplex for d in peak_multi_data_ if d.fp_450_soplex is not None]
+            peak_multi_fp_453_povray_list = [d.fp_453_povray for d in peak_multi_data_ if d.fp_453_povray is not None]
+            peak_multi_fp_454_calculix_list = [d.fp_454_calculix for d in peak_multi_data_ if d.fp_454_calculix is not None]
+            peak_multi_fp_459_GemsFDTD_list = [d.fp_459_GemsFDTD for d in peak_multi_data_ if d.fp_459_GemsFDTD is not None]
+            peak_multi_fp_465_tonto_list = [d.fp_465_tonto for d in peak_multi_data_ if d.fp_465_tonto is not None]
+            peak_multi_fp_470_lbm_list = [d.fp_470_lbm for d in peak_multi_data_ if d.fp_470_lbm is not None]
+            peak_multi_fp_481_wrf_list = [d.fp_481_wrf for d in peak_multi_data_ if d.fp_481_wrf is not None]
+            peak_multi_fp_482_sphinx3_list = [d.fp_482_sphinx3 for d in peak_multi_data_ if d.fp_482_sphinx3 is not None]
+            peak_multi_fp_SPECfp_2006_list = [d.fp_SPECfp_2006 for d in peak_multi_data_ if d.fp_SPECfp_2006 is not None]
+
+            # 计算每个数组的平均值
+            base_single_int_400_perlbench = np.mean(base_single_int_400_perlbench_list).round(2)
+            base_single_int_401_bzip2 = np.mean(base_single_int_401_bzip2_list).round(2)
+            base_single_int_403_gcc = np.mean(base_single_int_403_gcc_list).round(2)
+            base_single_int_429_mcf = np.mean(base_single_int_429_mcf_list).round(2)
+            base_single_int_445_gobmk = np.mean(base_single_int_445_gobmk_list).round(2)
+            base_single_int_456_hmmer = np.mean(base_single_int_456_hmmer_list).round(2)
+            base_single_int_458_sjeng = np.mean(base_single_int_458_sjeng_list).round(2)
+            base_single_int_462_libquantum = np.mean(base_single_int_462_libquantum_list).round(2)
+            base_single_int_464_h264ref = np.mean(base_single_int_464_h264ref_list).round(2)
+            base_single_int_471_omnetpp = np.mean(base_single_int_471_omnetpp_list).round(2)
+            base_single_int_473_astar = np.mean(base_single_int_473_astar_list).round(2)
+            base_single_int_483_xalancbmk = np.mean(base_single_int_483_xalancbmk_list).round(2)
+            base_single_int_SPECint_2006 = np.mean(base_single_int_SPECint_2006_list).round(2)
+            base_single_fp_410_bwaves = np.mean(base_single_fp_410_bwaves_list).round(2)
+            base_single_fp_416_gamess = np.mean(base_single_fp_416_gamess_list).round(2)
+            base_single_fp_433_milc = np.mean(base_single_fp_433_milc_list).round(2)
+            base_single_fp_434_zeusmp = np.mean(base_single_fp_434_zeusmp_list).round(2)
+            base_single_fp_435_gromacs = np.mean(base_single_fp_435_gromacs_list).round(2)
+            base_single_fp_436_cactusADM = np.mean(base_single_fp_436_cactusADM_list).round(2)
+            base_single_fp_437_leslie3d = np.mean(base_single_fp_437_leslie3d_list).round(2)
+            base_single_fp_444_namd = np.mean(base_single_fp_444_namd_list).round(2)
+            base_single_fp_447_dealII = np.mean(base_single_fp_447_dealII_list).round(2)
+            base_single_fp_450_soplex = np.mean(base_single_fp_450_soplex_list).round(2)
+            base_single_fp_453_povray = np.mean(base_single_fp_453_povray_list).round(2)
+            base_single_fp_454_calculix = np.mean(base_single_fp_454_calculix_list).round(2)
+            base_single_fp_459_GemsFDTD = np.mean(base_single_fp_459_GemsFDTD_list).round(2)
+            base_single_fp_465_tonto = np.mean(base_single_fp_465_tonto_list).round(2)
+            base_single_fp_470_lbm = np.mean(base_single_fp_470_lbm_list).round(2)
+            base_single_fp_481_wrf = np.mean(base_single_fp_481_wrf_list).round(2)
+            base_single_fp_482_sphinx3 = np.mean(base_single_fp_482_sphinx3_list).round(2)
+            base_single_fp_SPECfp_2006 = np.mean(base_single_fp_SPECfp_2006_list).round(2)
+            base_multi_int_400_perlbench = np.mean(base_multi_int_400_perlbench_list).round(2)
+            base_multi_int_401_bzip2 = np.mean(base_multi_int_401_bzip2_list).round(2)
+            base_multi_int_403_gcc = np.mean(base_multi_int_403_gcc_list).round(2)
+            base_multi_int_429_mcf = np.mean(base_multi_int_429_mcf_list).round(2)
+            base_multi_int_445_gobmk = np.mean(base_multi_int_445_gobmk_list).round(2)
+            base_multi_int_456_hmmer = np.mean(base_multi_int_456_hmmer_list).round(2)
+            base_multi_int_458_sjeng = np.mean(base_multi_int_458_sjeng_list).round(2)
+            base_multi_int_462_libquantum = np.mean(base_multi_int_462_libquantum_list).round(2)
+            base_multi_int_464_h264ref = np.mean(base_multi_int_464_h264ref_list).round(2)
+            base_multi_int_471_omnetpp = np.mean(base_multi_int_471_omnetpp_list).round(2)
+            base_multi_int_473_astar = np.mean(base_multi_int_473_astar_list).round(2)
+            base_multi_int_483_xalancbmk = np.mean(base_multi_int_483_xalancbmk_list).round(2)
+            base_multi_int_SPECint_2006 = np.mean(base_multi_int_SPECint_2006_list).round(2)
+            base_multi_fp_410_bwaves = np.mean(base_multi_fp_410_bwaves_list).round(2)
+            base_multi_fp_416_gamess = np.mean(base_multi_fp_416_gamess_list).round(2)
+            base_multi_fp_433_milc = np.mean(base_multi_fp_433_milc_list).round(2)
+            base_multi_fp_434_zeusmp = np.mean(base_multi_fp_434_zeusmp_list).round(2)
+            base_multi_fp_435_gromacs = np.mean(base_multi_fp_435_gromacs_list).round(2)
+            base_multi_fp_436_cactusADM = np.mean(base_multi_fp_436_cactusADM_list).round(2)
+            base_multi_fp_437_leslie3d = np.mean(base_multi_fp_437_leslie3d_list).round(2)
+            base_multi_fp_444_namd = np.mean(base_multi_fp_444_namd_list).round(2)
+            base_multi_fp_447_dealII = np.mean(base_multi_fp_447_dealII_list).round(2)
+            base_multi_fp_450_soplex = np.mean(base_multi_fp_450_soplex_list).round(2)
+            base_multi_fp_453_povray = np.mean(base_multi_fp_453_povray_list).round(2)
+            base_multi_fp_454_calculix = np.mean(base_multi_fp_454_calculix_list).round(2)
+            base_multi_fp_459_GemsFDTD = np.mean(base_multi_fp_459_GemsFDTD_list).round(2)
+            base_multi_fp_465_tonto = np.mean(base_multi_fp_465_tonto_list).round(2)
+            base_multi_fp_470_lbm = np.mean(base_multi_fp_470_lbm_list).round(2)
+            base_multi_fp_481_wrf = np.mean(base_multi_fp_481_wrf_list).round(2)
+            base_multi_fp_482_sphinx3 = np.mean(base_multi_fp_482_sphinx3_list).round(2)
+            base_multi_fp_SPECfp_2006 = np.mean(base_multi_fp_SPECfp_2006_list).round(2)
+            peak_single_int_400_perlbench = np.mean(peak_single_int_400_perlbench_list).round(2)
+            peak_single_int_401_bzip2 = np.mean(peak_single_int_401_bzip2_list).round(2)
+            peak_single_int_403_gcc = np.mean(peak_single_int_403_gcc_list).round(2)
+            peak_single_int_429_mcf = np.mean(peak_single_int_429_mcf_list).round(2)
+            peak_single_int_445_gobmk = np.mean(peak_single_int_445_gobmk_list).round(2)
+            peak_single_int_456_hmmer = np.mean(peak_single_int_456_hmmer_list).round(2)
+            peak_single_int_458_sjeng = np.mean(peak_single_int_458_sjeng_list).round(2)
+            peak_single_int_462_libquantum = np.mean(peak_single_int_462_libquantum_list).round(2)
+            peak_single_int_464_h264ref = np.mean(peak_single_int_464_h264ref_list).round(2)
+            peak_single_int_471_omnetpp = np.mean(peak_single_int_471_omnetpp_list).round(2)
+            peak_single_int_473_astar = np.mean(peak_single_int_473_astar_list).round(2)
+            peak_single_int_483_xalancbmk = np.mean(peak_single_int_483_xalancbmk_list).round(2)
+            peak_single_int_SPECint_2006 = np.mean(peak_single_int_SPECint_2006_list).round(2)
+            peak_single_fp_410_bwaves = np.mean(peak_single_fp_410_bwaves_list).round(2)
+            peak_single_fp_416_gamess = np.mean(peak_single_fp_416_gamess_list).round(2)
+            peak_single_fp_433_milc = np.mean(peak_single_fp_433_milc_list).round(2)
+            peak_single_fp_434_zeusmp = np.mean(peak_single_fp_434_zeusmp_list).round(2)
+            peak_single_fp_435_gromacs = np.mean(peak_single_fp_435_gromacs_list).round(2)
+            peak_single_fp_436_cactusADM = np.mean(peak_single_fp_436_cactusADM_list).round(2)
+            peak_single_fp_437_leslie3d = np.mean(peak_single_fp_437_leslie3d_list).round(2)
+            peak_single_fp_444_namd = np.mean(peak_single_fp_444_namd_list).round(2)
+            peak_single_fp_447_dealII = np.mean(peak_single_fp_447_dealII_list).round(2)
+            peak_single_fp_450_soplex = np.mean(peak_single_fp_450_soplex_list).round(2)
+            peak_single_fp_453_povray = np.mean(peak_single_fp_453_povray_list).round(2)
+            peak_single_fp_454_calculix = np.mean(peak_single_fp_454_calculix_list).round(2)
+            peak_single_fp_459_GemsFDTD = np.mean(peak_single_fp_459_GemsFDTD_list).round(2)
+            peak_single_fp_465_tonto = np.mean(peak_single_fp_465_tonto_list).round(2)
+            peak_single_fp_470_lbm = np.mean(peak_single_fp_470_lbm_list).round(2)
+            peak_single_fp_481_wrf = np.mean(peak_single_fp_481_wrf_list).round(2)
+            peak_single_fp_482_sphinx3 = np.mean(peak_single_fp_482_sphinx3_list).round(2)
+            peak_single_fp_SPECfp_2006 = np.mean(peak_single_fp_SPECfp_2006_list).round(2)
+            peak_multi_int_400_perlbench = np.mean(peak_multi_int_400_perlbench_list).round(2)
+            peak_multi_int_401_bzip2 = np.mean(peak_multi_int_401_bzip2_list).round(2)
+            peak_multi_int_403_gcc = np.mean(peak_multi_int_403_gcc_list).round(2)
+            peak_multi_int_429_mcf = np.mean(peak_multi_int_429_mcf_list).round(2)
+            peak_multi_int_445_gobmk = np.mean(peak_multi_int_445_gobmk_list).round(2)
+            peak_multi_int_456_hmmer = np.mean(peak_multi_int_456_hmmer_list).round(2)
+            peak_multi_int_458_sjeng = np.mean(peak_multi_int_458_sjeng_list).round(2)
+            peak_multi_int_462_libquantum = np.mean(peak_multi_int_462_libquantum_list).round(2)
+            peak_multi_int_464_h264ref = np.mean(peak_multi_int_464_h264ref_list).round(2)
+            peak_multi_int_471_omnetpp = np.mean(peak_multi_int_471_omnetpp_list).round(2)
+            peak_multi_int_473_astar = np.mean(peak_multi_int_473_astar_list).round(2)
+            peak_multi_int_483_xalancbmk = np.mean(peak_multi_int_483_xalancbmk_list).round(2)
+            peak_multi_int_SPECint_2006 = np.mean(peak_multi_int_SPECint_2006_list).round(2)
+            peak_multi_fp_410_bwaves = np.mean(peak_multi_fp_410_bwaves_list).round(2)
+            peak_multi_fp_416_gamess = np.mean(peak_multi_fp_416_gamess_list).round(2)
+            peak_multi_fp_433_milc = np.mean(peak_multi_fp_433_milc_list).round(2)
+            peak_multi_fp_434_zeusmp = np.mean(peak_multi_fp_434_zeusmp_list).round(2)
+            peak_multi_fp_435_gromacs = np.mean(peak_multi_fp_435_gromacs_list).round(2)
+            peak_multi_fp_436_cactusADM = np.mean(peak_multi_fp_436_cactusADM_list).round(2)
+            peak_multi_fp_437_leslie3d = np.mean(peak_multi_fp_437_leslie3d_list).round(2)
+            peak_multi_fp_444_namd = np.mean(peak_multi_fp_444_namd_list).round(2)
+            peak_multi_fp_447_dealII = np.mean(peak_multi_fp_447_dealII_list).round(2)
+            peak_multi_fp_450_soplex = np.mean(peak_multi_fp_450_soplex_list).round(2)
+            peak_multi_fp_453_povray = np.mean(peak_multi_fp_453_povray_list).round(2)
+            peak_multi_fp_454_calculix = np.mean(peak_multi_fp_454_calculix_list).round(2)
+            peak_multi_fp_459_GemsFDTD = np.mean(peak_multi_fp_459_GemsFDTD_list).round(2)
+            peak_multi_fp_465_tonto = np.mean(peak_multi_fp_465_tonto_list).round(2)
+            peak_multi_fp_470_lbm = np.mean(peak_multi_fp_470_lbm_list).round(2)
+            peak_multi_fp_481_wrf = np.mean(peak_multi_fp_481_wrf_list).round(2)
+            peak_multi_fp_482_sphinx3 = np.mean(peak_multi_fp_482_sphinx3_list).round(2)
+            peak_multi_fp_SPECfp_2006 = np.mean(peak_multi_fp_SPECfp_2006_list).round(2)
 
         new_data = {'execute_cmd': execute_cmd,
                     'modify_parameters': modify_parameters,
