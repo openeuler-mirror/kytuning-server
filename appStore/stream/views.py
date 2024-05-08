@@ -63,16 +63,16 @@ class StreamViewSet(CusModelViewSet):
             multi_triad_list = np.array([d.multi_triad for d in serializer_])
 
             # 计算每个数组的平均值
-            single_array_size = np.mean(single_array_size_list)
-            single_copy = np.mean(single_copy_list)
-            single_scale = np.mean(single_scale_list)
-            single_add = np.mean(single_add_list)
-            single_triad = np.mean(single_triad_list)
-            multi_array_size = np.mean(multi_array_size_list)
-            multi_copy = np.mean(multi_copy_list)
-            multi_scale = np.mean(multi_scale_list)
-            multi_add = np.mean(multi_add_list)
-            multi_triad = np.mean(multi_triad_list)
+            single_array_size = np.mean(single_array_size_list).round(2)
+            single_copy = np.mean(single_copy_list).round(2)
+            single_scale = np.mean(single_scale_list).round(2)
+            single_add = np.mean(single_add_list).round(2)
+            single_triad = np.mean(single_triad_list).round(2)
+            multi_array_size = np.mean(multi_array_size_list).round(2)
+            multi_copy = np.mean(multi_copy_list).round(2)
+            multi_scale = np.mean(multi_scale_list).round(2)
+            multi_add = np.mean(multi_add_list).round(2)
+            multi_triad = np.mean(multi_triad_list).round(2)
 
         new_data = {'single_array_size':single_array_size,
                 'single_copy':single_copy,

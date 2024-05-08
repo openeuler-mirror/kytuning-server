@@ -95,18 +95,18 @@ class Jvm2008ViewSet(CusModelViewSet):
             base_xml_list = [d.xml for d in base_data_]
             base_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in base_data_]
             # 计算每个数组的平均值
-            base_compiler = np.mean(base_compiler_list)
-            base_compress = np.mean(base_compress_list)
-            base_crypto = np.mean(base_crypto_list)
-            base_derby = np.mean(base_derby_list)
-            base_mpegaudio = np.mean(base_mpegaudio_list)
-            base_scimark_large = np.mean(base_scimark_large_list)
-            base_scimark_small = np.mean(base_scimark_small_list)
-            base_serial = np.mean(base_serial_list)
-            base_startup = np.mean(base_startup_list)
-            base_sunflow = np.mean(base_sunflow_list)
-            base_xml = np.mean(base_xml_list)
-            base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list)
+            base_compiler = np.mean(base_compiler_list).round(2)
+            base_compress = np.mean(base_compress_list).round(2)
+            base_crypto = np.mean(base_crypto_list).round(2)
+            base_derby = np.mean(base_derby_list).round(2)
+            base_mpegaudio = np.mean(base_mpegaudio_list).round(2)
+            base_scimark_large = np.mean(base_scimark_large_list).round(2)
+            base_scimark_small = np.mean(base_scimark_small_list).round(2)
+            base_serial = np.mean(base_serial_list).round(2)
+            base_startup = np.mean(base_startup_list).round(2)
+            base_sunflow = np.mean(base_sunflow_list).round(2)
+            base_xml = np.mean(base_xml_list).round(2)
+            base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2)
             # peak数据，将每个字典转换为NumPy数组
             peak_compiler_list = [d.compiler for d in peak_data_]
             peak_compress_list = [d.compress for d in peak_data_]
@@ -121,19 +121,19 @@ class Jvm2008ViewSet(CusModelViewSet):
             peak_xml_list = [d.xml for d in peak_data_]
             peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_]
             # 计算每个数组的平均值
-            peak_compiler = np.mean(peak_compiler_list)
+            peak_compiler = np.mean(peak_compiler_list).round(2)
             print(peak_compiler_list,111,peak_compiler)
-            peak_compress = np.mean(peak_compress_list)
-            peak_crypto = np.mean(peak_crypto_list)
-            peak_derby = np.mean(peak_derby_list)
-            peak_mpegaudio = np.mean(peak_mpegaudio_list)
-            peak_scimark_large = np.mean(peak_scimark_large_list)
-            peak_scimark_small = np.mean(peak_scimark_small_list)
-            peak_serial = np.mean(peak_serial_list)
-            peak_startup = np.mean(peak_startup_list)
-            peak_sunflow = np.mean(peak_sunflow_list)
-            peak_xml = np.mean(peak_xml_list)
-            peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list)
+            peak_compress = np.mean(peak_compress_list).round(2)
+            peak_crypto = np.mean(peak_crypto_list).round(2)
+            peak_derby = np.mean(peak_derby_list).round(2)
+            peak_mpegaudio = np.mean(peak_mpegaudio_list).round(2)
+            peak_scimark_large = np.mean(peak_scimark_large_list).round(2)
+            peak_scimark_small = np.mean(peak_scimark_small_list).round(2)
+            peak_serial = np.mean(peak_serial_list).round(2)
+            peak_startup = np.mean(peak_startup_list).round(2)
+            peak_sunflow = np.mean(peak_sunflow_list).round(2)
+            peak_xml = np.mean(peak_xml_list).round(2)
+            peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list).round(2)
 
         new_data = {
             'execute_cmd': execute_cmd,
