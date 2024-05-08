@@ -120,19 +120,19 @@ class UnixbenchViewSet(CusModelViewSet):
             single_system_call_overhead_list = [d.system_call_overhead for d in single_data_]
             single_index_score_list = [d.index_score for d in single_data_]
             # 计算每个数组的平均值
-            single_Dhrystone = np.mean(single_Dhrystone_list)
-            single_Double_Precision = np.mean(single_Double_Precision_list)
-            single_execl_throughput = np.mean(single_execl_throughput_list)
-            single_file_copy_1024 = np.mean(single_file_copy_1024_list)
-            single_file_copy_256 = np.mean(single_file_copy_256_list)
-            single_file_copy_4096 = np.mean(single_file_copy_4096_list)
-            single_pipe_throughput = np.mean(single_pipe_throughput_list)
-            single_pipe_based = np.mean(single_pipe_based_list)
-            single_process_creation = np.mean(single_process_creation_list)
-            single_shell_scripts_1 = np.mean(single_shell_scripts_1_list)
-            single_shell_scripts_8 = np.mean(single_shell_scripts_8_list)
-            single_system_call_overhead = np.mean(single_system_call_overhead_list)
-            single_index_score = np.mean(single_index_score_list)
+            single_Dhrystone = np.mean(single_Dhrystone_list).round(2)
+            single_Double_Precision = np.mean(single_Double_Precision_list).round(2)
+            single_execl_throughput = np.mean(single_execl_throughput_list).round(2)
+            single_file_copy_1024 = np.mean(single_file_copy_1024_list).round(2)
+            single_file_copy_256 = np.mean(single_file_copy_256_list).round(2)
+            single_file_copy_4096 = np.mean(single_file_copy_4096_list).round(2)
+            single_pipe_throughput = np.mean(single_pipe_throughput_list).round(2)
+            single_pipe_based = np.mean(single_pipe_based_list).round(2)
+            single_process_creation = np.mean(single_process_creation_list).round(2)
+            single_shell_scripts_1 = np.mean(single_shell_scripts_1_list).round(2)
+            single_shell_scripts_8 = np.mean(single_shell_scripts_8_list).round(2)
+            single_system_call_overhead = np.mean(single_system_call_overhead_list).round(2)
+            single_index_score = np.mean(single_index_score_list).round(2)
             # 多线程数据
             multi_Dhrystone_list = [d.Dhrystone for d in multi_data_]
             multi_Double_Precision_list = [d.Double_Precision for d in multi_data_]
@@ -148,19 +148,19 @@ class UnixbenchViewSet(CusModelViewSet):
             multi_system_call_overhead_list = [d.system_call_overhead for d in multi_data_]
             multi_index_score_list = [d.index_score for d in multi_data_]
             # 计算每个数组的平均值
-            multi_Dhrystone = np.mean(multi_Dhrystone_list)
-            multi_Double_Precision = np.mean(multi_Double_Precision_list)
-            multi_execl_throughput = np.mean(multi_execl_throughput_list)
-            multi_file_copy_1024 = np.mean(multi_file_copy_1024_list)
-            multi_file_copy_256 = np.mean(multi_file_copy_256_list)
-            multi_file_copy_4096 = np.mean(multi_file_copy_4096_list)
-            multi_pipe_throughput = np.mean(multi_pipe_throughput_list)
-            multi_pipe_based = np.mean(multi_pipe_based_list)
-            multi_process_creation = np.mean(multi_process_creation_list)
-            multi_shell_scripts_1 = np.mean(multi_shell_scripts_1_list)
-            multi_shell_scripts_8 = np.mean(multi_shell_scripts_8_list)
-            multi_system_call_overhead = np.mean(multi_system_call_overhead_list)
-            multi_index_score = np.mean(multi_index_score_list)
+            multi_Dhrystone = np.mean(multi_Dhrystone_list).round(2)
+            multi_Double_Precision = np.mean(multi_Double_Precision_list).round(2)
+            multi_execl_throughput = np.mean(multi_execl_throughput_list).round(2)
+            multi_file_copy_1024 = np.mean(multi_file_copy_1024_list).round(2)
+            multi_file_copy_256 = np.mean(multi_file_copy_256_list).round(2)
+            multi_file_copy_4096 = np.mean(multi_file_copy_4096_list).round(2)
+            multi_pipe_throughput = np.mean(multi_pipe_throughput_list).round(2)
+            multi_pipe_based = np.mean(multi_pipe_based_list).round(2)
+            multi_process_creation = np.mean(multi_process_creation_list).round(2)
+            multi_shell_scripts_1 = np.mean(multi_shell_scripts_1_list).round(2)
+            multi_shell_scripts_8 = np.mean(multi_shell_scripts_8_list).round(2)
+            multi_system_call_overhead = np.mean(multi_system_call_overhead_list).round(2)
+            multi_index_score = np.mean(multi_index_score_list).round(2)
 
         new_data = {'single_Dhrystone': single_Dhrystone,
                 'single_Double_Precision': single_Double_Precision,

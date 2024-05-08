@@ -21,7 +21,6 @@ class IozoneViewSet(CusModelViewSet):
         serializer = self.get_serializer(serializer_, many=True)
         datas = []
         groups = set([d['mark_name'] for d in serializer.data])
-        # 计算这些的平均值 data['write_test']
         if len(groups) == 1:
             for data in serializer.data:
                 data = {'testcase_name': data['testcase_name'],
@@ -46,13 +45,13 @@ class IozoneViewSet(CusModelViewSet):
                 random_read_test_list = [d.random_read_test for d in test_type_data_]
                 random_write_test_list = [d.random_write_test for d in test_type_data_]
                 # 计算每个数组的平均值
-                file_size = np.mean(file_size_list)
-                write_test = np.mean(write_test_list)
-                rewrite_test = np.mean(rewrite_test_list)
-                read_test = np.mean(read_test_list)
-                reread_test = np.mean(reread_test_list)
-                random_read_test = np.mean(random_read_test_list)
-                random_write_test = np.mean(random_write_test_list)
+                file_size = np.mean(file_size_list).round(2)
+                write_test = np.mean(write_test_list).round(2)
+                rewrite_test = np.mean(rewrite_test_list).round(2)
+                read_test = np.mean(read_test_list).round(2)
+                reread_test = np.mean(reread_test_list).round(2)
+                random_read_test = np.mean(random_read_test_list).round(2)
+                random_write_test = np.mean(random_write_test_list).round(2)
 
                 data = {'testcase_name': test_type,
                         'file_size': file_size,
