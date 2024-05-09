@@ -122,7 +122,6 @@ class Jvm2008ViewSet(CusModelViewSet):
             peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_]
             # 计算每个数组的平均值
             peak_compiler = np.mean(peak_compiler_list).round(2)
-            print(peak_compiler_list,111,peak_compiler)
             peak_compress = np.mean(peak_compress_list).round(2)
             peak_crypto = np.mean(peak_crypto_list).round(2)
             peak_derby = np.mean(peak_derby_list).round(2)
@@ -178,7 +177,7 @@ class Jvm2008ViewSet(CusModelViewSet):
         comparsionIds = comparsionIds.split(',')
         base_queryset = Jvm2008.objects.filter(env_id=env_id).all()
         data = self.get_data(base_queryset)
-        others = [{'column1': 'Jvm2008', 'column2': '', 'column3': 'Jvm2008m#1'},
+        others = [{'column1': 'Jvm2008', 'column2': '', 'column3': 'Jvm2008m#1 (基准数据)'},
                   {'column1': '执行命令', 'column2': '', 'column3': data['execute_cmd']},
                   {'column1': '修改参数：', 'column2': '', 'column3': data['modify_parameters']}]
         datas = [
@@ -311,7 +310,7 @@ class Jvm2008ViewSet(CusModelViewSet):
                 data_jvm2008['tune_type'] = tune_type
                 data_jvm2008['execute_cmd'] = 'xxx'
                 data_jvm2008['modify_parameters'] = '参数'
-                data_jvm2008['mark_name'] = '-'.join(k.split('-')[-2:])
+                data_jvm2008['mark_name'] = k[-3:]
                 data_jvm2008['compiler'] = jvm2008_json['items'][tune_type]['compiler']
                 data_jvm2008['compress'] = jvm2008_json['items'][tune_type]['compress']
                 data_jvm2008['crypto'] = jvm2008_json['items'][tune_type]['crypto']
@@ -326,14 +325,16 @@ class Jvm2008ViewSet(CusModelViewSet):
                 data_jvm2008['Noncompliant_pomposite_result'] = jvm2008_json['items'][tune_type][
                     'Noncompliant composite result:']
                 data_jvm2008['test_time'] = return_time(jvm2008_json['time'])
+                data_jvm2008 = {key: value if not isinstance(value, str) or value != '' else None for key, value in
+                           data_jvm2008.items()}
                 serializer_jvm2008 = Jvm2008Serializer(data=data_jvm2008)
                 if serializer_jvm2008.is_valid():
                     self.perform_create(serializer_jvm2008)
                 else:
-                    print(serializer_jvm2008.errors, "jvm2008")
                     serializer_jvm2008_errors.append(serializer_jvm2008.errors)
                     errors_message.append(get_error_message(serializer_jvm2008))
         if serializer_jvm2008_errors:
+            print(serializer_jvm2008_errors, "jvm2008")
             return json_response(serializer_jvm2008_errors, status.HTTP_400_BAD_REQUEST, errors_message)
         else:
             return

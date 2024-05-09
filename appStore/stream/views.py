@@ -106,7 +106,7 @@ class StreamViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_200_OK, '列表')
         #当大于两条数据是展示平均数
         data = self.get_data(base_queryset)
-        others = [{'column1':'Stream','column2':'', 'column3':'Stream#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
+        others = [{'column1':'Stream','column2':'', 'column3':'Stream#1 (基准数据)'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
             {'column1': '单线程', 'column2': 'Array size', 'column3': data['single_array_size']},
             {'column1': '单线程', 'column2': 'Copy', 'column3': data['single_copy']},
@@ -183,6 +183,8 @@ class StreamViewSet(CusModelViewSet):
                 data_stream['multi_add'] = stream_json['多线程']['Add']
                 data_stream['multi_triad'] = stream_json['多线程']['Triad']
                 data_stream['test_time'] = return_time(stream_json['time'])
+                data_stream = {key: value if not isinstance(value, str) or value != '' else None for key, value in
+                           data_stream.items()}
                 serializer_stream = StreamSerializer(data=data_stream)
                 if serializer_stream.is_valid():
                     self.perform_create(serializer_stream)
