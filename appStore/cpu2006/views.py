@@ -1,5 +1,5 @@
+import math
 import numpy as np
-
 # Create your views here.
 from rest_framework import status
 
@@ -702,8 +702,12 @@ class Cpu2006ViewSet(CusModelViewSet):
         for key, value in new_data.items():
             if key not in ['execute_cmd', 'modify_parameters']:
                 if value is not None:
-                    if np.isnan(value):
-                        new_data[key] = None
+                    try:
+                        numeric_value = float(value)  # 将字符串转换为浮点数
+                        if math.isnan(numeric_value):
+                            new_data[key] = None
+                    except ValueError:
+                        pass
         return new_data
 
     def do_base_data(self,data):
@@ -850,7 +854,7 @@ class Cpu2006ViewSet(CusModelViewSet):
         base_serializer = self.get_serializer(base_queryset, many=True)
         json_datas = self.get_data(base_queryset)
         base_datas = self.do_base_data(json_datas)
-        others = [{'column1': 'Cpu2006', 'column2': '', 'column3': '','column4': '','column5': 'Cpu2006#1'},
+        others = [{'column1': 'Cpu2006', 'column2': '', 'column3': '','column4': '','column5': 'Cpu2006#1 (基准数据)'},
                   {'column1': '执行命令', 'column2': '', 'column3': '','column4': '','column5': base_serializer.data[0]['execute_cmd']},
                   {'column1': '修改参数：', 'column2': '', 'column3': '','column4': '','column5': base_serializer.data[0]['modify_parameters']}]
 
@@ -1141,7 +1145,7 @@ class Cpu2006ViewSet(CusModelViewSet):
                     data_cpu2006 = {}
                     data_cpu2006['env_id'] = request.__dict__['data_cpu2006']['env_id']
                     data_cpu2006['thread'] = key.split("_")[0]
-                    data_cpu2006['thread'] = key.split("_")[0]
+                    data_cpu2006['mark_name'] = k[-3:]
                     if key.split("_")[1] == "fp":
                         for key1 in value:
                             data_cpu2006['execute_cmd'] = "xx"
@@ -1192,6 +1196,8 @@ class Cpu2006ViewSet(CusModelViewSet):
                             data_cpu2006['int_483_xalancbmk'] = value[key1]['483.xalancbmk']
                             data_cpu2006['int_SPECint_2006'] = value[key1]['SPECint_2006']
                             data_cpu2006['test_time'] = return_time(cpu2006_json['time'])
+                            data_cpu2006 = {key: value if not isinstance(value, str) or value != '' else None for
+                                            key, value in data_cpu2006.items()}
                             serializer_cpu2006 = Cpu2006Serializer(data=data_cpu2006)
                             if serializer_cpu2006.is_valid():
                                 self.perform_create(serializer_cpu2006)
