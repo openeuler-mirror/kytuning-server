@@ -143,7 +143,7 @@ class FioViewSet(CusModelViewSet):
         base_serializer = self.get_serializer(base_queryset, many=True)
         base_datas = self.get_data(base_queryset)
         datas = self.do_base_data(base_datas)
-        others = [{'column1': 'Fio', 'column2': '', 'column3': 'Fio#1'},
+        others = [{'column1': 'Fio', 'column2': '', 'column3': 'Fio#1 (基准数据)'},
                   {'column1': '执行命令', 'column2': '', 'column3': base_serializer.data[0]['execute_cmd']},
                   {'column1': '修改参数：', 'column2': '', 'column3': base_serializer.data[0]['modify_parameters']}]
 
@@ -211,17 +211,19 @@ class FioViewSet(CusModelViewSet):
                 data_fio['env_id'] = request.__dict__['data_fio']['env_id']
                 data_fio['execute_cmd'] = 'xx'
                 data_fio['modify_parameters'] = 'xx'
+                data_fio['mark_name'] = k[-3:]
                 data_fio['rw'] = fio_json['rw']
                 data_fio['bs'] = fio_json['items']['bs']
                 data_fio['io'] = fio_json['items']['io']
                 data_fio['iops'] = fio_json['items']['iops']
                 data_fio['bw'] = fio_json['items']['bw']
                 data_fio['test_time'] = return_time(fio_json['time'])
+                data_fio = {key: value if not isinstance(value, str) or value != '' else None for key, value in
+                               data_fio.items()}
                 serializer_fio = FioSerializer(data=data_fio)
                 if serializer_fio.is_valid():
                     self.perform_create(serializer_fio)
                     continue
-                print(serializer_fio.errors, "fio")
                 return json_response(serializer_fio.errors, status.HTTP_400_BAD_REQUEST,
                                      get_error_message(serializer_fio))
         if serializer_fio_errors:
