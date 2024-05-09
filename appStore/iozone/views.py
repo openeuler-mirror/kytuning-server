@@ -139,6 +139,8 @@ class IozoneViewSet(CusModelViewSet):
         return json_response(iozone_data, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
+        serializer_iozone_errors = []
+        error_message = []
         for k, iozone_json in request.__dict__['data_iozone'].items():
             if k.lower().startswith('iozone'):
                 constants.IOZONE_BOOL = True
@@ -163,3 +165,8 @@ class IozoneViewSet(CusModelViewSet):
                     print(serializer_iozone.errors, "iozone")
                     return json_response(serializer_iozone.errors, status.HTTP_400_BAD_REQUEST,
                                          get_error_message(serializer_iozone))
+        if serializer_iozone_errors:
+            print(serializer_iozone_errors, "iozone")
+            return json_response(serializer_iozone_errors, status.HTTP_400_BAD_REQUEST, error_message)
+        else:
+            return

@@ -333,4 +333,7 @@ class Jvm2008ViewSet(CusModelViewSet):
                     print(serializer_jvm2008.errors, "jvm2008")
                     serializer_jvm2008_errors.append(serializer_jvm2008.errors)
                     errors_message.append(get_error_message(serializer_jvm2008))
-        return json_response(serializer_jvm2008_errors, status.HTTP_400_BAD_REQUEST, errors_message)
+        if serializer_jvm2008_errors:
+            return json_response(serializer_jvm2008_errors, status.HTTP_400_BAD_REQUEST, errors_message)
+        else:
+            return

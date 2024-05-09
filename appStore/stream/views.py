@@ -51,6 +51,7 @@ class StreamViewSet(CusModelViewSet):
             multi_triad = serializer.data[0]['multi_triad']
         else:
             # 将每个字典转换为NumPy数组
+            # single_array_size_list = np.array([d['single_array_size'] for d in serializer.data]) #或者这样的方式
             single_array_size_list = np.array([d.single_array_size for d in serializer_])
             single_copy_list = np.array([d.single_copy for d in serializer_])
             single_scale_list = np.array([d.single_scale for d in serializer_])
@@ -185,9 +186,12 @@ class StreamViewSet(CusModelViewSet):
                 serializer_stream = StreamSerializer(data=data_stream)
                 if serializer_stream.is_valid():
                     self.perform_create(serializer_stream)
-                serializer_stream_errors.append(serializer_stream.errors)
-                error_message.append(get_error_message(serializer_stream))
+                else:
+                    serializer_stream_errors.append(serializer_stream.errors)
+                    error_message.append(get_error_message(serializer_stream))
 
         if serializer_stream_errors:
             print(serializer_stream_errors, "stream")
             return json_response(serializer_stream_errors, status.HTTP_400_BAD_REQUEST, error_message)
+        else:
+            return
