@@ -10,7 +10,7 @@ class Project(models.Model):
     env_id = models.IntegerField(verbose_name='环境id')
     user_name = models.CharField(max_length=255, verbose_name='测试人员名称')
     project_name = models.CharField(max_length=255, verbose_name='项目名称',null=True,blank=True)
-    arm = models.CharField( max_length=255, verbose_name='架构',null=True,blank=True)
+    cpu_module_name = models.CharField( max_length=255, verbose_name='cpu型号',null=True,blank=True)
     hwinfo_machineinfo_serialnumber = models.CharField(max_length=255,verbose_name='环境表中的hwinfo_machineinfo_serialnumber',null=True,blank=True)
     os_version = models.CharField(max_length=255, verbose_name='操作系统版本',null=True,blank=True)
     message = models.CharField(max_length=255, verbose_name='项目描述',null=True,blank=True)

@@ -27,8 +27,8 @@ class ProjectViewSet(CusModelViewSet):
         data_project['env_id'] = request.__dict__['data_project']['env_id']
         data_project['user_name'] = request.__dict__['data_project']['user_name']
         data_project['project_name'] = request.__dict__['data_project']['project_name']
-        data_project['arm'] = request.__dict__['data_project']['arm']
-        data_project['os_version'] = request.__dict__['data_project']['os_version']
+        data_project['os_version'] = request.__dict__['data_project']['envinfo']['swinfo']['os']['osversion']
+        data_project['cpu_module_name'] = request.__dict__['data_project']['envinfo']['hwinfo']['cpu']['model_name']
         data_project['hwinfo_machineinfo_serialnumber'] = \
         request.__dict__['data_project']['envinfo']['hwinfo']['machineinfo']['serialnumber']
         # 获取所有文件名对应的key，判断每种测试迭代了几次
@@ -67,8 +67,7 @@ class ProjectViewSet(CusModelViewSet):
             data_project['times'] = queryset.times + 1
         serializer_project = ProjectSerializer(data=data_project)
         if serializer_project.is_valid():
-            # self.perform_create(serializer_project)
-            pass
+            self.perform_create(serializer_project)
         else:
             print(serializer_project.errors, "project")
             return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
