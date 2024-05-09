@@ -96,7 +96,7 @@ class IozoneViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_200_OK, '未获取到数据')
         base_datas = self.get_data(base_queryset)
         datas = self.do_base_data(base_datas)
-        others = [{'column1': 'Iozone', 'column2': '', 'column3': 'Iozone#1'},
+        others = [{'column1': 'Iozone', 'column2': '', 'column3': 'Iozone#1 (基准数据)'},
                   {'column1': '执行命令', 'column2': '', 'column3': base_serializer.data[0]['execute_cmd']},
                   {'column1': '修改参数：', 'column2': '', 'column3': base_serializer.data[0]['modify_parameters']}]
 
@@ -149,6 +149,7 @@ class IozoneViewSet(CusModelViewSet):
                 data_iozone['execute_cmd'] = "xxx"
                 data_iozone['modify_parameters'] = "xxx"
                 data_iozone['testcase_name'] = k.split('-')[-3]
+                data_iozone['mark_name'] = k[-3:]
                 data_iozone['file_size'] = iozone_json['测试记录'][0]['文件大小']
                 data_iozone['block_size'] = iozone_json['测试记录'][0]['块大小']
                 data_iozone['write_test'] = iozone_json['测试记录'][0]['写测试（KB/s）']
@@ -158,11 +159,12 @@ class IozoneViewSet(CusModelViewSet):
                 data_iozone['random_read_test'] = iozone_json['测试记录'][0]['随机读测试（KB/s）']
                 data_iozone['random_write_test'] = iozone_json['测试记录'][0]['随机写测试（KB/s）']
                 data_iozone['test_time'] = return_time(iozone_json['time'])
+                data_iozone = {key: value if not isinstance(value, str) or value != '' else None for key, value in
+                                data_iozone.items()}
                 serializer_iozone = IozoneSerializer(data=data_iozone)
                 if serializer_iozone.is_valid():
                     self.perform_create(serializer_iozone)
                 else:
-                    print(serializer_iozone.errors, "iozone")
                     return json_response(serializer_iozone.errors, status.HTTP_400_BAD_REQUEST,
                                          get_error_message(serializer_iozone))
         if serializer_iozone_errors:
