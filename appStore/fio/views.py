@@ -202,6 +202,8 @@ class FioViewSet(CusModelViewSet):
         return json_response(unixbench_data, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
+        serializer_fio_errors = []
+        error_message = []
         for k, fio_json in request.__dict__['data_fio'].items():
             data_fio = {}
             if k.lower().startswith('fio'):
@@ -222,3 +224,8 @@ class FioViewSet(CusModelViewSet):
                 print(serializer_fio.errors, "fio")
                 return json_response(serializer_fio.errors, status.HTTP_400_BAD_REQUEST,
                                      get_error_message(serializer_fio))
+        if serializer_fio_errors:
+            print(serializer_fio_errors, "fio")
+            return json_response(serializer_fio_errors, status.HTTP_400_BAD_REQUEST, error_message)
+        else:
+            return

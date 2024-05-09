@@ -1195,8 +1195,11 @@ class Cpu2006ViewSet(CusModelViewSet):
                             serializer_cpu2006 = Cpu2006Serializer(data=data_cpu2006)
                             if serializer_cpu2006.is_valid():
                                 self.perform_create(serializer_cpu2006)
-                            serializer_cpu2006_errors.append(serializer_cpu2006.errors)
-                            error_message.append(get_error_message(serializer_cpu2006))
-
-        return json_response(serializer_cpu2006_errors, status.HTTP_400_BAD_REQUEST,
+                            else:
+                                serializer_cpu2006_errors.append(serializer_cpu2006.errors)
+                                error_message.append(get_error_message(serializer_cpu2006))
+        if serializer_cpu2006_errors:
+            return json_response(serializer_cpu2006_errors, status.HTTP_400_BAD_REQUEST,
                              error_message)
+        else:
+            return

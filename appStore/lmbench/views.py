@@ -760,8 +760,11 @@ class LmbenchViewSet(CusModelViewSet):
                     serializer_lmbench = LmbenchSerializer(data=lmbench)
                     if serializer_lmbench.is_valid():
                         self.perform_create(serializer_lmbench)
-                    serializer_lmbench_error.append(serializer_lmbench.errors)
-                    error_message.append(get_error_message(serializer_lmbench))
+                    else:
+                        serializer_lmbench_error.append(serializer_lmbench.errors)
+                        error_message.append(get_error_message(serializer_lmbench))
         if serializer_lmbench_error:
             print(serializer_lmbench_error,"lmbench")
             return json_response(serializer_lmbench_error, status.HTTP_400_BAD_REQUEST, error_message)
+        else:
+            return

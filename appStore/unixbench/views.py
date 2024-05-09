@@ -340,6 +340,10 @@ class UnixbenchViewSet(CusModelViewSet):
                 serializer_unixbench = UnixbenchSerializer(data=data_unixbench)
                 if serializer_unixbench.is_valid():
                     self.perform_create(serializer_unixbench)
-                serializer_unixbench_errors.append(serializer_unixbench.errors)
-                error_message.append(get_error_message(serializer_unixbench))
-        return json_response(serializer_unixbench_errors, status.HTTP_400_BAD_REQUEST, error_message)
+                else:
+                    serializer_unixbench_errors.append(serializer_unixbench.errors)
+                    error_message.append(get_error_message(serializer_unixbench))
+        if serializer_unixbench_errors:
+            return json_response(serializer_unixbench_errors, status.HTTP_400_BAD_REQUEST, error_message)
+        else:
+            return
