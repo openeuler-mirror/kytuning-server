@@ -13,7 +13,7 @@ class Env(models.Model):
     hwinfo_cpu_Vendor_ID = models.CharField(max_length=50, verbose_name='Vendor ID',null=True,blank=True)
     hwinfo_cpu_CPU_family = models.CharField(max_length=50, verbose_name='CPU family',null=True,blank=True)
     hwinfo_cpu_model_name = models.CharField(max_length=50, verbose_name='model_name',null=True,blank=True)
-    hwinfo_cpu_CPU_MHz = models.TextField(max_length=100, verbose_name='CPU MHz',null=True,blank=True)
+    hwinfo_cpu_CPU_MHz = models.TextField(verbose_name='CPU MHz',null=True,blank=True)
     hwinfo_cpu_CPUs = models.IntegerField(verbose_name='CPU(s)',null=True,blank=True)
     hwinfo_cpu_Threads_per_core = models.IntegerField(verbose_name='Thread(s) per core',null=True,blank=True)
     hwinfo_cpu_CPU_Arch = models.CharField(max_length=50, verbose_name='CPU Arch',null=True,blank=True)
@@ -61,6 +61,7 @@ class Env(models.Model):
     swinfo_software_ver_gfortranversion = models.CharField(max_length=50, verbose_name='gfortranversion',null=True,blank=True)
     swinfo_software_ver_pythonversion = models.CharField(max_length=50, verbose_name='pythonversion',null=True,blank=True)
     nwinfo_nic = models.TextField(verbose_name='nic', default="")
+    time= models.CharField(max_length=50, verbose_name='时间戳')
 
     class Meta:
         db_table = 'env'
