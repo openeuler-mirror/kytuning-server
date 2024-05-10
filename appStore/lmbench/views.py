@@ -17,24 +17,8 @@ class LmbenchViewSet(CusModelViewSet):
     queryset = Lmbench.objects.all().order_by('id')
     serializer_class = LmbenchSerializer
 
-    # pagination_class = LimsPageSet
-    # def list(self, request, *args, **kwargs):
-    #     """
-    #     返回列表
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     env_id = request.GET.get('env_id')
-    #     queryset = Lmbench.objects.filter(env_id=env_id).all()
-    #     queryset = self.filter_queryset(queryset)
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
-
     def get_data(self, serializer_):
         serializer = self.get_serializer(serializer_, many=True)
-        # print(serializer,111)
         execute_cmd = serializer.data[0]['execute_cmd']
         modify_parameters = serializer.data[0]['modify_parameters']
         basic_Mhz = ''
@@ -422,7 +406,7 @@ class LmbenchViewSet(CusModelViewSet):
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '列表')
         data = self.get_data(base_queryset)
-        others = [{'column1':'Lmbench','column2':'', 'column3':'Lmbench#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
+        others = [{'column1':'Lmbench','column2':'', 'column3':'Lmbench#1 (基准数据)'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
         {'column1':'Basic system parameters','column2':'Mhz','column3':data['basic_Mhz']},
         {'column1':'Basic system parameters','column2':'tlb pages','column3':data['basic_tlb_pages']},
@@ -757,6 +741,8 @@ class LmbenchViewSet(CusModelViewSet):
                             lmbench['memory_L2'] = value['L2 $']
                             lmbench['memory_Main_mem'] = value['Main mem']
                             lmbench['memory_Rand_mem'] = value['Rand mem']
+                    lmbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in
+                               lmbench.items()}
                     serializer_lmbench = LmbenchSerializer(data=lmbench)
                     if serializer_lmbench.is_valid():
                         self.perform_create(serializer_lmbench)

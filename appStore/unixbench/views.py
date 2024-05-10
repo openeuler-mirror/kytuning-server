@@ -207,7 +207,7 @@ class UnixbenchViewSet(CusModelViewSet):
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '列表')
         data = self.get_data(base_queryset)
-        others = [{'column1':'Unxibench','column2':'', 'column3':'Unixbench#1'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
+        others = [{'column1':'Unxibench','column2':'', 'column3':'Unixbench#1 (基准数据)'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
             {'column1': '单线程', 'column2': 'Dhrystone 2 using register variables(lps)', 'column3': data['single_Dhrystone']},
             {'column1': '单线程', 'column2': 'Double-Precision Whetstone(MWIPS)', 'column3': data['single_Double_Precision']},
@@ -322,7 +322,7 @@ class UnixbenchViewSet(CusModelViewSet):
                 data_unixbench['thread'] = thread
                 data_unixbench['execute_cmd'] = 'xx'
                 data_unixbench['modify_parameters'] = '参数'
-                data_unixbench['mark_name'] = '-'.join(k.split('-')[-2:])
+                data_unixbench['mark_name'] = k[-3:]
                 data_unixbench['Dhrystone'] = unixbench_json[thread]['Dhrystone 2 using register variables(lps)']
                 data_unixbench['Double_Precision'] = unixbench_json[thread]['Double-Precision Whetstone(MWIPS)']
                 data_unixbench['execl_throughput'] = unixbench_json[thread]['Execl Throughput(lps)']
@@ -337,6 +337,8 @@ class UnixbenchViewSet(CusModelViewSet):
                 data_unixbench['system_call_overhead'] = unixbench_json[thread]['System Call Overhead(lps)']
                 data_unixbench['index_score'] = unixbench_json[thread]['Index Score(sum)']
                 data_unixbench['test_time'] = return_time(unixbench_json['time'])
+                data_unixbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in
+                           data_unixbench.items()}
                 serializer_unixbench = UnixbenchSerializer(data=data_unixbench)
                 if serializer_unixbench.is_valid():
                     self.perform_create(serializer_unixbench)
