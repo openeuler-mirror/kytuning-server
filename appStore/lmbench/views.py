@@ -1,5 +1,5 @@
+import math
 import numpy as np
-
 # Create your views here.
 from rest_framework import status
 
@@ -170,77 +170,77 @@ class LmbenchViewSet(CusModelViewSet):
             memory_Rand_mem = serializer.data[0]['memory_Rand_mem']
         else:
              # 将每个字典转换为NumPy数组
-             basic_Mhz_list = np.array([d.basic_Mhz for d in serializer_])
-             basic_tlb_pages_list = np.array([d.basic_tlb_pages for d in serializer_])
-             basic_cache_line_bytes_list = np.array([d.basic_cache_line_bytes for d in serializer_])
-             basic_mem_par_list = np.array([d.basic_mem_par for d in serializer_])
-             basic_scal_load_list = np.array([d.basic_scal_load for d in serializer_])
-             processor_null_call_list = np.array([d.processor_null_call for d in serializer_])
-             processor_null_I_O_list = np.array([d.processor_null_I_O for d in serializer_])
-             processor_stat_list = np.array([d.processor_stat for d in serializer_])
-             processor_open_clo_list = np.array([d.processor_open_clo for d in serializer_])
-             processor_slct_TCP_list = np.array([d.processor_slct_TCP for d in serializer_])
-             processor_sig_inst_list = np.array([d.processor_sig_inst for d in serializer_])
-             processor_sig_hndl_list = np.array([d.processor_sig_hndl for d in serializer_])
-             processor_fork_proc_list = np.array([d.processor_fork_proc for d in serializer_])
-             processor_exec_proc_list = np.array([d.processor_exec_proc for d in serializer_])
-             processor_sh_proc_list = np.array([d.processor_sh_proc for d in serializer_])
-             processor_Mhz_list = np.array([d.processor_Mhz for d in serializer_])
-             basic_intgr_bit_list = np.array([d.basic_intgr_bit for d in serializer_])
-             basic_intgr_add_list = np.array([d.basic_intgr_add for d in serializer_])
-             basic_intgr_mul_list = np.array([d.basic_intgr_mul for d in serializer_])
-             basic_intgr_div_list = np.array([d.basic_intgr_div for d in serializer_])
-             basic_intgr_mod_list = np.array([d.basic_intgr_mod for d in serializer_])
-             basic_int64_bit_list = np.array([d.basic_int64_bit for d in serializer_])
-             basic_int64_add_list = np.array([d.basic_int64_add for d in serializer_])
-             basic_int64_mul_list = np.array([d.basic_int64_mul for d in serializer_])
-             basic_int64_div_list = np.array([d.basic_int64_div for d in serializer_])
-             basic_int64_mod_list = np.array([d.basic_int64_mod for d in serializer_])
-             basic_float_add_list = np.array([d.basic_float_add for d in serializer_])
-             basic_float_mul_list = np.array([d.basic_float_mul for d in serializer_])
-             basic_float_div_list = np.array([d.basic_float_div for d in serializer_])
-             basic_float_bogo_list = np.array([d.basic_float_bogo for d in serializer_])
-             basic_double_add_list = np.array([d.basic_double_add for d in serializer_])
-             basic_double_mul_list = np.array([d.basic_double_mul for d in serializer_])
-             basic_double_div_list = np.array([d.basic_double_div for d in serializer_])
-             basic_double_bogo_list = np.array([d.basic_double_bogo for d in serializer_])
-             context_2p_0K_list = np.array([d.context_2p_0K for d in serializer_])
-             context_2p_16K_list = np.array([d.context_2p_16K for d in serializer_])
-             context_2p_64K_list = np.array([d.context_2p_64K for d in serializer_])
-             context_8p_16K_list = np.array([d.context_8p_16K for d in serializer_])
-             context_8p_64K_list = np.array([d.context_8p_64K for d in serializer_])
-             context_16p_16K_list = np.array([d.context_16p_16K for d in serializer_])
-             context_16p_64K_list = np.array([d.context_16p_64K for d in serializer_])
-             local_2p_0K_list = np.array([d.local_2p_0K for d in serializer_])
-             local_Pipe_list = np.array([d.local_Pipe for d in serializer_])
-             local_AF_UNIX_list = np.array([d.local_AF_UNIX for d in serializer_])
-             local_UDP_list = np.array([d.local_UDP for d in serializer_])
-             local_TCP_list = np.array([d.local_TCP for d in serializer_])
-             local_TCP_conn_list = np.array([d.local_TCP_conn for d in serializer_])
-             local_RPC_TCP_list = np.array([d.local_RPC_TCP for d in serializer_])
-             local_RPC_UDP_list = np.array([d.local_RPC_UDP for d in serializer_])
-             local_bigger_Mmap_Latency_list = np.array([d.local_bigger_Mmap_Latency for d in serializer_])
-             local_bigger_Prot_Fault_list = np.array([d.local_bigger_Prot_Fault for d in serializer_])
-             local_bigger_Page_Fault_list = np.array([d.local_bigger_Page_Fault for d in serializer_])
-             local_bigger_100fd_selct_list = np.array([d.local_bigger_100fd_selct for d in serializer_])
-             local_bigger_0K_File_create_list = np.array([d.local_bigger_0K_File_create for d in serializer_])
-             local_bigger_0K_File_delete_list = np.array([d.local_bigger_0K_File_delete for d in serializer_])
-             local_bigger_10K_File_create_list = np.array([d.local_bigger_10K_File_create for d in serializer_])
-             local_bigger_10K_File_delete_list = np.array([d.local_bigger_10K_File_delete for d in serializer_])
-             local_bigger_Pipe_list = np.array([d.local_bigger_Pipe for d in serializer_])
-             local_bigger_AF_UNIX_list = np.array([d.local_bigger_AF_UNIX for d in serializer_])
-             local_bigger_TCP_list = np.array([d.local_bigger_TCP for d in serializer_])
-             local_bigger_File_reread_list = np.array([d.local_bigger_File_reread for d in serializer_])
-             local_bigger_Mmap_reread_list = np.array([d.local_bigger_Mmap_reread for d in serializer_])
-             local_bigger_Bcopy_libc_list = np.array([d.local_bigger_Bcopy_libc for d in serializer_])
-             local_bigger_Bcopy_hand_list = np.array([d.local_bigger_Bcopy_hand for d in serializer_])
-             local_bigger_Mem_read_list = np.array([d.local_bigger_Mem_read for d in serializer_])
-             local_bigger_Mem_write_list = np.array([d.local_bigger_Mem_write for d in serializer_])
-             memory_Mhz_list = np.array([d.memory_Mhz for d in serializer_])
-             memory_L1_list = np.array([d.memory_L1 for d in serializer_])
-             memory_L2_list = np.array([d.memory_L2 for d in serializer_])
-             memory_Main_mem_list = np.array([d.memory_Main_mem for d in serializer_])
-             memory_Rand_mem_list = np.array([d.memory_Rand_mem for d in serializer_])
+             basic_Mhz_list = [d.basic_Mhz for d in serializer_ if d.basic_Mhz is not None]
+             basic_tlb_pages_list = [d.basic_tlb_pages for d in serializer_ if d.basic_tlb_pages is not None]
+             basic_cache_line_bytes_list = [d.basic_cache_line_bytes for d in serializer_ if d.basic_cache_line_bytes is not None]
+             basic_mem_par_list = [d.basic_mem_par for d in serializer_ if d.basic_mem_par is not None]
+             basic_scal_load_list = [d.basic_scal_load for d in serializer_ if d.basic_scal_load is not None]
+             processor_null_call_list = [d.processor_null_call for d in serializer_ if d.processor_null_call is not None]
+             processor_null_I_O_list = [d.processor_null_I_O for d in serializer_ if d.processor_null_I_O is not None]
+             processor_stat_list = [d.processor_stat for d in serializer_ if d.processor_stat is not None]
+             processor_open_clo_list = [d.processor_open_clo for d in serializer_ if d.processor_open_clo is not None]
+             processor_slct_TCP_list = [d.processor_slct_TCP for d in serializer_ if d.processor_slct_TCP is not None]
+             processor_sig_inst_list = [d.processor_sig_inst for d in serializer_ if d.processor_sig_inst is not None]
+             processor_sig_hndl_list = [d.processor_sig_hndl for d in serializer_ if d.processor_sig_hndl is not None]
+             processor_fork_proc_list = [d.processor_fork_proc for d in serializer_ if d.processor_fork_proc is not None]
+             processor_exec_proc_list = [d.processor_exec_proc for d in serializer_ if d.processor_exec_proc is not None]
+             processor_sh_proc_list = [d.processor_sh_proc for d in serializer_ if d.processor_sh_proc is not None]
+             processor_Mhz_list = [d.processor_Mhz for d in serializer_ if d.processor_Mhz is not None]
+             basic_intgr_bit_list = [d.basic_intgr_bit for d in serializer_ if d.basic_intgr_bit is not None]
+             basic_intgr_add_list = [d.basic_intgr_add for d in serializer_ if d.basic_intgr_add is not None]
+             basic_intgr_mul_list = [d.basic_intgr_mul for d in serializer_ if d.basic_intgr_mul is not None]
+             basic_intgr_div_list = [d.basic_intgr_div for d in serializer_ if d.basic_intgr_div is not None]
+             basic_intgr_mod_list = [d.basic_intgr_mod for d in serializer_ if d.basic_intgr_mod is not None]
+             basic_int64_bit_list = [d.basic_int64_bit for d in serializer_ if d.basic_int64_bit is not None]
+             basic_int64_add_list = [d.basic_int64_add for d in serializer_ if d.basic_int64_add is not None]
+             basic_int64_mul_list = [d.basic_int64_mul for d in serializer_ if d.basic_int64_mul is not None]
+             basic_int64_div_list = [d.basic_int64_div for d in serializer_ if d.basic_int64_div is not None]
+             basic_int64_mod_list = [d.basic_int64_mod for d in serializer_ if d.basic_int64_mod is not None]
+             basic_float_add_list = [d.basic_float_add for d in serializer_ if d.basic_float_add is not None]
+             basic_float_mul_list = [d.basic_float_mul for d in serializer_ if d.basic_float_mul is not None]
+             basic_float_div_list = [d.basic_float_div for d in serializer_ if d.basic_float_div is not None]
+             basic_float_bogo_list = [d.basic_float_bogo for d in serializer_ if d.basic_float_bogo is not None]
+             basic_double_add_list = [d.basic_double_add for d in serializer_ if d.basic_double_add is not None]
+             basic_double_mul_list = [d.basic_double_mul for d in serializer_ if d.basic_double_mul is not None]
+             basic_double_div_list = [d.basic_double_div for d in serializer_ if d.basic_double_div is not None]
+             basic_double_bogo_list = [d.basic_double_bogo for d in serializer_ if d.basic_double_bogo is not None]
+             context_2p_0K_list = [d.context_2p_0K for d in serializer_ if d.context_2p_0K is not None]
+             context_2p_16K_list = [d.context_2p_16K for d in serializer_ if d.context_2p_16K is not None]
+             context_2p_64K_list = [d.context_2p_64K for d in serializer_ if d.context_2p_64K is not None]
+             context_8p_16K_list = [d.context_8p_16K for d in serializer_ if d.context_8p_16K is not None]
+             context_8p_64K_list = [d.context_8p_64K for d in serializer_ if d.context_8p_64K is not None]
+             context_16p_16K_list = [d.context_16p_16K for d in serializer_ if d.context_16p_16K is not None]
+             context_16p_64K_list = [d.context_16p_64K for d in serializer_ if d.context_16p_64K is not None]
+             local_2p_0K_list = [d.local_2p_0K for d in serializer_ if d.local_2p_0K is not None]
+             local_Pipe_list = [d.local_Pipe for d in serializer_ if d.local_Pipe is not None]
+             local_AF_UNIX_list = [d.local_AF_UNIX for d in serializer_ if d.local_AF_UNIX is not None]
+             local_UDP_list = [d.local_UDP for d in serializer_ if d.local_UDP is not None]
+             local_TCP_list = [d.local_TCP for d in serializer_ if d.local_TCP is not None]
+             local_TCP_conn_list = [d.local_TCP_conn for d in serializer_ if d.local_TCP_conn is not None]
+             local_RPC_TCP_list = [d.local_RPC_TCP for d in serializer_ if d.local_RPC_TCP is not None]
+             local_RPC_UDP_list = [d.local_RPC_UDP for d in serializer_ if d.local_RPC_UDP is not None]
+             local_bigger_Mmap_Latency_list = [d.local_bigger_Mmap_Latency for d in serializer_ if d.local_bigger_Mmap_Latency is not None]
+             local_bigger_Prot_Fault_list = [d.local_bigger_Prot_Fault for d in serializer_ if d.local_bigger_Prot_Fault is not None]
+             local_bigger_Page_Fault_list = [d.local_bigger_Page_Fault for d in serializer_ if d.local_bigger_Page_Fault is not None]
+             local_bigger_100fd_selct_list = [d.local_bigger_100fd_selct for d in serializer_ if d.local_bigger_100fd_selct is not None]
+             local_bigger_0K_File_create_list = [d.local_bigger_0K_File_create for d in serializer_ if d.local_bigger_0K_File_create is not None]
+             local_bigger_0K_File_delete_list = [d.local_bigger_0K_File_delete for d in serializer_ if d.local_bigger_0K_File_delete is not None]
+             local_bigger_10K_File_create_list = [d.local_bigger_10K_File_create for d in serializer_ if d.local_bigger_10K_File_create is not None]
+             local_bigger_10K_File_delete_list = [d.local_bigger_10K_File_delete for d in serializer_ if d.local_bigger_10K_File_delete is not None]
+             local_bigger_Pipe_list = [d.local_bigger_Pipe for d in serializer_ if d.local_bigger_Pipe is not None]
+             local_bigger_AF_UNIX_list = [d.local_bigger_AF_UNIX for d in serializer_ if d.local_bigger_AF_UNIX is not None]
+             local_bigger_TCP_list = [d.local_bigger_TCP for d in serializer_ if d.local_bigger_TCP is not None]
+             local_bigger_File_reread_list = [d.local_bigger_File_reread for d in serializer_ if d.local_bigger_File_reread is not None]
+             local_bigger_Mmap_reread_list = [d.local_bigger_Mmap_reread for d in serializer_ if d.local_bigger_Mmap_reread is not None]
+             local_bigger_Bcopy_libc_list = [d.local_bigger_Bcopy_libc for d in serializer_ if d.local_bigger_Bcopy_libc is not None]
+             local_bigger_Bcopy_hand_list = [d.local_bigger_Bcopy_hand for d in serializer_ if d.local_bigger_Bcopy_hand is not None]
+             local_bigger_Mem_read_list = [d.local_bigger_Mem_read for d in serializer_ if d.local_bigger_Mem_read is not None]
+             local_bigger_Mem_write_list = [d.local_bigger_Mem_write for d in serializer_ if d.local_bigger_Mem_write is not None]
+             memory_Mhz_list = [d.memory_Mhz for d in serializer_ if d.memory_Mhz is not None]
+             memory_L1_list = [d.memory_L1 for d in serializer_ if d.memory_L1 is not None]
+             memory_L2_list = [d.memory_L2 for d in serializer_ if d.memory_L2 is not None]
+             memory_Main_mem_list = [d.memory_Main_mem for d in serializer_ if d.memory_Main_mem is not None]
+             memory_Rand_mem_list = [d.memory_Rand_mem for d in serializer_ if d.memory_Rand_mem is not None]
              # 计算每个数组的平均值
              basic_Mhz = np.mean(basic_Mhz_list).round(2)
              basic_tlb_pages = np.mean(basic_tlb_pages_list).round(2)
@@ -313,7 +313,7 @@ class LmbenchViewSet(CusModelViewSet):
              memory_L2 = np.mean(memory_L2_list).round(2)
              memory_Main_mem = np.mean(memory_Main_mem_list).round(2)
              memory_Rand_mem = np.mean(memory_Rand_mem_list).round(2)
-        data = {
+        new_data = {
             'execute_cmd': execute_cmd,
             'modify_parameters': modify_parameters,
             'basic_Mhz': basic_Mhz,
@@ -388,8 +388,17 @@ class LmbenchViewSet(CusModelViewSet):
             'memory_Main_mem': memory_Main_mem,
             'memory_Rand_mem': memory_Rand_mem,
         }
-
-        return data
+        # 将值为 NaN 的项转换为 None，其他值保持不变
+        for key, value in new_data.items():
+            if key not in ['execute_cmd', 'modify_parameters']:
+                if value is not None:
+                    try:
+                        numeric_value = float(value)  # 将字符串转换为浮点数
+                        if math.isnan(numeric_value):
+                            new_data[key] = None
+                    except ValueError:
+                        pass
+        return new_data
 
     def list(self, request, *args, **kwargs):
         """
@@ -523,7 +532,7 @@ class LmbenchViewSet(CusModelViewSet):
                 datas[27]['column'+str(new_index)] = comparsion_datas['basic_float_mul']
                 datas[28]['column'+str(new_index)] = comparsion_datas['basic_float_div']
                 datas[29]['column'+str(new_index)] = comparsion_datas['basic_float_bogo']
-                datas[20]['column'+str(new_index)] = comparsion_datas['basic_double_add']
+                datas[30]['column'+str(new_index)] = comparsion_datas['basic_double_add']
                 datas[31]['column'+str(new_index)] = comparsion_datas['basic_double_mul']
                 datas[32]['column'+str(new_index)] = comparsion_datas['basic_double_div']
                 datas[33]['column'+str(new_index)] = comparsion_datas['basic_double_bogo']

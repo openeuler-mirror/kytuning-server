@@ -1,4 +1,5 @@
 # Create your views here.
+import math
 import numpy as np
 from rest_framework import status
 
@@ -16,22 +17,6 @@ class UnixbenchViewSet(CusModelViewSet):
 
     queryset = Unixbench.objects.all().order_by('id')
     serializer_class = UnixbenchSerializer
-
-    # pagination_class = LimsPageSet
-
-    # def list(self, request, *args, **kwargs):
-    #     """
-    #     返回列表
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     env_id = request.GET.get('env_id')
-    #     queryset = Unixbench.objects.filter(env_id=env_id).all()
-    #     queryset = self.filter_queryset(queryset)
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
 
     def get_data(self, serializer_):
         serializer = self.get_serializer(serializer_, many=True)
@@ -106,19 +91,19 @@ class UnixbenchViewSet(CusModelViewSet):
             single_data_ = serializer_.filter(thread='单线程')
             multi_data_ = serializer_.filter(thread='多线程')
             # 单线程数据
-            single_Dhrystone_list = [d.Dhrystone for d in single_data_]
-            single_Double_Precision_list = [d.Double_Precision for d in single_data_]
-            single_execl_throughput_list = [d.execl_throughput for d in single_data_]
-            single_file_copy_1024_list = [d.file_copy_1024 for d in single_data_]
-            single_file_copy_256_list = [d.file_copy_256 for d in single_data_]
-            single_file_copy_4096_list = [d.file_copy_4096 for d in single_data_]
-            single_pipe_throughput_list = [d.pipe_throughput for d in single_data_]
-            single_pipe_based_list = [d.pipe_based for d in single_data_]
-            single_process_creation_list = [d.process_creation for d in single_data_]
-            single_shell_scripts_1_list = [d.shell_scripts_1 for d in single_data_]
-            single_shell_scripts_8_list = [d.shell_scripts_8 for d in single_data_]
-            single_system_call_overhead_list = [d.system_call_overhead for d in single_data_]
-            single_index_score_list = [d.index_score for d in single_data_]
+            single_Dhrystone_list = [d.Dhrystone for d in single_data_ if d.Dhrystone is not None]
+            single_Double_Precision_list = [d.Double_Precision for d in single_data_ if d.Double_Precision is not None]
+            single_execl_throughput_list = [d.execl_throughput for d in single_data_ if d.execl_throughput is not None]
+            single_file_copy_1024_list = [d.file_copy_1024 for d in single_data_ if d.file_copy_1024 is not None]
+            single_file_copy_256_list = [d.file_copy_256 for d in single_data_ if d.file_copy_256 is not None]
+            single_file_copy_4096_list = [d.file_copy_4096 for d in single_data_ if d.file_copy_4096 is not None]
+            single_pipe_throughput_list = [d.pipe_throughput for d in single_data_ if d.pipe_throughput is not None]
+            single_pipe_based_list = [d.pipe_based for d in single_data_ if d.pipe_based is not None]
+            single_process_creation_list = [d.process_creation for d in single_data_ if d.process_creation is not None]
+            single_shell_scripts_1_list = [d.shell_scripts_1 for d in single_data_ if d.shell_scripts_1 is not None]
+            single_shell_scripts_8_list = [d.shell_scripts_8 for d in single_data_ if d.shell_scripts_8 is not None]
+            single_system_call_overhead_list = [d.system_call_overhead for d in single_data_ if d.system_call_overhead is not None]
+            single_index_score_list = [d.index_score for d in single_data_ if d.index_score is not None]
             # 计算每个数组的平均值
             single_Dhrystone = np.mean(single_Dhrystone_list).round(2)
             single_Double_Precision = np.mean(single_Double_Precision_list).round(2)
@@ -133,20 +118,21 @@ class UnixbenchViewSet(CusModelViewSet):
             single_shell_scripts_8 = np.mean(single_shell_scripts_8_list).round(2)
             single_system_call_overhead = np.mean(single_system_call_overhead_list).round(2)
             single_index_score = np.mean(single_index_score_list).round(2)
+
             # 多线程数据
-            multi_Dhrystone_list = [d.Dhrystone for d in multi_data_]
-            multi_Double_Precision_list = [d.Double_Precision for d in multi_data_]
-            multi_execl_throughput_list = [d.execl_throughput for d in multi_data_]
-            multi_file_copy_1024_list = [d.file_copy_1024 for d in multi_data_]
-            multi_file_copy_256_list = [d.file_copy_256 for d in multi_data_]
-            multi_file_copy_4096_list = [d.file_copy_4096 for d in multi_data_]
-            multi_pipe_throughput_list = [d.pipe_throughput for d in multi_data_]
-            multi_pipe_based_list = [d.pipe_based for d in multi_data_]
-            multi_process_creation_list = [d.process_creation for d in multi_data_]
-            multi_shell_scripts_1_list = [d.shell_scripts_1 for d in multi_data_]
-            multi_shell_scripts_8_list = [d.shell_scripts_8 for d in multi_data_]
-            multi_system_call_overhead_list = [d.system_call_overhead for d in multi_data_]
-            multi_index_score_list = [d.index_score for d in multi_data_]
+            multi_Dhrystone_list = [d.Dhrystone for d in multi_data_ if d.Dhrystone is not None]
+            multi_Double_Precision_list = [d.Double_Precision for d in multi_data_ if d.Double_Precision is not None]
+            multi_execl_throughput_list = [d.execl_throughput for d in multi_data_ if d.execl_throughput is not None]
+            multi_file_copy_1024_list = [d.file_copy_1024 for d in multi_data_ if d.file_copy_1024 is not None]
+            multi_file_copy_256_list = [d.file_copy_256 for d in multi_data_ if d.file_copy_256 is not None]
+            multi_file_copy_4096_list = [d.file_copy_4096 for d in multi_data_ if d.file_copy_4096 is not None]
+            multi_pipe_throughput_list = [d.pipe_throughput for d in multi_data_ if d.pipe_throughput is not None]
+            multi_pipe_based_list = [d.pipe_based for d in multi_data_ if d.pipe_based is not None]
+            multi_process_creation_list = [d.process_creation for d in multi_data_ if d.process_creation is not None]
+            multi_shell_scripts_1_list = [d.shell_scripts_1 for d in multi_data_ if d.shell_scripts_1 is not None]
+            multi_shell_scripts_8_list = [d.shell_scripts_8 for d in multi_data_ if d.shell_scripts_8 is not None]
+            multi_system_call_overhead_list = [d.system_call_overhead for d in multi_data_ if d.system_call_overhead is not None]
+            multi_index_score_list = [d.index_score for d in multi_data_ if d.index_score is not None]
             # 计算每个数组的平均值
             multi_Dhrystone = np.mean(multi_Dhrystone_list).round(2)
             multi_Double_Precision = np.mean(multi_Double_Precision_list).round(2)
@@ -190,6 +176,17 @@ class UnixbenchViewSet(CusModelViewSet):
                 'multi_index_score': multi_index_score,
                 'execute_cmd': execute_cmd,
                 'modify_parameters': modify_parameters}
+
+        # 将值为 NaN 的项转换为 None，其他值保持不变
+        for key, value in new_data.items():
+            if key not in ['execute_cmd', 'modify_parameters']:
+                if value is not None:
+                    try:
+                        numeric_value = float(value)  # 将字符串转换为浮点数
+                        if math.isnan(numeric_value):
+                            new_data[key] = None
+                    except ValueError:
+                        pass
         return new_data
 
     def list(self, request, *args, **kwargs):
@@ -315,9 +312,11 @@ class UnixbenchViewSet(CusModelViewSet):
             if k.lower().startswith('unixbench'):
                 constants.UNIXBENCH_BOOL = True
                 data_unixbench['env_id'] = request.__dict__['data_unixbench']['env_id']
-                thread = "多线程"
+                thread = ""
                 if k.split('-')[-3] == 'single':
                     thread = "单线程"
+                elif k.split('-')[-3] == 'multi':
+                    thread = "多线程"
                 # todo 所有的参数 、 cmd 是在哪里保存的
                 data_unixbench['thread'] = thread
                 data_unixbench['execute_cmd'] = 'xx'
