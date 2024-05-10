@@ -108,6 +108,19 @@ class Jvm2008ViewSet(CusModelViewSet):
             base_xml = np.mean(base_xml_list).round(2)
             base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2)
             # peak数据，将每个字典转换为NumPy数组
+            # peak_compiler_list = [d.compiler for d in peak_data_]
+            # peak_compress_list = [d.compress for d in peak_data_]
+            # peak_crypto_list = [d.crypto for d in peak_data_]
+            # peak_derby_list = [d.derby for d in peak_data_]
+            # peak_mpegaudio_list = [d.mpegaudio for d in peak_data_]
+            # peak_scimark_large_list = [d.scimark_large for d in peak_data_]
+            # peak_scimark_small_list = [d.scimark_small for d in peak_data_]
+            # peak_serial_list = [d.serial for d in peak_data_]
+            # peak_startup_list = [d.startup for d in peak_data_]
+            # peak_sunflow_list = [d.sunflow for d in peak_data_]
+            # peak_xml_list = [d.xml for d in peak_data_]
+            # peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_]
+
             peak_compiler_list = [d.compiler for d in peak_data_ if d.compiler is not None]
             peak_compress_list = [d.compress for d in peak_data_ if d.compress is not None]
             peak_crypto_list = [d.crypto for d in peak_data_ if d.crypto is not None]
@@ -249,54 +262,61 @@ class Jvm2008ViewSet(CusModelViewSet):
                 datas[22]['column' + str(new_index)] = comparsion_datas['peak_xml']
                 datas[23]['column' + str(new_index)] = comparsion_datas['peak_Noncompliant_pomposite_result']
 
-                datas[0]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[0]['column' + str(new_index)] - datas[0]['column3']) / datas[0]['column3'] * 100)
-                datas[1]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[1]['column' + str(new_index)] - datas[1]['column3']) / datas[1]['column3'] * 100)
-                datas[2]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[2]['column' + str(new_index)] - datas[2]['column3']) / datas[2]['column3'] * 100)
-                datas[3]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[3]['column' + str(new_index)] - datas[3]['column3']) / datas[3]['column3'] * 100)
-                datas[4]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[4]['column' + str(new_index)] - datas[4]['column3']) / datas[4]['column3'] * 100)
-                datas[5]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[5]['column' + str(new_index)] - datas[5]['column3']) / datas[5]['column3'] * 100)
-                datas[6]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[6]['column' + str(new_index)] - datas[6]['column3']) / datas[6]['column3'] * 100)
-                datas[7]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[7]['column' + str(new_index)] - datas[7]['column3']) / datas[7]['column3'] * 100)
-                datas[8]['column' + str(new_index + 1)] = "%.2f%%" % (
-                        (datas[8]['column' + str(new_index)] - datas[8]['column3']) / datas[8]['column3'] * 100)
-                datas[9]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[9]['column' + str(new_index)] - datas[9]['column3']) / datas[9]['column3'] * 100)
-                datas[10]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[10]['column' + str(new_index)] - datas[10]['column3']) / datas[10]['column3'] * 100)
-                datas[11]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[11]['column' + str(new_index)] - datas[11]['column3']) / datas[11]['column3'] * 100)
-                datas[12]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[12]['column' + str(new_index)] - datas[12]['column3']) / datas[12]['column3'] * 100)
-                datas[13]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[13]['column' + str(new_index)] - datas[13]['column3']) / datas[13]['column3'] * 100)
-                datas[14]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[14]['column' + str(new_index)] - datas[14]['column3']) / datas[14]['column3'] * 100)
-                datas[15]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[15]['column' + str(new_index)] - datas[15]['column3']) / datas[15]['column3'] * 100)
-                datas[16]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[16]['column' + str(new_index)] - datas[16]['column3']) / datas[16]['column3'] * 100)
-                datas[17]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[17]['column' + str(new_index)] - datas[17]['column3']) / datas[17]['column3'] * 100)
-                datas[18]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[18]['column' + str(new_index)] - datas[18]['column3']) / datas[18]['column3'] * 100)
-                datas[19]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[19]['column' + str(new_index)] - datas[19]['column3']) / datas[19]['column3'] * 100)
-                datas[20]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[20]['column' + str(new_index)] - datas[20]['column3']) / datas[20]['column3'] * 100)
-                datas[21]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[21]['column' + str(new_index)] - datas[21]['column3']) / datas[21]['column3'] * 100)
-                datas[22]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[22]['column' + str(new_index)] - datas[22]['column3']) / datas[22]['column3'] * 100)
-                datas[23]['column' + str(new_index + 1)] = "%.2f%%" % (
-                            (datas[23]['column' + str(new_index)] - datas[23]['column3']) / datas[23]['column3'] * 100)
+                for i in range(24):
+                    if datas[i]['column' + str(new_index)] and datas[i]['column3']:
+                        datas[i]['column' + str(new_index + 1)] = "%.2f%%" % (
+                                (datas[i]['column' + str(new_index)] - datas[i]['column3']) / datas[i]['column3'])
+                    else:
+                        datas[i]['column' + str(new_index + 1)] = None
+
+                # datas[0]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[0]['column' + str(new_index)] - datas[0]['column3']) / datas[0]['column3'] * 100)
+                # datas[1]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[1]['column' + str(new_index)] - datas[1]['column3']) / datas[1]['column3'] * 100)
+                # datas[2]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[2]['column' + str(new_index)] - datas[2]['column3']) / datas[2]['column3'] * 100)
+                # datas[3]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[3]['column' + str(new_index)] - datas[3]['column3']) / datas[3]['column3'] * 100)
+                # datas[4]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[4]['column' + str(new_index)] - datas[4]['column3']) / datas[4]['column3'] * 100)
+                # datas[5]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[5]['column' + str(new_index)] - datas[5]['column3']) / datas[5]['column3'] * 100)
+                # datas[6]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[6]['column' + str(new_index)] - datas[6]['column3']) / datas[6]['column3'] * 100)
+                # datas[7]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[7]['column' + str(new_index)] - datas[7]['column3']) / datas[7]['column3'] * 100)
+                # datas[8]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #         (datas[8]['column' + str(new_index)] - datas[8]['column3']) / datas[8]['column3'] * 100)
+                # datas[9]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[9]['column' + str(new_index)] - datas[9]['column3']) / datas[9]['column3'] * 100)
+                # datas[10]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[10]['column' + str(new_index)] - datas[10]['column3']) / datas[10]['column3'] * 100)
+                # datas[11]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[11]['column' + str(new_index)] - datas[11]['column3']) / datas[11]['column3'] * 100)
+                # datas[12]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[12]['column' + str(new_index)] - datas[12]['column3']) / datas[12]['column3'] * 100)
+                # datas[13]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[13]['column' + str(new_index)] - datas[13]['column3']) / datas[13]['column3'] * 100)
+                # datas[14]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[14]['column' + str(new_index)] - datas[14]['column3']) / datas[14]['column3'] * 100)
+                # datas[15]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[15]['column' + str(new_index)] - datas[15]['column3']) / datas[15]['column3'] * 100)
+                # datas[16]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[16]['column' + str(new_index)] - datas[16]['column3']) / datas[16]['column3'] * 100)
+                # datas[17]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[17]['column' + str(new_index)] - datas[17]['column3']) / datas[17]['column3'] * 100)
+                # datas[18]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[18]['column' + str(new_index)] - datas[18]['column3']) / datas[18]['column3'] * 100)
+                # datas[19]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[19]['column' + str(new_index)] - datas[19]['column3']) / datas[19]['column3'] * 100)
+                # datas[20]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[20]['column' + str(new_index)] - datas[20]['column3']) / datas[20]['column3'] * 100)
+                # datas[21]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[21]['column' + str(new_index)] - datas[21]['column3']) / datas[21]['column3'] * 100)
+                # datas[22]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[22]['column' + str(new_index)] - datas[22]['column3']) / datas[22]['column3'] * 100)
+                # datas[23]['column' + str(new_index + 1)] = "%.2f%%" % (
+                #             (datas[23]['column' + str(new_index)] - datas[23]['column3']) / datas[23]['column3'] * 100)
         jvm2008_data = {'others': others, 'data': datas}
         return json_response(jvm2008_data, status.HTTP_200_OK, '列表')
 
