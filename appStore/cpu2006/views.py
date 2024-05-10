@@ -1001,7 +1001,7 @@ class Cpu2006ViewSet(CusModelViewSet):
                 # 在datas中增加计算数据
                 # 使用for循环的方式实现，同时增加为空时不计算对比值，
                 for i in range(124):
-                    if base_datas[i]['column' + str(new_index)] is not None and base_datas[i]['column6'] is not None:
+                    if base_datas[i]['column' + str(new_index)] and base_datas[i]['column6']:
                         base_datas[i]['column' + str(new_index + 1)] = "%.2f%%" % (
                                 (base_datas[i]['column' + str(new_index)] - base_datas[i]['column6']) / base_datas[i][
                             'column6'])
