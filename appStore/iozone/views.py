@@ -37,13 +37,13 @@ class IozoneViewSet(CusModelViewSet):
             for test_type in test_types:
                 test_type_data_ = serializer_.filter(testcase_name=test_type)
                 # 处理half数据，将每个字典转换为NumPy数组
-                file_size_list = [d.file_size for d in test_type_data_]
-                write_test_list = [d.write_test for d in test_type_data_]
-                rewrite_test_list = [d.rewrite_test for d in test_type_data_]
-                read_test_list = [d.read_test for d in test_type_data_]
-                reread_test_list = [d.reread_test for d in test_type_data_]
-                random_read_test_list = [d.random_read_test for d in test_type_data_]
-                random_write_test_list = [d.random_write_test for d in test_type_data_]
+                file_size_list = [d.file_size for d in test_type_data_ if d.file_size is not None]
+                write_test_list = [d.write_test for d in test_type_data_ if d.write_test is not None]
+                rewrite_test_list = [d.rewrite_test for d in test_type_data_ if d.rewrite_test is not None]
+                read_test_list = [d.read_test for d in test_type_data_ if d.read_test is not None]
+                reread_test_list = [d.reread_test for d in test_type_data_ if d.reread_test is not None]
+                random_read_test_list = [d.random_read_test for d in test_type_data_ if d.random_read_test is not None]
+                random_write_test_list = [d.random_write_test for d in test_type_data_ if d.random_write_test is not None]
                 # 计算每个数组的平均值
                 file_size = np.mean(file_size_list).round(2)
                 write_test = np.mean(write_test_list).round(2)

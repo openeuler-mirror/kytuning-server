@@ -51,17 +51,17 @@ class StreamViewSet(CusModelViewSet):
             multi_triad = serializer.data[0]['multi_triad']
         else:
             # 将每个字典转换为NumPy数组
-            # single_array_size_list = np.array([d['single_array_size'] for d in serializer.data]) #或者这样的方式
-            single_array_size_list = np.array([d.single_array_size for d in serializer_])
-            single_copy_list = np.array([d.single_copy for d in serializer_])
-            single_scale_list = np.array([d.single_scale for d in serializer_])
-            single_add_list = np.array([d.single_add for d in serializer_])
-            single_triad_list = np.array([d.single_triad for d in serializer_])
-            multi_array_size_list = np.array([d.multi_array_size for d in serializer_])
-            multi_copy_list = np.array([d.multi_copy for d in serializer_])
-            multi_scale_list = np.array([d.multi_scale for d in serializer_])
-            multi_add_list = np.array([d.multi_add for d in serializer_])
-            multi_triad_list = np.array([d.multi_triad for d in serializer_])
+            # single_array_size_list = [d['single_array_size'] for d in serializer.data]) #或者这样的方式
+            single_array_size_list = [d.single_array_size for d in serializer_]
+            single_copy_list = [d.single_copy for d in serializer_]
+            single_scale_list = [d.single_scale for d in serializer_]
+            single_add_list = [d.single_add for d in serializer_]
+            single_triad_list = [d.single_triad for d in serializer_]
+            multi_array_size_list = [d.multi_array_size for d in serializer_]
+            multi_copy_list = [d.multi_copy for d in serializer_]
+            multi_scale_list = [d.multi_scale for d in serializer_]
+            multi_add_list = [d.multi_add for d in serializer_]
+            multi_triad_list = [d.multi_triad for d in serializer_]
 
             # 计算每个数组的平均值
             single_array_size = np.mean(single_array_size_list).round(2)

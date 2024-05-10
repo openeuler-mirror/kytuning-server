@@ -108,18 +108,20 @@ class Jvm2008ViewSet(CusModelViewSet):
             base_xml = np.mean(base_xml_list).round(2)
             base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2)
             # peak数据，将每个字典转换为NumPy数组
-            peak_compiler_list = [d.compiler for d in peak_data_]
-            peak_compress_list = [d.compress for d in peak_data_]
-            peak_crypto_list = [d.crypto for d in peak_data_]
-            peak_derby_list = [d.derby for d in peak_data_]
-            peak_mpegaudio_list = [d.mpegaudio for d in peak_data_]
-            peak_scimark_large_list = [d.scimark_large for d in peak_data_]
-            peak_scimark_small_list = [d.scimark_small for d in peak_data_]
-            peak_serial_list = [d.serial for d in peak_data_]
-            peak_startup_list = [d.startup for d in peak_data_]
-            peak_sunflow_list = [d.sunflow for d in peak_data_]
-            peak_xml_list = [d.xml for d in peak_data_]
-            peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_]
+            peak_compiler_list = [d.compiler for d in peak_data_ if d.compiler is not None]
+            peak_compress_list = [d.compress for d in peak_data_ if d.compress is not None]
+            peak_crypto_list = [d.crypto for d in peak_data_ if d.crypto is not None]
+            peak_derby_list = [d.derby for d in peak_data_ if d.derby is not None]
+            peak_mpegaudio_list = [d.mpegaudio for d in peak_data_ if d.mpegaudio is not None]
+            peak_scimark_large_list = [d.scimark_large for d in peak_data_ if d.scimark_large is not None]
+            peak_scimark_small_list = [d.scimark_small for d in peak_data_ if d.scimark_small is not None]
+            peak_serial_list = [d.serial for d in peak_data_ if d.serial is not None]
+            peak_startup_list = [d.startup for d in peak_data_ if d.startup is not None]
+            peak_sunflow_list = [d.sunflow for d in peak_data_ if d.sunflow is not None]
+            peak_xml_list = [d.xml for d in peak_data_ if d.xml is not None]
+            peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_ if
+                                                       d.Noncompliant_pomposite_result is not None]
+
             # 计算每个数组的平均值
             peak_compiler = np.mean(peak_compiler_list).round(2)
             peak_compress = np.mean(peak_compress_list).round(2)
@@ -326,7 +328,7 @@ class Jvm2008ViewSet(CusModelViewSet):
                     'Noncompliant composite result:']
                 data_jvm2008['test_time'] = return_time(jvm2008_json['time'])
                 data_jvm2008 = {key: value if not isinstance(value, str) or value != '' else None for key, value in
-                           data_jvm2008.items()}
+                                data_jvm2008.items()}
                 serializer_jvm2008 = Jvm2008Serializer(data=data_jvm2008)
                 if serializer_jvm2008.is_valid():
                     self.perform_create(serializer_jvm2008)
