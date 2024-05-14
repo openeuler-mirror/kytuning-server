@@ -3,16 +3,23 @@
     <el-table :data="other_list" border :span-method="titleObjectSpanMethod" style="overflow-y: auto;"
               :show-header="false">
       <template v-for="i in numColumns" :key="i">
-        <el-table-column :prop="`column${i}`" align="center"></el-table-column>
+        <el-table-column :prop="`column${i}`" :width="i < 5 ? '100' : ''" align="center"></el-table-column>
       </template>
     </el-table>
   </div>
   <div style="overflow-x: auto;">
     <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
       <template v-for="i in numColumns" :key="i">
-        <el-table-column :prop="`column${i}`" align="center"></el-table-column>
+        <el-table-column :prop="`column${i}`" :width="i < 5 ? '100' : ''" align="center"></el-table-column>
       </template>
     </el-table>
+  </div>
+  <br>
+  <br>
+  <div style="position: fixed; bottom: 0; width: 100%; display: flex; z-index: 999;">
+  <el-button :id="bt1" type="primary" icon="el-icon-download" @click="exportTableData" style="text-align: center">
+    导出表格数据
+  </el-button>
   </div>
 </template>
 
@@ -42,6 +49,24 @@ export default {
     })
   },
   methods: {
+    // 导出表格数据为 CSV 格式
+    exportTableData() {
+      const data = [this.other_list, this.tableDatas];
+
+      // 生成 CSV 格式的数据字符串
+      const csvData = data.map(rows => {
+        return rows.map(row => {
+          return Object.values(row).map(value => `"${value}"`).join(",");
+        }).join("\n");
+      }).join("\n");
+
+      // 创建并下载 CSV 文件
+      const blob = new Blob(["\uFEFF" + csvData], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "stream_data.csv";
+      link.click();
+    },
     // titleObjectSpanMethod({columnIndex }) {
     //     if (columnIndex === 0) {
     //         return [1, 2];
