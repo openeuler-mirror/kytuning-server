@@ -1,15 +1,17 @@
 <template>
-  <div>
-    <el-table :data="other_list" border style="width: 100%; margin-top: 20px">
-      <el-table-column prop="first" label="Iozone" min-width="80%"></el-table-column>
-      <el-table-column prop="second" label="Iozone#1"></el-table-column>
+  <div style="overflow-x: auto;">
+    <el-table :data="other_list" border :span-method="titleObjectSpanMethod" style="overflow-y: auto;"
+              :show-header="false">
+      <template v-for="i in numColumns" :key="i">
+        <el-table-column :prop="`column${i}`" :width="i < 2 ? '250' : ''" align="center"></el-table-column>
+      </template>
     </el-table>
   </div>
-  <div>
-    <el-table :data="getIozoneDatas" border style="width: 100%" :show-header="false">
-      <el-table-column prop="first" label="一级字段" align="center" min-width="30%" center></el-table-column>
-      <el-table-column prop="second" label="二级字段" align="center" min-width="50%"></el-table-column>
-      <el-table-column prop="third" label="san级字段" ></el-table-column>
+  <div style="overflow-x: auto;">
+    <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
+      <template v-for="i in numColumns" :key="i">
+        <el-table-column :prop="`column${i}`" :width="i < 2 ? '250' : ''" align="center"></el-table-column>
+      </template>
     </el-table>
   </div>
 </template>
@@ -26,54 +28,64 @@ export default {
   },
   data() {
     return {
-      other_list: [{first: '执行命令', second: './lmbench-except-base.sh; make see'}, {first: '修改参数：', second: 'xxx'}],
-      getIozoneDatas:  [
-            {
-                "first": "写测试（KB/s）",
-                "second": 1048576.0,
-                "third": 2814553.0
-            },
-            {
-                "first": "重写测试（KB/s)",
-                "second": 1048576.0,
-                "third": 4204919.0
-            },
-            {
-                "first": "读测试（KB/s）",
-                "second": 1048576.0,
-                "third": 5474048.0
-            },
-            {
-                "first": "重读测试（KB/s)",
-                "second": 1048576.0,
-                "third": 4684993.0
-            },
-            {
-                "first": "随机读测试（KB/s）",
-                "second": 1048576.0,
-                "third": 5497958.0
-            },
-            {
-                "first": "随机写测试（KB/s）",
-                "second": 1048576.0,
-                "third": 4139888.0
-            }
-        ],
-    }
-  },
-  computed: {
-    tableDatas() {
-    return [
-        {first:'Memory latencies in nanoseconds',second:'Rand mem',third:'this.lmbench_datas.memory_Rand_mem'},
-      ]
+      numColumns: 1,
+      other_list: [],
+      tableDatas: []
     }
   },
   created() {
-    axios.get('/api/iozone/?env_id=' + this.$route.params.baseId).then((response) => {
-      this.getIozoneDatas = response.data.data[0]
+    axios.get('/api/iozone/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
+      this.tableDatas = response.data.data.data
+      this.other_list = response.data.data.others
+      this.numColumns = Object.keys(response.data.data.others[0]).length
     })
   },
-};
+  methods: {
+    titleObjectSpanMethod({columnIndex }) {
+        if (columnIndex === 0) {
+            return [1, 2];
+          } else if (columnIndex === 1) {
+            return [0, 0];
+          }
+      },
+    // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
+    objectSpanMethod({rowIndex, columnIndex}) {
+      //columnIndex 表示需要合并的列，多列时用 || 隔开
+      if (columnIndex === 0) {
+        const _row = this.filterData(this.tableDatas, columnIndex).one[rowIndex];
+        const _col = _row > 0 ? 1 : 0;  // 为0是不执行合并。 为1是从当前单元格开始，执行合并1列
+        return {
+          rowspan: _row,
+          colspan: _col,
+        }
+      }
+    },
+    filterData(arr, colIndex) {
+      let spanOneArr = [];
+      let concatOne = 0;
+      arr.forEach((item, index) => {
+        if (index === 0) {
+          spanOneArr.push(1);
+        } else {
+          //first second 分别表示表格数据第一列和第二列对应的参数字段，根据实际参数修改
+          if (colIndex === 0) {
+            if (item.column1 === arr[index - 1].column1) {
+              spanOneArr[concatOne] += 1;
+              spanOneArr.push(0);
+            } else {
+              spanOneArr.push(1);
+              concatOne = index;
+            }
+          }
+        }
+      });
+      return {
+        one: spanOneArr,
+      };
+    }
+  }
+}
+;
 </script>
 
 <style>
