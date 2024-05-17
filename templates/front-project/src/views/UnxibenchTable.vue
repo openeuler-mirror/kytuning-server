@@ -3,14 +3,16 @@
     <el-table :data="other_list" border :span-method="titleObjectSpanMethod" style="overflow-y: auto;"
               :show-header="false">
       <template v-for="i in numColumns" :key="i">
-        <el-table-column :prop="`column${i}`" align="center"></el-table-column>
+        <el-table-column :prop="`column${i}`" :width="i < 2 ? '100' : ''"  align="center"></el-table-column>
       </template>
     </el-table>
   </div>
   <div style="overflow-x: auto;">
     <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
       <template v-for="i in numColumns" :key="i">
-        <el-table-column :prop="`column${i}`" align="center"></el-table-column>
+        <el-table-column :prop="`column${i}`" :width="i < 2 ? '100' : ''"  align="center"></el-table-column>
+<!--        <el-table-column :prop="`column${i}`" :width="i === 0 ? '500' : (i === 1 ? '200' : '')" align="center"></el-table-column>-->
+<!--        <el-table-column :prop="`column${i}`" :width="i === 0 ? '100' : (i < 3 ? '200' : '')" align="center"></el-table-column>-->
       </template>
     </el-table>
   </div>
@@ -34,7 +36,7 @@ export default {
     }
   },
   created() {
-    axios.get('/api/unixbench/?env_id=' + this.$route.params.baseId + '&comparativeIds=' + this.$route.params.comparativeIds).then((response) => {
+    axios.get('/api/unixbench/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
       this.tableDatas = response.data.data.data
       this.other_list = response.data.data.others
       this.numColumns = Object.keys(response.data.data.others[0]).length
