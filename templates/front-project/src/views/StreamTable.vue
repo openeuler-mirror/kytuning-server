@@ -1,17 +1,23 @@
 <template>
-  <div>
-    <el-table :data="other_list" border style="width: 100%; margin-top: 20px">
-      <el-table-column prop="first" label="Stream" min-width="80%"></el-table-column>
-      <el-table-column prop="second" label="Stream#1"></el-table-column>
+  <div style="overflow-x: auto;">
+    <el-table :data="other_list" border :span-method="titleObjectSpanMethod" style="overflow-y: auto;"
+              :show-header="false">
+      <template v-for="i in numColumns" :key="i">
+        <el-table-column :prop="`column${i}`" :width="i < 2 ? '100' : ''" align="center"></el-table-column>
+      </template>
     </el-table>
   </div>
-  <div>
-    <el-table :data="tableDatas" :span-method="objectSpanMethod" border style="width: 100%">
-      <!--    <el-table :data="tableDatas" show-header="false"> //隐藏了表头，但只是让这样行的内容变空，但位置还在-->
-      <el-table-column prop="ThreadType" align="center" min-width="30%" center></el-table-column>
-      <el-table-column prop="second" align="center" min-width="50%"></el-table-column>
-      <el-table-column prop="third"></el-table-column>
+  <div style="overflow-x: auto;">
+    <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
+      <template v-for="i in numColumns" :key="i">
+        <el-table-column :prop="`column${i}`" :width="i < 2 ? '100' : ''" align="center" show-tooltip-when-overflow></el-table-column>
+      </template>
     </el-table>
+  </div>
+  <br>
+  <br>
+  <div style="position: fixed; bottom: 0; width: 100%; display: flex;">
+    <el-button :id="bt1" type="primary" icon="el-icon-download" @click="exportTableData">导出表格数据</el-button>
   </div>
 </template>
 
@@ -27,56 +33,45 @@ export default {
   },
   data() {
     return {
-      other_list: [{first: '执行命令', second: './Run.sh'}, {first: '修改参数：', second: 'xxx'}],
-
-      stream_datas: {
-        single_array_size: '',
-        single_copy: '',
-        single_scale: '',
-        single_add: '',
-        single_triad: '',
-        multi_array_size: '',
-        multi_copy: '',
-        multi_scale: '',
-        multi_add: '',
-        multi_triad: '',
-      },
-      getStreamDatas: []
-    }
-  },
-  computed: {
-    tableDatas() {
-      return [
-        {ThreadType: '单线程', second: 'Array size', third: this.stream_datas.single_array_size,},
-        {ThreadType: '单线程', second: 'Copy', third: this.stream_datas.single_copy,},
-        {ThreadType: '单线程', second: 'Scale', third: this.stream_datas.single_scale,},
-        {ThreadType: '单线程', second: 'Add', third: this.stream_datas.single_add,},
-        {ThreadType: '单线程', second: 'Triad', third: this.stream_datas.single_triad,},
-        {ThreadType: '多线程', second: 'Array size', third: this.stream_datas.multi_array_size,},
-        {ThreadType: '多线程', second: 'Copy', third: this.stream_datas.multi_copy,},
-        {ThreadType: '多线程', second: 'Scale', third: this.stream_datas.multi_scale,},
-        {ThreadType: '多线程', second: 'Add', third: this.stream_datas.multi_add,},
-        {ThreadType: '多线程', second: 'Triad', third: this.stream_datas.multi_triad}]
+      numColumns: 1,
+      other_list: [],
+      tableDatas: []
     }
   },
   created() {
-    axios.get('/api/stream/?env_id=' + this.$route.params.baseId).then((response) => {
-      this.getStreamDatas = response.data.data[0]
-      this.other_list[0].second = this.getStreamDatas.execute_cmd
-      this.other_list[1].second = this.getStreamDatas.modify_parameters
-      this.stream_datas.single_array_size = this.getStreamDatas.single_array_size
-      this.stream_datas.single_copy = this.getStreamDatas.single_copy
-      this.stream_datas.single_scale = this.getStreamDatas.single_scale
-      this.stream_datas.single_add = this.getStreamDatas.single_add
-      this.stream_datas.single_triad = this.getStreamDatas.single_triad
-      this.stream_datas.multi_array_size = this.getStreamDatas.multi_array_size
-      this.stream_datas.multi_copy = this.getStreamDatas.multi_copy
-      this.stream_datas.multi_scale = this.getStreamDatas.multi_scale
-      this.stream_datas.multi_add = this.getStreamDatas.multi_add
-      this.stream_datas.multi_triad = this.getStreamDatas.multi_triad
+    axios.get('/api/stream/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
+      this.tableDatas = response.data.data.data
+      this.other_list = response.data.data.others
+      this.numColumns = Object.keys(response.data.data.others[0]).length
     })
   },
   methods: {
+    // 导出表格数据为 CSV 格式
+    exportTableData() {
+      const data = [this.other_list, this.tableDatas];
+
+      // 生成 CSV 格式的数据字符串
+      const csvData = data.map(rows => {
+        return rows.map(row => {
+          return Object.values(row).map(value => `"${value}"`).join(",");
+        }).join("\n");
+      }).join("\n");
+
+      // 创建并下载 CSV 文件
+      const blob = new Blob(["\uFEFF" + csvData], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "stream_data.csv";
+      link.click();
+    },
+
+    titleObjectSpanMethod({columnIndex }) {
+        if (columnIndex === 0) {
+            return [1, 2];
+          } else if (columnIndex === 1) {
+            return [0, 0];
+          }
+      },
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
       //columnIndex 表示需要合并的列，多列时用 || 隔开
@@ -98,7 +93,7 @@ export default {
         } else {
           //first second 分别表示表格数据第一列和第二列对应的参数字段，根据实际参数修改
           if (colIndex === 0) {
-            if (item['ThreadType'] === arr[index - 1]['ThreadType']) {
+            if (item.column1 === arr[index - 1].column1) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);
             } else {
@@ -111,11 +106,20 @@ export default {
       return {
         one: spanOneArr,
       };
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style>
 @import url("//unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css");
+button {
+  border: none;
+  padding: 15px 30px;
+  font-size: 16px;
+  font-family: Arial, 微软雅黑;
+  color: white;
+  background: #447aa8;
+  border-radius: 3px;
+}
 </style>
