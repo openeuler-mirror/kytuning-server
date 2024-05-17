@@ -8,6 +8,11 @@ const routes = [
         component: () => import('@/views/test_1'),
     },
     {
+        name: 'tablehome',
+        path: '/tablehome',
+        component: () => import('@/components/common/TableHome'),
+    },
+    {
         name: 'Home',
         path: '/',
         component: () => import('@/views/KylinHome'),
@@ -17,11 +22,17 @@ const routes = [
         name: 'project',
         component: () => import('@/views/ProjectTable'),
     },
+    // {
+    //     name: 'env',
+    //     path: '/env/:baseId',
+    //     component: () => import('@/views/EnvTable'),
+    //     // props: true
+    // },
     {
         name: 'env',
-        path: '/env/:baseId',
+        path: '/env/:baseId/',
         component: () => import('@/views/EnvTable'),
-        // props: true
+        props: true,
     },
     // {
     //     name: 'unixbench',
@@ -29,9 +40,9 @@ const routes = [
     //     component: () => import('@/views/UnixbenchTable'),
     // },
     {
-        name: 'unixbenchComparison',
-        path: '/unixbenchComparison/:baseId/:comparsionIds?',
-        component: () => import('@/views/UnxibenchComparisonTable'),
+        name: 'unixbench',
+        path: '/unixbench/:baseId/:comparsionIds?',
+        component: () => import('@/views/UnxibenchTable'),
         props: true,
     },
     // {
@@ -39,10 +50,16 @@ const routes = [
     //     path: '/stream/:baseId',
     //     component: () => import('@/views/StreamTable'),
     // },
+
+    // {
+    //     name: 'stream',
+    //     path: '/stream/:baseId/:comparsionIds?',
+    //     component: () => import('@/views/StreamTable'),
+    // },
     {
-        name: 'streamComparison',
-        path: '/streamComparison/:baseId/:comparsionIds?',
-        component: () => import('@/views/StreamComparisonTable'),
+        name: 'stream',
+        path: '/stream/:baseId/:comparsionIds?',
+        component: () => import('@/components/common/TableHome'),
     },
     // {
     //     name: 'lmbench',
@@ -50,9 +67,9 @@ const routes = [
     //     component: () => import('@/views/LmbenchTable'),
     // },
     {
-        name: 'lmbenchComparison',
-        path: '/lmbenchComparison/:baseId/:comparsionIds?',
-        component: () => import('@/views/LmbenchComparisonTable'),
+        name: 'lmbench',
+        path: '/lmbench/:baseId/:comparsionIds?',
+        component: () => import('@/views/LmbenchTable'),
     },
     // {
     //     name: 'fio',
@@ -60,9 +77,9 @@ const routes = [
     //     component: () => import('@/views/FioTable'),
     // },
     {
-        name: 'fioComparison',
-        path: '/fioComparison/:baseId/:comparsionIds?',
-        component: () => import('@/views/FioComparisonTable'),
+        name: 'fio',
+        path: '/fio/:baseId/:comparsionIds?',
+        component: () => import('@/views/FioTable'),
     },
     // {
     //     name: 'iozone',
@@ -70,9 +87,9 @@ const routes = [
     //     component: () => import('@/views/IozoneTable'),
     // },
     {
-        name: 'iozoneComparison',
-        path: '/iozoneComparison/:baseId/:comparsionIds?',
-        component: () => import('@/views/IozoneComparisonTable'),
+        name: 'iozone',
+        path: '/iozone/:baseId/:comparsionIds?',
+        component: () => import('@/views/IozoneTable'),
     },
     // {
     //     name: 'jvm2008',
@@ -80,24 +97,24 @@ const routes = [
     //     component: () => import('@/views/Jvm2008sTable'),
     // },
     {
-        name: 'jvm2008Comparison',
-        path: '/jvm2008Comparison/:baseId/:comparsionIds?',
-        component: () => import('@/views/Jvm2008ComparisonTable'),
+        name: 'jvm2008',
+        path: '/jvm2008/:baseId/:comparsionIds?',
+        component: () => import('@/views/Jvm2008Table'),
     },
+    // {
+    //     name: 'cpu2006',
+    //     path: '/cpu2006/:baseId',
+    //     component: () => import('@/views/old-view/Cpu2006Table'),
+    // },
     {
         name: 'cpu2006',
-        path: '/cpu2006/:baseId',
+        path: '/cpu2006/:baseId/:comparsionIds?',
         component: () => import('@/views/Cpu2006Table'),
     },
     {
-        name: 'cpu2006Comparison',
-        path: '/cpu2006Comparison/:baseId/:comparsionIds?',
-        component: () => import('@/views/Cpu2006ComparisonTable'),
-    },
-    {
-        name: 'cpu2017Comparison',
-        path: '/cpu2017Comparison/:baseId/:comparsionIds?',
-        component: () => import('@/views/Cpu2017ComparisonTable'),
+        name: 'cpu2017',
+        path: '/cpu2017/:baseId/:comparsionIds?',
+        component: () => import('@/views/Cpu2017Table'),
     },
 ]
 export default createRouter({
