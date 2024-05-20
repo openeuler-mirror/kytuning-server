@@ -22,16 +22,12 @@ export default {
   data() {
     return {
       numColumns: 4,
-      other_list: [],
       tableDatas: []
     }
   },
   created() {
     axios.get('/api/env/?env_id=' + this.$route.params.baseId).then((response) => {
       this.tableDatas = response.data.data.data
-      console.log(response.data.data.data,111)
-      // this.other_list = response.data.data.others
-      // this.numColumns = Object.keys(response.data.data.others[0]).length
     })
   },
   methods: {
