@@ -2,11 +2,10 @@
 import service from '../service.js'
 import qs from 'qs'
 
-export function kylintest(data) {
+export function test() {
     return service({
         method: 'get',
-        url: '/project',
-        data
+        url: '/stream/1',
     })
 }
 

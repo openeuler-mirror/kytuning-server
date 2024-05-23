@@ -30,4 +30,6 @@ router.register(r'unixbench', UnixbenchViewSet, basename='unixbench')
 urlpatterns = [
     # url(r'^y_upload_file/', y_upload_file),  # upload_file
     url(r'', include(router.urls)),
+    url('^stream_title/', StreamViewSet.as_view({'get': 'get_stream_title'}), name='stream_title'),
+    url('^stream_data/', StreamViewSet.as_view({'get': 'get_stream_data'}), name='stream_data'),
 ]

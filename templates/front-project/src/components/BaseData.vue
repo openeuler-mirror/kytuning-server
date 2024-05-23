@@ -1,5 +1,6 @@
 <template>
-  <div style="overflow-x: auto;">
+<!--  <div style="overflow-x: auto;">-->
+  <div >
     <template v-if="isDataLoaded">
       <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
         <template v-for="i in numColumns" :key="i">
@@ -35,12 +36,12 @@ export default {
     }
   },
   created() {
-    axios.get('/api/'+ this.dataName +'/?env_id=' + this.$route.params.baseId + '&comparsionIds=' +
-        this.$route.params.comparsionIds).then((response) => {
-          this.tableDatas = response.data.data.data
-          this.numColumns = Object.keys(response.data.data.others[0]).length
+    // axios.get('/api/'+ this.dataName+ '_data' +'/?env_id=' + this.$route.params.baseId).then((response) => {
+    axios.get('/api/'+ this.dataName+ '_data' +'/?env_id=' + this.baseId + '&index=1').then((response) => {
+          this.tableDatas = response.data.data
+          this.numColumns = Object.keys(this.tableDatas[0]).length
           this.isDataLoaded = true;
-          this.$emit('data-loaded', this.tableDatas);
+          this.$emit('data-loaded',this.numColumns, this.tableDatas);
     })
   },
   methods: {
@@ -91,6 +92,11 @@ export default {
 </script>
 
 <style>
+.base-container {
+  overflow-x: scroll; /* 显示水平滚动条 */
+  white-space: nowrap; /* 不换行 */
+}
+
 .header {
   background-color: #f0f0f0;
   padding: 20px;

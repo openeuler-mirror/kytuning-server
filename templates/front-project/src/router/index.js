@@ -39,6 +39,11 @@ const routes = [
         path: '/stream/:baseId/:comparsionIds?',
         component: () => import('@/components/common/TableHome'),
     },
+    // {
+    //     name: 'stream_title',
+    //     path: '/stream_title',
+    //     component: () => import('@/components/common/TableHome'),
+    // },
     {
         name: 'lmbench',
         path: '/lmbench/:baseId/:comparsionIds?',
