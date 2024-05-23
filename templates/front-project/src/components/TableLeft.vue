@@ -35,12 +35,12 @@ export default {
     }
   },
   created() {
-    axios.get('/api/'+ this.dataName +'/?env_id=' + this.$route.params.baseId + '&comparsionIds=' +
+    axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId + '&comparsionIds=' +
         this.$route.params.comparsionIds).then((response) => {
-          this.tableDatas = response.data.data.data
-          this.numColumns = Object.keys(response.data.data.others[0]).length
-          this.isDataLoaded = true;
-          this.$emit('data-loaded', this.tableDatas);
+      this.tableDatas = response.data.data.data
+      this.numColumns = Object.keys(response.data.data.others[0]).length
+      this.isDataLoaded = true;
+      this.$emit('data-loaded', this.tableDatas);
     })
   },
   methods: {
@@ -50,6 +50,41 @@ export default {
       } else if (columnIndex === 1) {
         return [0, 0];
       }
+    },
+    // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
+    objectSpanMethod({rowIndex, columnIndex}) {
+      //columnIndex 表示需要合并的列，多列时用 || 隔开
+      if (columnIndex === 0) {
+        const _row = this.filterData(this.tableDatas, columnIndex).one[rowIndex];
+        const _col = _row > 0 ? 1 : 0;  // 为0是不执行合并。 为1是从当前单元格开始，执行合并1列
+        return {
+          rowspan: _row,
+          colspan: _col,
+        }
+      }
+    },
+    filterData(arr, colIndex) {
+      let spanOneArr = [];
+      let concatOne = 0;
+      arr.forEach((item, index) => {
+        if (index === 0) {
+          spanOneArr.push(1);
+        } else {
+          //first second 分别表示表格数据第一列和第二列对应的参数字段，根据实际参数修改
+          if (colIndex === 0) {
+            if (item.column1 === arr[index - 1].column1) {
+              spanOneArr[concatOne] += 1;
+              spanOneArr.push(0);
+            } else {
+              spanOneArr.push(1);
+              concatOne = index;
+            }
+          }
+        }
+      });
+      return {
+        one: spanOneArr,
+      };
     },
   },
 };
