@@ -3,7 +3,7 @@ import { getToken } from '@/utils/setToken.js'
 import { ElMessage } from 'element-plus'
 
 const service = axios.create({
-    baseURL: '', // baseURL会自动加在请求地址上
+    baseURL: '/api/', // baseURL会自动加在请求地址上
     timeout: 3000
 })
 

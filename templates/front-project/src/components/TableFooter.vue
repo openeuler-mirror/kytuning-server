@@ -1,7 +1,7 @@
 <template>
   <div class="footer">
     <el-card>
-        <el-button :id="bt1" type="primary" icon="el-icon-download" @click="exportTableData">导出表格数据</el-button>
+        <el-button type="primary" icon="el-icon-download" @click="exportTableData">导出表格数据</el-button>
     </el-card>
   </div>
 </template>
@@ -16,8 +16,6 @@ export default {
      // 导出表格数据为 CSV 格式
     exportTableData() {
       const data = [this.otherList, this.tableDatas];
-      console.log(this.otherList,777);
-      console.log(this.tableDatas,888);
 
       // 生成 CSV 格式的数据字符串
       const csvData = data.map(rows => {
@@ -27,7 +25,7 @@ export default {
       }).join("\n");
 
       // 创建并下载 CSV 文件
-      const blob = new Blob(["\uFEFF" + csvData], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob(["\uFEFF" + csvData], {type: "text/csv;charset=utf-8;"});
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = this.dataName;
