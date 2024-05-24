@@ -17,7 +17,7 @@ class LmbenchViewSet(CusModelViewSet):
     queryset = Lmbench.objects.all().order_by('id')
     serializer_class = LmbenchSerializer
 
-    def get_data(self, serializer_):
+    def get_data(self, serializer_, datas, title_index, column_index, base_average):
         serializer = self.get_serializer(serializer_, many=True)
         execute_cmd = serializer.data[0]['execute_cmd']
         modify_parameters = serializer.data[0]['modify_parameters']
@@ -414,81 +414,86 @@ class LmbenchViewSet(CusModelViewSet):
         base_queryset = Lmbench.objects.filter(env_id=env_id).all()
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '列表')
-        data = self.get_data(base_queryset)
-        others = [{'column1':'Lmbench','column2':'', 'column3':'Lmbench#1 (基准数据)'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
-        {'column1':'Basic system parameters','column2':'Mhz','column3':data['basic_Mhz']},
-        {'column1':'Basic system parameters','column2':'tlb pages','column3':data['basic_tlb_pages']},
-        {'column1':'Basic system parameters','column2':'cache line bytes','column3':data['basic_cache_line_bytes']},
-        {'column1':'Basic system parameters','column2':'mem par','column3':data['basic_mem_par']},
-        {'column1':'Basic system parameters','column2':'scal load','column3':data['basic_scal_load']},
-        {'column1':'Processor','column2':'Mhz','column3':data['processor_null_call']},
-        {'column1':'Processor','column2':'null call','column3':data['processor_null_I_O']},
-        {'column1':'Processor','column2':'null I/O','column3':data['processor_stat']},
-        {'column1':'Processor','column2':'stat','column3':data['processor_open_clo']},
-        {'column1':'Processor','column2':'open close','column3':data['processor_slct_TCP']},
-        {'column1':'Processor','column2':'slct TCP','column3':data['processor_sig_inst']},
-        {'column1':'Processor','column2':'sig inst','column3':data['processor_sig_hndl']},
-        {'column1':'Processor','column2':'sig hndl','column3':data['processor_fork_proc']},
-        {'column1':'Processor','column2':'fork proc','column3':data['processor_exec_proc']},
-        {'column1':'Processor','column2':'exec proc','column3':data['processor_sh_proc']},
-        {'column1':'Processor','column2':'sh proc','column3':data['processor_Mhz']},
-        {'column1':'Basic integer operations','column2':'intgr bit','column3':data['basic_intgr_bit']},
-        {'column1':'Basic integer operations','column2':'intgr add','column3':data['basic_intgr_add']},
-        {'column1':'Basic integer operations','column2':'intgr mul','column3':data['basic_intgr_mul']},
-        {'column1':'Basic integer operations','column2':'intgr div','column3':data['basic_intgr_div']},
-        {'column1':'Basic integer operations','column2':'intgr mod','column3':data['basic_intgr_mod']},
-        {'column1':'Basic uint64 operations','column2':'int64 bit','column3':data['basic_int64_bit']},
-        {'column1':'Basic uint64 operations','column2':'int64 add','column3':data['basic_int64_add']},
-        {'column1':'Basic uint64 operations','column2':'int64 mul','column3':data['basic_int64_mul']},
-        {'column1':'Basic uint64 operations','column2':'int64 div','column3':data['basic_int64_div']},
-        {'column1':'Basic uint64 operations','column2':'int64 mod','column3':data['basic_int64_mod']},
-        {'column1':'Basic float operations','column2':'float add','column3':data['basic_float_add']},
-        {'column1':'Basic float operations','column2':'float mul','column3':data['basic_float_mul']},
-        {'column1':'Basic float operations','column2':'float div','column3':data['basic_float_div']},
-        {'column1':'Basic float operations','column2':'float bogo','column3':data['basic_float_bogo']},
-        {'column1':'Basic double operations','column2':'double add','column3':data['basic_double_add']},
-        {'column1':'Basic double operations','column2':'double mul','column3':data['basic_double_mul']},
-        {'column1':'Basic double operations','column2':'double div','column3':data['basic_double_div']},
-        {'column1':'Basic double operations','column2':'double bogo','column3':data['basic_double_bogo']},
-        {'column1':'Context switching','column2':'2p/0K','column3':data['context_2p_0K']},
-        {'column1':'Context switching','column2':'2p/16K','column3':data['context_2p_16K']},
-        {'column1':'Context switching','column2':'2p/64K','column3':data['context_2p_64K']},
-        {'column1':'Context switching','column2':'8p/16K','column3':data['context_8p_16K']},
-        {'column1':'Context switching','column2':'8p/64K','column3':data['context_8p_64K']},
-        {'column1':'Context switching','column2':'16p/16K','column3':data['context_16p_16K']},
-        {'column1':'Context switching','column2':'16p/64K','column3':data['context_16p_64K']},
-        {'column1':'*Local* Communication latencies','column2':'2p/0K','column3':data['local_2p_0K']},
-        {'column1':'*Local* Communication latencies','column2':'Pipe','column3':data['local_Pipe']},
-        {'column1':'*Local* Communication latencies','column2':'AF UNIX','column3':data['local_AF_UNIX']},
-        {'column1':'*Local* Communication latencies','column2':'UDP','column3':data['local_UDP']},
-        {'column1':'*Local* Communication latencies','column2':'TCP','column3':data['local_TCP']},
-        {'column1':'*Local* Communication latencies','column2':'TCP conn','column3':data['local_TCP_conn']},
-        {'column1':'*Local* Communication latencies','column2':'RPC/TCP','column3':data['local_RPC_TCP']},
-        {'column1':'*Local* Communication latencies','column2':'RPC/UDP','column3':data['local_RPC_UDP']},
-        {'column1':'File & VM system latencies in microseconds','column2':'0K File create','column3':data['local_bigger_Mmap_Latency']},
-        {'column1':'File & VM system latencies in microseconds','column2':'0K File delete','column3':data['local_bigger_Prot_Fault']},
-        {'column1':'File & VM system latencies in microseconds','column2':'10K File create','column3':data['local_bigger_Page_Fault']},
-        {'column1':'File & VM system latencies in microseconds','column2':'10K File delete','column3':data['local_bigger_100fd_selct']},
-        {'column1':'File & VM system latencies in microseconds','column2':'Mmap Latency','column3':data['local_bigger_0K_File_create']},
-        {'column1':'File & VM system latencies in microseconds','column2':'Prot Fault','column3':data['local_bigger_0K_File_delete']},
-        {'column1':'File & VM system latencies in microseconds','column2':'Page Fault','column3':data['local_bigger_10K_File_create']},
-        {'column1':'File & VM system latencies in microseconds','column2':'100fd selct','column3':data['local_bigger_10K_File_delete']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Pipe','column3':data['local_bigger_Pipe']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'AF UNIX','column3':data['local_bigger_AF_UNIX']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'TCP','column3':data['local_bigger_TCP']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'File reread','column3':data['local_bigger_File_reread']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mmap reread','column3':data['local_bigger_Mmap_reread']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Bcopy(libc)','column3':data['local_bigger_Bcopy_libc']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Bcopy(hand)','column3':data['local_bigger_Bcopy_hand']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mem read','column3':data['local_bigger_Mem_read']},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mem write','column3':data['local_bigger_Mem_write']},
-        {'column1':'Memory latencies in nanoseconds','column2':'Mhz','column3':data['memory_Mhz']},
-        {'column1':'Memory latencies in nanoseconds','column2':'L1 $','column3':data['memory_L1']},
-        {'column1':'Memory latencies in nanoseconds','column2':'L2 $','column3':data['memory_L2']},
-        {'column1':'Memory latencies in nanoseconds','column2':'Main mem','column3':data['memory_Main_mem']},
-        {'column1':'Memory latencies in nanoseconds','column2':'Rand mem','column3':data['memory_Rand_mem']},
+        {'column1':'Lmbench','column2':''},
+        {'column1': '执行命令','column2':''},
+        {'column1': '修改参数：', 'column2':''},
+        {'column1':'Basic system parameters','column2':'Mhz'},
+        {'column1':'Basic system parameters','column2':'tlb pages'},
+        {'column1':'Basic system parameters','column2':'cache line bytes'},
+        {'column1':'Basic system parameters','column2':'mem par'},
+        {'column1':'Basic system parameters','column2':'scal load'},
+        {'column1':'Processor','column2':'Mhz'},
+        {'column1':'Processor','column2':'null call'},
+        {'column1':'Processor','column2':'null I/O'},
+        {'column1':'Processor','column2':'stat'},
+        {'column1':'Processor','column2':'open close'},
+        {'column1':'Processor','column2':'slct TCP'},
+        {'column1':'Processor','column2':'sig inst'},
+        {'column1':'Processor','column2':'sig hndl'},
+        {'column1':'Processor','column2':'fork proc'},
+        {'column1':'Processor','column2':'exec proc'},
+        {'column1':'Processor','column2':'sh proc'},
+        {'column1':'Basic integer operations','column2':'intgr bit'},
+        {'column1':'Basic integer operations','column2':'intgr add'},
+        {'column1':'Basic integer operations','column2':'intgr mul'},
+        {'column1':'Basic integer operations','column2':'intgr div'},
+        {'column1':'Basic integer operations','column2':'intgr mod'},
+        {'column1':'Basic uint64 operations','column2':'int64 bit'},
+        {'column1':'Basic uint64 operations','column2':'int64 add'},
+        {'column1':'Basic uint64 operations','column2':'int64 mul'},
+        {'column1':'Basic uint64 operations','column2':'int64 div'},
+        {'column1':'Basic uint64 operations','column2':'int64 mod'},
+        {'column1':'Basic float operations','column2':'float add'},
+        {'column1':'Basic float operations','column2':'float mul'},
+        {'column1':'Basic float operations','column2':'float div'},
+        {'column1':'Basic float operations','column2':'float bogo'},
+        {'column1':'Basic double operations','column2':'double add'},
+        {'column1':'Basic double operations','column2':'double mul'},
+        {'column1':'Basic double operations','column2':'double div'},
+        {'column1':'Basic double operations','column2':'double bogo'},
+        {'column1':'Context switching','column2':'2p/0K'},
+        {'column1':'Context switching','column2':'2p/16K'},
+        {'column1':'Context switching','column2':'2p/64K'},
+        {'column1':'Context switching','column2':'8p/16K'},
+        {'column1':'Context switching','column2':'8p/64K'},
+        {'column1':'Context switching','column2':'16p/16K'},
+        {'column1':'Context switching','column2':'16p/64K'},
+        {'column1':'*Local* Communication latencies','column2':'2p/0K'},
+        {'column1':'*Local* Communication latencies','column2':'Pipe'},
+        {'column1':'*Local* Communication latencies','column2':'AF UNIX'},
+        {'column1':'*Local* Communication latencies','column2':'UDP'},
+        {'column1':'*Local* Communication latencies','column2':'TCP'},
+        {'column1':'*Local* Communication latencies','column2':'TCP conn'},
+        {'column1':'*Local* Communication latencies','column2':'RPC/TCP'},
+        {'column1':'*Local* Communication latencies','column2':'RPC/UDP'},
+        {'column1':'File & VM system latencies in microseconds','column2':'0K File create'},
+        {'column1':'File & VM system latencies in microseconds','column2':'0K File delete'},
+        {'column1':'File & VM system latencies in microseconds','column2':'10K File create'},
+        {'column1':'File & VM system latencies in microseconds','column2':'10K File delete'},
+        {'column1':'File & VM system latencies in microseconds','column2':'Mmap Latency'},
+        {'column1':'File & VM system latencies in microseconds','column2':'Prot Fault'},
+        {'column1':'File & VM system latencies in microseconds','column2':'Page Fault'},
+        {'column1':'File & VM system latencies in microseconds','column2':'100fd selct'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Pipe'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'AF UNIX'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'TCP'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'File reread'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mmap reread'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Bcopy(libc)'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Bcopy(hand)'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mem read'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mem write'},
+        {'column1':'Memory latencies in nanoseconds','column2':'Mhz'},
+        {'column1':'Memory latencies in nanoseconds','column2':'L1 $'},
+        {'column1':'Memory latencies in nanoseconds','column2':'L2 $'},
+        {'column1':'Memory latencies in nanoseconds','column2':'Main mem'},
+        {'column1':'Memory latencies in nanoseconds','column2':'Rand mem'},
         ]
+        title_index = 1
+        column_index = 3
+        base_average = {}
+        datas, title_index, column_index = self.get_data(base_queryset, datas, title_index, column_index, base_average)
         if comparsionIds != ['']:
             # 处理对比数据
             for index ,comparativeId in enumerate(comparsionIds):
@@ -581,80 +586,7 @@ class LmbenchViewSet(CusModelViewSet):
                     else:
                         datas[i]['column' + str(new_index + 1)] = None
 
-                # datas[0]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[0]['column'+str(new_index)] - datas[0]['column3'])/datas[0]['column3'] * 100)
-                # datas[1]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[1]['column'+str(new_index)] - datas[1]['column3'])/datas[1]['column3'] * 100)
-                # datas[2]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[2]['column'+str(new_index)] - datas[2]['column3'])/datas[2]['column3'] * 100)
-                # datas[3]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[3]['column'+str(new_index)] - datas[3]['column3'])/datas[3]['column3'] * 100)
-                # datas[4]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[4]['column'+str(new_index)] - datas[4]['column3'])/datas[4]['column3'] * 100)
-                # datas[5]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[5]['column'+str(new_index)] - datas[5]['column3'])/datas[5]['column3'] * 100)
-                # datas[6]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[6]['column'+str(new_index)] - datas[6]['column3'])/datas[6]['column3'] * 100)
-                # datas[7]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[7]['column'+str(new_index)] - datas[7]['column3'])/datas[7]['column3'] * 100)
-                # datas[8]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[8]['column'+str(new_index)] - datas[8]['column3'])/datas[8]['column3'] * 100)
-                # datas[9]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[9]['column'+str(new_index)] - datas[9]['column3'])/datas[9]['column3'] * 100)
-                # datas[10]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[10]['column'+str(new_index)] - datas[10]['column3'])/datas[10]['column3'] * 100)
-                # datas[11]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[11]['column'+str(new_index)] - datas[11]['column3'])/datas[11]['column3'] * 100)
-                # datas[12]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[12]['column'+str(new_index)] - datas[12]['column3'])/datas[12]['column3'] * 100)
-                # datas[13]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[13]['column'+str(new_index)] - datas[13]['column3'])/datas[13]['column3'] * 100)
-                # datas[14]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[14]['column'+str(new_index)] - datas[14]['column3'])/datas[14]['column3'] * 100)
-                # datas[15]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[15]['column'+str(new_index)] - datas[15]['column3'])/datas[15]['column3'] * 100)
-                # datas[16]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[16]['column'+str(new_index)] - datas[16]['column3'])/datas[16]['column3'] * 100)
-                # datas[17]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[17]['column'+str(new_index)] - datas[17]['column3'])/datas[17]['column3'] * 100)
-                # datas[18]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[18]['column'+str(new_index)] - datas[18]['column3'])/datas[18]['column3'] * 100)
-                # datas[19]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[19]['column'+str(new_index)] - datas[19]['column3'])/datas[19]['column3'] * 100)
-                # datas[20]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[20]['column'+str(new_index)] - datas[20]['column3'])/datas[20]['column3'] * 100)
-                # datas[21]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[21]['column'+str(new_index)] - datas[21]['column3'])/datas[21]['column3'] * 100)
-                # datas[22]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[22]['column'+str(new_index)] - datas[22]['column3'])/datas[22]['column3'] * 100)
-                # datas[23]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[23]['column'+str(new_index)] - datas[23]['column3'])/datas[23]['column3'] * 100)
-                # datas[24]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[24]['column'+str(new_index)] - datas[24]['column3'])/datas[24]['column3'] * 100)
-                # datas[25]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[25]['column'+str(new_index)] - datas[25]['column3'])/datas[25]['column3'] * 100)
-                # datas[26]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[26]['column'+str(new_index)] - datas[26]['column3'])/datas[26]['column3'] * 100)
-                # datas[27]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[27]['column'+str(new_index)] - datas[27]['column3'])/datas[27]['column3'] * 100)
-                # datas[28]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[28]['column'+str(new_index)] - datas[28]['column3'])/datas[28]['column3'] * 100)
-                # datas[29]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[29]['column'+str(new_index)] - datas[29]['column3'])/datas[29]['column3'] * 100)
-                # datas[20]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[20]['column'+str(new_index)] - datas[20]['column3'])/datas[20]['column3'] * 100)
-                # datas[31]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[31]['column'+str(new_index)] - datas[31]['column3'])/datas[31]['column3'] * 100)
-                # datas[32]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[32]['column'+str(new_index)] - datas[32]['column3'])/datas[32]['column3'] * 100)
-                # datas[33]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[33]['column'+str(new_index)] - datas[33]['column3'])/datas[33]['column3'] * 100)
-                # datas[34]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[34]['column'+str(new_index)] - datas[34]['column3'])/datas[34]['column3'] * 100)
-                # datas[35]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[35]['column'+str(new_index)] - datas[35]['column3'])/datas[35]['column3'] * 100)
-                # datas[36]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[36]['column'+str(new_index)] - datas[36]['column3'])/datas[36]['column3'] * 100)
-                # datas[37]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[37]['column'+str(new_index)] - datas[37]['column3'])/datas[37]['column3'] * 100)
-                # datas[38]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[38]['column'+str(new_index)] - datas[38]['column3'])/datas[38]['column3'] * 100)
-                # datas[39]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[39]['column'+str(new_index)] - datas[39]['column3'])/datas[39]['column3'] * 100)
-                # datas[40]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[40]['column'+str(new_index)] - datas[40]['column3'])/datas[40]['column3'] * 100)
-                # datas[41]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[41]['column'+str(new_index)] - datas[41]['column3'])/datas[41]['column3'] * 100)
-                # datas[42]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[42]['column'+str(new_index)] - datas[42]['column3'])/datas[42]['column3'] * 100)
-                # datas[43]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[43]['column'+str(new_index)] - datas[43]['column3'])/datas[43]['column3'] * 100)
-                # datas[44]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[44]['column'+str(new_index)] - datas[44]['column3'])/datas[44]['column3'] * 100)
-                # datas[45]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[45]['column'+str(new_index)] - datas[45]['column3'])/datas[45]['column3'] * 100)
-                # datas[46]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[46]['column'+str(new_index)] - datas[46]['column3'])/datas[46]['column3'] * 100)
-                # datas[47]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[47]['column'+str(new_index)] - datas[47]['column3'])/datas[47]['column3'] * 100)
-                # datas[48]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[48]['column'+str(new_index)] - datas[48]['column3'])/datas[48]['column3'] * 100)
-                # datas[49]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[49]['column'+str(new_index)] - datas[49]['column3'])/datas[49]['column3'] * 100)
-                # datas[50]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[50]['column'+str(new_index)] - datas[50]['column3'])/datas[50]['column3'] * 100)
-                # datas[51]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[51]['column'+str(new_index)] - datas[51]['column3'])/datas[51]['column3'] * 100)
-                # datas[52]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[52]['column'+str(new_index)] - datas[52]['column3'])/datas[52]['column3'] * 100)
-                # datas[53]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[53]['column'+str(new_index)] - datas[53]['column3'])/datas[53]['column3'] * 100)
-                # datas[54]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[54]['column'+str(new_index)] - datas[54]['column3'])/datas[54]['column3'] * 100)
-                # datas[55]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[55]['column'+str(new_index)] - datas[55]['column3'])/datas[55]['column3'] * 100)
-                # datas[56]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[56]['column'+str(new_index)] - datas[56]['column3'])/datas[56]['column3'] * 100)
-                # datas[57]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[57]['column'+str(new_index)] - datas[57]['column3'])/datas[57]['column3'] * 100)
-                # datas[58]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[58]['column'+str(new_index)] - datas[58]['column3'])/datas[58]['column3'] * 100)
-                # datas[59]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[59]['column'+str(new_index)] - datas[59]['column3'])/datas[59]['column3'] * 100)
-                # datas[60]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[60]['column'+str(new_index)] - datas[60]['column3'])/datas[60]['column3'] * 100)
-                # datas[61]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[61]['column'+str(new_index)] - datas[61]['column3'])/datas[61]['column3'] * 100)
-                # datas[62]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[62]['column'+str(new_index)] - datas[62]['column3'])/datas[62]['column3'] * 100)
-                # datas[63]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[63]['column'+str(new_index)] - datas[63]['column3'])/datas[63]['column3'] * 100)
-                # datas[64]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[64]['column'+str(new_index)] - datas[64]['column3'])/datas[64]['column3'] * 100)
-                # datas[65]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[65]['column'+str(new_index)] - datas[65]['column3'])/datas[65]['column3'] * 100)
-                # datas[66]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[66]['column'+str(new_index)] - datas[66]['column3'])/datas[66]['column3'] * 100)
-                # datas[67]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[67]['column'+str(new_index)] - datas[67]['column3'])/datas[67]['column3'] * 100)
-                # datas[68]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[68]['column'+str(new_index)] - datas[68]['column3'])/datas[68]['column3'] * 100)
-                # datas[69]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[69]['column'+str(new_index)] - datas[69]['column3'])/datas[69]['column3'] * 100)
-                # datas[70]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[70]['column'+str(new_index)] - datas[70]['column3'])/datas[70]['column3'] * 100)
-
-        lmbench_data = {'others': others, 'data': datas}
-        return json_response(lmbench_data, status.HTTP_200_OK, '列表')
+        return json_response(datas, status.HTTP_200_OK, '列表')
 
 
     def create(self, request, *args, **kwargs):
