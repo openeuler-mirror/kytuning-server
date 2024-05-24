@@ -30,18 +30,13 @@ export default {
       type: String,
       required: true
     },
-    comparsionIds: {
-      type: String,
-      required: true
-    }
   },
   created() {
-    axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId + '&comparsionIds=' +
-        this.$route.params.comparsionIds).then((response) => {
-          this.otherList = response.data.data.others
-          this.numColumns = Object.keys(response.data.data.others[0]).length
-          this.isDataLoaded = true;
-          this.$emit('data-loaded', this.otherList); // 触发自定义事件并传递数据
+    axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId).then((response) => {
+      this.otherList = response.data.data.others
+      this.numColumns = Object.keys(response.data.data.others[0]).length
+      this.isDataLoaded = true;
+      this.$emit('data-loaded', this.otherList); // 触发自定义事件并传递数据
     })
   },
   methods: {

@@ -1,7 +1,8 @@
 <template>
-  <div style="overflow-x: auto;">
+<!--  <div style="overflow-x: auto;">-->
+  <div>
     <template v-if="isDataLoaded">
-      <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
+      <el-table :data="tableTitle" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
         <template v-for="i in numColumns" :key="i">
           <el-table-column :prop="`column${i}`" :width="i < 2 ? '100' : ''" align="center" show-tooltip-when-overflow></el-table-column>
         </template>
@@ -12,11 +13,12 @@
 
 <script>
 import axios from 'axios'
+
 export default {
-  data(){
+  data() {
     return {
-      tableDatas:[],
-      numColumns : 0,
+      tableTitle: [],
+      numColumns: 0,
       isDataLoaded: false,
     }
   },
@@ -29,18 +31,13 @@ export default {
       type: String,
       required: true
     },
-    comparsionIds: {
-      type: String,
-      required: true
-    }
   },
   created() {
-    axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId + '&comparsionIds=' +
-        this.$route.params.comparsionIds).then((response) => {
-      this.tableDatas = response.data.data.data
-      this.numColumns = Object.keys(response.data.data.others[0]).length
+    axios.get('/api/' + this.dataName + '_title/').then((response) => {
+      this.tableTitle = response.data.data
+      this.numColumns = Object.keys(this.tableTitle[0]).length
       this.isDataLoaded = true;
-      this.$emit('data-loaded', this.tableDatas);
+      this.$emit('data-loaded', this.tableTitle);
     })
   },
   methods: {
@@ -55,7 +52,7 @@ export default {
     objectSpanMethod({rowIndex, columnIndex}) {
       //columnIndex 表示需要合并的列，多列时用 || 隔开
       if (columnIndex === 0) {
-        const _row = this.filterData(this.tableDatas, columnIndex).one[rowIndex];
+        const _row = this.filterData(this.tableTitle, columnIndex).one[rowIndex];
         const _col = _row > 0 ? 1 : 0;  // 为0是不执行合并。 为1是从当前单元格开始，执行合并1列
         return {
           rowspan: _row,
