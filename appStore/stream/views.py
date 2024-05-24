@@ -20,7 +20,23 @@ class StreamViewSet(CusModelViewSet):
     queryset = Stream.objects.all().order_by('id')
     serializer_class = StreamSerializer
 
-    def get_data(self, serializer_):
+    # pagination_class = LimsPageSet
+
+    # def list(self, request, *args, **kwargs):
+    #     """
+    #     返回列表
+    #     :param request:
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     env_id = request.GET.get('env_id')
+    #     queryset = Stream.objects.filter(env_id=env_id).all()
+    #     queryset = self.filter_queryset(queryset)
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
+
+    def get_data(self, serializer_,datas, title_index,column_index,base_average):
         serializer = self.get_serializer(serializer_, many=True)
         # 当大于两条数据时展示平均数
         single_array_size = ''
@@ -39,16 +55,54 @@ class StreamViewSet(CusModelViewSet):
             # todo 后期做优化考虑怎么未查找到的情况
             pass
         elif len(serializer_)== 1:
-            single_array_size = serializer.data[0]['single_array_size']
-            single_copy = serializer.data[0]['single_copy']
-            single_scale = serializer.data[0]['single_scale']
-            single_add = serializer.data[0]['single_add']
-            single_triad = serializer.data[0]['single_triad']
-            multi_array_size = serializer.data[0]['multi_array_size']
-            multi_copy = serializer.data[0]['multi_copy']
-            multi_scale = serializer.data[0]['multi_scale']
-            multi_add = serializer.data[0]['multi_add']
-            multi_triad = serializer.data[0]['multi_triad']
+            if title_index == 1:
+                datas[0]['column' + str(column_index)] = 'stream#' + str(title_index) + '(基准数据)'
+                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+                datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
+                datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
+                datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
+                datas[6]['column' + str(column_index)] = serializer.data[0]['single_add']
+                datas[7]['column' + str(column_index)] = serializer.data[0]['single_triad']
+                datas[8]['column' + str(column_index)] = serializer.data[0]['multi_array_size']
+                datas[9]['column' + str(column_index)] = serializer.data[0]['multi_copy']
+                datas[10]['column' + str(column_index)] = serializer.data[0]['multi_scale']
+                datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
+                datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
+                column_index += 1
+                title_index += 1
+            else:
+                datas[0]['column' + str(column_index)] = 'stream#' + str(title_index)
+                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+                datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
+                datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
+                datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
+                datas[6]['column' + str(column_index)] = serializer.data[0]['single_add']
+                datas[7]['column' + str(column_index)] = serializer.data[0]['single_triad']
+                datas[8]['column' + str(column_index)] = serializer.data[0]['multi_array_size']
+                datas[9]['column' + str(column_index)] = serializer.data[0]['multi_copy']
+                datas[10]['column' + str(column_index)] = serializer.data[0]['multi_scale']
+                datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
+                datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
+                column_index += 1
+                title_index += 1
+                #如果不是基准数据增加对比值
+                # 加对比数据
+                datas[0]['column' + str(column_index)] = '对比值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                datas[3]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['single_array_size'] - base_average['single_array_size']) / base_average['single_array_size'])
+                datas[4]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['single_copy'] - base_average['single_copy']) / base_average['single_copy'])
+                datas[5]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['single_scale'] - base_average['single_scale']) / base_average['single_scale'])
+                datas[6]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['single_add'] - base_average['single_add']) / base_average['single_add'])
+                datas[7]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['single_triad'] - base_average['single_triad']) / base_average['single_triad'])
+                datas[8]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['multi_array_size'] - base_average['multi_array_size']) / base_average['multi_array_size'])
+                datas[9]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['multi_copy'] - base_average['multi_copy']) / base_average['multi_copy'])
+                datas[10]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['multi_scale'] - base_average['multi_scale']) / base_average['multi_scale'])
+                datas[11]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['multi_add'] - base_average['multi_add']) / base_average['multi_add'])
+                datas[12]['column' + str(column_index)] = "%.2f%%" %((serializer.data[0]['multi_triad'] - base_average['multi_triad']) / base_average['multi_triad'])
+                column_index += 1
         else:
             # 将每个字典转换为NumPy数组
             # single_array_size_list = [d['single_array_size'] for d in serializer.data]) #或者这样的方式
@@ -75,20 +129,84 @@ class StreamViewSet(CusModelViewSet):
             multi_add = np.mean(multi_add_list).round(2)
             multi_triad = np.mean(multi_triad_list).round(2)
 
-        new_data = {'single_array_size':single_array_size,
-                'single_copy':single_copy,
-                'single_scale':single_scale,
-                'single_add':single_add,
-                'single_triad':single_triad,
-                'multi_array_size':multi_array_size,
-                'multi_copy':multi_copy,
-                'multi_scale':multi_scale,
-                'multi_add':multi_add,
-                'multi_triad':multi_triad,
-                'execute_cmd':execute_cmd,
-                'modify_parameters':modify_parameters,
-                }
-        return new_data
+            #先增加全部数据再增加平均值
+            for data in serializer_:
+                # 平均数据中增加基准数据
+                # title = 'stream#' + str(title_index) + '(基准数据)' if title_index == 1 else 'stream#' + str(title_index)
+                datas[0]['column' + str(column_index)] = 'stream#' + str(title_index)
+                datas[1]['column' + str(column_index)] = data.execute_cmd
+                datas[2]['column' + str(column_index)] = data.modify_parameters
+                datas[3]['column' + str(column_index)] = data.single_array_size
+                datas[4]['column' + str(column_index)] = data.single_copy
+                datas[5]['column' + str(column_index)] = data.single_scale
+                datas[6]['column' + str(column_index)] = data.single_add
+                datas[7]['column' + str(column_index)] = data.single_triad
+                datas[8]['column' + str(column_index)] = data.multi_array_size
+                datas[9]['column' + str(column_index)] = data.multi_copy
+                datas[10]['column' + str(column_index)] = data.multi_scale
+                datas[11]['column' + str(column_index)] = data.multi_add
+                datas[12]['column' + str(column_index)] = data.multi_triad
+                column_index += 1
+                title_index += 1
+            # 再增加一个平均值,如果有base_average数据表示是对比数据，需要增加对比数据，如果没有就是基准数据，需要增加基准数据的记录
+            if base_average:
+                datas[0]['column' + str(column_index)] = '平均值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                datas[3]['column' + str(column_index)] = single_array_size
+                datas[4]['column' + str(column_index)] = single_copy
+                datas[5]['column' + str(column_index)] = single_scale
+                datas[6]['column' + str(column_index)] = single_add
+                datas[7]['column' + str(column_index)] = single_triad
+                datas[8]['column' + str(column_index)] = multi_array_size
+                datas[9]['column' + str(column_index)] = multi_copy
+                datas[10]['column' + str(column_index)] = multi_scale
+                datas[11]['column' + str(column_index)] = multi_add
+                datas[12]['column' + str(column_index)] = multi_triad
+                column_index += 1
+                # 加对比数据
+                datas[0]['column' + str(column_index)] = '对比值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                datas[3]['column' + str(column_index)] = "%.2f%%" %((single_array_size - base_average['single_array_size']) / base_average['single_array_size'])
+                datas[4]['column' + str(column_index)] = "%.2f%%" %((single_copy - base_average['single_copy']) / base_average['single_copy'])
+                datas[5]['column' + str(column_index)] = "%.2f%%" %((single_scale - base_average['single_scale']) / base_average['single_scale'])
+                datas[6]['column' + str(column_index)] = "%.2f%%" %((single_add - base_average['single_add']) / base_average['single_add'])
+                datas[7]['column' + str(column_index)] = "%.2f%%" %((single_triad - base_average['single_triad']) / base_average['single_triad'])
+                datas[8]['column' + str(column_index)] = "%.2f%%" %((multi_array_size - base_average['multi_array_size']) / base_average['multi_array_size'])
+                datas[9]['column' + str(column_index)] = "%.2f%%" %((multi_copy - base_average['multi_copy']) / base_average['multi_copy'])
+                datas[10]['column' + str(column_index)] = "%.2f%%" %((multi_scale - base_average['multi_scale']) / base_average['multi_scale'])
+                datas[11]['column' + str(column_index)] = "%.2f%%" %((multi_add - base_average['multi_add']) / base_average['multi_add'])
+                datas[12]['column' + str(column_index)] = "%.2f%%" %((multi_triad - base_average['multi_triad']) / base_average['multi_triad'])
+                column_index += 1
+            else:
+                datas[0]['column' + str(column_index)] = '平均值(基准数据)'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                datas[3]['column' + str(column_index)] = single_array_size
+                datas[4]['column' + str(column_index)] = single_copy
+                datas[5]['column' + str(column_index)] = single_scale
+                datas[6]['column' + str(column_index)] = single_add
+                datas[7]['column' + str(column_index)] = single_triad
+                datas[8]['column' + str(column_index)] = multi_array_size
+                datas[9]['column' + str(column_index)] = multi_copy
+                datas[10]['column' + str(column_index)] = multi_scale
+                datas[11]['column' + str(column_index)] = multi_add
+                datas[12]['column' + str(column_index)] = multi_triad
+
+                #保存base的数据方便后面获取
+                base_average['single_array_size'] = single_array_size
+                base_average['single_copy'] = single_copy
+                base_average['single_scale'] = single_scale
+                base_average['single_add'] = single_add
+                base_average['single_triad'] = single_triad
+                base_average['multi_array_size'] = multi_array_size
+                base_average['multi_copy'] = multi_copy
+                base_average['multi_scale'] = multi_scale
+                base_average['multi_add'] = multi_add
+                base_average['multi_triad'] = multi_triad
+                column_index += 1
+        return datas,title_index,column_index
 
     def list(self, request, *args, **kwargs):
         """
@@ -104,66 +222,34 @@ class StreamViewSet(CusModelViewSet):
         base_queryset = Stream.objects.filter(env_id=env_id).all()
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '列表')
-        #当大于两条数据是展示平均数
-        data = self.get_data(base_queryset)
-        others = [{'column1':'Stream','column2':'', 'column3':'Stream#1 (基准数据)'},{'column1': '执行命令','column2':'', 'column3': data['execute_cmd']}, {'column1': '修改参数：', 'column2':'', 'column3':data['modify_parameters']}]
         datas = [
-            {'column1': '单线程', 'column2': 'Array size', 'column3': data['single_array_size']},
-            {'column1': '单线程', 'column2': 'Copy', 'column3': data['single_copy']},
-            {'column1': '单线程', 'column2': 'Scale', 'column3': data['single_scale']},
-            {'column1': '单线程', 'column2': 'Add', 'column3': data['single_add']},
-            {'column1': '单线程', 'column2': 'Triad', 'column3': data['single_triad']},
-            {'column1': '多线程', 'column2': 'Array size', 'column3': data['multi_array_size']},
-            {'column1': '多线程', 'column2': 'Copy', 'column3': data['multi_copy']},
-            {'column1': '多线程', 'column2': 'Scale', 'column3': data['multi_scale']},
-            {'column1': '多线程', 'column2': 'Add', 'column3': data['multi_add']},
-            {'column1': '多线程', 'column2': 'Triad', 'column3': data['multi_triad']}
-            ]
-
+            {'column1': 'Stream', 'column2': ''},
+            {'column1': '执行命令', 'column2': ''},
+            {'column1': '修改参数：', 'column2': ''},
+            {'column1': '单线程', 'column2': 'Array size'},
+            {'column1': '单线程', 'column2': 'Copy'},
+            {'column1': '单线程', 'column2': 'Scale'},
+            {'column1': '单线程', 'column2': 'Add'},
+            {'column1': '单线程', 'column2': 'Triad'},
+            {'column1': '多线程', 'column2': 'Array size'},
+            {'column1': '多线程', 'column2': 'Copy'},
+            {'column1': '多线程', 'column2': 'Scale'},
+            {'column1': '多线程', 'column2': 'Add'},
+            {'column1': '多线程', 'column2': 'Triad'},
+        ]
+        #当大于两条数据是展示平均数
+        title_index = 1
+        column_index = 3
+        base_average={}
+        datas,title_index,column_index = self.get_data(base_queryset, datas, title_index,column_index,base_average)
         if comparsionIds != ['']:
             # 处理对比数据
-            for index ,comparativeId in enumerate(comparsionIds):
-                new_index = 2 * index + 4
+            for comparativeId in comparsionIds:
                 comparsion_queryset = Stream.objects.filter(env_id=comparativeId).all()
-                comparsion_datas = self.get_data(comparsion_queryset)
-                others[0]['column'+str(new_index)] = 'Stream#'+str(index + 2)
-                others[1]['column'+str(new_index)] = comparsion_datas['execute_cmd']
-                others[2]['column'+str(new_index)] = comparsion_datas['modify_parameters']
-                others[0]['column'+str(new_index+1)] = ''
-                others[1]['column'+str(new_index+1)] = ''
-                others[2]['column'+str(new_index+1)] = ''
-
-                datas[0]['column'+str(new_index)] = comparsion_datas['single_array_size']
-                datas[1]['column'+str(new_index)] = comparsion_datas['single_copy']
-                datas[2]['column'+str(new_index)] = comparsion_datas['single_scale']
-                datas[3]['column'+str(new_index)] = comparsion_datas['single_add']
-                datas[4]['column'+str(new_index)] = comparsion_datas['single_triad']
-                datas[5]['column'+str(new_index)] = comparsion_datas['multi_array_size']
-                datas[6]['column'+str(new_index)] = comparsion_datas['multi_copy']
-                datas[7]['column'+str(new_index)] = comparsion_datas['multi_scale']
-                datas[8]['column'+str(new_index)] = comparsion_datas['multi_add']
-                datas[9]['column'+str(new_index)] = comparsion_datas['multi_triad']
-
-                for i in range(10):
-                    if datas[i]['column' + str(new_index)] and datas[i]['column3']:
-                        datas[i]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                (datas[i]['column' + str(new_index)] - datas[i]['column3']) / datas[i]['column3'])
-                    else:
-                        datas[i]['column' + str(new_index + 1)] = None
-
-                # datas[0]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[0]['column'+str(new_index)] - datas[0]['column3'])/datas[0]['column3'] * 100)
-                # datas[1]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[1]['column'+str(new_index)] - datas[1]['column3'])/datas[1]['column3'] * 100)
-                # datas[2]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[2]['column'+str(new_index)] - datas[2]['column3'])/datas[2]['column3'] * 100)
-                # datas[3]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[3]['column'+str(new_index)] - datas[3]['column3'])/datas[3]['column3'] * 100)
-                # datas[4]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[4]['column'+str(new_index)] - datas[4]['column3'])/datas[4]['column3'] * 100)
-                # datas[5]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[5]['column'+str(new_index)] - datas[5]['column3'])/datas[5]['column3'] * 100)
-                # datas[6]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[6]['column'+str(new_index)] - datas[6]['column3'])/datas[6]['column3'] * 100)
-                # datas[7]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[7]['column'+str(new_index)] - datas[7]['column3'])/datas[7]['column3'] * 100)
-                # datas[8]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[8]['column'+str(new_index)] - datas[8]['column3'])/datas[8]['column3'] * 100)
-                # datas[9]['column'+str(new_index+1)]  = "%.2f%%" % ((datas[9]['column'+str(new_index)] - datas[9]['column3'])/datas[9]['column3'] * 100)
-
-        stream_data = {'others': others, 'data': datas}
-        return json_response(stream_data, status.HTTP_200_OK, '列表')
+                if not comparsion_queryset:
+                    return json_response({}, status.HTTP_200_OK, '列表')
+                datas,title_index,column_index = self.get_data(comparsion_queryset,datas,title_index,column_index,base_average)
+        return json_response(datas, status.HTTP_200_OK, '列表')
 
 
     def create(self, request, *args, **kwargs):
