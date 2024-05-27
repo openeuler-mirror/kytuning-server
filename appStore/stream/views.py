@@ -26,98 +26,53 @@ class StreamViewSet(CusModelViewSet):
             # todo 后期做优化考虑怎么未查找到的情况
             pass
         elif len(serializer_) == 1:
-            if base_average:
-                datas[0]['column' + str(column_index)] = 'stream#' + str(title_index)
-                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
-                datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
-                datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
-                datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
-                datas[6]['column' + str(column_index)] = serializer.data[0]['single_add']
-                datas[7]['column' + str(column_index)] = serializer.data[0]['single_triad']
-                datas[8]['column' + str(column_index)] = serializer.data[0]['multi_array_size']
-                datas[9]['column' + str(column_index)] = serializer.data[0]['multi_copy']
-                datas[10]['column' + str(column_index)] = serializer.data[0]['multi_scale']
-                datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
-                datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
-                column_index += 1
-                title_index += 1
-                datas[0]['column' + str(column_index)] = '平均值'
-                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
-                datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
-                datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
-                datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
-                datas[6]['column' + str(column_index)] = serializer.data[0]['single_add']
-                datas[7]['column' + str(column_index)] = serializer.data[0]['single_triad']
-                datas[8]['column' + str(column_index)] = serializer.data[0]['multi_array_size']
-                datas[9]['column' + str(column_index)] = serializer.data[0]['multi_copy']
-                datas[10]['column' + str(column_index)] = serializer.data[0]['multi_scale']
-                datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
-                datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
-                column_index += 1
-                title_index += 1
-                # 如果不是基准数据增加对比值
-                # 加对比数据
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                datas[3]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_array_size'] - base_average['single_array_size']) / base_average['single_array_size'])
-                datas[4]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_copy'] - base_average['single_copy']) / base_average['single_copy'])
-                datas[5]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_scale'] - base_average['single_scale']) / base_average['single_scale'])
-                datas[6]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_add'] - base_average['single_add']) / base_average['single_add'])
-                datas[7]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_triad'] - base_average['single_triad']) / base_average['single_triad'])
-                datas[8]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_array_size'] - base_average['multi_array_size']) / base_average['multi_array_size'])
-                datas[9]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_copy'] - base_average['multi_copy']) / base_average['multi_copy'])
-                datas[10]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_scale'] - base_average['multi_scale']) / base_average['multi_scale'])
-                datas[11]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_add'] - base_average['multi_add']) / base_average['multi_add'])
-                datas[12]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_triad'] - base_average['multi_triad']) / base_average['multi_triad'])
-                column_index += 1
-            else:
-                datas[0]['column' + str(column_index)] = 'stream#' + str(title_index)
-                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
-                datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
-                datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
-                datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
-                datas[6]['column' + str(column_index)] = serializer.data[0]['single_add']
-                datas[7]['column' + str(column_index)] = serializer.data[0]['single_triad']
-                datas[8]['column' + str(column_index)] = serializer.data[0]['multi_array_size']
-                datas[9]['column' + str(column_index)] = serializer.data[0]['multi_copy']
-                datas[10]['column' + str(column_index)] = serializer.data[0]['multi_scale']
-                datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
-                datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
-                column_index += 1
-                title_index += 1
-                datas[0]['column' + str(column_index)] = '平均值(基准数据)'
-                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
-                datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
-                datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
-                datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
-                datas[6]['column' + str(column_index)] = serializer.data[0]['single_add']
-                datas[7]['column' + str(column_index)] = serializer.data[0]['single_triad']
-                datas[8]['column' + str(column_index)] = serializer.data[0]['multi_array_size']
-                datas[9]['column' + str(column_index)] = serializer.data[0]['multi_copy']
-                datas[10]['column' + str(column_index)] = serializer.data[0]['multi_scale']
-                datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
-                datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
-                column_index += 1
-                title_index += 1
-                base_average['single_array_size'] = serializer.data[0]['single_array_size']
-                base_average['single_copy'] = serializer.data[0]['single_copy']
-                base_average['single_scale'] = serializer.data[0]['single_scale']
-                base_average['single_add'] = serializer.data[0]['single_add']
-                base_average['single_triad'] = serializer.data[0]['single_triad']
-                base_average['multi_array_size'] = serializer.data[0]['multi_array_size']
-                base_average['multi_copy'] = serializer.data[0]['multi_copy']
-                base_average['multi_scale'] = serializer.data[0]['multi_scale']
-                base_average['multi_add'] = serializer.data[0]['multi_add']
-                base_average['multi_triad'] = serializer.data[0]['multi_triad']
+            # 基准数据和对比数据的全部数据
+            datas[0]['column' + str(column_index)] = 'stream#' + str(title_index)
+            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
+            datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
+            datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
+            datas[6]['column' + str(column_index)] = serializer.data[0]['single_add']
+            datas[7]['column' + str(column_index)] = serializer.data[0]['single_triad']
+            datas[8]['column' + str(column_index)] = serializer.data[0]['multi_array_size']
+            datas[9]['column' + str(column_index)] = serializer.data[0]['multi_copy']
+            datas[10]['column' + str(column_index)] = serializer.data[0]['multi_scale']
+            datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
+            datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
+            column_index += 1
+            title_index += 1
+            # 基准数据和对比数据的平均数据
+            title = '平均值(基准数据)' if not base_average else '平均数据'
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
+            datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
+            datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
+            datas[6]['column' + str(column_index)] = serializer.data[0]['single_add']
+            datas[7]['column' + str(column_index)] = serializer.data[0]['single_triad']
+            datas[8]['column' + str(column_index)] = serializer.data[0]['multi_array_size']
+            datas[9]['column' + str(column_index)] = serializer.data[0]['multi_copy']
+            datas[10]['column' + str(column_index)] = serializer.data[0]['multi_scale']
+            datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
+            datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
+            column_index += 1
+            title_index += 1
 
+            # 记录基准数据
+            base_average['single_array_size'] = serializer.data[0]['single_array_size']
+            base_average['single_copy'] = serializer.data[0]['single_copy']
+            base_average['single_scale'] = serializer.data[0]['single_scale']
+            base_average['single_add'] = serializer.data[0]['single_add']
+            base_average['single_triad'] = serializer.data[0]['single_triad']
+            base_average['multi_array_size'] = serializer.data[0]['multi_array_size']
+            base_average['multi_copy'] = serializer.data[0]['multi_copy']
+            base_average['multi_scale'] = serializer.data[0]['multi_scale']
+            base_average['multi_add'] = serializer.data[0]['multi_add']
+            base_average['multi_triad'] = serializer.data[0]['multi_triad']
         else:
-            # 将每个字典转换为NumPy数组
-            # single_array_size_list = [d['single_array_size'] for d in serializer.data]) #或者这样的方式
+            # 计算平均值
             single_array_size_list = [d.single_array_size for d in serializer_]
             single_copy_list = [d.single_copy for d in serializer_]
             single_scale_list = [d.single_scale for d in serializer_]
@@ -141,7 +96,7 @@ class StreamViewSet(CusModelViewSet):
             multi_add = np.mean(multi_add_list).round(2)
             multi_triad = np.mean(multi_triad_list).round(2)
 
-            # 先增加全部数据再增加平均值
+            # 基准数据和对比数据的全部数据
             for data in serializer_:
                 datas[0]['column' + str(column_index)] = 'stream#' + str(title_index)
                 datas[1]['column' + str(column_index)] = data.execute_cmd
@@ -158,64 +113,39 @@ class StreamViewSet(CusModelViewSet):
                 datas[12]['column' + str(column_index)] = data.multi_triad
                 column_index += 1
                 title_index += 1
-            # 再增加一个平均值,如果有base_average数据表示是对比数据，需要增加对比数据，如果没有就是基准数据，需要增加基准数据的记录
-            if base_average:
-                datas[0]['column' + str(column_index)] = '平均值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                datas[3]['column' + str(column_index)] = single_array_size
-                datas[4]['column' + str(column_index)] = single_copy
-                datas[5]['column' + str(column_index)] = single_scale
-                datas[6]['column' + str(column_index)] = single_add
-                datas[7]['column' + str(column_index)] = single_triad
-                datas[8]['column' + str(column_index)] = multi_array_size
-                datas[9]['column' + str(column_index)] = multi_copy
-                datas[10]['column' + str(column_index)] = multi_scale
-                datas[11]['column' + str(column_index)] = multi_add
-                datas[12]['column' + str(column_index)] = multi_triad
-                column_index += 1
-                # 加对比数据
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                datas[3]['column' + str(column_index)] = "%.2f%%" % ((single_array_size - base_average['single_array_size']) / base_average['single_array_size'])
-                datas[4]['column' + str(column_index)] = "%.2f%%" % ((single_copy - base_average['single_copy']) / base_average['single_copy'])
-                datas[5]['column' + str(column_index)] = "%.2f%%" % ((single_scale - base_average['single_scale']) / base_average['single_scale'])
-                datas[6]['column' + str(column_index)] = "%.2f%%" % ((single_add - base_average['single_add']) / base_average['single_add'])
-                datas[7]['column' + str(column_index)] = "%.2f%%" % ((single_triad - base_average['single_triad']) / base_average['single_triad'])
-                datas[8]['column' + str(column_index)] = "%.2f%%" % ((multi_array_size - base_average['multi_array_size']) / base_average['multi_array_size'])
-                datas[9]['column' + str(column_index)] = "%.2f%%" % ((multi_copy - base_average['multi_copy']) / base_average['multi_copy'])
-                datas[10]['column' + str(column_index)] = "%.2f%%" % ((multi_scale - base_average['multi_scale']) / base_average['multi_scale'])
-                datas[11]['column' + str(column_index)] = "%.2f%%" % ((multi_add - base_average['multi_add']) / base_average['multi_add'])
-                datas[12]['column' + str(column_index)] = "%.2f%%" % ((multi_triad - base_average['multi_triad']) / base_average['multi_triad'])
-                column_index += 1
-            else:
-                datas[0]['column' + str(column_index)] = '平均值(基准数据)'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                datas[3]['column' + str(column_index)] = single_array_size
-                datas[4]['column' + str(column_index)] = single_copy
-                datas[5]['column' + str(column_index)] = single_scale
-                datas[6]['column' + str(column_index)] = single_add
-                datas[7]['column' + str(column_index)] = single_triad
-                datas[8]['column' + str(column_index)] = multi_array_size
-                datas[9]['column' + str(column_index)] = multi_copy
-                datas[10]['column' + str(column_index)] = multi_scale
-                datas[11]['column' + str(column_index)] = multi_add
-                datas[12]['column' + str(column_index)] = multi_triad
+            title = '平均值(基准数据)' if not base_average else '平均数据'
+            # 基准数据和对比数据的平均数据
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            datas[3]['column' + str(column_index)] = single_array_size
+            datas[4]['column' + str(column_index)] = single_copy
+            datas[5]['column' + str(column_index)] = single_scale
+            datas[6]['column' + str(column_index)] = single_add
+            datas[7]['column' + str(column_index)] = single_triad
+            datas[8]['column' + str(column_index)] = multi_array_size
+            datas[9]['column' + str(column_index)] = multi_copy
+            datas[10]['column' + str(column_index)] = multi_scale
+            datas[11]['column' + str(column_index)] = multi_add
+            datas[12]['column' + str(column_index)] = multi_triad
+            column_index += 1
 
-                # 保存base的数据方便后面获取
-                base_average['single_array_size'] = single_array_size
-                base_average['single_copy'] = single_copy
-                base_average['single_scale'] = single_scale
-                base_average['single_add'] = single_add
-                base_average['single_triad'] = single_triad
-                base_average['multi_array_size'] = multi_array_size
-                base_average['multi_copy'] = multi_copy
-                base_average['multi_scale'] = multi_scale
-                base_average['multi_add'] = multi_add
-                base_average['multi_triad'] = multi_triad
-                column_index += 1
+            # 对比数据的对比值
+            datas[0]['column' + str(column_index)] = '对比值'
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            datas[3]['column' + str(column_index)] = "%.2f%%" % ((single_array_size - base_average['single_array_size']) / base_average['single_array_size'])
+            datas[4]['column' + str(column_index)] = "%.2f%%" % ((single_copy - base_average['single_copy']) / base_average['single_copy'])
+            datas[5]['column' + str(column_index)] = "%.2f%%" % ((single_scale - base_average['single_scale']) / base_average['single_scale'])
+            datas[6]['column' + str(column_index)] = "%.2f%%" % ((single_add - base_average['single_add']) / base_average['single_add'])
+            datas[7]['column' + str(column_index)] = "%.2f%%" % ((single_triad - base_average['single_triad']) / base_average['single_triad'])
+            datas[8]['column' + str(column_index)] = "%.2f%%" % ((multi_array_size - base_average['multi_array_size']) / base_average['multi_array_size'])
+            datas[9]['column' + str(column_index)] = "%.2f%%" % ((multi_copy - base_average['multi_copy']) / base_average['multi_copy'])
+            datas[10]['column' + str(column_index)] = "%.2f%%" % ((multi_scale - base_average['multi_scale']) / base_average['multi_scale'])
+            datas[11]['column' + str(column_index)] = "%.2f%%" % ((multi_add - base_average['multi_add']) / base_average['multi_add'])
+            datas[12]['column' + str(column_index)] = "%.2f%%" % ((multi_triad - base_average['multi_triad']) / base_average['multi_triad'])
+            column_index += 1
+
         return datas, title_index, column_index
 
     def list(self, request, *args, **kwargs):
