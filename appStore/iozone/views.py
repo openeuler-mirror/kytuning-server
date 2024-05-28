@@ -159,38 +159,149 @@ class IozoneViewSet(CusModelViewSet):
                 random_read_test_list = [d.random_read_test for d in test_type_data_ if d.random_read_test is not None]
                 random_write_test_list = [d.random_write_test for d in test_type_data_ if d.random_write_test is not None]
                 # 计算每个数组的平均值
-                file_size = np.mean(file_size_list).round(2)
-                write_test = np.mean(write_test_list).round(2)
-                rewrite_test = np.mean(rewrite_test_list).round(2)
-                read_test = np.mean(read_test_list).round(2)
-                reread_test = np.mean(reread_test_list).round(2)
-                random_read_test = np.mean(random_read_test_list).round(2)
-                random_write_test = np.mean(random_write_test_list).round(2)
+                file_size = np.mean(file_size_list).round(2) if not np.isnan(np.mean(file_size_list)) else None
+                write_test = np.mean(write_test_list).round(2) if not np.isnan(np.mean(write_test_list)) else None
+                rewrite_test = np.mean(rewrite_test_list).round(2) if not np.isnan(np.mean(rewrite_test_list)) else None
+                read_test = np.mean(read_test_list).round(2) if not np.isnan(np.mean(read_test_list)) else None
+                reread_test = np.mean(reread_test_list).round(2) if not np.isnan(np.mean(reread_test_list)) else None
+                random_read_test = np.mean(random_read_test_list).round(2) if not np.isnan(np.mean(random_read_test_list)) else None
+                random_write_test = np.mean(random_write_test_list).round(2) if not np.isnan(np.mean(random_write_test_list)) else None
 
                 data = {'testcase_name': test_type,
-                        'file_size': file_size,
-                        'write_test': write_test,
-                        'rewrite_test': rewrite_test,
+                        test_type + '_file_size': file_size,
                         'read_test': read_test,
                         'reread_test': reread_test,
                         'random_read_test': random_read_test,
+                        'rewrite_test': rewrite_test,
+                        'write_test': write_test,
                         'random_write_test': random_write_test, }
-                datas.append(data)
-        return datas
+                average_datas.append(data)
+            # 补全column2 = file_size
+            if column_index == 2:
+                datas[0]['column' + str(column_index)] = '(file size)'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                for data in average_datas:
+                    if data['testcase_name'] == 'double':
+                        datas[3]['column' + str(column_index)] = data['double_file_size']
+                        datas[4]['column' + str(column_index)] = data['double_file_size']
+                        datas[5]['column' + str(column_index)] = data['double_file_size']
+                        datas[6]['column' + str(column_index)] = data['double_file_size']
+                        datas[7]['column' + str(column_index)] = data['double_file_size']
+                        datas[8]['column' + str(column_index)] = data['double_file_size']
+                    elif data['testcase_name'] == 'full':
+                        datas[9]['column' + str(column_index)] = data['full_file_size']
+                        datas[10]['column' + str(column_index)] = data['full_file_size']
+                        datas[11]['column' + str(column_index)] = data['full_file_size']
+                        datas[12]['column' + str(column_index)] = data['full_file_size']
+                        datas[13]['column' + str(column_index)] = data['full_file_size']
+                        datas[14]['column' + str(column_index)] = data['full_file_size']
+                    elif data['testcase_name'] == 'half':
+                        datas[15]['column' + str(column_index)] = data['half_file_size']
+                        datas[16]['column' + str(column_index)] = data['half_file_size']
+                        datas[17]['column' + str(column_index)] = data['half_file_size']
+                        datas[18]['column' + str(column_index)] = data['half_file_size']
+                        datas[19]['column' + str(column_index)] = data['half_file_size']
+                        datas[20]['column' + str(column_index)] = data['half_file_size']
+                column_index += 1
 
-    def do_base_data(self, datas):
-        new_data = []
-        for value in datas:
-            data = [
-                {'column1': value['testcase_name'] + '-' + '写测试（KB/s）', 'column2':  value['file_size'], 'column3': value['write_test']},
-                {'column1': value['testcase_name'] + '-' + '重写测试（KB/s）', 'column2':  value['file_size'], 'column3': value['rewrite_test']},
-                {'column1': value['testcase_name'] + '-' + '读测试（KB/s）', 'column2':  value['file_size'], 'column3': value['read_test']},
-                {'column1': value['testcase_name'] + '-' + '重读测试（KB/s）', 'column2':  value['file_size'], 'column3': value['reread_test']},
-                {'column1': value['testcase_name'] + '-' + '随机读测试（KB/s）', 'column2':  value['file_size'], 'column3': value['random_read_test']},
-                {'column1': value['testcase_name'] + '-' + '随机写测试（KB/s）', 'column2':  value['file_size'], 'column3': value['random_write_test']},
-                    ]
-            new_data.extend(data)
-        return new_data
+            # 基准数据和对比数据的全部数据
+            for mark_name in groups:
+                temp_mark_datas = serializer_.filter(mark_name=mark_name)
+                # 基准数据和对比数据的全部数据
+                datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
+                datas[1]['column' + str(column_index)] = temp_mark_datas[0].execute_cmd
+                datas[2]['column' + str(column_index)] = temp_mark_datas[0].modify_parameters
+                for data in temp_mark_datas:
+                    if data.testcase_name == 'double':
+                        # 增加double数据
+                        datas[3]['column' + str(column_index)] = data.read_test
+                        datas[4]['column' + str(column_index)] = data.reread_test
+                        datas[5]['column' + str(column_index)] = data.random_read_test
+                        datas[6]['column' + str(column_index)] = data.write_test
+                        datas[7]['column' + str(column_index)] = data.rewrite_test
+                        datas[8]['column' + str(column_index)] = data.random_write_test
+                    elif data.testcase_name == 'full':
+                        # 增加full数据
+                        datas[9]['column' + str(column_index)] = data.read_test
+                        datas[10]['column' + str(column_index)] = data.reread_test
+                        datas[11]['column' + str(column_index)] = data.random_read_test
+                        datas[12]['column' + str(column_index)] = data.write_test
+                        datas[13]['column' + str(column_index)] = data.rewrite_test
+                        datas[14]['column' + str(column_index)] = data.random_write_test
+                    elif data.testcase_name == 'half':
+                        # 增加half数据
+                        datas[15]['column' + str(column_index)] = data.read_test
+                        datas[16]['column' + str(column_index)] = data.reread_test
+                        datas[17]['column' + str(column_index)] = data.random_read_test
+                        datas[18]['column' + str(column_index)] = data.write_test
+                        datas[19]['column' + str(column_index)] = data.rewrite_test
+                        datas[20]['column' + str(column_index)] = data.random_write_test
+                column_index += 1
+                title_index += 1
+            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            # 基准数据和对比数据的平均数据
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = serializer_[0].execute_cmd
+            datas[2]['column' + str(column_index)] = serializer_[0].modify_parameters
+            # 因为当没有某种数据的时候会出现column为增加的情况，所以需要先初始化一下所有的column为空
+            for i in range(3,21):
+                datas[i]['column' + str(column_index)] = None
+            for data in average_datas:
+                if data['testcase_name'] == 'double':
+                    # 增加double数据
+                    datas[3]['column' + str(column_index)] = data['read_test']
+                    datas[4]['column' + str(column_index)] = data['reread_test']
+                    datas[5]['column' + str(column_index)] = data['random_read_test']
+                    datas[6]['column' + str(column_index)] = data['write_test']
+                    datas[7]['column' + str(column_index)] = data['rewrite_test']
+                    datas[8]['column' + str(column_index)] = data['random_write_test']
+                elif data['testcase_name'] == 'full':
+                    # 增加full数据
+                    datas[9]['column' + str(column_index)] = data['read_test']
+                    datas[10]['column' + str(column_index)] = data['reread_test']
+                    datas[11]['column' + str(column_index)] = data['random_read_test']
+                    datas[12]['column' + str(column_index)] = data['write_test']
+                    datas[13]['column' + str(column_index)] = data['rewrite_test']
+                    datas[14]['column' + str(column_index)] = data['random_write_test']
+                elif data['testcase_name'] == 'half':
+                    # 增加half数据
+                    datas[15]['column' + str(column_index)] = data['read_test']
+                    datas[16]['column' + str(column_index)] = data['reread_test']
+                    datas[17]['column' + str(column_index)] = data['random_read_test']
+                    datas[18]['column' + str(column_index)] = data['write_test']
+                    datas[19]['column' + str(column_index)] = data['rewrite_test']
+                    datas[20]['column' + str(column_index)] = data['random_write_test']
+            column_index += 1
+            if not base_column_index:
+            # 记录基准数据
+                base_column_index = column_index - 1
+            else:
+                # 对比数据的对比值
+                datas[0]['column' + str(column_index)] = '对比值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                datas[3]['column' + str(column_index)] = "%.2f%%" % ((datas[3]['column' + str(column_index - 1)] - datas[3]['column' + str(base_column_index)]) /datas[3]['column' + str(base_column_index)]) if datas[3]['column' + str(column_index - 1)] is not None and datas[3]['column' + str(base_column_index)] is not None else None
+                datas[4]['column' + str(column_index)] = "%.2f%%" % ((datas[4]['column' + str(column_index - 1)] - datas[4]['column' + str(base_column_index)]) /datas[4]['column' + str(base_column_index)]) if datas[4]['column' + str(column_index - 1)] is not None and datas[4]['column' + str(base_column_index)] is not None else None
+                datas[5]['column' + str(column_index)] = "%.2f%%" % ((datas[5]['column' + str(column_index - 1)] - datas[5]['column' + str(base_column_index)]) /datas[5]['column' + str(base_column_index)]) if datas[5]['column' + str(column_index - 1)] is not None and datas[5]['column' + str(base_column_index)] is not None else None
+                datas[6]['column' + str(column_index)] = "%.2f%%" % ((datas[6]['column' + str(column_index - 1)] - datas[6]['column' + str(base_column_index)]) /datas[6]['column' + str(base_column_index)]) if datas[6]['column' + str(column_index - 1)] is not None and datas[6]['column' + str(base_column_index)] is not None else None
+                datas[7]['column' + str(column_index)] = "%.2f%%" % ((datas[7]['column' + str(column_index - 1)] - datas[7]['column' + str(base_column_index)]) /datas[7]['column' + str(base_column_index)]) if datas[7]['column' + str(column_index - 1)] is not None and datas[7]['column' + str(base_column_index)] is not None else None
+                datas[8]['column' + str(column_index)] = "%.2f%%" % ((datas[8]['column' + str(column_index - 1)] - datas[8]['column' + str(base_column_index)]) /datas[8]['column' + str(base_column_index)]) if datas[8]['column' + str(column_index - 1)] is not None and datas[8]['column' + str(base_column_index)] is not None else None
+                datas[9]['column' + str(column_index)] = "%.2f%%" % ((datas[9]['column' + str(column_index - 1)] - datas[9]['column' + str(base_column_index)]) /datas[9]['column' + str(base_column_index)]) if datas[9]['column' + str(column_index - 1)] is not None and datas[9]['column' + str(base_column_index)] is not None else None
+                datas[10]['column' + str(column_index)] = "%.2f%%" % ((datas[10]['column' + str(column_index - 1)] -datas[10]['column' + str(base_column_index)]) /datas[10]['column' + str(base_column_index)]) if datas[10]['column' + str(column_index - 1)] is not None and datas[10]['column' + str(base_column_index)] is not None else None
+                datas[11]['column' + str(column_index)] = "%.2f%%" % ((datas[11]['column' + str(column_index - 1)] -datas[11]['column' + str(base_column_index)]) /datas[11]['column' + str(base_column_index)]) if datas[11]['column' + str(column_index - 1)] is not None and datas[11]['column' + str(base_column_index)] is not None else None
+                datas[12]['column' + str(column_index)] = "%.2f%%" % ((datas[12]['column' + str(column_index - 1)] -datas[12]['column' + str(base_column_index)]) /datas[12]['column' + str(base_column_index)]) if datas[12]['column' + str(column_index - 1)] is not None and datas[12]['column' + str(base_column_index)] is not None else None
+                datas[13]['column' + str(column_index)] = "%.2f%%" % ((datas[13]['column' + str(column_index - 1)] -datas[13]['column' + str(base_column_index)]) /datas[13]['column' + str(base_column_index)]) if datas[13]['column' + str(column_index - 1)] is not None and datas[13]['column' + str(base_column_index)] is not None else None
+                datas[14]['column' + str(column_index)] = "%.2f%%" % ((datas[14]['column' + str(column_index - 1)] -datas[14]['column' + str(base_column_index)]) /datas[14]['column' + str(base_column_index)]) if datas[14]['column' + str(column_index - 1)] is not None and datas[14]['column' + str(base_column_index)] is not None else None
+                datas[15]['column' + str(column_index)] = "%.2f%%" % ((datas[15]['column' + str(column_index - 1)] -datas[15]['column' + str(base_column_index)]) /datas[15]['column' + str(base_column_index)]) if datas[15]['column' + str(column_index - 1)] is not None and datas[15]['column' + str(base_column_index)] is not None else None
+                datas[16]['column' + str(column_index)] = "%.2f%%" % ((datas[16]['column' + str(column_index - 1)] -datas[16]['column' + str(base_column_index)]) /datas[16]['column' + str(base_column_index)]) if datas[16]['column' + str(column_index - 1)] is not None and datas[16]['column' + str(base_column_index)] is not None else None
+                datas[17]['column' + str(column_index)] = "%.2f%%" % ((datas[17]['column' + str(column_index - 1)] -datas[17]['column' + str(base_column_index)]) /datas[17]['column' + str(base_column_index)]) if datas[17]['column' + str(column_index - 1)] is not None and datas[17]['column' + str(base_column_index)] is not None else None
+                datas[18]['column' + str(column_index)] = "%.2f%%" % ((datas[18]['column' + str(column_index - 1)] -datas[18]['column' + str(base_column_index)]) /datas[18]['column' + str(base_column_index)]) if datas[18]['column' + str(column_index - 1)] is not None and datas[18]['column' + str(base_column_index)] is not None else None
+                datas[19]['column' + str(column_index)] = "%.2f%%" % ((datas[19]['column' + str(column_index - 1)] -datas[19]['column' + str(base_column_index)]) /datas[19]['column' + str(base_column_index)]) if datas[19]['column' + str(column_index - 1)] is not None and datas[19]['column' + str(base_column_index)] is not None else None
+                datas[20]['column' + str(column_index)] = "%.2f%%" % ((datas[20]['column' + str(column_index - 1)] -datas[20]['column' + str(base_column_index)]) /datas[20]['column' + str(base_column_index)]) if datas[20]['column' + str(column_index - 1)] is not None and datas[20]['column' + str(base_column_index)] is not None else None
+                column_index += 1
+
+        return datas, title_index, column_index, base_column_index
 
 
     def list(self, request, *args, **kwargs):
