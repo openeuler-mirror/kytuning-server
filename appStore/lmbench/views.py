@@ -875,7 +875,7 @@ class LmbenchViewSet(CusModelViewSet):
         datas, title_index, column_index = self.get_data(base_queryset, datas, title_index, column_index, base_average)
         if comparsionIds != ['']:
             # 处理对比数据
-            for index ,comparativeId in enumerate(comparsionIds):
+            for comparativeId in comparsionIds:
                 comparsion_queryset = Lmbench.objects.filter(env_id=comparativeId).all()
                 if not comparsion_queryset:
                     return json_response({}, status.HTTP_200_OK, '列表')
