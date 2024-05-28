@@ -17,10 +17,11 @@ class IozoneViewSet(CusModelViewSet):
     queryset = Iozone.objects.all().order_by('id')
     serializer_class = IozoneSerializer
 
-    def get_data(self,serializer_):
+    def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
-        datas = []
+        average_datas = []
         groups = set([d['mark_name'] for d in serializer.data])
+
         if len(groups) == 1:
             for data in serializer.data:
                 data = {'testcase_name': data['testcase_name'],
@@ -31,8 +32,121 @@ class IozoneViewSet(CusModelViewSet):
                         'reread_test': data['reread_test'],
                         'random_read_test': data['random_read_test'],
                         'random_write_test': data['random_write_test'],}
-                datas.append(data)
+                average_datas.append(data)
+
+            # 补全column2 = file_size
+            if column_index == 2:
+                datas[0]['column' + str(column_index)] = '(file size)'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                for data in average_datas:
+                    if data['testcase_name'] == 'double':
+                        datas[3]['column' + str(column_index)] = data['file_size']
+                        datas[4]['column' + str(column_index)] = data['file_size']
+                        datas[5]['column' + str(column_index)] = data['file_size']
+                        datas[6]['column' + str(column_index)] = data['file_size']
+                        datas[7]['column' + str(column_index)] = data['file_size']
+                        datas[8]['column' + str(column_index)] = data['file_size']
+                    elif data['testcase_name'] == 'full':
+                        datas[9]['column' + str(column_index)] = data['file_size']
+                        datas[10]['column' + str(column_index)] = data['file_size']
+                        datas[11]['column' + str(column_index)] = data['file_size']
+                        datas[12]['column' + str(column_index)] = data['file_size']
+                        datas[13]['column' + str(column_index)] = data['file_size']
+                        datas[14]['column' + str(column_index)] = data['file_size']
+                    elif data['testcase_name'] == 'half':
+                        datas[15]['column' + str(column_index)] = data['file_size']
+                        datas[16]['column' + str(column_index)] = data['file_size']
+                        datas[17]['column' + str(column_index)] = data['file_size']
+                        datas[18]['column' + str(column_index)] = data['file_size']
+                        datas[19]['column' + str(column_index)] = data['file_size']
+                        datas[20]['column' + str(column_index)] = data['file_size']
+                column_index += 1
+
+            # 基准数据和对比数据的全部数据
+            datas[0]['column' + str(column_index)] = 'Iozone#' + str(title_index)
+            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            for data in average_datas:
+                if data['testcase_name'] == 'double':
+                    # 增加double数据
+                    datas[3]['column' + str(column_index)] = data['read_test']
+                    datas[4]['column' + str(column_index)] = data['reread_test']
+                    datas[5]['column' + str(column_index)] = data['random_read_test']
+                    datas[6]['column' + str(column_index)] = data['write_test']
+                    datas[7]['column' + str(column_index)] = data['rewrite_test']
+                    datas[8]['column' + str(column_index)] = data['random_write_test']
+                elif data['testcase_name']== 'full':
+                    # 增加full数据
+                    datas[9]['column' + str(column_index)] = data['read_test']
+                    datas[10]['column' + str(column_index)] = data['reread_test']
+                    datas[11]['column' + str(column_index)] = data['random_read_test']
+                    datas[12]['column' + str(column_index)] = data['write_test']
+                    datas[13]['column' + str(column_index)] = data['rewrite_test']
+                    datas[14]['column' + str(column_index)] = data['random_write_test']
+                elif data['testcase_name'] == 'half':
+                    # 增加half数据
+                    datas[15]['column' + str(column_index)] = data['read_test']
+                    datas[16]['column' + str(column_index)] = data['reread_test']
+                    datas[17]['column' + str(column_index)] = data['random_read_test']
+                    datas[18]['column' + str(column_index)] = data['write_test']
+                    datas[19]['column' + str(column_index)] = data['rewrite_test']
+                    datas[20]['column' + str(column_index)] = data['random_write_test']
+            column_index += 1
+            title_index += 1
+            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            # 基准数据和对比数据的平均数据
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            datas[3]['column' + str(column_index)] = datas[3]['column' + str(column_index -1)]
+            datas[4]['column' + str(column_index)] = datas[4]['column' + str(column_index -1)]
+            datas[5]['column' + str(column_index)] = datas[5]['column' + str(column_index -1)]
+            datas[6]['column' + str(column_index)] = datas[6]['column' + str(column_index -1)]
+            datas[7]['column' + str(column_index)] = datas[7]['column' + str(column_index -1)]
+            datas[8]['column' + str(column_index)] = datas[8]['column' + str(column_index -1)]
+            datas[9]['column' + str(column_index)] = datas[9]['column' + str(column_index -1)]
+            datas[10]['column' + str(column_index)] = datas[10]['column' + str(column_index -1)]
+            datas[11]['column' + str(column_index)] = datas[11]['column' + str(column_index -1)]
+            datas[12]['column' + str(column_index)] = datas[12]['column' + str(column_index -1)]
+            datas[13]['column' + str(column_index)] = datas[13]['column' + str(column_index -1)]
+            datas[14]['column' + str(column_index)] = datas[14]['column' + str(column_index -1)]
+            datas[15]['column' + str(column_index)] = datas[15]['column' + str(column_index -1)]
+            datas[16]['column' + str(column_index)] = datas[16]['column' + str(column_index -1)]
+            datas[17]['column' + str(column_index)] = datas[17]['column' + str(column_index -1)]
+            datas[18]['column' + str(column_index)] = datas[18]['column' + str(column_index -1)]
+            datas[19]['column' + str(column_index)] = datas[19]['column' + str(column_index -1)]
+            datas[20]['column' + str(column_index)] = datas[20]['column' + str(column_index -1)]
+            column_index += 1
+            # 记录基准数据
+            if not base_column_index:
+                base_column_index = column_index - 1
+            # 对比数据的对比值
+            else:
+                datas[0]['column' + str(column_index)] = '对比值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                datas[3]['column' + str(column_index)] = "%.2f%%" % ((datas[3]['column' + str(column_index - 1)] - datas[3]['column' + str(base_column_index)]) / datas[3]['column' + str(base_column_index)]) if datas[3]['column' + str(column_index - 1)] is not None and datas[3]['column' + str(base_column_index)] is not None else None
+                datas[4]['column' + str(column_index)] = "%.2f%%" % ((datas[4]['column' + str(column_index - 1)] - datas[4]['column' + str(base_column_index)]) / datas[4]['column' + str(base_column_index)]) if datas[4]['column' + str(column_index - 1)] is not None and datas[4]['column' + str(base_column_index)] is not None else None
+                datas[5]['column' + str(column_index)] = "%.2f%%" % ((datas[5]['column' + str(column_index - 1)] - datas[5]['column' + str(base_column_index)]) / datas[5]['column' + str(base_column_index)]) if datas[5]['column' + str(column_index - 1)] is not None and datas[5]['column' + str(base_column_index)] is not None else None
+                datas[6]['column' + str(column_index)] = "%.2f%%" % ((datas[6]['column' + str(column_index - 1)] - datas[6]['column' + str(base_column_index)]) / datas[6]['column' + str(base_column_index)]) if datas[6]['column' + str(column_index - 1)] is not None and datas[6]['column' + str(base_column_index)] is not None else None
+                datas[7]['column' + str(column_index)] = "%.2f%%" % ((datas[7]['column' + str(column_index - 1)] - datas[7]['column' + str(base_column_index)]) / datas[7]['column' + str(base_column_index)]) if datas[7]['column' + str(column_index - 1)] is not None and datas[7]['column' + str(base_column_index)] is not None else None
+                datas[8]['column' + str(column_index)] = "%.2f%%" % ((datas[8]['column' + str(column_index - 1)] - datas[8]['column' + str(base_column_index)]) / datas[8]['column' + str(base_column_index)]) if datas[8]['column' + str(column_index - 1)] is not None and datas[8]['column' + str(base_column_index)] is not None else None
+                datas[9]['column' + str(column_index)] = "%.2f%%" % ((datas[9]['column' + str(column_index - 1)] - datas[9]['column' + str(base_column_index)]) / datas[9]['column' + str(base_column_index)]) if datas[9]['column' + str(column_index - 1)] is not None and datas[9]['column' + str(base_column_index)] is not None else None
+                datas[10]['column' + str(column_index)] = "%.2f%%" % ((datas[10]['column' + str(column_index - 1)] - datas[10]['column' + str(base_column_index)]) / datas[10]['column' + str(base_column_index)]) if datas[10]['column' + str(column_index - 1)] is not None and datas[10]['column' + str(base_column_index)] is not None else None
+                datas[11]['column' + str(column_index)] = "%.2f%%" % ((datas[11]['column' + str(column_index - 1)] - datas[11]['column' + str(base_column_index)]) / datas[11]['column' + str(base_column_index)]) if datas[11]['column' + str(column_index - 1)] is not None and datas[11]['column' + str(base_column_index)] is not None else None
+                datas[12]['column' + str(column_index)] = "%.2f%%" % ((datas[12]['column' + str(column_index - 1)] - datas[12]['column' + str(base_column_index)]) / datas[12]['column' + str(base_column_index)]) if datas[12]['column' + str(column_index - 1)] is not None and datas[12]['column' + str(base_column_index)] is not None else None
+                datas[13]['column' + str(column_index)] = "%.2f%%" % ((datas[13]['column' + str(column_index - 1)] - datas[13]['column' + str(base_column_index)]) / datas[13]['column' + str(base_column_index)]) if datas[13]['column' + str(column_index - 1)] is not None and datas[13]['column' + str(base_column_index)] is not None else None
+                datas[14]['column' + str(column_index)] = "%.2f%%" % ((datas[14]['column' + str(column_index - 1)] - datas[14]['column' + str(base_column_index)]) / datas[14]['column' + str(base_column_index)]) if datas[14]['column' + str(column_index - 1)] is not None and datas[14]['column' + str(base_column_index)] is not None else None
+                datas[15]['column' + str(column_index)] = "%.2f%%" % ((datas[15]['column' + str(column_index - 1)] - datas[15]['column' + str(base_column_index)]) / datas[15]['column' + str(base_column_index)]) if datas[15]['column' + str(column_index - 1)] is not None and datas[15]['column' + str(base_column_index)] is not None else None
+                datas[16]['column' + str(column_index)] = "%.2f%%" % ((datas[16]['column' + str(column_index - 1)] - datas[16]['column' + str(base_column_index)]) / datas[16]['column' + str(base_column_index)]) if datas[16]['column' + str(column_index - 1)] is not None and datas[16]['column' + str(base_column_index)] is not None else None
+                datas[17]['column' + str(column_index)] = "%.2f%%" % ((datas[17]['column' + str(column_index - 1)] - datas[17]['column' + str(base_column_index)]) / datas[17]['column' + str(base_column_index)]) if datas[17]['column' + str(column_index - 1)] is not None and datas[17]['column' + str(base_column_index)] is not None else None
+                datas[18]['column' + str(column_index)] = "%.2f%%" % ((datas[18]['column' + str(column_index - 1)] - datas[18]['column' + str(base_column_index)]) / datas[18]['column' + str(base_column_index)]) if datas[18]['column' + str(column_index - 1)] is not None and datas[18]['column' + str(base_column_index)] is not None else None
+                datas[19]['column' + str(column_index)] = "%.2f%%" % ((datas[19]['column' + str(column_index - 1)] - datas[19]['column' + str(base_column_index)]) / datas[19]['column' + str(base_column_index)]) if datas[19]['column' + str(column_index - 1)] is not None and datas[19]['column' + str(base_column_index)] is not None else None
+                datas[20]['column' + str(column_index)] = "%.2f%%" % ((datas[20]['column' + str(column_index - 1)] - datas[20]['column' + str(base_column_index)]) / datas[20]['column' + str(base_column_index)]) if datas[20]['column' + str(column_index - 1)] is not None and datas[20]['column' + str(base_column_index)] is not None else None
+                column_index += 1
         else:
+            # 计算平均值
             test_types = set([d['testcase_name'] for d in serializer.data])
             for test_type in test_types:
                 test_type_data_ = serializer_.filter(testcase_name=test_type)
@@ -94,49 +208,41 @@ class IozoneViewSet(CusModelViewSet):
         base_serializer = self.get_serializer(base_queryset, many=True)
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '未获取到数据')
-        base_datas = self.get_data(base_queryset)
-        datas = self.do_base_data(base_datas)
-        others = [{'column1': 'Iozone', 'column2': '', 'column3': 'Iozone#1 (基准数据)'},
-                  {'column1': '执行命令', 'column2': '', 'column3': base_serializer.data[0]['execute_cmd']},
-                  {'column1': '修改参数：', 'column2': '', 'column3': base_serializer.data[0]['modify_parameters']}]
-
+        datas = [
+            {'column1': 'Iozone', 'column2': ''},
+            {'column1': '执行命令', 'column2': ''},
+            {'column1': '修改参数：', 'column2': ''},
+            {'column1': 'double-读测试（KB/s）'},
+            {'column1': 'double-重读测试（KB/s）'},
+            {'column1': 'double-随机读测试（KB/s）'},
+            {'column1': 'double-写测试（KB/s）'},
+            {'column1': 'double-重写测试（KB/s）'},
+            {'column1': 'double-随机写测试（KB/s）'},
+            {'column1': 'full-读测试（KB/s）'},
+            {'column1': 'full-重读测试（KB/s）'},
+            {'column1': 'full-随机读测试（KB/s）'},
+            {'column1': 'full-写测试（KB/s）'},
+            {'column1': 'full-重写测试（KB/s）'},
+            {'column1': 'full-随机写测试（KB/s）'},
+            {'column1': 'half-读测试（KB/s）'},
+            {'column1': 'half-重读测试（KB/s）'},
+            {'column1': 'half-随机读测试（KB/s）'},
+            {'column1': 'half-写测试（KB/s）'},
+            {'column1': 'half-重写测试（KB/s）'},
+            {'column1': 'half-随机写测试（KB/s）'},
+        ]
+        title_index = 1
+        column_index = 2
+        base_column_index = ''
+        datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index, column_index, base_column_index)
         if comparsionIds != ['']:
             # 处理对比数据
-            for index, comparativeId in enumerate(comparsionIds):
-                new_index = 2 * index + 4
+            for comparativeId in comparsionIds:
                 comparsion_queryset = Iozone.objects.filter(env_id=comparativeId).all()
-                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                if not base_queryset:
-                    return json_response({}, status.HTTP_200_OK, '未获取到数据')
-                comparsion_datas = self.get_data(comparsion_queryset)
-                others[0]['column' + str(new_index)] = 'Iozone#'+str(index + 2)
-                others[1]['column' + str(new_index)] = comparsion_serializer.data[0]['execute_cmd']
-                others[2]['column' + str(new_index)] = comparsion_serializer.data[0]['modify_parameters']
-                others[0]['column' + str(new_index + 1)] = ''
-                others[1]['column' + str(new_index + 1)] = ''
-                others[2]['column' + str(new_index + 1)] = ''
-
-                for value in comparsion_datas:
-                    # 判断comparsion_datas数据中的column1字段和datas中的column1字段相同，则在datas中增加值对应值
-                    for index2, data_ in enumerate(datas):
-                        if data_['column1'].split('-')[0] == value['testcase_name']:
-                            # 在datas中增加对比数据
-                            datas[index2]['column' + str(new_index)] = value['write_test']
-                            datas[index2 + 1]['column' + str(new_index)] = value['rewrite_test']
-                            datas[index2 + 2]['column' + str(new_index)] = value['read_test']
-                            datas[index2 + 3]['column' + str(new_index)] = value['reread_test']
-                            datas[index2 + 4]['column' + str(new_index)] = value['random_read_test']
-                            datas[index2 + 5]['column' + str(new_index)] = value['random_write_test']
-                            # 在datas中增加计算数据
-                            datas[index2]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
-                            datas[index2 + 1]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
-                            datas[index2 + 2]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
-                            datas[index2 + 3]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
-                            datas[index2 + 4]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
-                            datas[index2 + 5]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[index2]['column' + str(new_index)] - datas[index2]['column3']) / datas[index2]['column3'] * 100)
-                            break
-        iozone_data = {'others': others, 'data': datas}
-        return json_response(iozone_data, status.HTTP_200_OK, '列表')
+                if not comparsion_queryset:
+                    return json_response({}, status.HTTP_200_OK, '列表')
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+        return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_iozone_errors = []
