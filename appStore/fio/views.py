@@ -21,19 +21,6 @@ class FioViewSet(CusModelViewSet):
     queryset = Fio.objects.all().order_by('id')
     serializer_class = FioSerializer
 
-    # def list(self, request, *args, **kwargs):
-    #     """
-    #     返回列表
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     env_id = request.GET.get('env_id')
-    #     queryset = Fio.objects.filter(env_id=env_id).all()
-    #     queryset = self.filter_queryset(queryset)
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
     def get_unit(self, data):
         # value是值，unit是单位
         unit = data.split("".join(filter(lambda s: s in '0123456789.', data)))[-1]

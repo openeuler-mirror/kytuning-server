@@ -57,7 +57,7 @@ class UnixbenchViewSet(CusModelViewSet):
                     multi_system_call_overhead = data['system_call_overhead']
                     multi_index_score = data['index_score']
             # 基准数据和对比数据的全部数据
-            datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
+            datas[0]['column' + str(column_index)] = 'Unixbench#' + str(title_index)
             datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
             datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
             datas[3]['column' + str(column_index)] = single_Dhrystone
@@ -360,7 +360,7 @@ class UnixbenchViewSet(CusModelViewSet):
                         multi_index_score = data.index_score
 
                 # 基准数据和对比数据的全部数据
-                datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
+                datas[0]['column' + str(column_index)] = 'Unixbench#' + str(title_index)
                 datas[1]['column' + str(column_index)] = execute_cmd
                 datas[2]['column' + str(column_index)] = modify_parameters
                 datas[3]['column' + str(column_index)] = single_Dhrystone
