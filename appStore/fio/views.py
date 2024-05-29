@@ -16,7 +16,7 @@ from appStore.utils.customer_view import CusModelViewSet
 
 class FioViewSet(CusModelViewSet):
     """
-    stream数据管理
+    fio数据管理
     """
     queryset = Fio.objects.all().order_by('id')
     serializer_class = FioSerializer
@@ -105,14 +105,30 @@ class FioViewSet(CusModelViewSet):
                 datas.append(data)
         return datas
 
-    def do_base_data(self, datas):
-        new_data = []
+
+    def get_left_data(self, serializer_):
+        serializer = self.get_serializer(serializer_, many=True)
+        datas = []
+        groups = set([d['mark_name'] for d in serializer.data])
+        filter_datas = serializer_.filter(mark_name=list(groups)[0])
+        for data in filter_datas:
+            data_ = {'rw': data.rw + '(' + str(data.bs + ')'),
+                    'bs': data.bs,
+                    'io': data.io,
+                    'iops': data.iops,
+                    'bw': data.bw, }
+            datas.append(data_)
+        temp_data = []
         for value in datas:
-            data = [{'column1': value['rw'], 'column2': 'bs', 'column3': value['bs']},
-                    {'column1': value['rw'], 'column2': 'io', 'column3': value['io']},
-                    {'column1': value['rw'], 'column2': 'iops', 'column3': value['iops']},
-                    {'column1': value['rw'], 'column2': 'bw', 'column3': value['bw']}]
-            new_data.extend(data)
+            data = [{'column1': value['rw'], 'column2': 'bs'},
+                    {'column1': value['rw'], 'column2': 'io'},
+                    {'column1': value['rw'], 'column2': 'iops'},
+                    {'column1': value['rw'], 'column2': 'bw'}]
+            temp_data.extend(data)
+        others = [{'column1': 'Fio', 'column2': '', },
+                  {'column1': '执行命令', 'column2': ''},
+                  {'column1': '修改参数：', 'column2': ''}]
+        new_data = others + temp_data
         return new_data
 
     def list(self, request, *args, **kwargs):
@@ -127,66 +143,19 @@ class FioViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Fio.objects.filter(env_id=env_id).all()
-        base_serializer = self.get_serializer(base_queryset, many=True)
-        base_datas = self.get_data(base_queryset)
-        datas = self.do_base_data(base_datas)
-        others = [{'column1': 'Fio', 'column2': '', 'column3': 'Fio#1 (基准数据)'},
-                  {'column1': '执行命令', 'column2': '', 'column3': base_serializer.data[0]['execute_cmd']},
-                  {'column1': '修改参数：', 'column2': '', 'column3': base_serializer.data[0]['modify_parameters']}]
-
+        datas = self.get_left_data(base_queryset)
+        title_index = 1
+        column_index = 3
+        base_column_index = ''
+        datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index, column_index, base_column_index)
         if comparsionIds != ['']:
             # 处理对比数据
-            for index, comparativeId in enumerate(comparsionIds):
-                new_index = 2 * index + 4
+            for comparativeId in comparsionIds:
                 comparsion_queryset = Fio.objects.filter(env_id=comparativeId).all()
-                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_queryset)
-                others[0]['column' + str(new_index)] = 'Fio#'+str(index + 2)
-                others[1]['column' + str(new_index)] = comparsion_serializer.data[0]['execute_cmd']
-                others[2]['column' + str(new_index)] = comparsion_serializer.data[0]['modify_parameters']
-
-                others[0]['column' + str(new_index + 1)] = ''
-                others[1]['column' + str(new_index + 1)] = ''
-                others[2]['column' + str(new_index + 1)] = ''
-
-                for value in comparsion_datas:
-                    # 判断comparsion_datas数据中的rw字段和datas中的rw（column）字段相同，则在datas中增加值
-                    for index2, data_ in enumerate(datas):
-                        if data_['column1'] == value['rw']:
-                            # 在datas中增加对比数据
-                            datas[index2]['column' + str(new_index)] = value['bs']
-                            datas[index2 + 1]['column' + str(new_index)] = value['io']
-                            datas[index2 + 2]['column' + str(new_index)] = value['iops']
-                            datas[index2 + 3]['column' + str(new_index)] = value['bw']
-                            # 在datas中增加计算数据
-                            value0 = float(
-                                "".join(filter(lambda s: s in '0123456789.', datas[index2]['column' + str(new_index)])))
-                            value0_colum3 = float("".join(filter(lambda s: s in '0123456789.', datas[index2]['column3'])))
-                            value1 = float(
-                                "".join(filter(lambda s: s in '0123456789.', datas[index2 + 1]['column' + str(new_index)])))
-                            value1_colum3 = float("".join(filter(lambda s: s in '0123456789.', datas[index2 + 1]['column3'])))
-                            value2 = float(
-                                "".join(filter(lambda s: s in '0123456789.', datas[index2 + 2]['column' + str(new_index)])))
-                            value2_colum3 = float("".join(filter(lambda s: s in '0123456789.', datas[index2 + 2]['column3'])))
-                            value3 = float("".join(filter(lambda s: s in '0123456789.',
-                                                        datas[index2 + 3]['column' + str(new_index)].split(' ')[-1])))
-                            value3_colum3 = float("".join(
-                                filter(lambda s: s in '0123456789.', datas[index2 + 3]['column3'].split(' ')[-1])))
-                            # bs数据
-                            datas[index2]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (value0 - value0_colum3) / value0_colum3 )
-                            # io数据
-                            datas[index2 + 1]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (value1 - value1_colum3) / value1_colum3 )
-                            # iops数据
-                            datas[index2 + 2]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (value2 - value2_colum3) / value2_colum3)
-                            # bw数据
-                            datas[index2 + 3]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                        (value3 - value3_colum3) / value3_colum3)
-                            break
-        unixbench_data = {'others': others, 'data': datas}
-        return json_response(unixbench_data, status.HTTP_200_OK, '列表')
+                if not comparsion_queryset:
+                    return json_response({}, status.HTTP_200_OK, '列表')
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+        return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_fio_errors = []
