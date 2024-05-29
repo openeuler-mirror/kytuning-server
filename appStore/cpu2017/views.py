@@ -938,7 +938,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                 for i in range(100):
                     if base_datas[i]['column' + str(new_index)] and base_datas[i]['column6']:
                         base_datas[i]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                (base_datas[i]['column' + str(new_index)] - base_datas[i]['column6']) / base_datas[i]['column6'])
+                                (base_datas[i]['column' + str(new_index)] - base_datas[i]['column6']) / base_datas[i]['column6'] * 100)
                     else:
                         base_datas[i]['column' + str(new_index + 1)] = None
 
