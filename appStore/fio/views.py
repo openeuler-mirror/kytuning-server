@@ -40,24 +40,76 @@ class FioViewSet(CusModelViewSet):
         value2 = float(data.split('(')[1].split(unit2)[0])
         return value1, value2, unit1, unit2
 
-    def get_data(self, serializer_):
+    def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
-        datas = []
+        temp_datas = []
         groups = set([d['mark_name'] for d in serializer.data])
         if len(groups) == 1:
+            # 基准数据和对比数据的全部数据
             for data in serializer.data:
                 data = {'rw': data['rw'] + '(' + str(data['bs'] + ')'),
                         'bs': data['bs'],
                         'io': data['io'],
                         'iops': data['iops'],
                         'bw': data['bw'], }
-                datas.append(data)
+                temp_datas.append(data)
+            # 先增加头部的内容
+            datas[0]['column' + str(column_index)] = 'Fio#' + str(title_index)
+            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            # 增加数据部分
+            # 先初始化所有数据为空
+            # todo 后期查看之前代码是如何实现的
+            for i in range(3,len(datas)):
+                datas[i]['column' + str(column_index)] = None
+            for value in temp_datas:
+                # 判断comparsion_datas数据中的rw字段和datas中的rw（column）字段相同，则在datas中增加值
+                for index, data_ in enumerate(datas):
+                    if data_['column1'] == value['rw']:
+                        # 在datas中增加对比数据
+                        datas[index]['column' + str(column_index)] = value['bs']
+                        datas[index + 1]['column' + str(column_index)] = value['io']
+                        datas[index + 2]['column' + str(column_index)] = value['iops']
+                        datas[index + 3]['column' + str(column_index)] = value['bw']
+                        break
+            column_index += 1
+            title_index += 1
+            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            # 基准数据和对比数据的平均数据
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for index,data in enumerate(datas):
+                if index > 2:
+                    datas[index]['column' + str(column_index)] = datas[index]['column' + str(column_index - 1)]
+            column_index += 1
+            if not base_column_index:
+                # 记录基准数据
+                base_column_index = column_index - 1
+            else:
+                # 对比数据的对比值
+                datas[0]['column' + str(column_index)] = '对比值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                # 获取到最后一组数据、处理数据
+                for i in range(len(datas)):
+                    if i > 2:
+                        value  = datas[i]['column' + str(column_index-1)]           # 最后一组数据
+                        base_value = datas[i]['column' + str(base_column_index)]    # base数据
+                        if value is not None and base_value is not None:
+                            value = float("".join(filter(lambda s: s in '0123456789.', value.split('(')[0])))
+                            base_value = float("".join(filter(lambda s: s in '0123456789.', base_value.split('(')[0])))
+                            datas[i]['column' + str(column_index)] = "%.2f%%" % ((value - base_value) /base_value * 100) if value is not None and base_value is not None else None
+                        else:
+                            datas[i]['column' + str(column_index)] = None
+                column_index += 1
         else:
-            # 当有多条数据时计算平均值
+            # 计算平均值
             # 判断bs的大小，方便按照bs的大小分组
             bs_size = set([d['bs'] for d in serializer.data])
             rw_types = set([d['rw'] for d in serializer.data])
             new_datas = []
+            average_datas = []
             for test_type in bs_size:
                 for rw_type in rw_types:
                     data_ = serializer_.filter(bs=test_type).filter(rw=rw_type)
@@ -70,7 +122,6 @@ class FioViewSet(CusModelViewSet):
                 iops_list = [d.iops for d in data_]
                 bw_list = [d.bw for d in data_]
                 # 获取bs、io、iops的平均值
-
                 bs = 0
                 for bs_ in bs_list:
                     value, bs_unit = self.get_unit(bs_)
@@ -102,8 +153,82 @@ class FioViewSet(CusModelViewSet):
                         'io': str(io) + io_unit,
                         'iops': str(iops) + iops_unit,
                         'bw': bw, }
-                datas.append(data)
-        return datas
+                average_datas.append(data)
+            # 基准数据和对比数据的全部数据
+            for mark_name in groups:
+                group_data = []
+                temp_mark_datas = serializer_.filter(mark_name=mark_name)
+                # 先增加头部的内容
+                datas[0]['column' + str(column_index)] = 'Fio#' + str(title_index)
+                datas[1]['column' + str(column_index)] = temp_mark_datas[0].execute_cmd
+                datas[2]['column' + str(column_index)] = temp_mark_datas[0].modify_parameters
+                for data in temp_mark_datas:
+                    data = {'rw': data.rw + '(' + str(data.bs + ')'),
+                            'bs': data.bs,
+                            'io': data.io,
+                            'iops': data.iops,
+                            'bw': data.bw, }
+                    group_data.append(data)
+                # 增加数据部分
+                # 先初始化所有数据为空
+                for i in range(3, len(datas)):
+                    datas[i]['column' + str(column_index)] = None
+                for value in group_data:
+                    # 判断comparsion_datas数据中的rw字段和datas中的rw（column）字段相同，则在datas中增加值
+                    for index, data_ in enumerate(datas):
+                        if index > 2:
+                            if data_['column1'] == value['rw']:
+                                # 在datas中增加对比数据
+                                datas[index]['column' + str(column_index)] = value['bs']
+                                datas[index + 1]['column' + str(column_index)] = value['io']
+                                datas[index + 2]['column' + str(column_index)] = value['iops']
+                                datas[index + 3]['column' + str(column_index)] = value['bw']
+                                break
+                column_index += 1
+                title_index += 1
+            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            # 基准数据和对比数据的平均数据
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = serializer_[0].execute_cmd
+            datas[2]['column' + str(column_index)] = serializer_[0].modify_parameters
+            for i in range(3, len(datas)):
+                datas[i]['column' + str(column_index)] = None
+            for value in average_datas:
+                for index, data_ in enumerate(datas):
+                    if index > 2:
+                        if data_['column1'] == value['rw']:
+                            # 在datas中增加对比数据
+                            datas[index]['column' + str(column_index)] = value['bs']
+                            datas[index + 1]['column' + str(column_index)] = value['io']
+                            datas[index + 2]['column' + str(column_index)] = value['iops']
+                            datas[index + 3]['column' + str(column_index)] = value['bw']
+                            break
+            column_index += 1
+            if not base_column_index:
+                # 记录基准数据
+                base_column_index = column_index - 1
+            else:
+                # 对比数据的对比值
+                datas[0]['column' + str(column_index)] = '对比值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                for i in range(3, len(datas)):
+                    datas[i]['column' + str(column_index)] = None
+                # 获取到最后一组数据、处理数据
+                for i in range(len(datas)):
+                    if i > 2:
+                        value = datas[i]['column' + str(column_index - 1)]  # 最后一组数据
+                        base_value = datas[i]['column' + str(base_column_index)]  # base数据
+                        if value is not None and base_value is not None:
+                            value = float("".join(filter(lambda s: s in '0123456789.', value.split('(')[0])))
+                            base_value = float("".join(filter(lambda s: s in '0123456789.', base_value.split('(')[0])))
+                            datas[i]['column' + str(column_index)] = "%.2f%%" % ((value - base_value) / base_value * 100)
+                        else:
+                            datas[i]['column' + str(column_index)] = None
+                column_index += 1
+                pass
+
+        return datas, title_index, column_index, base_column_index
 
 
     def get_left_data(self, serializer_):
