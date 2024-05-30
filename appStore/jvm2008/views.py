@@ -17,8 +17,7 @@ class Jvm2008ViewSet(CusModelViewSet):
     queryset = Jvm2008.objects.all().order_by('id')
     serializer_class = Jvm2008Serializer
 
-
-    def get_data(self, serializer_):
+    def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
         execute_cmd = serializer.data[0]['execute_cmd']
         modify_parameters = serializer.data[0]['modify_parameters']
@@ -50,33 +49,40 @@ class Jvm2008ViewSet(CusModelViewSet):
         # 0-0 或者0-1这样的数据有几组，以此来判断需不需要计算平均值
         groups = set([d['mark_name'] for d in serializer.data])
         if len(groups) == 1:
+            # 基准数据和对比数据的全部数据
+            datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
+            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            # 初始化所有数据为空
+            for i in range(3, 27):
+                datas[i]['column' + str(column_index)] = None
             for data in serializer.data:
                 if data['tune_type'] == 'base':
-                    base_compiler = data['compiler']
-                    base_compress = data['compress']
-                    base_crypto = data['crypto']
-                    base_derby = data['derby']
-                    base_mpegaudio = data['mpegaudio']
-                    base_scimark_large = data['scimark_large']
-                    base_scimark_small = data['scimark_small']
-                    base_serial = data['serial']
-                    base_startup = data['startup']
-                    base_sunflow = data['sunflow']
-                    base_xml = data['xml']
-                    base_Noncompliant_pomposite_result = data['Noncompliant_pomposite_result']
+                    datas[3]['column' + str(column_index)] = data['compiler']
+                    datas[4]['column' + str(column_index)] = data['compress']
+                    datas[5]['column' + str(column_index)] = data['crypto']
+                    datas[6]['column' + str(column_index)] = data['derby']
+                    datas[7]['column' + str(column_index)] = data['mpegaudio']
+                    datas[8]['column' + str(column_index)] = data['scimark_large']
+                    datas[9]['column' + str(column_index)] = data['scimark_small']
+                    datas[10]['column' + str(column_index)] = data['serial']
+                    datas[11]['column' + str(column_index)] = data['startup']
+                    datas[12]['column' + str(column_index)] = data['sunflow']
+                    datas[13]['column' + str(column_index)] = data['xml']
+                    datas[14]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
                 elif data['tune_type'] == 'peak':
-                    peak_compiler = data['compiler']
-                    peak_compress = data['compress']
-                    peak_crypto = data['crypto']
-                    peak_derby = data['derby']
-                    peak_mpegaudio = data['mpegaudio']
-                    peak_scimark_large = data['scimark_large']
-                    peak_scimark_small = data['scimark_small']
-                    peak_serial = data['serial']
-                    peak_startup = data['startup']
-                    peak_sunflow = data['sunflow']
-                    peak_xml = data['xml']
-                    peak_Noncompliant_pomposite_result = data['Noncompliant_pomposite_result']
+                    datas[15]['column' + str(column_index)] = data['compiler']
+                    datas[16]['column' + str(column_index)] = data['compress']
+                    datas[17]['column' + str(column_index)] = data['crypto']
+                    datas[18]['column' + str(column_index)] = data['derby']
+                    datas[19]['column' + str(column_index)] = data['mpegaudio']
+                    datas[20]['column' + str(column_index)] = data['scimark_large']
+                    datas[21]['column' + str(column_index)] = data['scimark_small']
+                    datas[22]['column' + str(column_index)] = data['serial']
+                    datas[23]['column' + str(column_index)] = data['startup']
+                    datas[24]['column' + str(column_index)] = data['sunflow']
+                    datas[25]['column' + str(column_index)] = data['xml']
+                    datas[26]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
         else:
             # 数据分组
             base_data_ = serializer_.filter(tune_type='base')
@@ -95,31 +101,18 @@ class Jvm2008ViewSet(CusModelViewSet):
             base_xml_list = [d.xml for d in base_data_]
             base_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in base_data_]
             # 计算每个数组的平均值
-            base_compiler = np.mean(base_compiler_list).round(2)
-            base_compress = np.mean(base_compress_list).round(2)
-            base_crypto = np.mean(base_crypto_list).round(2)
-            base_derby = np.mean(base_derby_list).round(2)
-            base_mpegaudio = np.mean(base_mpegaudio_list).round(2)
-            base_scimark_large = np.mean(base_scimark_large_list).round(2)
-            base_scimark_small = np.mean(base_scimark_small_list).round(2)
-            base_serial = np.mean(base_serial_list).round(2)
-            base_startup = np.mean(base_startup_list).round(2)
-            base_sunflow = np.mean(base_sunflow_list).round(2)
-            base_xml = np.mean(base_xml_list).round(2)
-            base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2)
-            # peak数据，将每个字典转换为NumPy数组
-            # peak_compiler_list = [d.compiler for d in peak_data_]
-            # peak_compress_list = [d.compress for d in peak_data_]
-            # peak_crypto_list = [d.crypto for d in peak_data_]
-            # peak_derby_list = [d.derby for d in peak_data_]
-            # peak_mpegaudio_list = [d.mpegaudio for d in peak_data_]
-            # peak_scimark_large_list = [d.scimark_large for d in peak_data_]
-            # peak_scimark_small_list = [d.scimark_small for d in peak_data_]
-            # peak_serial_list = [d.serial for d in peak_data_]
-            # peak_startup_list = [d.startup for d in peak_data_]
-            # peak_sunflow_list = [d.sunflow for d in peak_data_]
-            # peak_xml_list = [d.xml for d in peak_data_]
-            # peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_]
+            average_base_compiler = np.mean(base_compiler_list).round(2) if not np.isnan(np.mean(base_compiler_list)) else None
+            average_base_compress = np.mean(base_compress_list).round(2) if not np.isnan(np.mean(base_compress_list)) else None
+            average_base_crypto = np.mean(base_crypto_list).round(2) if not np.isnan(np.mean(base_crypto_list)) else None
+            average_base_derby = np.mean(base_derby_list).round(2) if not np.isnan(np.mean(base_derby_list)) else None
+            average_base_mpegaudio = np.mean(base_mpegaudio_list).round(2) if not np.isnan(np.mean(base_mpegaudio_list)) else None
+            average_base_scimark_large = np.mean(base_scimark_large_list).round(2) if not np.isnan(np.mean(base_scimark_large_list)) else None
+            average_base_scimark_small = np.mean(base_scimark_small_list).round(2) if not np.isnan(np.mean(base_scimark_small_list)) else None
+            average_base_serial = np.mean(base_serial_list).round(2) if not np.isnan(np.mean(base_serial_list)) else None
+            average_base_startup = np.mean(base_startup_list).round(2) if not np.isnan(np.mean(base_startup_list)) else None
+            average_base_sunflow = np.mean(base_sunflow_list).round(2) if not np.isnan(np.mean(base_sunflow_list)) else None
+            average_base_xml = np.mean(base_xml_list).round(2) if not np.isnan(np.mean(base_xml_list)) else None
+            average_base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2) if not np.isnan(np.mean(base_Noncompliant_pomposite_result_list)) else None
 
             peak_compiler_list = [d.compiler for d in peak_data_ if d.compiler is not None]
             peak_compress_list = [d.compress for d in peak_data_ if d.compress is not None]
@@ -132,22 +125,20 @@ class Jvm2008ViewSet(CusModelViewSet):
             peak_startup_list = [d.startup for d in peak_data_ if d.startup is not None]
             peak_sunflow_list = [d.sunflow for d in peak_data_ if d.sunflow is not None]
             peak_xml_list = [d.xml for d in peak_data_ if d.xml is not None]
-            peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_ if
-                                                       d.Noncompliant_pomposite_result is not None]
-
+            peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_ if d.Noncompliant_pomposite_result is not None]
             # 计算每个数组的平均值
-            peak_compiler = np.mean(peak_compiler_list).round(2)
-            peak_compress = np.mean(peak_compress_list).round(2)
-            peak_crypto = np.mean(peak_crypto_list).round(2)
-            peak_derby = np.mean(peak_derby_list).round(2)
-            peak_mpegaudio = np.mean(peak_mpegaudio_list).round(2)
-            peak_scimark_large = np.mean(peak_scimark_large_list).round(2)
-            peak_scimark_small = np.mean(peak_scimark_small_list).round(2)
-            peak_serial = np.mean(peak_serial_list).round(2)
-            peak_startup = np.mean(peak_startup_list).round(2)
-            peak_sunflow = np.mean(peak_sunflow_list).round(2)
-            peak_xml = np.mean(peak_xml_list).round(2)
-            peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list).round(2)
+            average_peak_compiler = np.mean(peak_compiler_list).round(2) if not np.isnan(np.mean(peak_compiler_list)) else None
+            average_peak_compress = np.mean(peak_compress_list).round(2) if not np.isnan(np.mean(peak_compress_list)) else None
+            average_peak_crypto = np.mean(peak_crypto_list).round(2) if not np.isnan(np.mean(peak_crypto_list)) else None
+            average_peak_derby = np.mean(peak_derby_list).round(2) if not np.isnan(np.mean(peak_derby_list)) else None
+            average_peak_mpegaudio = np.mean(peak_mpegaudio_list).round(2) if not np.isnan(np.mean(peak_mpegaudio_list)) else None
+            average_peak_scimark_large = np.mean(peak_scimark_large_list).round(2) if not np.isnan(np.mean(peak_scimark_large_list)) else None
+            average_peak_scimark_small = np.mean(peak_scimark_small_list).round(2) if not np.isnan(np.mean(peak_scimark_small_list)) else None
+            average_peak_serial = np.mean(peak_serial_list).round(2) if not np.isnan(np.mean(peak_serial_list)) else None
+            average_peak_startup = np.mean(peak_startup_list).round(2) if not np.isnan(np.mean(peak_startup_list)) else None
+            average_peak_sunflow = np.mean(peak_sunflow_list).round(2) if not np.isnan(np.mean(peak_sunflow_list)) else None
+            average_peak_xml = np.mean(peak_xml_list).round(2) if not np.isnan(np.mean(peak_xml_list)) else None
+            average_peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list).round(2) if not np.isnan(np.mean(peak_Noncompliant_pomposite_result_list)) else None
 
         new_data = {
             'execute_cmd': execute_cmd,
@@ -191,134 +182,144 @@ class Jvm2008ViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Jvm2008.objects.filter(env_id=env_id).all()
-        data = self.get_data(base_queryset)
-        others = [{'column1': 'Jvm2008', 'column2': '', 'column3': 'Jvm2008m#1 (基准数据)'},
-                  {'column1': '执行命令', 'column2': '', 'column3': data['execute_cmd']},
-                  {'column1': '修改参数：', 'column2': '', 'column3': data['modify_parameters']}]
         datas = [
-            {'column1': 'base', 'column2': 'compiler size', 'column3': data['base_compiler']},
-            {'column1': 'base', 'column2': 'compress', 'column3': data['base_compress']},
-            {'column1': 'base', 'column2': 'crypto', 'column3': data['base_crypto']},
-            {'column1': 'base', 'column2': 'derby', 'column3': data['base_derby']},
-            {'column1': 'base', 'column2': 'mpegaudio', 'column3': data['base_mpegaudio']},
-            {'column1': 'base', 'column2': 'scimark.large size', 'column3': data['base_scimark_large']},
-            {'column1': 'base', 'column2': 'scimark.small', 'column3': data['base_scimark_small']},
-            {'column1': 'base', 'column2': 'serial', 'column3': data['base_serial']},
-            {'column1': 'base', 'column2': 'startup', 'column3': data['base_startup']},
-            {'column1': 'base', 'column2': 'sunflow', 'column3': data['base_sunflow']},
-            {'column1': 'base', 'column2': 'xml', 'column3': data['base_xml']},
-            {'column1': 'base', 'column2': 'Noncompliant composite result:',
-             'column3': data['base_Noncompliant_pomposite_result']},
-            {'column1': 'peak', 'column2': 'compiler', 'column3': data['peak_compiler']},
-            {'column1': 'peak', 'column2': 'compress', 'column3': data['peak_compress']},
-            {'column1': 'peak', 'column2': 'crypto', 'column3': data['peak_crypto']},
-            {'column1': 'peak', 'column2': 'derby', 'column3': data['peak_derby']},
-            {'column1': 'peak', 'column2': 'mpegaudio', 'column3': data['peak_mpegaudio']},
-            {'column1': 'peak', 'column2': 'scimark.large', 'column3': data['peak_scimark_large']},
-            {'column1': 'peak', 'column2': 'scimark.small', 'column3': data['peak_scimark_small']},
-            {'column1': 'peak', 'column2': 'serial', 'column3': data['peak_serial']},
-            {'column1': 'peak', 'column2': 'startup', 'column3': data['peak_startup']},
-            {'column1': 'peak', 'column2': 'sunflow', 'column3': data['peak_sunflow']},
-            {'column1': 'peak', 'column2': 'xml', 'column3': data['peak_xml']},
-            {'column1': 'peak', 'column2': 'Noncompliant composite result:',
-             'column3': data['peak_Noncompliant_pomposite_result']},
+            {'column1': 'Jvm2008', 'column2': ''},
+            {'column1': '执行命令', 'column2': ''},
+            {'column1': '修改参数：', 'column2': ''},
+            {'column1': 'base', 'column2': 'compiler size'},
+            {'column1': 'base', 'column2': 'compress'},
+            {'column1': 'base', 'column2': 'crypto'},
+            {'column1': 'base', 'column2': 'derby'},
+            {'column1': 'base', 'column2': 'mpegaudio'},
+            {'column1': 'base', 'column2': 'scimark.large size'},
+            {'column1': 'base', 'column2': 'scimark.small'},
+            {'column1': 'base', 'column2': 'serial'},
+            {'column1': 'base', 'column2': 'startup'},
+            {'column1': 'base', 'column2': 'sunflow'},
+            {'column1': 'base', 'column2': 'xml'},
+            {'column1': 'base', 'column2': 'Noncompliant composite result:'},
+            {'column1': 'peak', 'column2': 'compiler'},
+            {'column1': 'peak', 'column2': 'compress'},
+            {'column1': 'peak', 'column2': 'crypto'},
+            {'column1': 'peak', 'column2': 'derby'},
+            {'column1': 'peak', 'column2': 'mpegaudio'},
+            {'column1': 'peak', 'column2': 'scimark.large'},
+            {'column1': 'peak', 'column2': 'scimark.small'},
+            {'column1': 'peak', 'column2': 'serial'},
+            {'column1': 'peak', 'column2': 'startup'},
+            {'column1': 'peak', 'column2': 'sunflow'},
+            {'column1': 'peak', 'column2': 'xml'},
+            {'column1': 'peak', 'column2': 'Noncompliant composite result:'},
         ]
+        title_index = 1
+        column_index = 3
+        base_column_index = ''
+        datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index,
+                                                                            column_index, base_column_index)
 
         if comparsionIds != ['']:
             # 处理对比数据
-            for index, comparativeId in enumerate(comparsionIds):
-                new_index = 2 * index + 4
+            for comparativeId in comparsionIds:
                 comparsion_queryset = Jvm2008.objects.filter(env_id=comparativeId).all()
-                comparsion_datas = self.get_data(comparsion_queryset)
-                others[0]['column' + str(new_index)] = 'Jvm2008#' + str(index + 2)
-                others[1]['column' + str(new_index)] = comparsion_datas['execute_cmd']
-                others[2]['column' + str(new_index)] = comparsion_datas['modify_parameters']
-                others[0]['column' + str(new_index + 1)] = ''
-                others[1]['column' + str(new_index + 1)] = ''
-                others[2]['column' + str(new_index + 1)] = ''
-
-                datas[0]['column' + str(new_index)] = comparsion_datas['base_compiler']
-                datas[1]['column' + str(new_index)] = comparsion_datas['base_compress']
-                datas[2]['column' + str(new_index)] = comparsion_datas['base_crypto']
-                datas[3]['column' + str(new_index)] = comparsion_datas['base_derby']
-                datas[4]['column' + str(new_index)] = comparsion_datas['base_mpegaudio']
-                datas[5]['column' + str(new_index)] = comparsion_datas['base_scimark_large']
-                datas[6]['column' + str(new_index)] = comparsion_datas['base_scimark_small']
-                datas[7]['column' + str(new_index)] = comparsion_datas['base_serial']
-                datas[8]['column' + str(new_index)] = comparsion_datas['base_startup']
-                datas[9]['column' + str(new_index)] = comparsion_datas['base_sunflow']
-                datas[10]['column' + str(new_index)] = comparsion_datas['base_xml']
-                datas[11]['column' + str(new_index)] = comparsion_datas['base_Noncompliant_pomposite_result']
-                datas[12]['column' + str(new_index)] = comparsion_datas['peak_compiler']
-                datas[13]['column' + str(new_index)] = comparsion_datas['peak_compress']
-                datas[14]['column' + str(new_index)] = comparsion_datas['peak_crypto']
-                datas[15]['column' + str(new_index)] = comparsion_datas['peak_derby']
-                datas[16]['column' + str(new_index)] = comparsion_datas['peak_mpegaudio']
-                datas[17]['column' + str(new_index)] = comparsion_datas['peak_scimark_large']
-                datas[18]['column' + str(new_index)] = comparsion_datas['peak_scimark_small']
-                datas[19]['column' + str(new_index)] = comparsion_datas['peak_serial']
-                datas[20]['column' + str(new_index)] = comparsion_datas['peak_startup']
-                datas[21]['column' + str(new_index)] = comparsion_datas['peak_sunflow']
-                datas[22]['column' + str(new_index)] = comparsion_datas['peak_xml']
-                datas[23]['column' + str(new_index)] = comparsion_datas['peak_Noncompliant_pomposite_result']
-
-                for i in range(24):
-                    if datas[i]['column' + str(new_index)] and datas[i]['column3']:
-                        datas[i]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                (datas[i]['column' + str(new_index)] - datas[i]['column3']) / datas[i]['column3'])
-                    else:
-                        datas[i]['column' + str(new_index + 1)] = None
-
-                # datas[0]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[0]['column' + str(new_index)] - datas[0]['column3']) / datas[0]['column3'] * 100)
-                # datas[1]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[1]['column' + str(new_index)] - datas[1]['column3']) / datas[1]['column3'] * 100)
-                # datas[2]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[2]['column' + str(new_index)] - datas[2]['column3']) / datas[2]['column3'] * 100)
-                # datas[3]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[3]['column' + str(new_index)] - datas[3]['column3']) / datas[3]['column3'] * 100)
-                # datas[4]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[4]['column' + str(new_index)] - datas[4]['column3']) / datas[4]['column3'] * 100)
-                # datas[5]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[5]['column' + str(new_index)] - datas[5]['column3']) / datas[5]['column3'] * 100)
-                # datas[6]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[6]['column' + str(new_index)] - datas[6]['column3']) / datas[6]['column3'] * 100)
-                # datas[7]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[7]['column' + str(new_index)] - datas[7]['column3']) / datas[7]['column3'] * 100)
-                # datas[8]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #         (datas[8]['column' + str(new_index)] - datas[8]['column3']) / datas[8]['column3'] * 100)
-                # datas[9]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[9]['column' + str(new_index)] - datas[9]['column3']) / datas[9]['column3'] * 100)
-                # datas[10]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[10]['column' + str(new_index)] - datas[10]['column3']) / datas[10]['column3'] * 100)
-                # datas[11]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[11]['column' + str(new_index)] - datas[11]['column3']) / datas[11]['column3'] * 100)
-                # datas[12]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[12]['column' + str(new_index)] - datas[12]['column3']) / datas[12]['column3'] * 100)
-                # datas[13]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[13]['column' + str(new_index)] - datas[13]['column3']) / datas[13]['column3'] * 100)
-                # datas[14]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[14]['column' + str(new_index)] - datas[14]['column3']) / datas[14]['column3'] * 100)
-                # datas[15]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[15]['column' + str(new_index)] - datas[15]['column3']) / datas[15]['column3'] * 100)
-                # datas[16]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[16]['column' + str(new_index)] - datas[16]['column3']) / datas[16]['column3'] * 100)
-                # datas[17]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[17]['column' + str(new_index)] - datas[17]['column3']) / datas[17]['column3'] * 100)
-                # datas[18]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[18]['column' + str(new_index)] - datas[18]['column3']) / datas[18]['column3'] * 100)
-                # datas[19]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[19]['column' + str(new_index)] - datas[19]['column3']) / datas[19]['column3'] * 100)
-                # datas[20]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[20]['column' + str(new_index)] - datas[20]['column3']) / datas[20]['column3'] * 100)
-                # datas[21]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[21]['column' + str(new_index)] - datas[21]['column3']) / datas[21]['column3'] * 100)
-                # datas[22]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[22]['column' + str(new_index)] - datas[22]['column3']) / datas[22]['column3'] * 100)
-                # datas[23]['column' + str(new_index + 1)] = "%.2f%%" % (
-                #             (datas[23]['column' + str(new_index)] - datas[23]['column3']) / datas[23]['column3'] * 100)
-        jvm2008_data = {'others': others, 'data': datas}
-        return json_response(jvm2008_data, status.HTTP_200_OK, '列表')
+                if not comparsion_queryset:
+                    return json_response({}, status.HTTP_200_OK, '列表')
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas,
+                                                                                    title_index, column_index,
+                                                                                    base_column_index)
+        return json_response(datas, status.HTTP_200_OK, '列表')
+        # if comparsionIds != ['']:
+        #     # 处理对比数据
+        #     for index, comparativeId in enumerate(comparsionIds):
+        #         new_index = 2 * index + 4
+        #         comparsion_queryset = Jvm2008.objects.filter(env_id=comparativeId).all()
+        #         comparsion_datas = self.get_data(comparsion_queryset)
+        #         others[0]['column' + str(new_index)] = 'Jvm2008#' + str(index + 2)
+        #         others[1]['column' + str(new_index)] = comparsion_datas['execute_cmd']
+        #         others[2]['column' + str(new_index)] = comparsion_datas['modify_parameters']
+        #         others[0]['column' + str(new_index + 1)] = ''
+        #         others[1]['column' + str(new_index + 1)] = ''
+        #         others[2]['column' + str(new_index + 1)] = ''
+        #
+        #         datas[0]['column' + str(new_index)] = comparsion_datas['base_compiler']
+        #         datas[1]['column' + str(new_index)] = comparsion_datas['base_compress']
+        #         datas[2]['column' + str(new_index)] = comparsion_datas['base_crypto']
+        #         datas[3]['column' + str(new_index)] = comparsion_datas['base_derby']
+        #         datas[4]['column' + str(new_index)] = comparsion_datas['base_mpegaudio']
+        #         datas[5]['column' + str(new_index)] = comparsion_datas['base_scimark_large']
+        #         datas[6]['column' + str(new_index)] = comparsion_datas['base_scimark_small']
+        #         datas[7]['column' + str(new_index)] = comparsion_datas['base_serial']
+        #         datas[8]['column' + str(new_index)] = comparsion_datas['base_startup']
+        #         datas[9]['column' + str(new_index)] = comparsion_datas['base_sunflow']
+        #         datas[10]['column' + str(new_index)] = comparsion_datas['base_xml']
+        #         datas[11]['column' + str(new_index)] = comparsion_datas['base_Noncompliant_pomposite_result']
+        #         datas[12]['column' + str(new_index)] = comparsion_datas['peak_compiler']
+        #         datas[13]['column' + str(new_index)] = comparsion_datas['peak_compress']
+        #         datas[14]['column' + str(new_index)] = comparsion_datas['peak_crypto']
+        #         datas[15]['column' + str(new_index)] = comparsion_datas['peak_derby']
+        #         datas[16]['column' + str(new_index)] = comparsion_datas['peak_mpegaudio']
+        #         datas[17]['column' + str(new_index)] = comparsion_datas['peak_scimark_large']
+        #         datas[18]['column' + str(new_index)] = comparsion_datas['peak_scimark_small']
+        #         datas[19]['column' + str(new_index)] = comparsion_datas['peak_serial']
+        #         datas[20]['column' + str(new_index)] = comparsion_datas['peak_startup']
+        #         datas[21]['column' + str(new_index)] = comparsion_datas['peak_sunflow']
+        #         datas[22]['column' + str(new_index)] = comparsion_datas['peak_xml']
+        #         datas[23]['column' + str(new_index)] = comparsion_datas['peak_Noncompliant_pomposite_result']
+        #
+        #         for i in range(24):
+        #             if datas[i]['column' + str(new_index)] and datas[i]['column3']:
+        #                 datas[i]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[i]['column' + str(new_index)] - datas[i]['column3']) / datas[i]['column3'] * 100)
+        #             else:
+        #                 datas[i]['column' + str(new_index + 1)] = None
+        #
+        #         # datas[0]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[0]['column' + str(new_index)] - datas[0]['column3']) / datas[0]['column3'] * 100)
+        #         # datas[1]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[1]['column' + str(new_index)] - datas[1]['column3']) / datas[1]['column3'] * 100)
+        #         # datas[2]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[2]['column' + str(new_index)] - datas[2]['column3']) / datas[2]['column3'] * 100)
+        #         # datas[3]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[3]['column' + str(new_index)] - datas[3]['column3']) / datas[3]['column3'] * 100)
+        #         # datas[4]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[4]['column' + str(new_index)] - datas[4]['column3']) / datas[4]['column3'] * 100)
+        #         # datas[5]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[5]['column' + str(new_index)] - datas[5]['column3']) / datas[5]['column3'] * 100)
+        #         # datas[6]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[6]['column' + str(new_index)] - datas[6]['column3']) / datas[6]['column3'] * 100)
+        #         # datas[7]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[7]['column' + str(new_index)] - datas[7]['column3']) / datas[7]['column3'] * 100)
+        #         # datas[8]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #         (datas[8]['column' + str(new_index)] - datas[8]['column3']) / datas[8]['column3'] * 100)
+        #         # datas[9]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[9]['column' + str(new_index)] - datas[9]['column3']) / datas[9]['column3'] * 100)
+        #         # datas[10]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[10]['column' + str(new_index)] - datas[10]['column3']) / datas[10]['column3'] * 100)
+        #         # datas[11]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[11]['column' + str(new_index)] - datas[11]['column3']) / datas[11]['column3'] * 100)
+        #         # datas[12]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[12]['column' + str(new_index)] - datas[12]['column3']) / datas[12]['column3'] * 100)
+        #         # datas[13]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[13]['column' + str(new_index)] - datas[13]['column3']) / datas[13]['column3'] * 100)
+        #         # datas[14]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[14]['column' + str(new_index)] - datas[14]['column3']) / datas[14]['column3'] * 100)
+        #         # datas[15]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[15]['column' + str(new_index)] - datas[15]['column3']) / datas[15]['column3'] * 100)
+        #         # datas[16]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[16]['column' + str(new_index)] - datas[16]['column3']) / datas[16]['column3'] * 100)
+        #         # datas[17]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[17]['column' + str(new_index)] - datas[17]['column3']) / datas[17]['column3'] * 100)
+        #         # datas[18]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[18]['column' + str(new_index)] - datas[18]['column3']) / datas[18]['column3'] * 100)
+        #         # datas[19]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[19]['column' + str(new_index)] - datas[19]['column3']) / datas[19]['column3'] * 100)
+        #         # datas[20]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[20]['column' + str(new_index)] - datas[20]['column3']) / datas[20]['column3'] * 100)
+        #         # datas[21]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[21]['column' + str(new_index)] - datas[21]['column3']) / datas[21]['column3'] * 100)
+        #         # datas[22]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[22]['column' + str(new_index)] - datas[22]['column3']) / datas[22]['column3'] * 100)
+        #         # datas[23]['column' + str(new_index + 1)] = "%.2f%%" % (
+        #         #             (datas[23]['column' + str(new_index)] - datas[23]['column3']) / datas[23]['column3'] * 100)
+        return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_jvm2008_errors = []
