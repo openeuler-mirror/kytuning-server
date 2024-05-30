@@ -22,12 +22,9 @@ class StreamViewSet(CusModelViewSet):
 
     def get_data(self, serializer_, datas, title_index, column_index, base_average):
         serializer = self.get_serializer(serializer_, many=True)
-        if len(serializer_) == 0:
-            # todo 后期做优化考虑怎么未查找到的情况
-            pass
-        elif len(serializer_) == 1:
+        if len(serializer_) == 1:
             # 基准数据和对比数据的全部数据
-            datas[0]['column' + str(column_index)] = 'stream#' + str(title_index)
+            datas[0]['column' + str(column_index)] = 'Stream#' + str(title_index)
             datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
             datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
             datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
@@ -76,35 +73,16 @@ class StreamViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = '对比值'
                 datas[1]['column' + str(column_index)] = ''
                 datas[2]['column' + str(column_index)] = ''
-                datas[3]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['single_array_size'] - base_average['single_array_size']) /
-                            base_average['single_array_size'])
-                datas[4]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['single_copy'] - base_average['single_copy']) / base_average[
-                        'single_copy'])
-                datas[5]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['single_scale'] - base_average['single_scale']) / base_average[
-                        'single_scale'])
-                datas[6]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['single_add'] - base_average['single_add']) / base_average[
-                        'single_add'])
-                datas[7]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['single_triad'] - base_average['single_triad']) / base_average[
-                        'single_triad'])
-                datas[8]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['multi_array_size'] - base_average['multi_array_size']) / base_average[
-                        'multi_array_size'])
-                datas[9]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['multi_copy'] - base_average['multi_copy']) / base_average[
-                        'multi_copy'])
-                datas[10]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['multi_scale'] - base_average['multi_scale']) / base_average[
-                        'multi_scale'])
-                datas[11]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['multi_add'] - base_average['multi_add']) / base_average['multi_add'])
-                datas[12]['column' + str(column_index)] = "%.2f%%" % (
-                            (serializer.data[0]['multi_triad'] - base_average['multi_triad']) / base_average[
-                        'multi_triad'])
+                datas[3]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_array_size'] - base_average['single_array_size'] * 100) /base_average['single_array_size'])
+                datas[4]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_copy'] - base_average['single_copy'] * 100) / base_average['single_copy'])
+                datas[5]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_scale'] - base_average['single_scale'] * 100) / base_average['single_scale'])
+                datas[6]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_add'] - base_average['single_add'] * 100) / base_average['single_add'])
+                datas[7]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['single_triad'] - base_average['single_triad'] * 100) / base_average['single_triad'])
+                datas[8]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_array_size'] - base_average['multi_array_size'] * 100) / base_average['multi_array_size'])
+                datas[9]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_copy'] - base_average['multi_copy'] * 100) / base_average['multi_copy'])
+                datas[10]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_scale'] - base_average['multi_scale'] * 100) / base_average['multi_scale'])
+                datas[11]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_add'] - base_average['multi_add'] * 100) / base_average['multi_add'])
+                datas[12]['column' + str(column_index)] = "%.2f%%" % ((serializer.data[0]['multi_triad'] - base_average['multi_triad'] * 100) / base_average['multi_triad'])
                 column_index += 1
         else:
             # 计算平均值
@@ -133,7 +111,7 @@ class StreamViewSet(CusModelViewSet):
 
             # 基准数据和对比数据的全部数据
             for data in serializer_:
-                datas[0]['column' + str(column_index)] = 'stream#' + str(title_index)
+                datas[0]['column' + str(column_index)] = 'Stream#' + str(title_index)
                 datas[1]['column' + str(column_index)] = data.execute_cmd
                 datas[2]['column' + str(column_index)] = data.modify_parameters
                 datas[3]['column' + str(column_index)] = data.single_array_size
@@ -181,16 +159,16 @@ class StreamViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = '对比值'
                 datas[1]['column' + str(column_index)] = ''
                 datas[2]['column' + str(column_index)] = ''
-                datas[3]['column' + str(column_index)] = "%.2f%%" % ((single_array_size - base_average['single_array_size']) / base_average['single_array_size'])
-                datas[4]['column' + str(column_index)] = "%.2f%%" % ((single_copy - base_average['single_copy']) / base_average['single_copy'])
-                datas[5]['column' + str(column_index)] = "%.2f%%" % ((single_scale - base_average['single_scale']) / base_average['single_scale'])
-                datas[6]['column' + str(column_index)] = "%.2f%%" % ((single_add - base_average['single_add']) / base_average['single_add'])
-                datas[7]['column' + str(column_index)] = "%.2f%%" % ((single_triad - base_average['single_triad']) / base_average['single_triad'])
-                datas[8]['column' + str(column_index)] = "%.2f%%" % ((multi_array_size - base_average['multi_array_size']) / base_average['multi_array_size'])
-                datas[9]['column' + str(column_index)] = "%.2f%%" % ((multi_copy - base_average['multi_copy']) / base_average['multi_copy'])
-                datas[10]['column' + str(column_index)] = "%.2f%%" % ((multi_scale - base_average['multi_scale']) / base_average['multi_scale'])
-                datas[11]['column' + str(column_index)] = "%.2f%%" % ((multi_add - base_average['multi_add']) / base_average['multi_add'])
-                datas[12]['column' + str(column_index)] = "%.2f%%" % ((multi_triad - base_average['multi_triad']) / base_average['multi_triad'])
+                datas[3]['column' + str(column_index)] = "%.2f%%" % ((single_array_size - base_average['single_array_size']) / base_average['single_array_size'] * 100)
+                datas[4]['column' + str(column_index)] = "%.2f%%" % ((single_copy - base_average['single_copy']) / base_average['single_copy'] * 100)
+                datas[5]['column' + str(column_index)] = "%.2f%%" % ((single_scale - base_average['single_scale']) / base_average['single_scale'] * 100)
+                datas[6]['column' + str(column_index)] = "%.2f%%" % ((single_add - base_average['single_add']) / base_average['single_add'] * 100)
+                datas[7]['column' + str(column_index)] = "%.2f%%" % ((single_triad - base_average['single_triad']) / base_average['single_triad'] * 100)
+                datas[8]['column' + str(column_index)] = "%.2f%%" % ((multi_array_size - base_average['multi_array_size']) / base_average['multi_array_size'] * 100)
+                datas[9]['column' + str(column_index)] = "%.2f%%" % ((multi_copy - base_average['multi_copy']) / base_average['multi_copy'] * 100)
+                datas[10]['column' + str(column_index)] = "%.2f%%" % ((multi_scale - base_average['multi_scale']) / base_average['multi_scale'] * 100)
+                datas[11]['column' + str(column_index)] = "%.2f%%" % ((multi_add - base_average['multi_add']) / base_average['multi_add'] * 100)
+                datas[12]['column' + str(column_index)] = "%.2f%%" % ((multi_triad - base_average['multi_triad']) / base_average['multi_triad'] * 100)
                 column_index += 1
 
         return datas, title_index, column_index
