@@ -35,7 +35,7 @@ export default {
   created() {
     axios.get('/api/' + this.dataName + '_title/').then((response) => {
       this.tableTitle = response.data.data
-      this.numColumns = Object.keys(this.tableTitle[0]).length
+      this.numColumns = Object.keys(response.data.data[0]).length
       this.isDataLoaded = true;
       this.$emit('data-loaded', this.tableTitle);
     })

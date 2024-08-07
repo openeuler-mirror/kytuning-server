@@ -1,13 +1,5 @@
 <template>
   <div style="overflow-x: auto;">
-    <el-table :data="other_list" border :span-method="titleObjectSpanMethod" style="overflow-y: auto;"
-              :show-header="false">
-      <template v-for="i in numColumns" :key="i">
-        <el-table-column :prop="`column${i}`" :width="i < 2 ? '100' : ''"  align="center"></el-table-column>
-      </template>
-    </el-table>
-  </div>
-  <div style="overflow-x: auto;">
     <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
       <template v-for="i in numColumns" :key="i">
         <el-table-column :prop="`column${i}`" :width="i < 2 ? '100' : ''"  align="center"></el-table-column>
@@ -31,25 +23,23 @@ export default {
   data() {
     return {
       numColumns: 1,
-      other_list: [],
       tableDatas: []
     }
   },
   created() {
     axios.get('/api/unixbench/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
-      this.tableDatas = response.data.data.data
-      this.other_list = response.data.data.others
-      this.numColumns = Object.keys(response.data.data.others[0]).length
+      this.tableDatas = response.data.data
+      this.numColumns = Object.keys(this.tableDatas[0]).length
     })
   },
   methods: {
-    titleObjectSpanMethod({columnIndex }) {
-        if (columnIndex === 0) {
-            return [1, 2];
-          } else if (columnIndex === 1) {
-            return [0, 0];
-          }
-      },
+    titleObjectSpanMethod({columnIndex}) {
+      if (columnIndex === 0) {
+        return [1, 2];
+      } else if (columnIndex === 1) {
+        return [0, 0];
+      }
+    },
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
       //columnIndex 表示需要合并的列，多列时用 || 隔开
