@@ -18,7 +18,7 @@ class UnixbenchViewSet(CusModelViewSet):
     queryset = Unixbench.objects.all().order_by('id')
     serializer_class = UnixbenchSerializer
 
-    def get_data(self, serializer_, datas, title_index, column_index, base_average):
+    def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
         # 0-0 或者0-1这样的数据有几组，以此来判断需不需要计算平均值
         groups = set([d['mark_name'] for d in serializer.data])
@@ -86,7 +86,7 @@ class UnixbenchViewSet(CusModelViewSet):
             datas[28]['column' + str(column_index)] = multi_index_score
             column_index += 1
             title_index += 1
-            title = '平均值(基准数据)' if not base_average else '平均数据'
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
@@ -118,143 +118,18 @@ class UnixbenchViewSet(CusModelViewSet):
             datas[27]['column' + str(column_index)] = multi_system_call_overhead
             datas[28]['column' + str(column_index)] = multi_index_score
             column_index += 1
-            if not base_average:
+            if not base_column_index:
                 # 记录基准数据
-                base_average['single_Dhrystone'] = single_Dhrystone
-                base_average['single_Double_Precision'] = single_Double_Precision
-                base_average['single_execl_throughput'] = single_execl_throughput
-                base_average['single_file_copy_1024'] = single_file_copy_1024
-                base_average['single_file_copy_256'] = single_file_copy_256
-                base_average['single_file_copy_4096'] = single_file_copy_4096
-                base_average['single_pipe_throughput'] = single_pipe_throughput
-                base_average['single_pipe_based'] = single_pipe_based
-                base_average['single_process_creation'] = single_process_creation
-                base_average['single_shell_scripts_1'] = single_shell_scripts_1
-                base_average['single_shell_scripts_8'] = single_shell_scripts_8
-                base_average['single_system_call_overhead'] = single_system_call_overhead
-                base_average['single_index_score'] = single_index_score
-                base_average['multi_Dhrystone'] = multi_Dhrystone
-                base_average['multi_Double_Precision'] = multi_Double_Precision
-                base_average['multi_execl_throughput'] = multi_execl_throughput
-                base_average['multi_file_copy_1024'] = multi_file_copy_1024
-                base_average['multi_file_copy_256'] = multi_file_copy_256
-                base_average['multi_file_copy_4096'] = multi_file_copy_4096
-                base_average['multi_pipe_throughput'] = multi_pipe_throughput
-                base_average['multi_pipe_based'] = multi_pipe_based
-                base_average['multi_process_creation'] = multi_process_creation
-                base_average['multi_shell_scripts_1'] = multi_shell_scripts_1
-                base_average['multi_shell_scripts_8'] = multi_shell_scripts_8
-                base_average['multi_system_call_overhead'] = multi_system_call_overhead
-                base_average['multi_index_score'] = multi_index_score
+                base_column_index = column_index - 1
             else:
                 # 对比数据的对比值
                 datas[0]['column' + str(column_index)] = '对比值'
                 datas[1]['column' + str(column_index)] = ''
                 datas[2]['column' + str(column_index)] = ''
-                datas[3]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_Dhrystone - base_average['single_Dhrystone']) / base_average[
-                        'single_Dhrystone'] * 100) if single_Dhrystone is not None and base_average[
-                    'single_Dhrystone'] is not None else None
-                datas[4]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_Double_Precision - base_average['single_Double_Precision']) / base_average[
-                        'single_Double_Precision'] * 100) if single_Double_Precision is not None and base_average[
-                    'single_Double_Precision'] is not None else None
-                datas[5]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_execl_throughput - base_average['single_execl_throughput']) / base_average[
-                        'single_execl_throughput'] * 100) if single_execl_throughput is not None and base_average[
-                    'single_execl_throughput'] is not None else None
-                datas[6]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_file_copy_1024 - base_average['single_file_copy_1024']) / base_average[
-                        'single_file_copy_1024'] * 100) if single_file_copy_1024 is not None and base_average[
-                    'single_file_copy_1024'] is not None else None
-                datas[7]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_file_copy_256 - base_average['single_file_copy_256']) / base_average[
-                        'single_file_copy_256'] * 100) if single_file_copy_256 is not None and base_average[
-                    'single_file_copy_256'] is not None else None
-                datas[8]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_file_copy_4096 - base_average['single_file_copy_4096']) / base_average[
-                        'single_file_copy_4096'] * 100) if single_file_copy_4096 is not None and base_average[
-                    'single_file_copy_4096'] is not None else None
-                datas[9]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_pipe_throughput - base_average['single_pipe_throughput']) / base_average[
-                        'single_pipe_throughput'] * 100) if single_pipe_throughput is not None and base_average[
-                    'single_pipe_throughput'] is not None else None
-                datas[10]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_pipe_based - base_average['single_pipe_based']) / base_average[
-                        'single_pipe_based'] * 100) if single_pipe_based is not None and base_average[
-                    'single_pipe_based'] is not None else None
-                datas[11]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_process_creation - base_average['single_process_creation']) / base_average[
-                        'single_process_creation'] * 100) if single_process_creation is not None and base_average[
-                    'single_process_creation'] is not None else None
-                datas[12]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_shell_scripts_1 - base_average['single_shell_scripts_1']) / base_average[
-                        'single_shell_scripts_1'] * 100) if single_shell_scripts_1 is not None and base_average[
-                    'single_shell_scripts_1'] is not None else None
-                datas[13]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_shell_scripts_8 - base_average['single_shell_scripts_8']) / base_average[
-                        'single_shell_scripts_8'] * 100) if single_shell_scripts_8 is not None and base_average[
-                    'single_shell_scripts_8'] is not None else None
-                datas[14]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_system_call_overhead - base_average['single_system_call_overhead']) / base_average[
-                        'single_system_call_overhead'] * 100) if single_system_call_overhead is not None and base_average[
-                    'single_system_call_overhead'] is not None else None
-                datas[15]['column' + str(column_index)] = "%.2f%%" % (
-                            (single_index_score - base_average['single_index_score']) / base_average[
-                        'single_index_score'] * 100) if single_index_score is not None and base_average[
-                    'single_index_score'] is not None else None
-                datas[16]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_Dhrystone - base_average['multi_Dhrystone']) / base_average[
-                        'multi_Dhrystone'] * 100) if multi_Dhrystone is not None and base_average[
-                    'multi_Dhrystone'] is not None else None
-                datas[17]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_Double_Precision - base_average['multi_Double_Precision']) / base_average[
-                        'multi_Double_Precision'] * 100) if multi_Double_Precision is not None and base_average[
-                    'multi_Double_Precision'] is not None else None
-                datas[18]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_execl_throughput - base_average['multi_execl_throughput']) / base_average[
-                        'multi_execl_throughput'] * 100) if multi_execl_throughput is not None and base_average[
-                    'multi_execl_throughput'] is not None else None
-                datas[19]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_file_copy_1024 - base_average['multi_file_copy_1024']) / base_average[
-                        'multi_file_copy_1024'] * 100) if multi_file_copy_1024 is not None and base_average[
-                    'multi_file_copy_1024'] is not None else None
-                datas[20]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_file_copy_256 - base_average['multi_file_copy_256']) / base_average[
-                        'multi_file_copy_256'] * 100) if multi_file_copy_256 is not None and base_average[
-                    'multi_file_copy_256'] is not None else None
-                datas[21]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_file_copy_4096 - base_average['multi_file_copy_4096']) / base_average[
-                        'multi_file_copy_4096'] * 100) if multi_file_copy_4096 is not None and base_average[
-                    'multi_file_copy_4096'] is not None else None
-                datas[22]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_pipe_throughput - base_average['multi_pipe_throughput']) / base_average[
-                        'multi_pipe_throughput'] * 100) if multi_pipe_throughput is not None and base_average[
-                    'multi_pipe_throughput'] is not None else None
-                datas[23]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_pipe_based - base_average['multi_pipe_based']) / base_average[
-                        'multi_pipe_based'] * 100) if multi_pipe_based is not None and base_average[
-                    'multi_pipe_based'] is not None else None
-                datas[24]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_process_creation - base_average['multi_process_creation']) / base_average[
-                        'multi_process_creation'] * 100) if multi_process_creation is not None and base_average[
-                    'multi_process_creation'] is not None else None
-                datas[25]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_shell_scripts_1 - base_average['multi_shell_scripts_1']) / base_average[
-                        'multi_shell_scripts_1'] * 100) if multi_shell_scripts_1 is not None and base_average[
-                    'multi_shell_scripts_1'] is not None else None
-                datas[26]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_shell_scripts_8 - base_average['multi_shell_scripts_8']) / base_average[
-                        'multi_shell_scripts_8'] * 100) if multi_shell_scripts_8 is not None and base_average[
-                    'multi_shell_scripts_8'] is not None else None
-                datas[27]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_system_call_overhead - base_average['multi_system_call_overhead']) / base_average[
-                        'multi_system_call_overhead'] * 100) if multi_system_call_overhead is not None and base_average[
-                    'multi_system_call_overhead'] is not None else None
-                datas[28]['column' + str(column_index)] = "%.2f%%" % (
-                            (multi_index_score - base_average['multi_index_score']) / base_average[
-                        'multi_index_score'] * 100) if multi_index_score is not None and base_average[
-                    'multi_index_score'] is not None else None
+                for i in range(29):
+                    if i > 2:
+                        datas[i]['column' + str(column_index)] = \
+                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
                 column_index += 1
         else:
             # 数据分组
@@ -389,7 +264,7 @@ class UnixbenchViewSet(CusModelViewSet):
                 datas[28]['column' + str(column_index)] = multi_index_score
                 column_index += 1
                 title_index += 1
-            title = '平均值(基准数据)' if not base_average else '平均数据'
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
@@ -421,68 +296,20 @@ class UnixbenchViewSet(CusModelViewSet):
             datas[27]['column' + str(column_index)] = average_multi_system_call_overhead
             datas[28]['column' + str(column_index)] = average_multi_index_score
             column_index += 1
-            if not base_average:
+            if not base_column_index:
                 # 记录基准数据
-                base_average['single_Dhrystone'] = single_Dhrystone
-                base_average['single_Double_Precision'] = single_Double_Precision
-                base_average['single_execl_throughput'] = single_execl_throughput
-                base_average['single_file_copy_1024'] = single_file_copy_1024
-                base_average['single_file_copy_256'] = single_file_copy_256
-                base_average['single_file_copy_4096'] = single_file_copy_4096
-                base_average['single_pipe_throughput'] = single_pipe_throughput
-                base_average['single_pipe_based'] = single_pipe_based
-                base_average['single_process_creation'] = single_process_creation
-                base_average['single_shell_scripts_1'] = single_shell_scripts_1
-                base_average['single_shell_scripts_8'] = single_shell_scripts_8
-                base_average['single_system_call_overhead'] = single_system_call_overhead
-                base_average['single_index_score'] = single_index_score
-                base_average['multi_Dhrystone'] = multi_Dhrystone
-                base_average['multi_Double_Precision'] = multi_Double_Precision
-                base_average['multi_execl_throughput'] = multi_execl_throughput
-                base_average['multi_file_copy_1024'] = multi_file_copy_1024
-                base_average['multi_file_copy_256'] = multi_file_copy_256
-                base_average['multi_file_copy_4096'] = multi_file_copy_4096
-                base_average['multi_pipe_throughput'] = multi_pipe_throughput
-                base_average['multi_pipe_based'] = multi_pipe_based
-                base_average['multi_process_creation'] = multi_process_creation
-                base_average['multi_shell_scripts_1'] = multi_shell_scripts_1
-                base_average['multi_shell_scripts_8'] = multi_shell_scripts_8
-                base_average['multi_system_call_overhead'] = multi_system_call_overhead
-                base_average['multi_index_score'] = multi_index_score
+                base_column_index = column_index - 1
             else:
                 # 对比数据的对比值
                 datas[0]['column' + str(column_index)] = '对比值'
                 datas[1]['column' + str(column_index)] = ''
                 datas[2]['column' + str(column_index)] = ''
-                #todo 增加一个函数处理None的数据
-                datas[3]['column' + str(column_index)] = "%.2f%%" % ((single_Dhrystone - base_average['single_Dhrystone']) / base_average['single_Dhrystone'] * 100) if single_Dhrystone is not None and base_average['single_Dhrystone'] is not None else None
-                datas[4]['column' + str(column_index)] = "%.2f%%" % ((single_Double_Precision - base_average['single_Double_Precision']) / base_average['single_Double_Precision'] * 100) if single_Double_Precision is not None and base_average['single_Double_Precision'] is not None else None
-                datas[5]['column' + str(column_index)] = "%.2f%%" % ((single_execl_throughput - base_average['single_execl_throughput']) / base_average['single_execl_throughput'] * 100) if single_execl_throughput is not None and base_average['single_execl_throughput'] is not None else None
-                datas[6]['column' + str(column_index)] = "%.2f%%" % ((single_file_copy_1024 - base_average['single_file_copy_1024']) / base_average['single_file_copy_1024'] * 100) if single_file_copy_1024 is not None and base_average['single_file_copy_1024'] is not None else None
-                datas[7]['column' + str(column_index)] = "%.2f%%" % ((single_file_copy_256 - base_average['single_file_copy_256']) / base_average['single_file_copy_256'] * 100) if single_file_copy_256 is not None and base_average['single_file_copy_256'] is not None else None
-                datas[8]['column' + str(column_index)] = "%.2f%%" % ((single_file_copy_4096 - base_average['single_file_copy_4096']) / base_average['single_file_copy_4096'] * 100) if single_file_copy_4096 is not None and base_average['single_file_copy_4096'] is not None else None
-                datas[9]['column' + str(column_index)] = "%.2f%%" % ((single_pipe_throughput - base_average['single_pipe_throughput']) / base_average['single_pipe_throughput'] * 100) if single_pipe_throughput is not None and base_average['single_pipe_throughput'] is not None else None
-                datas[10]['column' + str(column_index)] = "%.2f%%" % ((single_pipe_based - base_average['single_pipe_based']) / base_average['single_pipe_based'] * 100) if single_pipe_based is not None and base_average['single_pipe_based'] is not None else None
-                datas[11]['column' + str(column_index)] = "%.2f%%" % ((single_process_creation - base_average['single_process_creation']) / base_average['single_process_creation'] * 100) if single_process_creation is not None and base_average['single_process_creation'] is not None else None
-                datas[12]['column' + str(column_index)] = "%.2f%%" % ((single_shell_scripts_1 - base_average['single_shell_scripts_1']) / base_average['single_shell_scripts_1'] * 100) if single_shell_scripts_1 is not None and base_average['single_shell_scripts_1'] is not None else None
-                datas[13]['column' + str(column_index)] = "%.2f%%" % ((single_shell_scripts_8 - base_average['single_shell_scripts_8']) / base_average['single_shell_scripts_8'] * 100) if single_shell_scripts_8 is not None and base_average['single_shell_scripts_8'] is not None else None
-                datas[14]['column' + str(column_index)] = "%.2f%%" % ((single_system_call_overhead - base_average['single_system_call_overhead']) / base_average['single_system_call_overhead'] * 100) if single_system_call_overhead is not None and base_average['single_system_call_overhead'] is not None else None
-                datas[15]['column' + str(column_index)] = "%.2f%%" % ((single_index_score - base_average['single_index_score']) / base_average['single_index_score'] * 100) if single_index_score is not None and base_average['single_index_score'] is not None else None
-                datas[16]['column' + str(column_index)] = "%.2f%%" % ((multi_Dhrystone - base_average['multi_Dhrystone']) / base_average['multi_Dhrystone'] * 100) if multi_Dhrystone is not None and base_average['multi_Dhrystone'] is not None else None
-                datas[17]['column' + str(column_index)] = "%.2f%%" % ((multi_Double_Precision - base_average['multi_Double_Precision']) / base_average['multi_Double_Precision'] * 100) if multi_Double_Precision is not None and base_average['multi_Double_Precision'] is not None else None
-                datas[18]['column' + str(column_index)] = "%.2f%%" % ((multi_execl_throughput - base_average['multi_execl_throughput']) / base_average['multi_execl_throughput'] * 100) if multi_execl_throughput is not None and base_average['multi_execl_throughput'] is not None else None
-                datas[19]['column' + str(column_index)] = "%.2f%%" % ((multi_file_copy_1024 - base_average['multi_file_copy_1024']) / base_average['multi_file_copy_1024'] * 100) if multi_file_copy_1024 is not None and base_average['multi_file_copy_1024'] is not None else None
-                datas[20]['column' + str(column_index)] = "%.2f%%" % ((multi_file_copy_256 - base_average['multi_file_copy_256']) / base_average['multi_file_copy_256'] * 100) if multi_file_copy_256 is not None and base_average['multi_file_copy_256'] is not None else None
-                datas[21]['column' + str(column_index)] = "%.2f%%" % ((multi_file_copy_4096 - base_average['multi_file_copy_4096']) / base_average['multi_file_copy_4096'] * 100) if multi_file_copy_4096 is not None and base_average['multi_file_copy_4096'] is not None else None
-                datas[22]['column' + str(column_index)] = "%.2f%%" % ((multi_pipe_throughput - base_average['multi_pipe_throughput']) / base_average['multi_pipe_throughput'] * 100) if multi_pipe_throughput is not None and base_average['multi_pipe_throughput'] is not None else None
-                datas[23]['column' + str(column_index)] = "%.2f%%" % ((multi_pipe_based - base_average['multi_pipe_based']) / base_average['multi_pipe_based'] * 100) if multi_pipe_based is not None and base_average['multi_pipe_based'] is not None else None
-                datas[24]['column' + str(column_index)] = "%.2f%%" % ((multi_process_creation - base_average['multi_process_creation']) / base_average['multi_process_creation'] * 100) if multi_process_creation is not None and base_average['multi_process_creation'] is not None else None
-                datas[25]['column' + str(column_index)] = "%.2f%%" % ((multi_shell_scripts_1 - base_average['multi_shell_scripts_1']) / base_average['multi_shell_scripts_1'] * 100) if multi_shell_scripts_1 is not None and base_average['multi_shell_scripts_1'] is not None else None
-                datas[26]['column' + str(column_index)] = "%.2f%%" % ((multi_shell_scripts_8 - base_average['multi_shell_scripts_8']) / base_average['multi_shell_scripts_8'] * 100) if multi_shell_scripts_8 is not None and base_average['multi_shell_scripts_8'] is not None else None
-                datas[27]['column' + str(column_index)] = "%.2f%%" % ((multi_system_call_overhead - base_average['multi_system_call_overhead']) / base_average['multi_system_call_overhead'] * 100) if multi_system_call_overhead is not None and base_average['multi_system_call_overhead'] is not None else None
-                datas[28]['column' + str(column_index)] = "%.2f%%" % ((multi_index_score - base_average['multi_index_score']) / base_average['multi_index_score'] * 100) if multi_index_score is not None and base_average['multi_index_score'] is not None else None
+                for i in range(29):
+                    if i > 2:
+                        datas[i]['column' + str(column_index)] = \
+                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
                 column_index += 1
-        return datas, title_index, column_index
+        return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
         """
@@ -531,8 +358,8 @@ class UnixbenchViewSet(CusModelViewSet):
         ]
         title_index = 1
         column_index = 3
-        base_average = {}
-        datas, title_index, column_index = self.get_data(base_queryset, datas, title_index, column_index, base_average)
+        base_column_index = ''
+        datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index, column_index, base_column_index)
 
         if comparsionIds != ['']:
             # 处理对比数据
@@ -540,7 +367,8 @@ class UnixbenchViewSet(CusModelViewSet):
                 comparsion_queryset = Unixbench.objects.filter(env_id=comparativeId).all()
                 if not comparsion_queryset:
                     return json_response({}, status.HTTP_200_OK, '列表')
-                datas, title_index, column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_average)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index,
+                                                                                    column_index, base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
