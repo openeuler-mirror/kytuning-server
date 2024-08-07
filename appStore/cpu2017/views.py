@@ -29,7 +29,7 @@ class Cpu2017ViewSet(CusModelViewSet):
         groups = set([d['mark_name'] for d in serializer.data])
         if len(groups) == 1:
             # 基准数据和对比数据的全部数据
-            datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
+            datas[0]['column' + str(column_index)] = 'Cpu2017#' + str(title_index)
             datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
             datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
             # 初始化所有数据为空
@@ -154,7 +154,7 @@ class Cpu2017ViewSet(CusModelViewSet):
             column_index += 1
             title_index += 1
             # 基准数据和对比数据的平均数据
-            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
@@ -510,7 +510,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                 column_index += 1
                 title_index += 1
             # 基准数据和对比数据的平均数据
-            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
