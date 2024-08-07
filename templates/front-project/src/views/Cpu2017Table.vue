@@ -1,13 +1,5 @@
 <template>
   <div style="overflow-x: auto;">
-    <el-table :data="other_list" border :span-method="titleObjectSpanMethod" style="overflow-y: auto;"
-              :show-header="false">
-      <template v-for="i in numColumns" :key="i">
-        <el-table-column :prop="`column${i}`" :width="i < 5 ? '100' : ''" align="center"></el-table-column>
-      </template>
-    </el-table>
-  </div>
-  <div style="overflow-x: auto;">
     <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
       <template v-for="i in numColumns" :key="i">
         <el-table-column :prop="`column${i}`" :width="i < 5 ? '100' : ''" align="center"></el-table-column>
@@ -43,9 +35,8 @@ export default {
   },
   created() {
     axios.get('/api/cpu2017/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
-      this.tableDatas = response.data.data.data
-      this.other_list = response.data.data.others
-      this.numColumns = Object.keys(response.data.data.others[0]).length
+      this.tableDatas = response.data.data
+      this.numColumns = Object.keys(this.tableDatas[0]).length
     })
   },
   methods: {
@@ -61,7 +52,7 @@ export default {
       }).join("\n");
 
       // 创建并下载 CSV 文件
-      const blob = new Blob(["\uFEFF" + csvData], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob(["\uFEFF" + csvData], {type: "text/csv;charset=utf-8;"});
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       link.download = "stream_data.csv";
@@ -74,13 +65,13 @@ export default {
     //         return [0, 0];
     //   },
 
-    titleObjectSpanMethod({columnIndex }) {
-        if (columnIndex === 0) {
-            return [1, 5];
-          } else if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3 || columnIndex === 4) {
-            return [0, 0];
-          }
-      },
+    titleObjectSpanMethod({columnIndex}) {
+      if (columnIndex === 0) {
+        return [1, 5];
+      } else if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3 || columnIndex === 4) {
+        return [0, 0];
+      }
+    },
 
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
@@ -110,7 +101,7 @@ export default {
               spanOneArr.push(1);
               concatOne = index;
             }
-          } else if (colIndex === 1){
+          } else if (colIndex === 1) {
             if (item.column2 === arr[index - 1].column2) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);
@@ -118,7 +109,7 @@ export default {
               spanOneArr.push(1);
               concatOne = index;
             }
-          } else if (colIndex === 2){
+          } else if (colIndex === 2) {
             if (item.column3 === arr[index - 1].column3) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);
@@ -126,7 +117,7 @@ export default {
               spanOneArr.push(1);
               concatOne = index;
             }
-          }  else if (colIndex === 3){
+          } else if (colIndex === 3) {
             if (item.column4 === arr[index - 1].column4) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);
