@@ -1,9 +1,10 @@
 <template>
   <!--  <Header/>-->
   <div style="overflow-x: auto;" v-if="tableDatas.length > 0">
-    <el-table :data="filteredTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
-      <template v-for="i in numColumns" :key="i">
-        <el-table-column v-if="showAllData || i < 3" :prop="`column${i}`" :width="i < 2 ? '100' : ''" align="center" show-tooltip-when-overflow></el-table-column>
+    <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
+              :show-header="false">
+      <template v-for="(value, key) in tableDatas[0]" :key="key">
+        <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" align="center" show-tooltip-when-overflow></el-table-column>
       </template>
     </el-table>
   </div>
@@ -17,7 +18,8 @@
 </template>
 
 <script>
-import { ElTable, ElTableColumn } from 'element-plus';
+import axios from 'axios'
+import {ElTable, ElTableColumn} from 'element-plus';
 
 export default {
   components: {
@@ -27,133 +29,44 @@ export default {
   data() {
     return {
       numColumns: 1,
-      other_list: [],
-      tableDatas: [
-        {'column1': 'Stream', 'column2': '', 'column3': 'Stream#1',
-          'column4': '平均值(基准数据)',
-          'column5': 'Stream#3',
-          'column6': '平均数据',
-          'column7': '对比值'
-        },
-        {'column1': '执行命令', 'column2': '', 'column3': 'xx', 'column4': 'xx', 'column5': 'xx', 'column6': 'xx', 'column7': ''},
-        {'column1': '修改参数：', 'column2': '', 'column3': '参数', 'column4': '参数', 'column5': '参数', 'column6': '参数', 'column7': ''},
-        {
-          'column1': '单线程',
-          'column2': 'Array size',
-          'column3': 80000000,
-          'column4': 80000000,
-          'column5': 80000000,
-          'column6': 80000000,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '单线程',
-          'column2': 'Copy',
-          'column3': 12326.7845,
-          'column4': 12326.7845,
-          'column5': 12326.7845,
-          'column6': 12326.7845,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '单线程',
-          'column2': 'Scale',
-          'column3': 11945.0908,
-          'column4': 11945.0908,
-          'column5': 11945.0908,
-          'column6': 11945.0908,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '单线程',
-          'column2': 'Add',
-          'column3': 12482.9315,
-          'column4': 12482.9315,
-          'column5': 12482.9315,
-          'column6': 12482.9315,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '单线程',
-          'column2': 'Triad',
-          'column3': 12456.3631,
-          'column4': 12456.3631,
-          'column5': 12456.3631,
-          'column6': 12456.3631,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '多线程',
-          'column2': 'Array size',
-          'column3': 80000000,
-          'column4': 80000000,
-          'column5': 80000000,
-          'column6': 80000000,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '多线程',
-          'column2': 'Copy',
-          'column3': 34418.7734,
-          'column4': 34418.7734,
-          'column5': 34418.7734,
-          'column6': 34418.7734,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '多线程',
-          'column2': 'Scale',
-          'column3': 34176.2257,
-          'column4': 34176.2257,
-          'column5': 34176.2257,
-          'column6': 34176.2257,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '多线程',
-          'column2': 'Add',
-          'column3': 39649.7559,
-          'column4': 39649.7559,
-          'column5': 39649.7559,
-          'column6': 39649.7559,
-          'column7': '-99.00%'
-        },
-        {
-          'column1': '多线程',
-          'column2': 'Triad',
-          'column3': 39655.6133,
-          'column4': 39655.6133,
-          'column5': 39655.6133,
-          'column6': 39655.6133,
-          'column7': '-99.00%'
-        }
-      ],
+      tableDatas: [],
       showAllData: false,
+      keysToHide: [],
     };
   },
   created() {
-    this.numColumns = Object.keys(this.tableDatas[0]).length;
-    this.showAllData = true; // 默认显示全部数据
-    const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
-      const value = this.tableDatas[0][key];
-      return value.includes('Stream#');
-    });
-    console.log(keysToHide, 222)
+    axios.get('/api/stream/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
+      this.tableDatas = response.data.data
+      // this.other_list = response.data.data.others
+      this.numColumns = Object.keys(this.tableDatas[0]).length
+
+      this.numColumns = Object.keys(this.tableDatas[0]).length;
+      this.showAllData = true; // 默认显示全部数据
+      const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
+        const value = this.tableDatas[0][key];
+        return value.includes('Stream#');
+      });
+      this.keysToHide = keysToHide
+    })
   },
   computed: {
-    filteredTableData() {
+    displayTableData() {
       if (this.showAllData) {
         return this.tableDatas;
       } else {
-        return this.tableDatas.filter(row => {
-          return Object.values(row).some(value => {
-            value !== '' && !value.includes('Stream#');
-            console.log(value, 11)
-            return value
+        let count = 1;
+        const modifiedTableData = JSON.parse(JSON.stringify(this.tableDatas)); // 深拷贝原始数据
+        modifiedTableData.forEach(row => {
+          Object.entries(row).forEach(([key, value]) => {
+            if (typeof value === 'string' && key.startsWith('column') && value.startsWith('平均值')) {
+              row[key] = `Stream#${count}`; // 将"平均值"替换为"Stream#"
+              count++;
+            }
           });
         });
+        return modifiedTableData;
       }
-    },
+    }
   },
   methods: {
     toggleDataVisibility() {
@@ -161,7 +74,7 @@ export default {
     },
     // 导出表格数据为 CSV 格式
     exportTableData() {
-      const data = [this.other_list, this.tableDatas];
+      const data = [this.tableDatas];
 
       // 生成 CSV 格式的数据字符串
       const csvData = data
@@ -169,10 +82,8 @@ export default {
             return rows
                 .map(row => {
                   return Object.values(row).map(value => `"${value}"`).join(",");
-                })
-                .join("\n");
-          })
-          .join("\n");
+                }).join("\n");
+          }).join("\n");
 
       // 创建并下载 CSV 文件
       const blob = new Blob(["\uFEFF" + csvData], {type: "text/csv;charset=utf-8;"});
