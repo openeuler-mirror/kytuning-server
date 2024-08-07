@@ -19,135 +19,6 @@ class Cpu2006ViewSet(CusModelViewSet):
 
     def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
-        # 初始化数据为空 否则如果下面只获取的单线程或者多线程另外一组获取不到可能会报错
-        base_single_int_400_perlbench = ''
-        base_single_int_401_bzip2 = ''
-        base_single_int_403_gcc = ''
-        base_single_int_429_mcf = ''
-        base_single_int_445_gobmk = ''
-        base_single_int_456_hmmer = ''
-        base_single_int_458_sjeng = ''
-        base_single_int_462_libquantum = ''
-        base_single_int_464_h264ref = ''
-        base_single_int_471_omnetpp = ''
-        base_single_int_473_astar = ''
-        base_single_int_483_xalancbmk = ''
-        base_single_int_SPECint_2006 = ''
-        base_single_fp_410_bwaves = ''
-        base_single_fp_416_gamess = ''
-        base_single_fp_433_milc = ''
-        base_single_fp_434_zeusmp = ''
-        base_single_fp_435_gromacs = ''
-        base_single_fp_436_cactusADM = ''
-        base_single_fp_437_leslie3d = ''
-        base_single_fp_444_namd = ''
-        base_single_fp_447_dealII = ''
-        base_single_fp_450_soplex = ''
-        base_single_fp_453_povray = ''
-        base_single_fp_454_calculix = ''
-        base_single_fp_459_GemsFDTD = ''
-        base_single_fp_465_tonto = ''
-        base_single_fp_470_lbm = ''
-        base_single_fp_481_wrf = ''
-        base_single_fp_482_sphinx3 = ''
-        base_single_fp_SPECfp_2006 = ''
-
-        base_multi_int_400_perlbench = ''
-        base_multi_int_401_bzip2 = ''
-        base_multi_int_403_gcc = ''
-        base_multi_int_429_mcf = ''
-        base_multi_int_445_gobmk = ''
-        base_multi_int_456_hmmer = ''
-        base_multi_int_458_sjeng = ''
-        base_multi_int_462_libquantum = ''
-        base_multi_int_464_h264ref = ''
-        base_multi_int_471_omnetpp = ''
-        base_multi_int_473_astar = ''
-        base_multi_int_483_xalancbmk = ''
-        base_multi_int_SPECint_2006 = ''
-        base_multi_fp_410_bwaves = ''
-        base_multi_fp_416_gamess = ''
-        base_multi_fp_433_milc = ''
-        base_multi_fp_434_zeusmp = ''
-        base_multi_fp_435_gromacs = ''
-        base_multi_fp_436_cactusADM = ''
-        base_multi_fp_437_leslie3d = ''
-        base_multi_fp_444_namd = ''
-        base_multi_fp_447_dealII = ''
-        base_multi_fp_450_soplex = ''
-        base_multi_fp_453_povray = ''
-        base_multi_fp_454_calculix = ''
-        base_multi_fp_459_GemsFDTD = ''
-        base_multi_fp_465_tonto = ''
-        base_multi_fp_470_lbm = ''
-        base_multi_fp_481_wrf = ''
-        base_multi_fp_482_sphinx3 = ''
-        base_multi_fp_SPECfp_2006 = ''
-
-        peak_single_int_400_perlbench = ''
-        peak_single_int_401_bzip2 = ''
-        peak_single_int_403_gcc = ''
-        peak_single_int_429_mcf = ''
-        peak_single_int_445_gobmk = ''
-        peak_single_int_456_hmmer = ''
-        peak_single_int_458_sjeng = ''
-        peak_single_int_462_libquantum = ''
-        peak_single_int_464_h264ref = ''
-        peak_single_int_471_omnetpp = ''
-        peak_single_int_473_astar = ''
-        peak_single_int_483_xalancbmk = ''
-        peak_single_int_SPECint_2006 = ''
-        peak_single_fp_410_bwaves = ''
-        peak_single_fp_416_gamess = ''
-        peak_single_fp_433_milc = ''
-        peak_single_fp_434_zeusmp = ''
-        peak_single_fp_435_gromacs = ''
-        peak_single_fp_436_cactusADM = ''
-        peak_single_fp_437_leslie3d = ''
-        peak_single_fp_444_namd = ''
-        peak_single_fp_447_dealII = ''
-        peak_single_fp_450_soplex = ''
-        peak_single_fp_453_povray = ''
-        peak_single_fp_454_calculix = ''
-        peak_single_fp_459_GemsFDTD = ''
-        peak_single_fp_465_tonto = ''
-        peak_single_fp_470_lbm = ''
-        peak_single_fp_481_wrf = ''
-        peak_single_fp_482_sphinx3 = ''
-        peak_single_fp_SPECfp_2006 = ''
-
-        peak_multi_int_400_perlbench = ''
-        peak_multi_int_401_bzip2 = ''
-        peak_multi_int_403_gcc = ''
-        peak_multi_int_429_mcf = ''
-        peak_multi_int_445_gobmk = ''
-        peak_multi_int_456_hmmer = ''
-        peak_multi_int_458_sjeng = ''
-        peak_multi_int_462_libquantum = ''
-        peak_multi_int_464_h264ref = ''
-        peak_multi_int_471_omnetpp = ''
-        peak_multi_int_473_astar = ''
-        peak_multi_int_483_xalancbmk = ''
-        peak_multi_int_SPECint_2006 = ''
-        peak_multi_fp_410_bwaves = ''
-        peak_multi_fp_416_gamess = ''
-        peak_multi_fp_433_milc = ''
-        peak_multi_fp_434_zeusmp = ''
-        peak_multi_fp_435_gromacs = ''
-        peak_multi_fp_436_cactusADM = ''
-        peak_multi_fp_437_leslie3d = ''
-        peak_multi_fp_444_namd = ''
-        peak_multi_fp_447_dealII = ''
-        peak_multi_fp_450_soplex = ''
-        peak_multi_fp_453_povray = ''
-        peak_multi_fp_454_calculix = ''
-        peak_multi_fp_459_GemsFDTD = ''
-        peak_multi_fp_465_tonto = ''
-        peak_multi_fp_470_lbm = ''
-        peak_multi_fp_481_wrf = ''
-        peak_multi_fp_482_sphinx3 = ''
-        peak_multi_fp_SPECfp_2006 = ''
-
         # thread dtype tuneType
         # 先判断数据的TuneType确定是base还是peak
         # 在判断数据的thread确定是单线程还是多线程
@@ -862,20 +733,20 @@ class Cpu2006ViewSet(CusModelViewSet):
             datas[124]['column' + str(column_index)] = average_peak_multi_fp_481_wrf
             datas[125]['column' + str(column_index)] = average_peak_multi_fp_482_sphinx3
             datas[126]['column' + str(column_index)] = average_peak_multi_fp_SPECfp_2006
-        column_index += 1
-        if not base_column_index:
-            # 记录基准数据
-            base_column_index = column_index - 1
-        else:
-            # 对比数据的对比值
-            datas[0]['column' + str(column_index)] = '对比值'
-            datas[1]['column' + str(column_index)] = ''
-            datas[2]['column' + str(column_index)] = ''
-            for i in range(127):
-                    if i > 2:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
             column_index += 1
+            if not base_column_index:
+                # 记录基准数据
+                base_column_index = column_index - 1
+            else:
+                # 对比数据的对比值
+                datas[0]['column' + str(column_index)] = '对比值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                for i in range(127):
+                        if i > 2:
+                            datas[i]['column' + str(column_index)] = \
+                                "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+                column_index += 1
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
