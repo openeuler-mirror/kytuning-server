@@ -18,20 +18,6 @@ class Cpu2017ViewSet(CusModelViewSet):
     queryset = Cpu2017.objects.all().order_by('id')
     serializer_class = Cpu2017Serializer
 
-    # def list(self, request, *args, **kwargs):
-    #     """
-    #     返回列表
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     env_id = request.GET.get('env_id')
-    #     queryset = Cpu2017.objects.filter(env_id=env_id).all()
-    #     queryset = self.filter_queryset(queryset)
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
-
     def get_data(self, serializer_):
         # 初始化数据为空 否则如果下面只获取的单线程或者多线程另外一组获取不到可能会报错
         serializer = self.get_serializer(serializer_, many=True)

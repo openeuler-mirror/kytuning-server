@@ -316,7 +316,6 @@ class IozoneViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Iozone.objects.filter(env_id=env_id).all()
-        base_serializer = self.get_serializer(base_queryset, many=True)
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '未获取到数据')
         datas = [
