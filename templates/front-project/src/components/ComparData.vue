@@ -1,6 +1,6 @@
 <template>
   <div class="tableCompar">
-    <template v-if="isDataLoaded">
+    <template v-if="isDataLoaded && isComparDataLoaded[baseId]">
       <el-table :data="comparDatas" border style="overflow-x: auto;" :show-header="false">
         <template v-for="i in numColumns" :key="i">
           <el-table-column :prop="`column${i}`" :width="i < 2 ? '100' : ''" align="center" show-tooltip-when-overflow></el-table-column>
@@ -37,16 +37,14 @@ export default {
   },
   created() {
     axios.get('/api/' + this.dataName + '_data' + '/?env_id=' + this.baseId + '&index=' + this.titleIndex)
-    // axios.get('/api/' + this.dataName + '_data' + '/?env_id=' + this.baseId)
+        // axios.get('/api/' + this.dataName + '_data' + '/?env_id=' + this.baseId)
         .then((response) => {
-        this.comparDatas = response.data.data
-        this.numColumns = Object.keys(this.comparDatas[0]).length
-        console.log(this.numColumns,1000);
-
-        const titleIndex_ = this.titleIndex + this.numColumns -1
-        this.$emit('data-loaded', this.baseId,titleIndex_, this.comparDatas)
-        this.isDataLoaded = true
-      })
+          this.comparDatas = response.data.data
+          this.numColumns = Object.keys(this.comparDatas[0]).length
+          const titleIndex_ = this.titleIndex + this.numColumns - 1
+          this.$emit('data-loaded', this.baseId, titleIndex_, this.comparDatas)
+          this.isDataLoaded = true
+        })
   },
 }
 </script>
