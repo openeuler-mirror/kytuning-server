@@ -74,7 +74,7 @@ class FioViewSet(CusModelViewSet):
                         break
             column_index += 1
             title_index += 1
-            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
@@ -186,7 +186,7 @@ class FioViewSet(CusModelViewSet):
                                 break
                 column_index += 1
                 title_index += 1
-            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = serializer_[0].execute_cmd
