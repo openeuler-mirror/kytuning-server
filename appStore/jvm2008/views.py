@@ -58,6 +58,7 @@ class Jvm2008ViewSet(CusModelViewSet):
                     datas[26]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
             column_index += 1
             title_index += 1
+            # 基准数据和对比数据的平均数据
             title = '平均值(基准数据)' if not base_column_index else '平均数据'
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
@@ -210,9 +211,6 @@ class Jvm2008ViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = '对比值'
                 datas[1]['column' + str(column_index)] = ''
                 datas[2]['column' + str(column_index)] = ''
-                datas[0]['column' + str(column_index)] = title
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
                 datas[3]['column' + str(column_index)] =  "%.2f%%" % ((datas[3]['column' + str(column_index - 1)] - datas[3]['column' + str(base_column_index)]) / datas[3]['column' + str(base_column_index)] * 100) if datas[3]['column' + str(column_index - 1)] is not None and datas[3]['column' + str(base_column_index)] is not None else None
                 datas[4]['column' + str(column_index)] =  "%.2f%%" % ((datas[4]['column' + str(column_index - 1)] - datas[4]['column' + str(base_column_index)]) / datas[4]['column' + str(base_column_index)] * 100) if datas[4]['column' + str(column_index - 1)] is not None and datas[4]['column' + str(base_column_index)] is not None else None
                 datas[5]['column' + str(column_index)] =  "%.2f%%" % ((datas[5]['column' + str(column_index - 1)] - datas[5]['column' + str(base_column_index)]) / datas[5]['column' + str(base_column_index)] * 100) if datas[5]['column' + str(column_index - 1)] is not None and datas[5]['column' + str(base_column_index)] is not None else None
@@ -284,8 +282,7 @@ class Jvm2008ViewSet(CusModelViewSet):
         title_index = 1
         column_index = 3
         base_column_index = ''
-        datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index,
-                                                                            column_index, base_column_index)
+        datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index, column_index, base_column_index)
 
         if comparsionIds != ['']:
             # 处理对比数据
