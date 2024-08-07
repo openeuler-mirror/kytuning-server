@@ -17,26 +17,9 @@ class Cpu2006ViewSet(CusModelViewSet):
     queryset = Cpu2006.objects.all().order_by('id')
     serializer_class = Cpu2006Serializer
 
-    # def list(self, request, *args, **kwargs):
-    #     """
-    #     返回列表
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     env_id = request.GET.get('env_id')
-    #     queryset = Cpu2006.objects.filter(env_id=env_id).all()
-    #     queryset = self.filter_queryset(queryset)
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return json_response(serializer.data, status.HTTP_200_OK, '列表')
-
-    def get_data(self, serializer_):
+    def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
         # 初始化数据为空 否则如果下面只获取的单线程或者多线程另外一组获取不到可能会报错
-        execute_cmd = serializer.data[0]['execute_cmd']
-        modify_parameters = serializer.data[0]['modify_parameters']
-
         base_single_int_400_perlbench = ''
         base_single_int_401_bzip2 = ''
         base_single_int_403_gcc = ''
@@ -171,148 +154,179 @@ class Cpu2006ViewSet(CusModelViewSet):
         # 在判断tuneType确定是int还是fp
         groups = set([d['mark_name'] for d in serializer.data])
         if len(groups) == 1:
+            # 基准数据和对比数据的全部数据
+            datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
+            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            # 初始化所有数据为空
+            for i in range(5, 127):
+                datas[i]['column' + str(column_index)] = None
             for data in serializer.data:
                 # 判断数据的TuneType确定是base还是peak
                 if data['tuneType'] == 'base':
                     if data['thread'] == '单线程':
                         if data['dtype'] == 'int':
-                            base_single_int_400_perlbench = data['int_400_perlbench']
-                            base_single_int_401_bzip2 = data['int_401_bzip2']
-                            base_single_int_403_gcc = data['int_403_gcc']
-                            base_single_int_429_mcf = data['int_429_mcf']
-                            base_single_int_445_gobmk = data['int_445_gobmk']
-                            base_single_int_456_hmmer = data['int_456_hmmer']
-                            base_single_int_458_sjeng = data['int_458_sjeng']
-                            base_single_int_462_libquantum = data['int_462_libquantum']
-                            base_single_int_464_h264ref = data['int_464_h264ref']
-                            base_single_int_471_omnetpp = data['int_471_omnetpp']
-                            base_single_int_473_astar = data['int_473_astar']
-                            base_single_int_483_xalancbmk = data['int_483_xalancbmk']
-                            base_single_int_SPECint_2006 = data['int_SPECint_2006']
+                            datas[3]['column' + str(column_index)] = data['int_400_perlbench']
+                            datas[4]['column' + str(column_index)] = data['int_401_bzip2']
+                            datas[5]['column' + str(column_index)] = data['int_403_gcc']
+                            datas[6]['column' + str(column_index)] = data['int_429_mcf']
+                            datas[7]['column' + str(column_index)] = data['int_445_gobmk']
+                            datas[8]['column' + str(column_index)] = data['int_456_hmmer']
+                            datas[9]['column' + str(column_index)] = data['int_458_sjeng']
+                            datas[10]['column' + str(column_index)] = data['int_462_libquantum']
+                            datas[11]['column' + str(column_index)] = data['int_464_h264ref']
+                            datas[12]['column' + str(column_index)] = data['int_471_omnetpp']
+                            datas[13]['column' + str(column_index)] = data['int_473_astar']
+                            datas[14]['column' + str(column_index)] = data['int_483_xalancbmk']
+                            datas[15]['column' + str(column_index)] = data['int_SPECint_2006']
                         elif data['dtype'] == 'fp':
-                            base_single_fp_410_bwaves = data['fp_410_bwaves']
-                            base_single_fp_416_gamess = data['fp_416_gamess']
-                            base_single_fp_433_milc = data['fp_433_milc']
-                            base_single_fp_434_zeusmp = data['fp_434_zeusmp']
-                            base_single_fp_435_gromacs = data['fp_435_gromacs']
-                            base_single_fp_436_cactusADM = data['fp_436_cactusADM']
-                            base_single_fp_437_leslie3d = data['fp_437_leslie3d']
-                            base_single_fp_444_namd = data['fp_444_namd']
-                            base_single_fp_447_dealII = data['fp_447_dealII']
-                            base_single_fp_450_soplex = data['fp_450_soplex']
-                            base_single_fp_453_povray = data['fp_453_povray']
-                            base_single_fp_454_calculix = data['fp_454_calculix']
-                            base_single_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
-                            base_single_fp_465_tonto = data['fp_465_tonto']
-                            base_single_fp_470_lbm = data['fp_470_lbm']
-                            base_single_fp_481_wrf = data['fp_481_wrf']
-                            base_single_fp_482_sphinx3 = data['fp_482_sphinx3']
-                            base_single_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+                            datas[16]['column' + str(column_index)] = data['fp_410_bwaves']
+                            datas[17]['column' + str(column_index)] = data['fp_416_gamess']
+                            datas[18]['column' + str(column_index)] = data['fp_433_milc']
+                            datas[19]['column' + str(column_index)] = data['fp_434_zeusmp']
+                            datas[20]['column' + str(column_index)] = data['fp_435_gromacs']
+                            datas[21]['column' + str(column_index)] = data['fp_436_cactusADM']
+                            datas[22]['column' + str(column_index)] = data['fp_437_leslie3d']
+                            datas[23]['column' + str(column_index)] = data['fp_444_namd']
+                            datas[24]['column' + str(column_index)] = data['fp_447_dealII']
+                            datas[25]['column' + str(column_index)] = data['fp_450_soplex']
+                            datas[26]['column' + str(column_index)] = data['fp_453_povray']
+                            datas[27]['column' + str(column_index)] = data['fp_454_calculix']
+                            datas[28]['column' + str(column_index)] = data['fp_459_GemsFDTD']
+                            datas[29]['column' + str(column_index)] = data['fp_465_tonto']
+                            datas[30]['column' + str(column_index)] = data['fp_470_lbm']
+                            datas[31]['column' + str(column_index)] = data['fp_481_wrf']
+                            datas[32]['column' + str(column_index)] = data['fp_482_sphinx3']
+                            datas[33]['column' + str(column_index)] = data['fp_SPECfp_2006']
                     elif data['thread'] == '多线程':
                         if data['dtype'] == 'int':
-                            base_multi_int_400_perlbench = data['int_400_perlbench']
-                            base_multi_int_401_bzip2 = data['int_401_bzip2']
-                            base_multi_int_403_gcc = data['int_403_gcc']
-                            base_multi_int_429_mcf = data['int_429_mcf']
-                            base_multi_int_445_gobmk = data['int_445_gobmk']
-                            base_multi_int_456_hmmer = data['int_456_hmmer']
-                            base_multi_int_458_sjeng = data['int_458_sjeng']
-                            base_multi_int_462_libquantum = data['int_462_libquantum']
-                            base_multi_int_464_h264ref = data['int_464_h264ref']
-                            base_multi_int_471_omnetpp = data['int_471_omnetpp']
-                            base_multi_int_473_astar = data['int_473_astar']
-                            base_multi_int_483_xalancbmk = data['int_483_xalancbmk']
-                            base_multi_int_SPECint_2006 = data['int_SPECint_2006']
-
+                            datas[34]['column' + str(column_index)] = data['int_400_perlbench']
+                            datas[35]['column' + str(column_index)] = data['int_401_bzip2']
+                            datas[36]['column' + str(column_index)] = data['int_403_gcc']
+                            datas[37]['column' + str(column_index)] = data['int_429_mcf']
+                            datas[38]['column' + str(column_index)] = data['int_445_gobmk']
+                            datas[39]['column' + str(column_index)] = data['int_456_hmmer']
+                            datas[40]['column' + str(column_index)] = data['int_458_sjeng']
+                            datas[41]['column' + str(column_index)] = data['int_462_libquantum']
+                            datas[42]['column' + str(column_index)] = data['int_464_h264ref']
+                            datas[43]['column' + str(column_index)] = data['int_471_omnetpp']
+                            datas[44]['column' + str(column_index)] = data['int_473_astar']
+                            datas[45]['column' + str(column_index)] = data['int_483_xalancbmk']
+                            datas[46]['column' + str(column_index)] = data['int_SPECint_2006']
                         elif data['dtype'] == 'fp':
-                            base_multi_fp_410_bwaves = data['fp_410_bwaves']
-                            base_multi_fp_416_gamess = data['fp_416_gamess']
-                            base_multi_fp_433_milc = data['fp_433_milc']
-                            base_multi_fp_434_zeusmp = data['fp_434_zeusmp']
-                            base_multi_fp_435_gromacs = data['fp_435_gromacs']
-                            base_multi_fp_436_cactusADM = data['fp_436_cactusADM']
-                            base_multi_fp_437_leslie3d = data['fp_437_leslie3d']
-                            base_multi_fp_444_namd = data['fp_444_namd']
-                            base_multi_fp_447_dealII = data['fp_447_dealII']
-                            base_multi_fp_450_soplex = data['fp_450_soplex']
-                            base_multi_fp_453_povray = data['fp_453_povray']
-                            base_multi_fp_454_calculix = data['fp_454_calculix']
-                            base_multi_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
-                            base_multi_fp_465_tonto = data['fp_465_tonto']
-                            base_multi_fp_470_lbm = data['fp_470_lbm']
-                            base_multi_fp_481_wrf = data['fp_481_wrf']
-                            base_multi_fp_482_sphinx3 = data['fp_482_sphinx3']
-                            base_multi_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+                            datas[47]['column' + str(column_index)] = data['fp_410_bwaves']
+                            datas[48]['column' + str(column_index)] = data['fp_416_gamess']
+                            datas[49]['column' + str(column_index)] = data['fp_433_milc']
+                            datas[50]['column' + str(column_index)] = data['fp_434_zeusmp']
+                            datas[51]['column' + str(column_index)] = data['fp_435_gromacs']
+                            datas[52]['column' + str(column_index)] = data['fp_436_cactusADM']
+                            datas[53]['column' + str(column_index)] = data['fp_437_leslie3d']
+                            datas[54]['column' + str(column_index)] = data['fp_444_namd']
+                            datas[55]['column' + str(column_index)] = data['fp_447_dealII']
+                            datas[56]['column' + str(column_index)] = data['fp_450_soplex']
+                            datas[57]['column' + str(column_index)] = data['fp_453_povray']
+                            datas[58]['column' + str(column_index)] = data['fp_454_calculix']
+                            datas[59]['column' + str(column_index)] = data['fp_459_GemsFDTD']
+                            datas[60]['column' + str(column_index)] = data['fp_465_tonto']
+                            datas[61]['column' + str(column_index)] = data['fp_470_lbm']
+                            datas[62]['column' + str(column_index)] = data['fp_481_wrf']
+                            datas[63]['column' + str(column_index)] = data['fp_482_sphinx3']
+                            datas[64]['column' + str(column_index)] = data['fp_SPECfp_2006']
                 elif data['tuneType'] == 'peak':
                     if data['thread'] == '单线程':
                         if data['dtype'] == 'int':
-                            peak_single_int_400_perlbench = data['int_400_perlbench']
-                            peak_single_int_401_bzip2 = data['int_401_bzip2']
-                            peak_single_int_403_gcc = data['int_403_gcc']
-                            peak_single_int_429_mcf = data['int_429_mcf']
-                            peak_single_int_445_gobmk = data['int_445_gobmk']
-                            peak_single_int_456_hmmer = data['int_456_hmmer']
-                            peak_single_int_458_sjeng = data['int_458_sjeng']
-                            peak_single_int_462_libquantum = data['int_462_libquantum']
-                            peak_single_int_464_h264ref = data['int_464_h264ref']
-                            peak_single_int_471_omnetpp = data['int_471_omnetpp']
-                            peak_single_int_473_astar = data['int_473_astar']
-                            peak_single_int_483_xalancbmk = data['int_483_xalancbmk']
-                            peak_single_int_SPECint_2006 = data['int_SPECint_2006']
+                            datas[65]['column' + str(column_index)] = data['int_400_perlbench']
+                            datas[66]['column' + str(column_index)] = data['int_401_bzip2']
+                            datas[67]['column' + str(column_index)] = data['int_403_gcc']
+                            datas[68]['column' + str(column_index)] = data['int_429_mcf']
+                            datas[69]['column' + str(column_index)] = data['int_445_gobmk']
+                            datas[70]['column' + str(column_index)] = data['int_456_hmmer']
+                            datas[71]['column' + str(column_index)] = data['int_458_sjeng']
+                            datas[72]['column' + str(column_index)] = data['int_462_libquantum']
+                            datas[73]['column' + str(column_index)] = data['int_464_h264ref']
+                            datas[74]['column' + str(column_index)] = data['int_471_omnetpp']
+                            datas[75]['column' + str(column_index)] = data['int_473_astar']
+                            datas[76]['column' + str(column_index)] = data['int_483_xalancbmk']
+                            datas[77]['column' + str(column_index)] = data['int_SPECint_2006']
                         elif data['dtype'] == 'fp':
-                            peak_single_fp_410_bwaves = data['fp_410_bwaves']
-                            peak_single_fp_416_gamess = data['fp_416_gamess']
-                            peak_single_fp_433_milc = data['fp_433_milc']
-                            peak_single_fp_434_zeusmp = data['fp_434_zeusmp']
-                            peak_single_fp_435_gromacs = data['fp_435_gromacs']
-                            peak_single_fp_436_cactusADM = data['fp_436_cactusADM']
-                            peak_single_fp_437_leslie3d = data['fp_437_leslie3d']
-                            peak_single_fp_444_namd = data['fp_444_namd']
-                            peak_single_fp_447_dealII = data['fp_447_dealII']
-                            peak_single_fp_450_soplex = data['fp_450_soplex']
-                            peak_single_fp_453_povray = data['fp_453_povray']
-                            peak_single_fp_454_calculix = data['fp_454_calculix']
-                            peak_single_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
-                            peak_single_fp_465_tonto = data['fp_465_tonto']
-                            peak_single_fp_470_lbm = data['fp_470_lbm']
-                            peak_single_fp_481_wrf = data['fp_481_wrf']
-                            peak_single_fp_482_sphinx3 = data['fp_482_sphinx3']
-                            peak_single_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+                            datas[78]['column' + str(column_index)] = data['fp_410_bwaves']
+                            datas[79]['column' + str(column_index)] = data['fp_416_gamess']
+                            datas[80]['column' + str(column_index)] = data['fp_433_milc']
+                            datas[81]['column' + str(column_index)] = data['fp_434_zeusmp']
+                            datas[82]['column' + str(column_index)] = data['fp_435_gromacs']
+                            datas[83]['column' + str(column_index)] = data['fp_436_cactusADM']
+                            datas[84]['column' + str(column_index)] = data['fp_437_leslie3d']
+                            datas[85]['column' + str(column_index)] = data['fp_444_namd']
+                            datas[86]['column' + str(column_index)] = data['fp_447_dealII']
+                            datas[87]['column' + str(column_index)] = data['fp_450_soplex']
+                            datas[88]['column' + str(column_index)] = data['fp_453_povray']
+                            datas[89]['column' + str(column_index)] = data['fp_454_calculix']
+                            datas[90]['column' + str(column_index)] = data['fp_459_GemsFDTD']
+                            datas[91]['column' + str(column_index)] = data['fp_465_tonto']
+                            datas[92]['column' + str(column_index)] = data['fp_470_lbm']
+                            datas[93]['column' + str(column_index)] = data['fp_481_wrf']
+                            datas[94]['column' + str(column_index)] = data['fp_482_sphinx3']
+                            datas[95]['column' + str(column_index)] = data['fp_SPECfp_2006']
                     elif data['thread'] == '多线程':
                         if data['dtype'] == 'int':
-                            peak_multi_int_400_perlbench = data['int_400_perlbench']
-                            peak_multi_int_401_bzip2 = data['int_401_bzip2']
-                            peak_multi_int_403_gcc = data['int_403_gcc']
-                            peak_multi_int_429_mcf = data['int_429_mcf']
-                            peak_multi_int_445_gobmk = data['int_445_gobmk']
-                            peak_multi_int_456_hmmer = data['int_456_hmmer']
-                            peak_multi_int_458_sjeng = data['int_458_sjeng']
-                            peak_multi_int_462_libquantum = data['int_462_libquantum']
-                            peak_multi_int_464_h264ref = data['int_464_h264ref']
-                            peak_multi_int_471_omnetpp = data['int_471_omnetpp']
-                            peak_multi_int_473_astar = data['int_473_astar']
-                            peak_multi_int_483_xalancbmk = data['int_483_xalancbmk']
-                            peak_multi_int_SPECint_2006 = data['int_SPECint_2006']
+                            datas[96]['column' + str(column_index)] = data['int_400_perlbench']
+                            datas[97]['column' + str(column_index)] = data['int_401_bzip2']
+                            datas[98]['column' + str(column_index)] = data['int_403_gcc']
+                            datas[99]['column' + str(column_index)] = data['int_429_mcf']
+                            datas[100]['column' + str(column_index)] = data['int_445_gobmk']
+                            datas[101]['column' + str(column_index)] = data['int_456_hmmer']
+                            datas[102]['column' + str(column_index)] = data['int_458_sjeng']
+                            datas[103]['column' + str(column_index)] = data['int_462_libquantum']
+                            datas[104]['column' + str(column_index)] = data['int_464_h264ref']
+                            datas[105]['column' + str(column_index)] = data['int_471_omnetpp']
+                            datas[106]['column' + str(column_index)] = data['int_473_astar']
+                            datas[107]['column' + str(column_index)] = data['int_483_xalancbmk']
+                            datas[108]['column' + str(column_index)] = data['int_SPECint_2006']
                         elif data['dtype'] == 'fp':
-                            peak_multi_fp_410_bwaves = data['fp_410_bwaves']
-                            peak_multi_fp_416_gamess = data['fp_416_gamess']
-                            peak_multi_fp_433_milc = data['fp_433_milc']
-                            peak_multi_fp_434_zeusmp = data['fp_434_zeusmp']
-                            peak_multi_fp_435_gromacs = data['fp_435_gromacs']
-                            peak_multi_fp_436_cactusADM = data['fp_436_cactusADM']
-                            peak_multi_fp_437_leslie3d = data['fp_437_leslie3d']
-                            peak_multi_fp_444_namd = data['fp_444_namd']
-                            peak_multi_fp_447_dealII = data['fp_447_dealII']
-                            peak_multi_fp_450_soplex = data['fp_450_soplex']
-                            peak_multi_fp_453_povray = data['fp_453_povray']
-                            peak_multi_fp_454_calculix = data['fp_454_calculix']
-                            peak_multi_fp_459_GemsFDTD = data['fp_459_GemsFDTD']
-                            peak_multi_fp_465_tonto = data['fp_465_tonto']
-                            peak_multi_fp_470_lbm = data['fp_470_lbm']
-                            peak_multi_fp_481_wrf = data['fp_481_wrf']
-                            peak_multi_fp_482_sphinx3 = data['fp_482_sphinx3']
-                            peak_multi_fp_SPECfp_2006 = data['fp_SPECfp_2006']
+                            datas[109]['column' + str(column_index)] = data['fp_410_bwaves']
+                            datas[110]['column' + str(column_index)] = data['fp_416_gamess']
+                            datas[111]['column' + str(column_index)] = data['fp_433_milc']
+                            datas[112]['column' + str(column_index)] = data['fp_434_zeusmp']
+                            datas[113]['column' + str(column_index)] = data['fp_435_gromacs']
+                            datas[114]['column' + str(column_index)] = data['fp_436_cactusADM']
+                            datas[115]['column' + str(column_index)] = data['fp_437_leslie3d']
+                            datas[116]['column' + str(column_index)] = data['fp_444_namd']
+                            datas[117]['column' + str(column_index)] = data['fp_447_dealII']
+                            datas[118]['column' + str(column_index)] = data['fp_450_soplex']
+                            datas[119]['column' + str(column_index)] = data['fp_453_povray']
+                            datas[120]['column' + str(column_index)] = data['fp_454_calculix']
+                            datas[121]['column' + str(column_index)] = data['fp_459_GemsFDTD']
+                            datas[122]['column' + str(column_index)] = data['fp_465_tonto']
+                            datas[123]['column' + str(column_index)] = data['fp_470_lbm']
+                            datas[124]['column' + str(column_index)] = data['fp_481_wrf']
+                            datas[125]['column' + str(column_index)] = data['fp_482_sphinx3']
+                            datas[126]['column' + str(column_index)] = data['fp_SPECfp_2006']
+            column_index += 1
+            title_index += 1
+            # 基准数据和对比数据的平均数据
+            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(127):
+                if i > 2:
+                    datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
+            column_index += 1
+            if not base_column_index:
+                # 记录基准数据
+                base_column_index = column_index - 1
+            else:
+                # 对比数据的对比值
+                datas[0]['column' + str(column_index)] = '对比值'
+                datas[1]['column' + str(column_index)] = ''
+                datas[2]['column' + str(column_index)] = ''
+                for i in range(127):
+                    if i > 2:
+                        datas[i]['column' + str(column_index)] = \
+                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+                column_index += 1
         else:
+            # 计算平均值
             base_single_data_ = serializer_.filter(tuneType='base').filter(thread='单线程')
             base_multi_data_ = serializer_.filter(tuneType='base').filter(thread='多线程')
             peak_single_data_ = serializer_.filter(tuneType='peak').filter(thread='单线程')
@@ -445,399 +459,424 @@ class Cpu2006ViewSet(CusModelViewSet):
             peak_multi_fp_SPECfp_2006_list = [d.fp_SPECfp_2006 for d in peak_multi_data_ if d.fp_SPECfp_2006 is not None]
 
             # 计算每个数组的平均值
-            base_single_int_400_perlbench = np.mean(base_single_int_400_perlbench_list).round(2)
-            base_single_int_401_bzip2 = np.mean(base_single_int_401_bzip2_list).round(2)
-            base_single_int_403_gcc = np.mean(base_single_int_403_gcc_list).round(2)
-            base_single_int_429_mcf = np.mean(base_single_int_429_mcf_list).round(2)
-            base_single_int_445_gobmk = np.mean(base_single_int_445_gobmk_list).round(2)
-            base_single_int_456_hmmer = np.mean(base_single_int_456_hmmer_list).round(2)
-            base_single_int_458_sjeng = np.mean(base_single_int_458_sjeng_list).round(2)
-            base_single_int_462_libquantum = np.mean(base_single_int_462_libquantum_list).round(2)
-            base_single_int_464_h264ref = np.mean(base_single_int_464_h264ref_list).round(2)
-            base_single_int_471_omnetpp = np.mean(base_single_int_471_omnetpp_list).round(2)
-            base_single_int_473_astar = np.mean(base_single_int_473_astar_list).round(2)
-            base_single_int_483_xalancbmk = np.mean(base_single_int_483_xalancbmk_list).round(2)
-            base_single_int_SPECint_2006 = np.mean(base_single_int_SPECint_2006_list).round(2)
-            base_single_fp_410_bwaves = np.mean(base_single_fp_410_bwaves_list).round(2)
-            base_single_fp_416_gamess = np.mean(base_single_fp_416_gamess_list).round(2)
-            base_single_fp_433_milc = np.mean(base_single_fp_433_milc_list).round(2)
-            base_single_fp_434_zeusmp = np.mean(base_single_fp_434_zeusmp_list).round(2)
-            base_single_fp_435_gromacs = np.mean(base_single_fp_435_gromacs_list).round(2)
-            base_single_fp_436_cactusADM = np.mean(base_single_fp_436_cactusADM_list).round(2)
-            base_single_fp_437_leslie3d = np.mean(base_single_fp_437_leslie3d_list).round(2)
-            base_single_fp_444_namd = np.mean(base_single_fp_444_namd_list).round(2)
-            base_single_fp_447_dealII = np.mean(base_single_fp_447_dealII_list).round(2)
-            base_single_fp_450_soplex = np.mean(base_single_fp_450_soplex_list).round(2)
-            base_single_fp_453_povray = np.mean(base_single_fp_453_povray_list).round(2)
-            base_single_fp_454_calculix = np.mean(base_single_fp_454_calculix_list).round(2)
-            base_single_fp_459_GemsFDTD = np.mean(base_single_fp_459_GemsFDTD_list).round(2)
-            base_single_fp_465_tonto = np.mean(base_single_fp_465_tonto_list).round(2)
-            base_single_fp_470_lbm = np.mean(base_single_fp_470_lbm_list).round(2)
-            base_single_fp_481_wrf = np.mean(base_single_fp_481_wrf_list).round(2)
-            base_single_fp_482_sphinx3 = np.mean(base_single_fp_482_sphinx3_list).round(2)
-            base_single_fp_SPECfp_2006 = np.mean(base_single_fp_SPECfp_2006_list).round(2)
-            base_multi_int_400_perlbench = np.mean(base_multi_int_400_perlbench_list).round(2)
-            base_multi_int_401_bzip2 = np.mean(base_multi_int_401_bzip2_list).round(2)
-            base_multi_int_403_gcc = np.mean(base_multi_int_403_gcc_list).round(2)
-            base_multi_int_429_mcf = np.mean(base_multi_int_429_mcf_list).round(2)
-            base_multi_int_445_gobmk = np.mean(base_multi_int_445_gobmk_list).round(2)
-            base_multi_int_456_hmmer = np.mean(base_multi_int_456_hmmer_list).round(2)
-            base_multi_int_458_sjeng = np.mean(base_multi_int_458_sjeng_list).round(2)
-            base_multi_int_462_libquantum = np.mean(base_multi_int_462_libquantum_list).round(2)
-            base_multi_int_464_h264ref = np.mean(base_multi_int_464_h264ref_list).round(2)
-            base_multi_int_471_omnetpp = np.mean(base_multi_int_471_omnetpp_list).round(2)
-            base_multi_int_473_astar = np.mean(base_multi_int_473_astar_list).round(2)
-            base_multi_int_483_xalancbmk = np.mean(base_multi_int_483_xalancbmk_list).round(2)
-            base_multi_int_SPECint_2006 = np.mean(base_multi_int_SPECint_2006_list).round(2)
-            base_multi_fp_410_bwaves = np.mean(base_multi_fp_410_bwaves_list).round(2)
-            base_multi_fp_416_gamess = np.mean(base_multi_fp_416_gamess_list).round(2)
-            base_multi_fp_433_milc = np.mean(base_multi_fp_433_milc_list).round(2)
-            base_multi_fp_434_zeusmp = np.mean(base_multi_fp_434_zeusmp_list).round(2)
-            base_multi_fp_435_gromacs = np.mean(base_multi_fp_435_gromacs_list).round(2)
-            base_multi_fp_436_cactusADM = np.mean(base_multi_fp_436_cactusADM_list).round(2)
-            base_multi_fp_437_leslie3d = np.mean(base_multi_fp_437_leslie3d_list).round(2)
-            base_multi_fp_444_namd = np.mean(base_multi_fp_444_namd_list).round(2)
-            base_multi_fp_447_dealII = np.mean(base_multi_fp_447_dealII_list).round(2)
-            base_multi_fp_450_soplex = np.mean(base_multi_fp_450_soplex_list).round(2)
-            base_multi_fp_453_povray = np.mean(base_multi_fp_453_povray_list).round(2)
-            base_multi_fp_454_calculix = np.mean(base_multi_fp_454_calculix_list).round(2)
-            base_multi_fp_459_GemsFDTD = np.mean(base_multi_fp_459_GemsFDTD_list).round(2)
-            base_multi_fp_465_tonto = np.mean(base_multi_fp_465_tonto_list).round(2)
-            base_multi_fp_470_lbm = np.mean(base_multi_fp_470_lbm_list).round(2)
-            base_multi_fp_481_wrf = np.mean(base_multi_fp_481_wrf_list).round(2)
-            base_multi_fp_482_sphinx3 = np.mean(base_multi_fp_482_sphinx3_list).round(2)
-            base_multi_fp_SPECfp_2006 = np.mean(base_multi_fp_SPECfp_2006_list).round(2)
-            peak_single_int_400_perlbench = np.mean(peak_single_int_400_perlbench_list).round(2)
-            peak_single_int_401_bzip2 = np.mean(peak_single_int_401_bzip2_list).round(2)
-            peak_single_int_403_gcc = np.mean(peak_single_int_403_gcc_list).round(2)
-            peak_single_int_429_mcf = np.mean(peak_single_int_429_mcf_list).round(2)
-            peak_single_int_445_gobmk = np.mean(peak_single_int_445_gobmk_list).round(2)
-            peak_single_int_456_hmmer = np.mean(peak_single_int_456_hmmer_list).round(2)
-            peak_single_int_458_sjeng = np.mean(peak_single_int_458_sjeng_list).round(2)
-            peak_single_int_462_libquantum = np.mean(peak_single_int_462_libquantum_list).round(2)
-            peak_single_int_464_h264ref = np.mean(peak_single_int_464_h264ref_list).round(2)
-            peak_single_int_471_omnetpp = np.mean(peak_single_int_471_omnetpp_list).round(2)
-            peak_single_int_473_astar = np.mean(peak_single_int_473_astar_list).round(2)
-            peak_single_int_483_xalancbmk = np.mean(peak_single_int_483_xalancbmk_list).round(2)
-            peak_single_int_SPECint_2006 = np.mean(peak_single_int_SPECint_2006_list).round(2)
-            peak_single_fp_410_bwaves = np.mean(peak_single_fp_410_bwaves_list).round(2)
-            peak_single_fp_416_gamess = np.mean(peak_single_fp_416_gamess_list).round(2)
-            peak_single_fp_433_milc = np.mean(peak_single_fp_433_milc_list).round(2)
-            peak_single_fp_434_zeusmp = np.mean(peak_single_fp_434_zeusmp_list).round(2)
-            peak_single_fp_435_gromacs = np.mean(peak_single_fp_435_gromacs_list).round(2)
-            peak_single_fp_436_cactusADM = np.mean(peak_single_fp_436_cactusADM_list).round(2)
-            peak_single_fp_437_leslie3d = np.mean(peak_single_fp_437_leslie3d_list).round(2)
-            peak_single_fp_444_namd = np.mean(peak_single_fp_444_namd_list).round(2)
-            peak_single_fp_447_dealII = np.mean(peak_single_fp_447_dealII_list).round(2)
-            peak_single_fp_450_soplex = np.mean(peak_single_fp_450_soplex_list).round(2)
-            peak_single_fp_453_povray = np.mean(peak_single_fp_453_povray_list).round(2)
-            peak_single_fp_454_calculix = np.mean(peak_single_fp_454_calculix_list).round(2)
-            peak_single_fp_459_GemsFDTD = np.mean(peak_single_fp_459_GemsFDTD_list).round(2)
-            peak_single_fp_465_tonto = np.mean(peak_single_fp_465_tonto_list).round(2)
-            peak_single_fp_470_lbm = np.mean(peak_single_fp_470_lbm_list).round(2)
-            peak_single_fp_481_wrf = np.mean(peak_single_fp_481_wrf_list).round(2)
-            peak_single_fp_482_sphinx3 = np.mean(peak_single_fp_482_sphinx3_list).round(2)
-            peak_single_fp_SPECfp_2006 = np.mean(peak_single_fp_SPECfp_2006_list).round(2)
-            peak_multi_int_400_perlbench = np.mean(peak_multi_int_400_perlbench_list).round(2)
-            peak_multi_int_401_bzip2 = np.mean(peak_multi_int_401_bzip2_list).round(2)
-            peak_multi_int_403_gcc = np.mean(peak_multi_int_403_gcc_list).round(2)
-            peak_multi_int_429_mcf = np.mean(peak_multi_int_429_mcf_list).round(2)
-            peak_multi_int_445_gobmk = np.mean(peak_multi_int_445_gobmk_list).round(2)
-            peak_multi_int_456_hmmer = np.mean(peak_multi_int_456_hmmer_list).round(2)
-            peak_multi_int_458_sjeng = np.mean(peak_multi_int_458_sjeng_list).round(2)
-            peak_multi_int_462_libquantum = np.mean(peak_multi_int_462_libquantum_list).round(2)
-            peak_multi_int_464_h264ref = np.mean(peak_multi_int_464_h264ref_list).round(2)
-            peak_multi_int_471_omnetpp = np.mean(peak_multi_int_471_omnetpp_list).round(2)
-            peak_multi_int_473_astar = np.mean(peak_multi_int_473_astar_list).round(2)
-            peak_multi_int_483_xalancbmk = np.mean(peak_multi_int_483_xalancbmk_list).round(2)
-            peak_multi_int_SPECint_2006 = np.mean(peak_multi_int_SPECint_2006_list).round(2)
-            peak_multi_fp_410_bwaves = np.mean(peak_multi_fp_410_bwaves_list).round(2)
-            peak_multi_fp_416_gamess = np.mean(peak_multi_fp_416_gamess_list).round(2)
-            peak_multi_fp_433_milc = np.mean(peak_multi_fp_433_milc_list).round(2)
-            peak_multi_fp_434_zeusmp = np.mean(peak_multi_fp_434_zeusmp_list).round(2)
-            peak_multi_fp_435_gromacs = np.mean(peak_multi_fp_435_gromacs_list).round(2)
-            peak_multi_fp_436_cactusADM = np.mean(peak_multi_fp_436_cactusADM_list).round(2)
-            peak_multi_fp_437_leslie3d = np.mean(peak_multi_fp_437_leslie3d_list).round(2)
-            peak_multi_fp_444_namd = np.mean(peak_multi_fp_444_namd_list).round(2)
-            peak_multi_fp_447_dealII = np.mean(peak_multi_fp_447_dealII_list).round(2)
-            peak_multi_fp_450_soplex = np.mean(peak_multi_fp_450_soplex_list).round(2)
-            peak_multi_fp_453_povray = np.mean(peak_multi_fp_453_povray_list).round(2)
-            peak_multi_fp_454_calculix = np.mean(peak_multi_fp_454_calculix_list).round(2)
-            peak_multi_fp_459_GemsFDTD = np.mean(peak_multi_fp_459_GemsFDTD_list).round(2)
-            peak_multi_fp_465_tonto = np.mean(peak_multi_fp_465_tonto_list).round(2)
-            peak_multi_fp_470_lbm = np.mean(peak_multi_fp_470_lbm_list).round(2)
-            peak_multi_fp_481_wrf = np.mean(peak_multi_fp_481_wrf_list).round(2)
-            peak_multi_fp_482_sphinx3 = np.mean(peak_multi_fp_482_sphinx3_list).round(2)
-            peak_multi_fp_SPECfp_2006 = np.mean(peak_multi_fp_SPECfp_2006_list).round(2)
+            average_base_single_int_400_perlbench = np.mean(base_single_int_400_perlbench_list).round(2) if not np.isnan(np.mean(base_single_int_400_perlbench_list)) else None
+            average_base_single_int_401_bzip2 = np.mean(base_single_int_401_bzip2_list).round(2) if not np.isnan(np.mean(base_single_int_401_bzip2_list)) else None
+            average_base_single_int_403_gcc = np.mean(base_single_int_403_gcc_list).round(2) if not np.isnan(np.mean(base_single_int_403_gcc_list)) else None
+            average_base_single_int_429_mcf = np.mean(base_single_int_429_mcf_list).round(2) if not np.isnan(np.mean(base_single_int_429_mcf_list)) else None
+            average_base_single_int_445_gobmk = np.mean(base_single_int_445_gobmk_list).round(2) if not np.isnan(np.mean(base_single_int_445_gobmk_list)) else None
+            average_base_single_int_456_hmmer = np.mean(base_single_int_456_hmmer_list).round(2) if not np.isnan(np.mean(base_single_int_456_hmmer_list)) else None
+            average_base_single_int_458_sjeng = np.mean(base_single_int_458_sjeng_list).round(2) if not np.isnan(np.mean(base_single_int_458_sjeng_list)) else None
+            average_base_single_int_462_libquantum = np.mean(base_single_int_462_libquantum_list).round(2) if not np.isnan(np.mean(base_single_int_462_libquantum_list)) else None
+            average_base_single_int_464_h264ref = np.mean(base_single_int_464_h264ref_list).round(2) if not np.isnan(np.mean(base_single_int_464_h264ref_list)) else None
+            average_base_single_int_471_omnetpp = np.mean(base_single_int_471_omnetpp_list).round(2) if not np.isnan(np.mean(base_single_int_471_omnetpp_list)) else None
+            average_base_single_int_473_astar = np.mean(base_single_int_473_astar_list).round(2) if not np.isnan(np.mean(base_single_int_473_astar_list)) else None
+            average_base_single_int_483_xalancbmk = np.mean(base_single_int_483_xalancbmk_list).round(2) if not np.isnan(np.mean(base_single_int_483_xalancbmk_list)) else None
+            average_base_single_int_SPECint_2006 = np.mean(base_single_int_SPECint_2006_list).round(2) if not np.isnan(np.mean(base_single_int_SPECint_2006_list)) else None
+            average_base_single_fp_410_bwaves = np.mean(base_single_fp_410_bwaves_list).round(2) if not np.isnan(np.mean(base_single_fp_410_bwaves_list)) else None
+            average_base_single_fp_416_gamess = np.mean(base_single_fp_416_gamess_list).round(2) if not np.isnan(np.mean(base_single_fp_416_gamess_list)) else None
+            average_base_single_fp_433_milc = np.mean(base_single_fp_433_milc_list).round(2) if not np.isnan(np.mean(base_single_fp_433_milc_list)) else None
+            average_base_single_fp_434_zeusmp = np.mean(base_single_fp_434_zeusmp_list).round(2) if not np.isnan(np.mean(base_single_fp_434_zeusmp_list)) else None
+            average_base_single_fp_435_gromacs = np.mean(base_single_fp_435_gromacs_list).round(2) if not np.isnan(np.mean(base_single_fp_435_gromacs_list)) else None
+            average_base_single_fp_436_cactusADM = np.mean(base_single_fp_436_cactusADM_list).round(2) if not np.isnan(np.mean(base_single_fp_436_cactusADM_list)) else None
+            average_base_single_fp_437_leslie3d = np.mean(base_single_fp_437_leslie3d_list).round(2) if not np.isnan(np.mean(base_single_fp_437_leslie3d_list)) else None
+            average_base_single_fp_444_namd = np.mean(base_single_fp_444_namd_list).round(2) if not np.isnan(np.mean(base_single_fp_444_namd_list)) else None
+            average_base_single_fp_447_dealII = np.mean(base_single_fp_447_dealII_list).round(2) if not np.isnan(np.mean(base_single_fp_447_dealII_list)) else None
+            average_base_single_fp_450_soplex = np.mean(base_single_fp_450_soplex_list).round(2) if not np.isnan(np.mean(base_single_fp_450_soplex_list)) else None
+            average_base_single_fp_453_povray = np.mean(base_single_fp_453_povray_list).round(2) if not np.isnan(np.mean(base_single_fp_453_povray_list)) else None
+            average_base_single_fp_454_calculix = np.mean(base_single_fp_454_calculix_list).round(2) if not np.isnan(np.mean(base_single_fp_454_calculix_list)) else None
+            average_base_single_fp_459_GemsFDTD = np.mean(base_single_fp_459_GemsFDTD_list).round(2) if not np.isnan(np.mean(base_single_fp_459_GemsFDTD_list)) else None
+            average_base_single_fp_465_tonto = np.mean(base_single_fp_465_tonto_list).round(2) if not np.isnan(np.mean(base_single_fp_465_tonto_list)) else None
+            average_base_single_fp_470_lbm = np.mean(base_single_fp_470_lbm_list).round(2) if not np.isnan(np.mean(base_single_fp_470_lbm_list)) else None
+            average_base_single_fp_481_wrf = np.mean(base_single_fp_481_wrf_list).round(2) if not np.isnan(np.mean(base_single_fp_481_wrf_list)) else None
+            average_base_single_fp_482_sphinx3 = np.mean(base_single_fp_482_sphinx3_list).round(2) if not np.isnan(np.mean(base_single_fp_482_sphinx3_list)) else None
+            average_base_single_fp_SPECfp_2006 = np.mean(base_single_fp_SPECfp_2006_list).round(2) if not np.isnan(np.mean(base_single_fp_SPECfp_2006_list)) else None
+            average_base_multi_int_400_perlbench = np.mean(base_multi_int_400_perlbench_list).round(2) if not np.isnan(np.mean(base_multi_int_400_perlbench_list)) else None
+            average_base_multi_int_401_bzip2 = np.mean(base_multi_int_401_bzip2_list).round(2) if not np.isnan(np.mean(base_multi_int_401_bzip2_list)) else None
+            average_base_multi_int_403_gcc = np.mean(base_multi_int_403_gcc_list).round(2) if not np.isnan(np.mean(base_multi_int_403_gcc_list)) else None
+            average_base_multi_int_429_mcf = np.mean(base_multi_int_429_mcf_list).round(2) if not np.isnan(np.mean(base_multi_int_429_mcf_list)) else None
+            average_base_multi_int_445_gobmk = np.mean(base_multi_int_445_gobmk_list).round(2) if not np.isnan(np.mean(base_multi_int_445_gobmk_list)) else None
+            average_base_multi_int_456_hmmer = np.mean(base_multi_int_456_hmmer_list).round(2) if not np.isnan(np.mean(base_multi_int_456_hmmer_list)) else None
+            average_base_multi_int_458_sjeng = np.mean(base_multi_int_458_sjeng_list).round(2) if not np.isnan(np.mean(base_multi_int_458_sjeng_list)) else None
+            average_base_multi_int_462_libquantum = np.mean(base_multi_int_462_libquantum_list).round(2) if not np.isnan(np.mean(base_multi_int_462_libquantum_list)) else None
+            average_base_multi_int_464_h264ref = np.mean(base_multi_int_464_h264ref_list).round(2) if not np.isnan(np.mean(base_multi_int_464_h264ref_list)) else None
+            average_base_multi_int_471_omnetpp = np.mean(base_multi_int_471_omnetpp_list).round(2) if not np.isnan(np.mean(base_multi_int_471_omnetpp_list)) else None
+            average_base_multi_int_473_astar = np.mean(base_multi_int_473_astar_list).round(2) if not np.isnan(np.mean(base_multi_int_473_astar_list)) else None
+            average_base_multi_int_483_xalancbmk = np.mean(base_multi_int_483_xalancbmk_list).round(2) if not np.isnan(np.mean(base_multi_int_483_xalancbmk_list)) else None
+            average_base_multi_int_SPECint_2006 = np.mean(base_multi_int_SPECint_2006_list).round(2) if not np.isnan(np.mean(base_multi_int_SPECint_2006_list)) else None
+            average_base_multi_fp_410_bwaves = np.mean(base_multi_fp_410_bwaves_list).round(2) if not np.isnan(np.mean(base_multi_fp_410_bwaves_list)) else None
+            average_base_multi_fp_416_gamess = np.mean(base_multi_fp_416_gamess_list).round(2) if not np.isnan(np.mean(base_multi_fp_416_gamess_list)) else None
+            average_base_multi_fp_433_milc = np.mean(base_multi_fp_433_milc_list).round(2) if not np.isnan(np.mean(base_multi_fp_433_milc_list)) else None
+            average_base_multi_fp_434_zeusmp = np.mean(base_multi_fp_434_zeusmp_list).round(2) if not np.isnan(np.mean(base_multi_fp_434_zeusmp_list)) else None
+            average_base_multi_fp_435_gromacs = np.mean(base_multi_fp_435_gromacs_list).round(2) if not np.isnan(np.mean(base_multi_fp_435_gromacs_list)) else None
+            average_base_multi_fp_436_cactusADM = np.mean(base_multi_fp_436_cactusADM_list).round(2) if not np.isnan(np.mean(base_multi_fp_436_cactusADM_list)) else None
+            average_base_multi_fp_437_leslie3d = np.mean(base_multi_fp_437_leslie3d_list).round(2) if not np.isnan(np.mean(base_multi_fp_437_leslie3d_list)) else None
+            average_base_multi_fp_444_namd = np.mean(base_multi_fp_444_namd_list).round(2) if not np.isnan(np.mean(base_multi_fp_444_namd_list)) else None
+            average_base_multi_fp_447_dealII = np.mean(base_multi_fp_447_dealII_list).round(2) if not np.isnan(np.mean(base_multi_fp_447_dealII_list)) else None
+            average_base_multi_fp_450_soplex = np.mean(base_multi_fp_450_soplex_list).round(2) if not np.isnan(np.mean(base_multi_fp_450_soplex_list)) else None
+            average_base_multi_fp_453_povray = np.mean(base_multi_fp_453_povray_list).round(2) if not np.isnan(np.mean(base_multi_fp_453_povray_list)) else None
+            average_base_multi_fp_454_calculix = np.mean(base_multi_fp_454_calculix_list).round(2) if not np.isnan(np.mean(base_multi_fp_454_calculix_list)) else None
+            average_base_multi_fp_459_GemsFDTD = np.mean(base_multi_fp_459_GemsFDTD_list).round(2) if not np.isnan(np.mean(base_multi_fp_459_GemsFDTD_list)) else None
+            average_base_multi_fp_465_tonto = np.mean(base_multi_fp_465_tonto_list).round(2) if not np.isnan(np.mean(base_multi_fp_465_tonto_list)) else None
+            average_base_multi_fp_470_lbm = np.mean(base_multi_fp_470_lbm_list).round(2) if not np.isnan(np.mean(base_multi_fp_470_lbm_list)) else None
+            average_base_multi_fp_481_wrf = np.mean(base_multi_fp_481_wrf_list).round(2) if not np.isnan(np.mean(base_multi_fp_481_wrf_list)) else None
+            average_base_multi_fp_482_sphinx3 = np.mean(base_multi_fp_482_sphinx3_list).round(2) if not np.isnan(np.mean(base_multi_fp_482_sphinx3_list)) else None
+            average_base_multi_fp_SPECfp_2006 = np.mean(base_multi_fp_SPECfp_2006_list).round(2) if not np.isnan(np.mean(base_multi_fp_SPECfp_2006_list)) else None
+            average_peak_single_int_400_perlbench = np.mean(peak_single_int_400_perlbench_list).round(2) if not np.isnan(np.mean(peak_single_int_400_perlbench_list)) else None
+            average_peak_single_int_401_bzip2 = np.mean(peak_single_int_401_bzip2_list).round(2) if not np.isnan(np.mean(peak_single_int_401_bzip2_list)) else None
+            average_peak_single_int_403_gcc = np.mean(peak_single_int_403_gcc_list).round(2) if not np.isnan(np.mean(peak_single_int_403_gcc_list)) else None
+            average_peak_single_int_429_mcf = np.mean(peak_single_int_429_mcf_list).round(2) if not np.isnan(np.mean(peak_single_int_429_mcf_list)) else None
+            average_peak_single_int_445_gobmk = np.mean(peak_single_int_445_gobmk_list).round(2) if not np.isnan(np.mean(peak_single_int_445_gobmk_list)) else None
+            average_peak_single_int_456_hmmer = np.mean(peak_single_int_456_hmmer_list).round(2) if not np.isnan(np.mean(peak_single_int_456_hmmer_list)) else None
+            average_peak_single_int_458_sjeng = np.mean(peak_single_int_458_sjeng_list).round(2) if not np.isnan(np.mean(peak_single_int_458_sjeng_list)) else None
+            average_peak_single_int_462_libquantum = np.mean(peak_single_int_462_libquantum_list).round(2) if not np.isnan(np.mean(peak_single_int_462_libquantum_list)) else None
+            average_peak_single_int_464_h264ref = np.mean(peak_single_int_464_h264ref_list).round(2) if not np.isnan(np.mean(peak_single_int_464_h264ref_list)) else None
+            average_peak_single_int_471_omnetpp = np.mean(peak_single_int_471_omnetpp_list).round(2) if not np.isnan(np.mean(peak_single_int_471_omnetpp_list)) else None
+            average_peak_single_int_473_astar = np.mean(peak_single_int_473_astar_list).round(2) if not np.isnan(np.mean(peak_single_int_473_astar_list)) else None
+            average_peak_single_int_483_xalancbmk = np.mean(peak_single_int_483_xalancbmk_list).round(2) if not np.isnan(np.mean(peak_single_int_483_xalancbmk_list)) else None
+            average_peak_single_int_SPECint_2006 = np.mean(peak_single_int_SPECint_2006_list).round(2) if not np.isnan(np.mean(peak_single_int_SPECint_2006_list)) else None
+            average_peak_single_fp_410_bwaves = np.mean(peak_single_fp_410_bwaves_list).round(2) if not np.isnan(np.mean(peak_single_fp_410_bwaves_list)) else None
+            average_peak_single_fp_416_gamess = np.mean(peak_single_fp_416_gamess_list).round(2) if not np.isnan(np.mean(peak_single_fp_416_gamess_list)) else None
+            average_peak_single_fp_433_milc = np.mean(peak_single_fp_433_milc_list).round(2) if not np.isnan(np.mean(peak_single_fp_433_milc_list)) else None
+            average_peak_single_fp_434_zeusmp = np.mean(peak_single_fp_434_zeusmp_list).round(2) if not np.isnan(np.mean(peak_single_fp_434_zeusmp_list)) else None
+            average_peak_single_fp_435_gromacs = np.mean(peak_single_fp_435_gromacs_list).round(2) if not np.isnan(np.mean(peak_single_fp_435_gromacs_list)) else None
+            average_peak_single_fp_436_cactusADM = np.mean(peak_single_fp_436_cactusADM_list).round(2) if not np.isnan(np.mean(peak_single_fp_436_cactusADM_list)) else None
+            average_peak_single_fp_437_leslie3d = np.mean(peak_single_fp_437_leslie3d_list).round(2) if not np.isnan(np.mean(peak_single_fp_437_leslie3d_list)) else None
+            average_peak_single_fp_444_namd = np.mean(peak_single_fp_444_namd_list).round(2) if not np.isnan(np.mean(peak_single_fp_444_namd_list)) else None
+            average_peak_single_fp_447_dealII = np.mean(peak_single_fp_447_dealII_list).round(2) if not np.isnan(np.mean(peak_single_fp_447_dealII_list)) else None
+            average_peak_single_fp_450_soplex = np.mean(peak_single_fp_450_soplex_list).round(2) if not np.isnan(np.mean(peak_single_fp_450_soplex_list)) else None
+            average_peak_single_fp_453_povray = np.mean(peak_single_fp_453_povray_list).round(2) if not np.isnan(np.mean(peak_single_fp_453_povray_list)) else None
+            average_peak_single_fp_454_calculix = np.mean(peak_single_fp_454_calculix_list).round(2) if not np.isnan(np.mean(peak_single_fp_454_calculix_list)) else None
+            average_peak_single_fp_459_GemsFDTD = np.mean(peak_single_fp_459_GemsFDTD_list).round(2) if not np.isnan(np.mean(peak_single_fp_459_GemsFDTD_list)) else None
+            average_peak_single_fp_465_tonto = np.mean(peak_single_fp_465_tonto_list).round(2) if not np.isnan(np.mean(peak_single_fp_465_tonto_list)) else None
+            average_peak_single_fp_470_lbm = np.mean(peak_single_fp_470_lbm_list).round(2) if not np.isnan(np.mean(peak_single_fp_470_lbm_list)) else None
+            average_peak_single_fp_481_wrf = np.mean(peak_single_fp_481_wrf_list).round(2) if not np.isnan(np.mean(peak_single_fp_481_wrf_list)) else None
+            average_peak_single_fp_482_sphinx3 = np.mean(peak_single_fp_482_sphinx3_list).round(2) if not np.isnan(np.mean(peak_single_fp_482_sphinx3_list)) else None
+            average_peak_single_fp_SPECfp_2006 = np.mean(peak_single_fp_SPECfp_2006_list).round(2) if not np.isnan(np.mean(peak_single_fp_SPECfp_2006_list)) else None
+            average_peak_multi_int_400_perlbench = np.mean(peak_multi_int_400_perlbench_list).round(2) if not np.isnan(np.mean(peak_multi_int_400_perlbench_list)) else None
+            average_peak_multi_int_401_bzip2 = np.mean(peak_multi_int_401_bzip2_list).round(2) if not np.isnan(np.mean(peak_multi_int_401_bzip2_list)) else None
+            average_peak_multi_int_403_gcc = np.mean(peak_multi_int_403_gcc_list).round(2) if not np.isnan(np.mean(peak_multi_int_403_gcc_list)) else None
+            average_peak_multi_int_429_mcf = np.mean(peak_multi_int_429_mcf_list).round(2) if not np.isnan(np.mean(peak_multi_int_429_mcf_list)) else None
+            average_peak_multi_int_445_gobmk = np.mean(peak_multi_int_445_gobmk_list).round(2) if not np.isnan(np.mean(peak_multi_int_445_gobmk_list)) else None
+            average_peak_multi_int_456_hmmer = np.mean(peak_multi_int_456_hmmer_list).round(2) if not np.isnan(np.mean(peak_multi_int_456_hmmer_list)) else None
+            average_peak_multi_int_458_sjeng = np.mean(peak_multi_int_458_sjeng_list).round(2) if not np.isnan(np.mean(peak_multi_int_458_sjeng_list)) else None
+            average_peak_multi_int_462_libquantum = np.mean(peak_multi_int_462_libquantum_list).round(2) if not np.isnan(np.mean(peak_multi_int_462_libquantum_list)) else None
+            average_peak_multi_int_464_h264ref = np.mean(peak_multi_int_464_h264ref_list).round(2) if not np.isnan(np.mean(peak_multi_int_464_h264ref_list)) else None
+            average_peak_multi_int_471_omnetpp = np.mean(peak_multi_int_471_omnetpp_list).round(2) if not np.isnan(np.mean(peak_multi_int_471_omnetpp_list)) else None
+            average_peak_multi_int_473_astar = np.mean(peak_multi_int_473_astar_list).round(2) if not np.isnan(np.mean(peak_multi_int_473_astar_list)) else None
+            average_peak_multi_int_483_xalancbmk = np.mean(peak_multi_int_483_xalancbmk_list).round(2) if not np.isnan(np.mean(peak_multi_int_483_xalancbmk_list)) else None
+            average_peak_multi_int_SPECint_2006 = np.mean(peak_multi_int_SPECint_2006_list).round(2) if not np.isnan(np.mean(peak_multi_int_SPECint_2006_list)) else None
+            average_peak_multi_fp_410_bwaves = np.mean(peak_multi_fp_410_bwaves_list).round(2) if not np.isnan(np.mean(peak_multi_fp_410_bwaves_list)) else None
+            average_peak_multi_fp_416_gamess = np.mean(peak_multi_fp_416_gamess_list).round(2) if not np.isnan(np.mean(peak_multi_fp_416_gamess_list)) else None
+            average_peak_multi_fp_433_milc = np.mean(peak_multi_fp_433_milc_list).round(2) if not np.isnan(np.mean(peak_multi_fp_433_milc_list)) else None
+            average_peak_multi_fp_434_zeusmp = np.mean(peak_multi_fp_434_zeusmp_list).round(2) if not np.isnan(np.mean(peak_multi_fp_434_zeusmp_list)) else None
+            average_peak_multi_fp_435_gromacs = np.mean(peak_multi_fp_435_gromacs_list).round(2) if not np.isnan(np.mean(peak_multi_fp_435_gromacs_list)) else None
+            average_peak_multi_fp_436_cactusADM = np.mean(peak_multi_fp_436_cactusADM_list).round(2) if not np.isnan(np.mean(peak_multi_fp_436_cactusADM_list)) else None
+            average_peak_multi_fp_437_leslie3d = np.mean(peak_multi_fp_437_leslie3d_list).round(2) if not np.isnan(np.mean(peak_multi_fp_437_leslie3d_list)) else None
+            average_peak_multi_fp_444_namd = np.mean(peak_multi_fp_444_namd_list).round(2) if not np.isnan(np.mean(peak_multi_fp_444_namd_list)) else None
+            average_peak_multi_fp_447_dealII = np.mean(peak_multi_fp_447_dealII_list).round(2) if not np.isnan(np.mean(peak_multi_fp_447_dealII_list)) else None
+            average_peak_multi_fp_450_soplex = np.mean(peak_multi_fp_450_soplex_list).round(2) if not np.isnan(np.mean(peak_multi_fp_450_soplex_list)) else None
+            average_peak_multi_fp_453_povray = np.mean(peak_multi_fp_453_povray_list).round(2) if not np.isnan(np.mean(peak_multi_fp_453_povray_list)) else None
+            average_peak_multi_fp_454_calculix = np.mean(peak_multi_fp_454_calculix_list).round(2) if not np.isnan(np.mean(peak_multi_fp_454_calculix_list)) else None
+            average_peak_multi_fp_459_GemsFDTD = np.mean(peak_multi_fp_459_GemsFDTD_list).round(2) if not np.isnan(np.mean(peak_multi_fp_459_GemsFDTD_list)) else None
+            average_peak_multi_fp_465_tonto = np.mean(peak_multi_fp_465_tonto_list).round(2) if not np.isnan(np.mean(peak_multi_fp_465_tonto_list)) else None
+            average_peak_multi_fp_470_lbm = np.mean(peak_multi_fp_470_lbm_list).round(2) if not np.isnan(np.mean(peak_multi_fp_470_lbm_list)) else None
+            average_peak_multi_fp_481_wrf = np.mean(peak_multi_fp_481_wrf_list).round(2) if not np.isnan(np.mean(peak_multi_fp_481_wrf_list)) else None
+            average_peak_multi_fp_482_sphinx3 = np.mean(peak_multi_fp_482_sphinx3_list).round(2) if not np.isnan(np.mean(peak_multi_fp_482_sphinx3_list)) else None
+            average_peak_multi_fp_SPECfp_2006 = np.mean(peak_multi_fp_SPECfp_2006_list).round(2) if not np.isnan(np.mean(peak_multi_fp_SPECfp_2006_list)) else None
 
-        new_data = {'execute_cmd': execute_cmd,
-                    'modify_parameters': modify_parameters,
-
-                    'base_single_int_400_perlbench': base_single_int_400_perlbench,
-                    'base_single_int_401_bzip2': base_single_int_401_bzip2,
-                    'base_single_int_403_gcc': base_single_int_403_gcc,
-                    'base_single_int_429_mcf': base_single_int_429_mcf,
-                    'base_single_int_445_gobmk': base_single_int_445_gobmk,
-                    'base_single_int_456_hmmer': base_single_int_456_hmmer,
-                    'base_single_int_458_sjeng': base_single_int_458_sjeng,
-                    'base_single_int_462_libquantum': base_single_int_462_libquantum,
-                    'base_single_int_464_h264ref': base_single_int_464_h264ref,
-                    'base_single_int_471_omnetpp': base_single_int_471_omnetpp,
-                    'base_single_int_473_astar': base_single_int_473_astar,
-                    'base_single_int_483_xalancbmk': base_single_int_483_xalancbmk,
-                    'base_single_int_SPECint_2006': base_single_int_SPECint_2006,
-                    'base_single_fp_410_bwaves': base_single_fp_410_bwaves,
-                    'base_single_fp_416_gamess': base_single_fp_416_gamess,
-                    'base_single_fp_433_milc': base_single_fp_433_milc,
-                    'base_single_fp_434_zeusmp': base_single_fp_434_zeusmp,
-                    'base_single_fp_435_gromacs': base_single_fp_435_gromacs,
-                    'base_single_fp_436_cactusADM': base_single_fp_436_cactusADM,
-                    'base_single_fp_437_leslie3d': base_single_fp_437_leslie3d,
-                    'base_single_fp_444_namd': base_single_fp_444_namd,
-                    'base_single_fp_447_dealII': base_single_fp_447_dealII,
-                    'base_single_fp_450_soplex': base_single_fp_450_soplex,
-                    'base_single_fp_453_povray': base_single_fp_453_povray,
-                    'base_single_fp_454_calculix': base_single_fp_454_calculix,
-                    'base_single_fp_459_GemsFDTD': base_single_fp_459_GemsFDTD,
-                    'base_single_fp_465_tonto': base_single_fp_465_tonto,
-                    'base_single_fp_470_lbm': base_single_fp_470_lbm,
-                    'base_single_fp_481_wrf': base_single_fp_481_wrf,
-                    'base_single_fp_482_sphinx3': base_single_fp_482_sphinx3,
-                    'base_single_fp_SPECfp_2006': base_single_fp_SPECfp_2006,
-                    'base_multi_int_400_perlbench': base_multi_int_400_perlbench,
-                    'base_multi_int_401_bzip2': base_multi_int_401_bzip2,
-                    'base_multi_int_403_gcc': base_multi_int_403_gcc,
-                    'base_multi_int_429_mcf': base_multi_int_429_mcf,
-                    'base_multi_int_445_gobmk': base_multi_int_445_gobmk,
-                    'base_multi_int_456_hmmer': base_multi_int_456_hmmer,
-                    'base_multi_int_458_sjeng': base_multi_int_458_sjeng,
-                    'base_multi_int_462_libquantum': base_multi_int_462_libquantum,
-                    'base_multi_int_464_h264ref': base_multi_int_464_h264ref,
-                    'base_multi_int_471_omnetpp': base_multi_int_471_omnetpp,
-                    'base_multi_int_473_astar': base_multi_int_473_astar,
-                    'base_multi_int_483_xalancbmk': base_multi_int_483_xalancbmk,
-                    'base_multi_int_SPECint_2006': base_multi_int_SPECint_2006,
-                    'base_multi_fp_410_bwaves': base_multi_fp_410_bwaves,
-                    'base_multi_fp_416_gamess': base_multi_fp_416_gamess,
-                    'base_multi_fp_433_milc': base_multi_fp_433_milc,
-                    'base_multi_fp_434_zeusmp': base_multi_fp_434_zeusmp,
-                    'base_multi_fp_435_gromacs': base_multi_fp_435_gromacs,
-                    'base_multi_fp_436_cactusADM': base_multi_fp_436_cactusADM,
-                    'base_multi_fp_437_leslie3d': base_multi_fp_437_leslie3d,
-                    'base_multi_fp_444_namd': base_multi_fp_444_namd,
-                    'base_multi_fp_447_dealII': base_multi_fp_447_dealII,
-                    'base_multi_fp_450_soplex': base_multi_fp_450_soplex,
-                    'base_multi_fp_453_povray': base_multi_fp_453_povray,
-                    'base_multi_fp_454_calculix': base_multi_fp_454_calculix,
-                    'base_multi_fp_459_GemsFDTD': base_multi_fp_459_GemsFDTD,
-                    'base_multi_fp_465_tonto': base_multi_fp_465_tonto,
-                    'base_multi_fp_470_lbm': base_multi_fp_470_lbm,
-                    'base_multi_fp_481_wrf': base_multi_fp_481_wrf,
-                    'base_multi_fp_482_sphinx3': base_multi_fp_482_sphinx3,
-                    'base_multi_fp_SPECfp_2006': base_multi_fp_SPECfp_2006,
-                    'peak_single_int_400_perlbench': peak_single_int_400_perlbench,
-                    'peak_single_int_401_bzip2': peak_single_int_401_bzip2,
-                    'peak_single_int_403_gcc': peak_single_int_403_gcc,
-                    'peak_single_int_429_mcf': peak_single_int_429_mcf,
-                    'peak_single_int_445_gobmk': peak_single_int_445_gobmk,
-                    'peak_single_int_456_hmmer': peak_single_int_456_hmmer,
-                    'peak_single_int_458_sjeng': peak_single_int_458_sjeng,
-                    'peak_single_int_462_libquantum': peak_single_int_462_libquantum,
-                    'peak_single_int_464_h264ref': peak_single_int_464_h264ref,
-                    'peak_single_int_471_omnetpp': peak_single_int_471_omnetpp,
-                    'peak_single_int_473_astar': peak_single_int_473_astar,
-                    'peak_single_int_483_xalancbmk': peak_single_int_483_xalancbmk,
-                    'peak_single_int_SPECint_2006': peak_single_int_SPECint_2006,
-                    'peak_single_fp_410_bwaves': peak_single_fp_410_bwaves,
-                    'peak_single_fp_416_gamess': peak_single_fp_416_gamess,
-                    'peak_single_fp_433_milc': peak_single_fp_433_milc,
-                    'peak_single_fp_434_zeusmp': peak_single_fp_434_zeusmp,
-                    'peak_single_fp_435_gromacs': peak_single_fp_435_gromacs,
-                    'peak_single_fp_436_cactusADM': peak_single_fp_436_cactusADM,
-                    'peak_single_fp_437_leslie3d': peak_single_fp_437_leslie3d,
-                    'peak_single_fp_444_namd': peak_single_fp_444_namd,
-                    'peak_single_fp_447_dealII': peak_single_fp_447_dealII,
-                    'peak_single_fp_450_soplex': peak_single_fp_450_soplex,
-                    'peak_single_fp_453_povray': peak_single_fp_453_povray,
-                    'peak_single_fp_454_calculix': peak_single_fp_454_calculix,
-                    'peak_single_fp_459_GemsFDTD': peak_single_fp_459_GemsFDTD,
-                    'peak_single_fp_465_tonto': peak_single_fp_465_tonto,
-                    'peak_single_fp_470_lbm': peak_single_fp_470_lbm,
-                    'peak_single_fp_481_wrf': peak_single_fp_481_wrf,
-                    'peak_single_fp_482_sphinx3': peak_single_fp_482_sphinx3,
-                    'peak_single_fp_SPECfp_2006': peak_single_fp_SPECfp_2006,
-                    'peak_multi_int_400_perlbench': peak_multi_int_400_perlbench,
-                    'peak_multi_int_401_bzip2': peak_multi_int_401_bzip2,
-                    'peak_multi_int_403_gcc': peak_multi_int_403_gcc,
-                    'peak_multi_int_429_mcf': peak_multi_int_429_mcf,
-                    'peak_multi_int_445_gobmk': peak_multi_int_445_gobmk,
-                    'peak_multi_int_456_hmmer': peak_multi_int_456_hmmer,
-                    'peak_multi_int_458_sjeng': peak_multi_int_458_sjeng,
-                    'peak_multi_int_462_libquantum': peak_multi_int_462_libquantum,
-                    'peak_multi_int_464_h264ref': peak_multi_int_464_h264ref,
-                    'peak_multi_int_471_omnetpp': peak_multi_int_471_omnetpp,
-                    'peak_multi_int_473_astar': peak_multi_int_473_astar,
-                    'peak_multi_int_483_xalancbmk': peak_multi_int_483_xalancbmk,
-                    'peak_multi_int_SPECint_2006': peak_multi_int_SPECint_2006,
-                    'peak_multi_fp_410_bwaves': peak_multi_fp_410_bwaves,
-                    'peak_multi_fp_416_gamess': peak_multi_fp_416_gamess,
-                    'peak_multi_fp_433_milc': peak_multi_fp_433_milc,
-                    'peak_multi_fp_434_zeusmp': peak_multi_fp_434_zeusmp,
-                    'peak_multi_fp_435_gromacs': peak_multi_fp_435_gromacs,
-                    'peak_multi_fp_436_cactusADM': peak_multi_fp_436_cactusADM,
-                    'peak_multi_fp_437_leslie3d': peak_multi_fp_437_leslie3d,
-                    'peak_multi_fp_444_namd': peak_multi_fp_444_namd,
-                    'peak_multi_fp_447_dealII': peak_multi_fp_447_dealII,
-                    'peak_multi_fp_450_soplex': peak_multi_fp_450_soplex,
-                    'peak_multi_fp_453_povray': peak_multi_fp_453_povray,
-                    'peak_multi_fp_454_calculix': peak_multi_fp_454_calculix,
-                    'peak_multi_fp_459_GemsFDTD': peak_multi_fp_459_GemsFDTD,
-                    'peak_multi_fp_465_tonto': peak_multi_fp_465_tonto,
-                    'peak_multi_fp_470_lbm': peak_multi_fp_470_lbm,
-                    'peak_multi_fp_481_wrf': peak_multi_fp_481_wrf,
-                    'peak_multi_fp_482_sphinx3': peak_multi_fp_482_sphinx3,
-                    'peak_multi_fp_SPECfp_2006': peak_multi_fp_SPECfp_2006,
-                    }
-        # 将值为 NaN 的项转换为 None，其他值保持不变
-        for key, value in new_data.items():
-            if key not in ['execute_cmd', 'modify_parameters']:
-                if value is not None:
-                    try:
-                        numeric_value = float(value)  # 将字符串转换为浮点数
-                        if math.isnan(numeric_value):
-                            new_data[key] = None
-                    except ValueError:
-                        pass
-        return new_data
-
-    def do_base_data(self,data):
-        datas = [
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '400.perlbench', 'column5': data['base_single_int_400_perlbench']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '401.bzip2', 'column5': data['base_single_int_401_bzip2']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '403.gcc', 'column5': data['base_single_int_403_gcc']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '429.mcf', 'column5': data['base_single_int_429_mcf']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '445.gobmk', 'column5': data['base_single_int_445_gobmk']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '456.hmmer', 'column5': data['base_single_int_456_hmmer']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '458.sjeng', 'column5': data['base_single_int_458_sjeng']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '462.libquantum', 'column5': data['base_single_int_462_libquantum']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '464.h264ref', 'column5': data['base_single_int_464_h264ref']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '471.omnetpp', 'column5': data['base_single_int_471_omnetpp']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '473.astar', 'column5': data['base_single_int_473_astar']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '483.xalancbmk', 'column5': data['base_single_int_483_xalancbmk']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': 'SPECint_2006', 'column5': data['base_single_int_SPECint_2006']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '410.bwaves', 'column5': data['base_single_fp_410_bwaves']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '416.gamess', 'column5': data['base_single_fp_416_gamess']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '433.milc', 'column5': data['base_single_fp_433_milc']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '434.zeusmp', 'column5': data['base_single_fp_434_zeusmp']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '435.gromacs', 'column5': data['base_single_fp_435_gromacs']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '436.cactusADM', 'column5': data['base_single_fp_436_cactusADM']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '437.leslie3d', 'column5': data['base_single_fp_437_leslie3d']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '444.namd', 'column5': data['base_single_fp_444_namd']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '447.dealII', 'column5': data['base_single_fp_447_dealII']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '450.soplex', 'column5': data['base_single_fp_450_soplex']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '453.povray', 'column5': data['base_single_fp_453_povray']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '454.calculix', 'column5': data['base_single_fp_454_calculix']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '459.GemsFDTD', 'column5': data['base_single_fp_459_GemsFDTD']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '465.tonto', 'column5': data['base_single_fp_465_tonto']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '470.lbm', 'column5': data['base_single_fp_470_lbm']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '481.wrf', 'column5': data['base_single_fp_481_wrf']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '482.sphinx3', 'column5': data['base_single_fp_482_sphinx3']},
-            {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': 'SPECfp_2006', 'column5': data['base_single_fp_SPECfp_2006']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '400.perlbench', 'column5': data['base_multi_int_400_perlbench']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '401.bzip2', 'column5': data['base_multi_int_401_bzip2']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '403.gcc', 'column5': data['base_multi_int_403_gcc']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '429.mcf', 'column5': data['base_multi_int_429_mcf']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '445.gobmk', 'column5': data['base_multi_int_445_gobmk']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '456.hmmer', 'column5': data['base_multi_int_456_hmmer']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '458.sjeng', 'column5': data['base_multi_int_458_sjeng']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '462.libquantum', 'column5': data['base_multi_int_462_libquantum']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '464.h264ref', 'column5': data['base_multi_int_464_h264ref']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '471.omnetpp', 'column5': data['base_multi_int_471_omnetpp']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '473.astar', 'column5': data['base_multi_int_473_astar']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '483.xalancbmk', 'column5': data['base_multi_int_483_xalancbmk']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': 'SPECint_2006', 'column5': data['base_multi_int_SPECint_2006']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '410.bwaves', 'column5': data['base_multi_fp_410_bwaves']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '416.gamess', 'column5': data['base_multi_fp_416_gamess']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '433.milc', 'column5': data['base_multi_fp_433_milc']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '434.zeusmp', 'column5': data['base_multi_fp_434_zeusmp']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '435.gromacs', 'column5': data['base_multi_fp_435_gromacs']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '436.cactusADM', 'column5': data['base_multi_fp_436_cactusADM']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '437.leslie3d', 'column5': data['base_multi_fp_437_leslie3d']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '444.namd', 'column5': data['base_multi_fp_444_namd']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '447.dealII', 'column5': data['base_multi_fp_447_dealII']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '450.soplex', 'column5': data['base_multi_fp_450_soplex']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '453.povray', 'column5': data['base_multi_fp_453_povray']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '454.calculix', 'column5': data['base_multi_fp_454_calculix']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '459.GemsFDTD', 'column5': data['base_multi_fp_459_GemsFDTD']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '465.tonto', 'column5': data['base_multi_fp_465_tonto']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '470.lbm', 'column5': data['base_multi_fp_470_lbm']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '481.wrf', 'column5': data['base_multi_fp_481_wrf']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '482.sphinx3', 'column5': data['base_multi_fp_482_sphinx3']},
-            {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': 'SPECfp_2006', 'column5': data['base_multi_fp_SPECfp_2006']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '400.perlbench', 'column5': data['peak_single_int_400_perlbench']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '401.bzip2', 'column5': data['peak_single_int_401_bzip2']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '403.gcc', 'column5': data['peak_single_int_403_gcc']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '429.mcf', 'column5': data['peak_single_int_429_mcf']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '445.gobmk', 'column5': data['peak_single_int_445_gobmk']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '456.hmmer', 'column5': data['peak_single_int_456_hmmer']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '458.sjeng', 'column5': data['peak_single_int_458_sjeng']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '462.libquantum', 'column5': data['peak_single_int_462_libquantum']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '464.h264ref', 'column5': data['peak_single_int_464_h264ref']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '471.omnetpp', 'column5': data['peak_single_int_471_omnetpp']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '473.astar', 'column5': data['peak_single_int_473_astar']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '483.xalancbmk', 'column5': data['peak_single_int_483_xalancbmk']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': 'SPECint_2006', 'column5': data['peak_single_int_SPECint_2006']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '410.bwaves', 'column5': data['peak_single_fp_410_bwaves']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '416.gamess', 'column5': data['peak_single_fp_416_gamess']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '433.milc', 'column5': data['peak_single_fp_433_milc']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '434.zeusmp', 'column5': data['peak_single_fp_434_zeusmp']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '435.gromacs', 'column5': data['peak_single_fp_435_gromacs']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '436.cactusADM', 'column5': data['peak_single_fp_436_cactusADM']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '437.leslie3d', 'column5': data['peak_single_fp_437_leslie3d']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '444.namd', 'column5': data['peak_single_fp_444_namd']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '447.dealII', 'column5': data['peak_single_fp_447_dealII']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '450.soplex', 'column5': data['peak_single_fp_450_soplex']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '453.povray', 'column5': data['peak_single_fp_453_povray']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '454.calculix', 'column5': data['peak_single_fp_454_calculix']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '459.GemsFDTD', 'column5': data['peak_single_fp_459_GemsFDTD']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '465.tonto', 'column5': data['peak_single_fp_465_tonto']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '470.lbm', 'column5': data['peak_single_fp_470_lbm']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '481.wrf', 'column5': data['peak_single_fp_481_wrf']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '482.sphinx3', 'column5': data['peak_single_fp_482_sphinx3']},
-            {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': 'SPECfp_2006', 'column5': data['peak_single_fp_SPECfp_2006']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '400.perlbench', 'column5': data['peak_multi_int_400_perlbench']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '401.bzip2', 'column5': data['peak_multi_int_401_bzip2']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '403.gcc', 'column5': data['peak_multi_int_403_gcc']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '429.mcf', 'column5': data['peak_multi_int_429_mcf']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '445.gobmk', 'column5': data['peak_multi_int_445_gobmk']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '456.hmmer', 'column5': data['peak_multi_int_456_hmmer']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '458.sjeng', 'column5': data['peak_multi_int_458_sjeng']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '462.libquantum', 'column5': data['peak_multi_int_462_libquantum']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '464.h264ref', 'column5': data['peak_multi_int_464_h264ref']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '471.omnetpp', 'column5': data['peak_multi_int_471_omnetpp']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '473.astar', 'column5': data['peak_multi_int_473_astar']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '483.xalancbmk', 'column5': data['peak_multi_int_483_xalancbmk']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': 'SPECint_2006', 'column5': data['peak_multi_int_SPECint_2006']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '410.bwaves', 'column5': data['peak_multi_fp_410_bwaves']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '416.gamess', 'column5': data['peak_multi_fp_416_gamess']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '433.milc', 'column5': data['peak_multi_fp_433_milc']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '434.zeusmp', 'column5': data['peak_multi_fp_434_zeusmp']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '435.gromacs', 'column5': data['peak_multi_fp_435_gromacs']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '436.cactusADM', 'column5': data['peak_multi_fp_436_cactusADM']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '437.leslie3d', 'column5': data['peak_multi_fp_437_leslie3d']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '444.namd', 'column5': data['peak_multi_fp_444_namd']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '447.dealII', 'column5': data['peak_multi_fp_447_dealII']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '450.soplex', 'column5': data['peak_multi_fp_450_soplex']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '453.povray', 'column5': data['peak_multi_fp_453_povray']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '454.calculix', 'column5': data['peak_multi_fp_454_calculix']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '459.GemsFDTD', 'column5': data['peak_multi_fp_459_GemsFDTD']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '465.tonto', 'column5': data['peak_multi_fp_465_tonto']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '470.lbm', 'column5': data['peak_multi_fp_470_lbm']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '481.wrf', 'column5': data['peak_multi_fp_481_wrf']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '482.sphinx3', 'column5': data['peak_multi_fp_482_sphinx3']},
-            {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': 'SPECfp_2006', 'column5': data['peak_multi_fp_SPECfp_2006']},
-        ]
-        return datas
+            # 查到mark-name相同的数据拼接为一组：serializer.data
+            for mark_name in groups:
+                temp_datas = serializer_.filter(mark_name=mark_name)
+                datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
+                datas[1]['column' + str(column_index)] = temp_datas[0].execute_cmd
+                datas[2]['column' + str(column_index)] = temp_datas[0].modify_parameters
+                # 基准数据和对比数据的全部数据
+                for data in temp_datas:
+                    # 判断数据的TuneType确定是base还是peak
+                    if data.tuneType == 'base':
+                        if data.thread == '单线程':
+                            if data.dtype == 'int':
+                                datas[3]['column' + str(column_index)] = data.int_400_perlbench
+                                datas[4]['column' + str(column_index)] = data.int_401_bzip2
+                                datas[5]['column' + str(column_index)] = data.int_403_gcc
+                                datas[6]['column' + str(column_index)] = data.int_429_mcf
+                                datas[7]['column' + str(column_index)] = data.int_445_gobmk
+                                datas[8]['column' + str(column_index)] = data.int_456_hmmer
+                                datas[9]['column' + str(column_index)] = data.int_458_sjeng
+                                datas[10]['column' + str(column_index)] = data.int_462_libquantum
+                                datas[11]['column' + str(column_index)] = data.int_464_h264ref
+                                datas[12]['column' + str(column_index)] = data.int_471_omnetpp
+                                datas[13]['column' + str(column_index)] = data.int_473_astar
+                                datas[14]['column' + str(column_index)] = data.int_483_xalancbmk
+                                datas[15]['column' + str(column_index)] = data.int_SPECint_2006
+                            elif data.dtype == 'fp':
+                                datas[16]['column' + str(column_index)] = data.fp_410_bwaves
+                                datas[17]['column' + str(column_index)] = data.fp_416_gamess
+                                datas[18]['column' + str(column_index)] = data.fp_433_milc
+                                datas[19]['column' + str(column_index)] = data.fp_434_zeusmp
+                                datas[20]['column' + str(column_index)] = data.fp_435_gromacs
+                                datas[21]['column' + str(column_index)] = data.fp_436_cactusADM
+                                datas[22]['column' + str(column_index)] = data.fp_437_leslie3d
+                                datas[23]['column' + str(column_index)] = data.fp_444_namd
+                                datas[24]['column' + str(column_index)] = data.fp_447_dealII
+                                datas[25]['column' + str(column_index)] = data.fp_450_soplex
+                                datas[26]['column' + str(column_index)] = data.fp_453_povray
+                                datas[27]['column' + str(column_index)] = data.fp_454_calculix
+                                datas[28]['column' + str(column_index)] = data.fp_459_GemsFDTD
+                                datas[29]['column' + str(column_index)] = data.fp_465_tonto
+                                datas[30]['column' + str(column_index)] = data.fp_470_lbm
+                                datas[31]['column' + str(column_index)] = data.fp_481_wrf
+                                datas[32]['column' + str(column_index)] = data.fp_482_sphinx3
+                                datas[33]['column' + str(column_index)] = data.fp_SPECfp_2006
+                        elif data.thread == '多线程':
+                            if data.dtype == 'int':
+                                datas[34]['column' + str(column_index)] = data.int_400_perlbench
+                                datas[35]['column' + str(column_index)] = data.int_401_bzip2
+                                datas[36]['column' + str(column_index)] = data.int_403_gcc
+                                datas[37]['column' + str(column_index)] = data.int_429_mcf
+                                datas[38]['column' + str(column_index)] = data.int_445_gobmk
+                                datas[39]['column' + str(column_index)] = data.int_456_hmmer
+                                datas[40]['column' + str(column_index)] = data.int_458_sjeng
+                                datas[41]['column' + str(column_index)] = data.int_462_libquantum
+                                datas[42]['column' + str(column_index)] = data.int_464_h264ref
+                                datas[43]['column' + str(column_index)] = data.int_471_omnetpp
+                                datas[44]['column' + str(column_index)] = data.int_473_astar
+                                datas[45]['column' + str(column_index)] = data.int_483_xalancbmk
+                                datas[46]['column' + str(column_index)] = data.int_SPECint_2006
+                            elif data.dtype == 'fp':
+                                datas[47]['column' + str(column_index)] = data.fp_410_bwaves
+                                datas[48]['column' + str(column_index)] = data.fp_416_gamess
+                                datas[49]['column' + str(column_index)] = data.fp_433_milc
+                                datas[50]['column' + str(column_index)] = data.fp_434_zeusmp
+                                datas[51]['column' + str(column_index)] = data.fp_435_gromacs
+                                datas[52]['column' + str(column_index)] = data.fp_436_cactusADM
+                                datas[53]['column' + str(column_index)] = data.fp_437_leslie3d
+                                datas[54]['column' + str(column_index)] = data.fp_444_namd
+                                datas[55]['column' + str(column_index)] = data.fp_447_dealII
+                                datas[56]['column' + str(column_index)] = data.fp_450_soplex
+                                datas[57]['column' + str(column_index)] = data.fp_453_povray
+                                datas[58]['column' + str(column_index)] = data.fp_454_calculix
+                                datas[59]['column' + str(column_index)] = data.fp_459_GemsFDTD
+                                datas[60]['column' + str(column_index)] = data.fp_465_tonto
+                                datas[61]['column' + str(column_index)] = data.fp_470_lbm
+                                datas[62]['column' + str(column_index)] = data.fp_481_wrf
+                                datas[63]['column' + str(column_index)] = data.fp_482_sphinx3
+                                datas[64]['column' + str(column_index)] = data.fp_SPECfp_2006
+                    elif data.tuneType == 'peak':
+                        if data.thread == '单线程':
+                            if data.dtype == 'int':
+                                datas[65]['column' + str(column_index)] = data.int_400_perlbench
+                                datas[66]['column' + str(column_index)] = data.int_401_bzip2
+                                datas[67]['column' + str(column_index)] = data.int_403_gcc
+                                datas[68]['column' + str(column_index)] = data.int_429_mcf
+                                datas[69]['column' + str(column_index)] = data.int_445_gobmk
+                                datas[70]['column' + str(column_index)] = data.int_456_hmmer
+                                datas[71]['column' + str(column_index)] = data.int_458_sjeng
+                                datas[72]['column' + str(column_index)] = data.int_462_libquantum
+                                datas[73]['column' + str(column_index)] = data.int_464_h264ref
+                                datas[74]['column' + str(column_index)] = data.int_471_omnetpp
+                                datas[75]['column' + str(column_index)] = data.int_473_astar
+                                datas[76]['column' + str(column_index)] = data.int_483_xalancbmk
+                                datas[77]['column' + str(column_index)] = data.int_SPECint_2006
+                            elif data.dtype == 'fp':
+                                datas[78]['column' + str(column_index)] = data.fp_410_bwaves
+                                datas[79]['column' + str(column_index)] = data.fp_416_gamess
+                                datas[80]['column' + str(column_index)] = data.fp_433_milc
+                                datas[81]['column' + str(column_index)] = data.fp_434_zeusmp
+                                datas[82]['column' + str(column_index)] = data.fp_435_gromacs
+                                datas[83]['column' + str(column_index)] = data.fp_436_cactusADM
+                                datas[84]['column' + str(column_index)] = data.fp_437_leslie3d
+                                datas[85]['column' + str(column_index)] = data.fp_444_namd
+                                datas[86]['column' + str(column_index)] = data.fp_447_dealII
+                                datas[87]['column' + str(column_index)] = data.fp_450_soplex
+                                datas[88]['column' + str(column_index)] = data.fp_453_povray
+                                datas[89]['column' + str(column_index)] = data.fp_454_calculix
+                                datas[90]['column' + str(column_index)] = data.fp_459_GemsFDTD
+                                datas[91]['column' + str(column_index)] = data.fp_465_tonto
+                                datas[92]['column' + str(column_index)] = data.fp_470_lbm
+                                datas[93]['column' + str(column_index)] = data.fp_481_wrf
+                                datas[94]['column' + str(column_index)] = data.fp_482_sphinx3
+                                datas[95]['column' + str(column_index)] = data.fp_SPECfp_2006
+                        elif data.thread == '多线程':
+                            if data.dtype == 'int':
+                                datas[96]['column' + str(column_index)] = data.int_400_perlbench
+                                datas[97]['column' + str(column_index)] = data.int_401_bzip2
+                                datas[98]['column' + str(column_index)] = data.int_403_gcc
+                                datas[99]['column' + str(column_index)] = data.int_429_mcf
+                                datas[100]['column' + str(column_index)] = data.int_445_gobmk
+                                datas[101]['column' + str(column_index)] = data.int_456_hmmer
+                                datas[102]['column' + str(column_index)] = data.int_458_sjeng
+                                datas[103]['column' + str(column_index)] = data.int_462_libquantum
+                                datas[104]['column' + str(column_index)] = data.int_464_h264ref
+                                datas[105]['column' + str(column_index)] = data.int_471_omnetpp
+                                datas[106]['column' + str(column_index)] = data.int_473_astar
+                                datas[107]['column' + str(column_index)] = data.int_483_xalancbmk
+                                datas[108]['column' + str(column_index)] = data.int_SPECint_2006
+                            elif data.dtype == 'fp':
+                                datas[109]['column' + str(column_index)] = data.fp_410_bwaves
+                                datas[110]['column' + str(column_index)] = data.fp_416_gamess
+                                datas[111]['column' + str(column_index)] = data.fp_433_milc
+                                datas[112]['column' + str(column_index)] = data.fp_434_zeusmp
+                                datas[113]['column' + str(column_index)] = data.fp_435_gromacs
+                                datas[114]['column' + str(column_index)] = data.fp_436_cactusADM
+                                datas[115]['column' + str(column_index)] = data.fp_437_leslie3d
+                                datas[116]['column' + str(column_index)] = data.fp_444_namd
+                                datas[117]['column' + str(column_index)] = data.fp_447_dealII
+                                datas[118]['column' + str(column_index)] = data.fp_450_soplex
+                                datas[119]['column' + str(column_index)] = data.fp_453_povray
+                                datas[120]['column' + str(column_index)] = data.fp_454_calculix
+                                datas[121]['column' + str(column_index)] = data.fp_459_GemsFDTD
+                                datas[122]['column' + str(column_index)] = data.fp_465_tonto
+                                datas[123]['column' + str(column_index)] = data.fp_470_lbm
+                                datas[124]['column' + str(column_index)] = data.fp_481_wrf
+                                datas[125]['column' + str(column_index)] = data.fp_482_sphinx3
+                                datas[126]['column' + str(column_index)] = data.fp_SPECfp_2006
+                column_index += 1
+                title_index += 1
+            # 基准数据和对比数据的平均数据
+            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            datas[3]['column' + str(column_index)] = average_base_single_int_400_perlbench
+            datas[4]['column' + str(column_index)] = average_base_single_int_401_bzip2
+            datas[5]['column' + str(column_index)] = average_base_single_int_403_gcc
+            datas[6]['column' + str(column_index)] = average_base_single_int_429_mcf
+            datas[7]['column' + str(column_index)] = average_base_single_int_445_gobmk
+            datas[8]['column' + str(column_index)] = average_base_single_int_456_hmmer
+            datas[9]['column' + str(column_index)] = average_base_single_int_458_sjeng
+            datas[10]['column' + str(column_index)] = average_base_single_int_462_libquantum
+            datas[11]['column' + str(column_index)] = average_base_single_int_464_h264ref
+            datas[12]['column' + str(column_index)] = average_base_single_int_471_omnetpp
+            datas[13]['column' + str(column_index)] = average_base_single_int_473_astar
+            datas[14]['column' + str(column_index)] = average_base_single_int_483_xalancbmk
+            datas[15]['column' + str(column_index)] = average_base_single_int_SPECint_2006
+            datas[16]['column' + str(column_index)] = average_base_single_fp_410_bwaves
+            datas[17]['column' + str(column_index)] = average_base_single_fp_416_gamess
+            datas[18]['column' + str(column_index)] = average_base_single_fp_433_milc
+            datas[19]['column' + str(column_index)] = average_base_single_fp_434_zeusmp
+            datas[20]['column' + str(column_index)] = average_base_single_fp_435_gromacs
+            datas[21]['column' + str(column_index)] = average_base_single_fp_436_cactusADM
+            datas[22]['column' + str(column_index)] = average_base_single_fp_437_leslie3d
+            datas[23]['column' + str(column_index)] = average_base_single_fp_444_namd
+            datas[24]['column' + str(column_index)] = average_base_single_fp_447_dealII
+            datas[25]['column' + str(column_index)] = average_base_single_fp_450_soplex
+            datas[26]['column' + str(column_index)] = average_base_single_fp_453_povray
+            datas[27]['column' + str(column_index)] = average_base_single_fp_454_calculix
+            datas[28]['column' + str(column_index)] = average_base_single_fp_459_GemsFDTD
+            datas[29]['column' + str(column_index)] = average_base_single_fp_465_tonto
+            datas[30]['column' + str(column_index)] = average_base_single_fp_470_lbm
+            datas[31]['column' + str(column_index)] = average_base_single_fp_481_wrf
+            datas[32]['column' + str(column_index)] = average_base_single_fp_482_sphinx3
+            datas[33]['column' + str(column_index)] = average_base_single_fp_SPECfp_2006
+            datas[34]['column' + str(column_index)] = average_base_multi_int_400_perlbench
+            datas[35]['column' + str(column_index)] = average_base_multi_int_401_bzip2
+            datas[36]['column' + str(column_index)] = average_base_multi_int_403_gcc
+            datas[37]['column' + str(column_index)] = average_base_multi_int_429_mcf
+            datas[38]['column' + str(column_index)] = average_base_multi_int_445_gobmk
+            datas[39]['column' + str(column_index)] = average_base_multi_int_456_hmmer
+            datas[40]['column' + str(column_index)] = average_base_multi_int_458_sjeng
+            datas[41]['column' + str(column_index)] = average_base_multi_int_462_libquantum
+            datas[42]['column' + str(column_index)] = average_base_multi_int_464_h264ref
+            datas[43]['column' + str(column_index)] = average_base_multi_int_471_omnetpp
+            datas[44]['column' + str(column_index)] = average_base_multi_int_473_astar
+            datas[45]['column' + str(column_index)] = average_base_multi_int_483_xalancbmk
+            datas[46]['column' + str(column_index)] = average_base_multi_int_SPECint_2006
+            datas[47]['column' + str(column_index)] = average_base_multi_fp_410_bwaves
+            datas[48]['column' + str(column_index)] = average_base_multi_fp_416_gamess
+            datas[49]['column' + str(column_index)] = average_base_multi_fp_433_milc
+            datas[50]['column' + str(column_index)] = average_base_multi_fp_434_zeusmp
+            datas[51]['column' + str(column_index)] = average_base_multi_fp_435_gromacs
+            datas[52]['column' + str(column_index)] = average_base_multi_fp_436_cactusADM
+            datas[53]['column' + str(column_index)] = average_base_multi_fp_437_leslie3d
+            datas[54]['column' + str(column_index)] = average_base_multi_fp_444_namd
+            datas[55]['column' + str(column_index)] = average_base_multi_fp_447_dealII
+            datas[56]['column' + str(column_index)] = average_base_multi_fp_450_soplex
+            datas[57]['column' + str(column_index)] = average_base_multi_fp_453_povray
+            datas[58]['column' + str(column_index)] = average_base_multi_fp_454_calculix
+            datas[59]['column' + str(column_index)] = average_base_multi_fp_459_GemsFDTD
+            datas[60]['column' + str(column_index)] = average_base_multi_fp_465_tonto
+            datas[61]['column' + str(column_index)] = average_base_multi_fp_470_lbm
+            datas[62]['column' + str(column_index)] = average_base_multi_fp_481_wrf
+            datas[63]['column' + str(column_index)] = average_base_multi_fp_482_sphinx3
+            datas[64]['column' + str(column_index)] = average_base_multi_fp_SPECfp_2006
+            datas[65]['column' + str(column_index)] = average_peak_single_int_400_perlbench
+            datas[66]['column' + str(column_index)] = average_peak_single_int_401_bzip2
+            datas[67]['column' + str(column_index)] = average_peak_single_int_403_gcc
+            datas[68]['column' + str(column_index)] = average_peak_single_int_429_mcf
+            datas[69]['column' + str(column_index)] = average_peak_single_int_445_gobmk
+            datas[70]['column' + str(column_index)] = average_peak_single_int_456_hmmer
+            datas[71]['column' + str(column_index)] = average_peak_single_int_458_sjeng
+            datas[72]['column' + str(column_index)] = average_peak_single_int_462_libquantum
+            datas[73]['column' + str(column_index)] = average_peak_single_int_464_h264ref
+            datas[74]['column' + str(column_index)] = average_peak_single_int_471_omnetpp
+            datas[75]['column' + str(column_index)] = average_peak_single_int_473_astar
+            datas[76]['column' + str(column_index)] = average_peak_single_int_483_xalancbmk
+            datas[77]['column' + str(column_index)] = average_peak_single_int_SPECint_2006
+            datas[78]['column' + str(column_index)] = average_peak_single_fp_410_bwaves
+            datas[79]['column' + str(column_index)] = average_peak_single_fp_416_gamess
+            datas[80]['column' + str(column_index)] = average_peak_single_fp_433_milc
+            datas[81]['column' + str(column_index)] = average_peak_single_fp_434_zeusmp
+            datas[82]['column' + str(column_index)] = average_peak_single_fp_435_gromacs
+            datas[83]['column' + str(column_index)] = average_peak_single_fp_436_cactusADM
+            datas[84]['column' + str(column_index)] = average_peak_single_fp_437_leslie3d
+            datas[85]['column' + str(column_index)] = average_peak_single_fp_444_namd
+            datas[86]['column' + str(column_index)] = average_peak_single_fp_447_dealII
+            datas[87]['column' + str(column_index)] = average_peak_single_fp_450_soplex
+            datas[88]['column' + str(column_index)] = average_peak_single_fp_453_povray
+            datas[89]['column' + str(column_index)] = average_peak_single_fp_454_calculix
+            datas[90]['column' + str(column_index)] = average_peak_single_fp_459_GemsFDTD
+            datas[91]['column' + str(column_index)] = average_peak_single_fp_465_tonto
+            datas[92]['column' + str(column_index)] = average_peak_single_fp_470_lbm
+            datas[93]['column' + str(column_index)] = average_peak_single_fp_481_wrf
+            datas[94]['column' + str(column_index)] = average_peak_single_fp_482_sphinx3
+            datas[95]['column' + str(column_index)] = average_peak_single_fp_SPECfp_2006
+            datas[96]['column' + str(column_index)] = average_peak_multi_int_400_perlbench
+            datas[97]['column' + str(column_index)] = average_peak_multi_int_401_bzip2
+            datas[98]['column' + str(column_index)] = average_peak_multi_int_403_gcc
+            datas[99]['column' + str(column_index)] = average_peak_multi_int_429_mcf
+            datas[100]['column' + str(column_index)] = average_peak_multi_int_445_gobmk
+            datas[101]['column' + str(column_index)] = average_peak_multi_int_456_hmmer
+            datas[102]['column' + str(column_index)] = average_peak_multi_int_458_sjeng
+            datas[103]['column' + str(column_index)] = average_peak_multi_int_462_libquantum
+            datas[104]['column' + str(column_index)] = average_peak_multi_int_464_h264ref
+            datas[105]['column' + str(column_index)] = average_peak_multi_int_471_omnetpp
+            datas[106]['column' + str(column_index)] = average_peak_multi_int_473_astar
+            datas[107]['column' + str(column_index)] = average_peak_multi_int_483_xalancbmk
+            datas[108]['column' + str(column_index)] = average_peak_multi_int_SPECint_2006
+            datas[109]['column' + str(column_index)] = average_peak_multi_fp_410_bwaves
+            datas[110]['column' + str(column_index)] = average_peak_multi_fp_416_gamess
+            datas[111]['column' + str(column_index)] = average_peak_multi_fp_433_milc
+            datas[112]['column' + str(column_index)] = average_peak_multi_fp_434_zeusmp
+            datas[113]['column' + str(column_index)] = average_peak_multi_fp_435_gromacs
+            datas[114]['column' + str(column_index)] = average_peak_multi_fp_436_cactusADM
+            datas[115]['column' + str(column_index)] = average_peak_multi_fp_437_leslie3d
+            datas[116]['column' + str(column_index)] = average_peak_multi_fp_444_namd
+            datas[117]['column' + str(column_index)] = average_peak_multi_fp_447_dealII
+            datas[118]['column' + str(column_index)] = average_peak_multi_fp_450_soplex
+            datas[119]['column' + str(column_index)] = average_peak_multi_fp_453_povray
+            datas[120]['column' + str(column_index)] = average_peak_multi_fp_454_calculix
+            datas[121]['column' + str(column_index)] = average_peak_multi_fp_459_GemsFDTD
+            datas[122]['column' + str(column_index)] = average_peak_multi_fp_465_tonto
+            datas[123]['column' + str(column_index)] = average_peak_multi_fp_470_lbm
+            datas[124]['column' + str(column_index)] = average_peak_multi_fp_481_wrf
+            datas[125]['column' + str(column_index)] = average_peak_multi_fp_482_sphinx3
+            datas[126]['column' + str(column_index)] = average_peak_multi_fp_SPECfp_2006
+        column_index += 1
+        if not base_column_index:
+            # 记录基准数据
+            base_column_index = column_index - 1
+        else:
+            # 对比数据的对比值
+            datas[0]['column' + str(column_index)] = '对比值'
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(127):
+                    if i > 2:
+                        datas[i]['column' + str(column_index)] = \
+                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+            column_index += 1
+        return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
         """
@@ -851,289 +890,147 @@ class Cpu2006ViewSet(CusModelViewSet):
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
         base_queryset = Cpu2006.objects.filter(env_id=env_id).all()
-        base_serializer = self.get_serializer(base_queryset, many=True)
-        json_datas = self.get_data(base_queryset)
-        base_datas = self.do_base_data(json_datas)
-        others = [{'column1': 'Cpu2006', 'column2': '', 'column3': '','column4': '','column5': 'Cpu2006#1 (基准数据)'},
-                  {'column1': '执行命令', 'column2': '', 'column3': '','column4': '','column5': base_serializer.data[0]['execute_cmd']},
-                  {'column1': '修改参数：', 'column2': '', 'column3': '','column4': '','column5': base_serializer.data[0]['modify_parameters']}]
+        datas = [{'column1': 'Cpu2006', 'column2': '', 'column3': '', 'column4': ''},
+                 {'column1': '执行命令', 'column2': '', 'column3': '', 'column4': ''},
+                 {'column1': '修改参数：', 'column2': '', 'column3': '', 'column4': ''},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '400.perlbench'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '401.bzip2'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '403.gcc'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '429.mcf'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '445.gobmk'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '456.hmmer'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '458.sjeng'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '462.libquantum'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '464.h264ref'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '471.omnetpp'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '473.astar'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '483.xalancbmk'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': 'SPECint_2006'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '410.bwaves'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '416.gamess'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '433.milc'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '434.zeusmp'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '435.gromacs'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '436.cactusADM'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '437.leslie3d'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '444.namd'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '447.dealII'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '450.soplex'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '453.povray'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '454.calculix'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '459.GemsFDTD'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '465.tonto'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '470.lbm'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '481.wrf'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': '482.sphinx3'},
+                 {'column1': 'base', 'column2': '单线程', 'column3': 'fp', 'column4': 'SPECfp_2006'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '400.perlbench'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '401.bzip2'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '403.gcc'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '429.mcf'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '445.gobmk'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '456.hmmer'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '458.sjeng'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '462.libquantum'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '464.h264ref'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '471.omnetpp'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '473.astar'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': '483.xalancbmk'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'int', 'column4': 'SPECint_2006'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '410.bwaves'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '416.gamess'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '433.milc'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '434.zeusmp'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '435.gromacs'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '436.cactusADM'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '437.leslie3d'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '444.namd'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '447.dealII'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '450.soplex'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '453.povray'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '454.calculix'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '459.GemsFDTD'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '465.tonto'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '470.lbm'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '481.wrf'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': '482.sphinx3'},
+                 {'column1': 'base', 'column2': '多线程', 'column3': 'fp', 'column4': 'SPECfp_2006'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '400.perlbench'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '401.bzip2'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '403.gcc'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '429.mcf'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '445.gobmk'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '456.hmmer'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '458.sjeng'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '462.libquantum'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '464.h264ref'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '471.omnetpp'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '473.astar'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': '483.xalancbmk'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'int', 'column4': 'SPECint_2006'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '410.bwaves'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '416.gamess'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '433.milc'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '434.zeusmp'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '435.gromacs'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '436.cactusADM'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '437.leslie3d'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '444.namd'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '447.dealII'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '450.soplex'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '453.povray'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '454.calculix'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '459.GemsFDTD'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '465.tonto'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '470.lbm'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '481.wrf'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': '482.sphinx3'},
+                 {'column1': 'peak', 'column2': '单线程', 'column3': 'fp', 'column4': 'SPECfp_2006'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '400.perlbench'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '401.bzip2'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '403.gcc'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '429.mcf'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '445.gobmk'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '456.hmmer'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '458.sjeng'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '462.libquantum'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '464.h264ref'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '471.omnetpp'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '473.astar'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': '483.xalancbmk'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'int', 'column4': 'SPECint_2006'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '410.bwaves'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '416.gamess'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '433.milc'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '434.zeusmp'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '435.gromacs'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '436.cactusADM'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '437.leslie3d'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '444.namd'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '447.dealII'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '450.soplex'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '453.povray'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '454.calculix'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '459.GemsFDTD'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '465.tonto'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '470.lbm'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '481.wrf'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': '482.sphinx3'},
+                 {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': 'SPECfp_2006'},
+                 ]
+        title_index = 1
+        column_index = 5
+        base_column_index = ''
+        datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index, column_index, base_column_index)
 
         if comparsionIds != ['']:
             # 处理对比数据
-            for index, comparativeId in enumerate(comparsionIds):
-                new_index = 2 * index + 6
+            for comparativeId in comparsionIds:
                 comparsion_queryset = Cpu2006.objects.filter(env_id=comparativeId).all()
-                comparsion_serializer = self.get_serializer(comparsion_queryset, many=True)
-                comparsion_datas = self.get_data(comparsion_queryset)
-
-                others[0]['column' + str(new_index)] = 'Cpu2006#' + str(index + 2)
-                others[1]['column' + str(new_index)] = comparsion_serializer.data[0]['execute_cmd']
-                others[2]['column' + str(new_index)] = comparsion_serializer.data[0]['modify_parameters']
-
-                others[0]['column' + str(new_index + 1)] = ''
-                others[1]['column' + str(new_index + 1)] = ''
-                others[2]['column' + str(new_index + 1)] = ''
-
-                base_datas[0]['column' + str(new_index)] = comparsion_datas['base_single_int_400_perlbench']
-                base_datas[1]['column' + str(new_index)] = comparsion_datas['base_single_int_401_bzip2']
-                base_datas[2]['column' + str(new_index)] = comparsion_datas['base_single_int_403_gcc']
-                base_datas[3]['column' + str(new_index)] = comparsion_datas['base_single_int_429_mcf']
-                base_datas[4]['column' + str(new_index)] = comparsion_datas['base_single_int_445_gobmk']
-                base_datas[5]['column' + str(new_index)] = comparsion_datas['base_single_int_456_hmmer']
-                base_datas[6]['column' + str(new_index)] = comparsion_datas['base_single_int_458_sjeng']
-                base_datas[7]['column' + str(new_index)] = comparsion_datas['base_single_int_462_libquantum']
-                base_datas[8]['column' + str(new_index)] = comparsion_datas['base_single_int_464_h264ref']
-                base_datas[9]['column' + str(new_index)] = comparsion_datas['base_single_int_471_omnetpp']
-                base_datas[10]['column' + str(new_index)] = comparsion_datas['base_single_int_473_astar']
-                base_datas[11]['column' + str(new_index)] = comparsion_datas['base_single_int_483_xalancbmk']
-                base_datas[12]['column' + str(new_index)] = comparsion_datas['base_single_int_SPECint_2006']
-                base_datas[13]['column' + str(new_index)] = comparsion_datas['base_single_fp_410_bwaves']
-                base_datas[14]['column' + str(new_index)] = comparsion_datas['base_single_fp_416_gamess']
-                base_datas[15]['column' + str(new_index)] = comparsion_datas['base_single_fp_433_milc']
-                base_datas[16]['column' + str(new_index)] = comparsion_datas['base_single_fp_434_zeusmp']
-                base_datas[17]['column' + str(new_index)] = comparsion_datas['base_single_fp_435_gromacs']
-                base_datas[18]['column' + str(new_index)] = comparsion_datas['base_single_fp_436_cactusADM']
-                base_datas[19]['column' + str(new_index)] = comparsion_datas['base_single_fp_437_leslie3d']
-                base_datas[20]['column' + str(new_index)] = comparsion_datas['base_single_fp_444_namd']
-                base_datas[21]['column' + str(new_index)] = comparsion_datas['base_single_fp_447_dealII']
-                base_datas[22]['column' + str(new_index)] = comparsion_datas['base_single_fp_450_soplex']
-                base_datas[23]['column' + str(new_index)] = comparsion_datas['base_single_fp_453_povray']
-                base_datas[24]['column' + str(new_index)] = comparsion_datas['base_single_fp_454_calculix']
-                base_datas[25]['column' + str(new_index)] = comparsion_datas['base_single_fp_459_GemsFDTD']
-                base_datas[26]['column' + str(new_index)] = comparsion_datas['base_single_fp_465_tonto']
-                base_datas[27]['column' + str(new_index)] = comparsion_datas['base_single_fp_470_lbm']
-                base_datas[28]['column' + str(new_index)] = comparsion_datas['base_single_fp_481_wrf']
-                base_datas[29]['column' + str(new_index)] = comparsion_datas['base_single_fp_482_sphinx3']
-                base_datas[30]['column' + str(new_index)] = comparsion_datas['base_single_fp_SPECfp_2006']
-                base_datas[31]['column' + str(new_index)] = comparsion_datas['base_multi_int_400_perlbench']
-                base_datas[32]['column' + str(new_index)] = comparsion_datas['base_multi_int_401_bzip2']
-                base_datas[33]['column' + str(new_index)] = comparsion_datas['base_multi_int_403_gcc']
-                base_datas[34]['column' + str(new_index)] = comparsion_datas['base_multi_int_429_mcf']
-                base_datas[35]['column' + str(new_index)] = comparsion_datas['base_multi_int_445_gobmk']
-                base_datas[36]['column' + str(new_index)] = comparsion_datas['base_multi_int_456_hmmer']
-                base_datas[37]['column' + str(new_index)] = comparsion_datas['base_multi_int_458_sjeng']
-                base_datas[38]['column' + str(new_index)] = comparsion_datas['base_multi_int_462_libquantum']
-                base_datas[39]['column' + str(new_index)] = comparsion_datas['base_multi_int_464_h264ref']
-                base_datas[40]['column' + str(new_index)] = comparsion_datas['base_multi_int_471_omnetpp']
-                base_datas[41]['column' + str(new_index)] = comparsion_datas['base_multi_int_473_astar']
-                base_datas[42]['column' + str(new_index)] = comparsion_datas['base_multi_int_483_xalancbmk']
-                base_datas[43]['column' + str(new_index)] = comparsion_datas['base_multi_int_SPECint_2006']
-                base_datas[44]['column' + str(new_index)] = comparsion_datas['base_multi_fp_410_bwaves']
-                base_datas[45]['column' + str(new_index)] = comparsion_datas['base_multi_fp_416_gamess']
-                base_datas[46]['column' + str(new_index)] = comparsion_datas['base_multi_fp_433_milc']
-                base_datas[47]['column' + str(new_index)] = comparsion_datas['base_multi_fp_434_zeusmp']
-                base_datas[48]['column' + str(new_index)] = comparsion_datas['base_multi_fp_435_gromacs']
-                base_datas[49]['column' + str(new_index)] = comparsion_datas['base_multi_fp_436_cactusADM']
-                base_datas[50]['column' + str(new_index)] = comparsion_datas['base_multi_fp_437_leslie3d']
-                base_datas[51]['column' + str(new_index)] = comparsion_datas['base_multi_fp_444_namd']
-                base_datas[52]['column' + str(new_index)] = comparsion_datas['base_multi_fp_447_dealII']
-                base_datas[53]['column' + str(new_index)] = comparsion_datas['base_multi_fp_450_soplex']
-                base_datas[54]['column' + str(new_index)] = comparsion_datas['base_multi_fp_453_povray']
-                base_datas[55]['column' + str(new_index)] = comparsion_datas['base_multi_fp_454_calculix']
-                base_datas[56]['column' + str(new_index)] = comparsion_datas['base_multi_fp_459_GemsFDTD']
-                base_datas[57]['column' + str(new_index)] = comparsion_datas['base_multi_fp_465_tonto']
-                base_datas[58]['column' + str(new_index)] = comparsion_datas['base_multi_fp_470_lbm']
-                base_datas[59]['column' + str(new_index)] = comparsion_datas['base_multi_fp_481_wrf']
-                base_datas[60]['column' + str(new_index)] = comparsion_datas['base_multi_fp_482_sphinx3']
-                base_datas[61]['column' + str(new_index)] = comparsion_datas['base_multi_fp_SPECfp_2006']
-                base_datas[62]['column' + str(new_index)] = comparsion_datas['peak_single_int_400_perlbench']
-                base_datas[63]['column' + str(new_index)] = comparsion_datas['peak_single_int_401_bzip2']
-                base_datas[64]['column' + str(new_index)] = comparsion_datas['peak_single_int_403_gcc']
-                base_datas[65]['column' + str(new_index)] = comparsion_datas['peak_single_int_429_mcf']
-                base_datas[66]['column' + str(new_index)] = comparsion_datas['peak_single_int_445_gobmk']
-                base_datas[67]['column' + str(new_index)] = comparsion_datas['peak_single_int_456_hmmer']
-                base_datas[68]['column' + str(new_index)] = comparsion_datas['peak_single_int_458_sjeng']
-                base_datas[69]['column' + str(new_index)] = comparsion_datas['peak_single_int_462_libquantum']
-                base_datas[70]['column' + str(new_index)] = comparsion_datas['peak_single_int_464_h264ref']
-                base_datas[71]['column' + str(new_index)] = comparsion_datas['peak_single_int_471_omnetpp']
-                base_datas[72]['column' + str(new_index)] = comparsion_datas['peak_single_int_473_astar']
-                base_datas[73]['column' + str(new_index)] = comparsion_datas['peak_single_int_483_xalancbmk']
-                base_datas[74]['column' + str(new_index)] = comparsion_datas['peak_single_int_SPECint_2006']
-                base_datas[75]['column' + str(new_index)] = comparsion_datas['peak_single_fp_410_bwaves']
-                base_datas[76]['column' + str(new_index)] = comparsion_datas['peak_single_fp_416_gamess']
-                base_datas[77]['column' + str(new_index)] = comparsion_datas['peak_single_fp_433_milc']
-                base_datas[78]['column' + str(new_index)] = comparsion_datas['peak_single_fp_434_zeusmp']
-                base_datas[79]['column' + str(new_index)] = comparsion_datas['peak_single_fp_435_gromacs']
-                base_datas[80]['column' + str(new_index)] = comparsion_datas['peak_single_fp_436_cactusADM']
-                base_datas[81]['column' + str(new_index)] = comparsion_datas['peak_single_fp_437_leslie3d']
-                base_datas[82]['column' + str(new_index)] = comparsion_datas['peak_single_fp_444_namd']
-                base_datas[83]['column' + str(new_index)] = comparsion_datas['peak_single_fp_447_dealII']
-                base_datas[84]['column' + str(new_index)] = comparsion_datas['peak_single_fp_450_soplex']
-                base_datas[85]['column' + str(new_index)] = comparsion_datas['peak_single_fp_453_povray']
-                base_datas[86]['column' + str(new_index)] = comparsion_datas['peak_single_fp_454_calculix']
-                base_datas[87]['column' + str(new_index)] = comparsion_datas['peak_single_fp_459_GemsFDTD']
-                base_datas[88]['column' + str(new_index)] = comparsion_datas['peak_single_fp_465_tonto']
-                base_datas[89]['column' + str(new_index)] = comparsion_datas['peak_single_fp_470_lbm']
-                base_datas[90]['column' + str(new_index)] = comparsion_datas['peak_single_fp_481_wrf']
-                base_datas[91]['column' + str(new_index)] = comparsion_datas['peak_single_fp_482_sphinx3']
-                base_datas[92]['column' + str(new_index)] = comparsion_datas['peak_single_fp_SPECfp_2006']
-                base_datas[93]['column' + str(new_index)] = comparsion_datas['peak_multi_int_400_perlbench']
-                base_datas[94]['column' + str(new_index)] = comparsion_datas['peak_multi_int_401_bzip2']
-                base_datas[95]['column' + str(new_index)] = comparsion_datas['peak_multi_int_403_gcc']
-                base_datas[96]['column' + str(new_index)] = comparsion_datas['peak_multi_int_429_mcf']
-                base_datas[97]['column' + str(new_index)] = comparsion_datas['peak_multi_int_445_gobmk']
-                base_datas[98]['column' + str(new_index)] = comparsion_datas['peak_multi_int_456_hmmer']
-                base_datas[99]['column' + str(new_index)] = comparsion_datas['peak_multi_int_458_sjeng']
-                base_datas[100]['column' + str(new_index)] = comparsion_datas['peak_multi_int_462_libquantum']
-                base_datas[101]['column' + str(new_index)] = comparsion_datas['peak_multi_int_464_h264ref']
-                base_datas[102]['column' + str(new_index)] = comparsion_datas['peak_multi_int_471_omnetpp']
-                base_datas[103]['column' + str(new_index)] = comparsion_datas['peak_multi_int_473_astar']
-                base_datas[104]['column' + str(new_index)] = comparsion_datas['peak_multi_int_483_xalancbmk']
-                base_datas[105]['column' + str(new_index)] = comparsion_datas['peak_multi_int_SPECint_2006']
-                base_datas[106]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_410_bwaves']
-                base_datas[107]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_416_gamess']
-                base_datas[108]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_433_milc']
-                base_datas[109]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_434_zeusmp']
-                base_datas[110]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_435_gromacs']
-                base_datas[111]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_436_cactusADM']
-                base_datas[112]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_437_leslie3d']
-                base_datas[113]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_444_namd']
-                base_datas[114]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_447_dealII']
-                base_datas[115]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_450_soplex']
-                base_datas[116]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_453_povray']
-                base_datas[117]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_454_calculix']
-                base_datas[118]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_459_GemsFDTD']
-                base_datas[119]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_465_tonto']
-                base_datas[120]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_470_lbm']
-                base_datas[121]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_481_wrf']
-                base_datas[122]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_482_sphinx3']
-                base_datas[123]['column' + str(new_index)] = comparsion_datas['peak_multi_fp_SPECfp_2006']
-                # 在datas中增加计算数据
-                # 使用for循环的方式实现，同时增加为空时不计算对比值，
-                for i in range(124):
-                    if base_datas[i]['column' + str(new_index)] and base_datas[i]['column6']:
-                        base_datas[i]['column' + str(new_index + 1)] = "%.2f%%" % (
-                                (base_datas[i]['column' + str(new_index)] - base_datas[i]['column6']) / base_datas[i][
-                            'column6'] * 100)
-                    else:
-                        base_datas[i]['column' + str(new_index + 1)] = None
-
-                # base_datas[0]['column' + str(new_index + 1)] =  "%.2f%%" % ((base_datas[0]['column'+str(new_index)] - base_datas[0]['column5'])/base_datas[0]['column5'] * 100)
-                # base_datas[1]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[1]['column'+str(new_index)] - base_datas[1]['column5'])/base_datas[1]['column5'] * 100)
-                # base_datas[2]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[2]['column'+str(new_index)] - base_datas[2]['column5'])/base_datas[2]['column5'] * 100)
-                # base_datas[3]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[3]['column'+str(new_index)] - base_datas[3]['column5'])/base_datas[3]['column5'] * 100)
-                # base_datas[4]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[4]['column'+str(new_index)] - base_datas[4]['column5'])/base_datas[4]['column5'] * 100)
-                # base_datas[5]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[5]['column'+str(new_index)] - base_datas[5]['column5'])/base_datas[5]['column5'] * 100)
-                # base_datas[6]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[6]['column'+str(new_index)] - base_datas[6]['column5'])/base_datas[6]['column5'] * 100)
-                # base_datas[7]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[7]['column'+str(new_index)] - base_datas[7]['column5'])/base_datas[7]['column5'] * 100)
-                # base_datas[8]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[8]['column'+str(new_index)] - base_datas[8]['column5'])/base_datas[8]['column5'] * 100)
-                # base_datas[9]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[9]['column'+str(new_index)] - base_datas[9]['column5'])/base_datas[9]['column5'] * 100)
-                # base_datas[10]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[10]['column'+str(new_index)] - base_datas[10]['column5'])/base_datas[10]['column5'] * 100)
-                # base_datas[11]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[11]['column'+str(new_index)] - base_datas[11]['column5'])/base_datas[11]['column5'] * 100)
-                # base_datas[12]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[12]['column'+str(new_index)] - base_datas[12]['column5'])/base_datas[12]['column5'] * 100)
-                # base_datas[13]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[13]['column'+str(new_index)] - base_datas[13]['column5'])/base_datas[13]['column5'] * 100)
-                # base_datas[14]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[14]['column'+str(new_index)] - base_datas[14]['column5'])/base_datas[14]['column5'] * 100)
-                # base_datas[15]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[15]['column'+str(new_index)] - base_datas[15]['column5'])/base_datas[15]['column5'] * 100)
-                # base_datas[16]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[16]['column'+str(new_index)] - base_datas[16]['column5'])/base_datas[16]['column5'] * 100)
-                # base_datas[17]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[17]['column'+str(new_index)] - base_datas[17]['column5'])/base_datas[17]['column5'] * 100)
-                # base_datas[18]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[18]['column'+str(new_index)] - base_datas[18]['column5'])/base_datas[18]['column5'] * 100)
-                # base_datas[19]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[19]['column'+str(new_index)] - base_datas[19]['column5'])/base_datas[19]['column5'] * 100)
-                # base_datas[20]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[20]['column'+str(new_index)] - base_datas[20]['column5'])/base_datas[20]['column5'] * 100)
-                # base_datas[21]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[21]['column'+str(new_index)] - base_datas[21]['column5'])/base_datas[21]['column5'] * 100)
-                # base_datas[22]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[22]['column'+str(new_index)] - base_datas[22]['column5'])/base_datas[22]['column5'] * 100)
-                # base_datas[23]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[23]['column'+str(new_index)] - base_datas[23]['column5'])/base_datas[23]['column5'] * 100)
-                # base_datas[24]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[24]['column'+str(new_index)] - base_datas[24]['column5'])/base_datas[24]['column5'] * 100)
-                # base_datas[25]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[25]['column'+str(new_index)] - base_datas[25]['column5'])/base_datas[25]['column5'] * 100)
-                # base_datas[26]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[26]['column'+str(new_index)] - base_datas[26]['column5'])/base_datas[26]['column5'] * 100)
-                # base_datas[27]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[27]['column'+str(new_index)] - base_datas[27]['column5'])/base_datas[27]['column5'] * 100)
-                # base_datas[28]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[28]['column'+str(new_index)] - base_datas[28]['column5'])/base_datas[28]['column5'] * 100)
-                # base_datas[29]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[29]['column'+str(new_index)] - base_datas[29]['column5'])/base_datas[29]['column5'] * 100)
-                # base_datas[30]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[30]['column'+str(new_index)] - base_datas[30]['column5'])/base_datas[30]['column5'] * 100)
-                # base_datas[31]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[31]['column'+str(new_index)] - base_datas[31]['column5'])/base_datas[31]['column5'] * 100)
-                # base_datas[32]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[32]['column'+str(new_index)] - base_datas[32]['column5'])/base_datas[32]['column5'] * 100)
-                # base_datas[33]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[33]['column'+str(new_index)] - base_datas[33]['column5'])/base_datas[33]['column5'] * 100)
-                # base_datas[34]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[34]['column'+str(new_index)] - base_datas[34]['column5'])/base_datas[34]['column5'] * 100)
-                # base_datas[35]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[35]['column'+str(new_index)] - base_datas[35]['column5'])/base_datas[35]['column5'] * 100)
-                # base_datas[36]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[36]['column'+str(new_index)] - base_datas[36]['column5'])/base_datas[36]['column5'] * 100)
-                # base_datas[37]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[37]['column'+str(new_index)] - base_datas[37]['column5'])/base_datas[37]['column5'] * 100)
-                # base_datas[38]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[38]['column'+str(new_index)] - base_datas[38]['column5'])/base_datas[38]['column5'] * 100)
-                # base_datas[39]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[39]['column'+str(new_index)] - base_datas[39]['column5'])/base_datas[39]['column5'] * 100)
-                # base_datas[40]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[40]['column'+str(new_index)] - base_datas[40]['column5'])/base_datas[40]['column5'] * 100)
-                # base_datas[41]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[41]['column'+str(new_index)] - base_datas[41]['column5'])/base_datas[41]['column5'] * 100)
-                # base_datas[42]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[42]['column'+str(new_index)] - base_datas[42]['column5'])/base_datas[42]['column5'] * 100)
-                # base_datas[43]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[43]['column'+str(new_index)] - base_datas[43]['column5'])/base_datas[43]['column5'] * 100)
-                # base_datas[44]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[44]['column'+str(new_index)] - base_datas[44]['column5'])/base_datas[44]['column5'] * 100)
-                # base_datas[45]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[45]['column'+str(new_index)] - base_datas[45]['column5'])/base_datas[45]['column5'] * 100)
-                # base_datas[46]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[46]['column'+str(new_index)] - base_datas[46]['column5'])/base_datas[46]['column5'] * 100)
-                # base_datas[47]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[47]['column'+str(new_index)] - base_datas[47]['column5'])/base_datas[47]['column5'] * 100)
-                # base_datas[48]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[48]['column'+str(new_index)] - base_datas[48]['column5'])/base_datas[48]['column5'] * 100)
-                # base_datas[49]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[49]['column'+str(new_index)] - base_datas[49]['column5'])/base_datas[49]['column5'] * 100)
-                # base_datas[50]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[50]['column'+str(new_index)] - base_datas[50]['column5'])/base_datas[50]['column5'] * 100)
-                # base_datas[51]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[51]['column'+str(new_index)] - base_datas[51]['column5'])/base_datas[51]['column5'] * 100)
-                # base_datas[52]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[52]['column'+str(new_index)] - base_datas[52]['column5'])/base_datas[52]['column5'] * 100)
-                # base_datas[53]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[53]['column'+str(new_index)] - base_datas[53]['column5'])/base_datas[53]['column5'] * 100)
-                # base_datas[54]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[54]['column'+str(new_index)] - base_datas[54]['column5'])/base_datas[54]['column5'] * 100)
-                # base_datas[55]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[55]['column'+str(new_index)] - base_datas[55]['column5'])/base_datas[55]['column5'] * 100)
-                # base_datas[56]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[56]['column'+str(new_index)] - base_datas[56]['column5'])/base_datas[56]['column5'] * 100)
-                # base_datas[57]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[57]['column'+str(new_index)] - base_datas[57]['column5'])/base_datas[57]['column5'] * 100)
-                # base_datas[58]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[58]['column'+str(new_index)] - base_datas[58]['column5'])/base_datas[58]['column5'] * 100)
-                # base_datas[59]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[59]['column'+str(new_index)] - base_datas[59]['column5'])/base_datas[59]['column5'] * 100)
-                # base_datas[60]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[60]['column'+str(new_index)] - base_datas[60]['column5'])/base_datas[60]['column5'] * 100)
-                # base_datas[61]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[61]['column'+str(new_index)] - base_datas[61]['column5'])/base_datas[61]['column5'] * 100)
-                # base_datas[62]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[62]['column'+str(new_index)] - base_datas[62]['column5'])/base_datas[62]['column5'] * 100)
-                # base_datas[63]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[63]['column'+str(new_index)] - base_datas[63]['column5'])/base_datas[63]['column5'] * 100)
-                # base_datas[64]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[64]['column'+str(new_index)] - base_datas[64]['column5'])/base_datas[64]['column5'] * 100)
-                # base_datas[65]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[65]['column'+str(new_index)] - base_datas[65]['column5'])/base_datas[65]['column5'] * 100)
-                # base_datas[66]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[66]['column'+str(new_index)] - base_datas[66]['column5'])/base_datas[66]['column5'] * 100)
-                # base_datas[67]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[67]['column'+str(new_index)] - base_datas[67]['column5'])/base_datas[67]['column5'] * 100)
-                # base_datas[68]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[68]['column'+str(new_index)] - base_datas[68]['column5'])/base_datas[68]['column5'] * 100)
-                # base_datas[69]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[69]['column'+str(new_index)] - base_datas[69]['column5'])/base_datas[69]['column5'] * 100)
-                # base_datas[70]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[70]['column'+str(new_index)] - base_datas[70]['column5'])/base_datas[70]['column5'] * 100)
-                # base_datas[71]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[71]['column'+str(new_index)] - base_datas[71]['column5'])/base_datas[71]['column5'] * 100)
-                # base_datas[72]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[72]['column'+str(new_index)] - base_datas[72]['column5'])/base_datas[72]['column5'] * 100)
-                # base_datas[73]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[73]['column'+str(new_index)] - base_datas[73]['column5'])/base_datas[73]['column5'] * 100)
-                # base_datas[74]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[74]['column'+str(new_index)] - base_datas[74]['column5'])/base_datas[74]['column5'] * 100)
-                # base_datas[75]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[75]['column'+str(new_index)] - base_datas[75]['column5'])/base_datas[75]['column5'] * 100)
-                # base_datas[76]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[76]['column'+str(new_index)] - base_datas[76]['column5'])/base_datas[76]['column5'] * 100)
-                # base_datas[77]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[77]['column'+str(new_index)] - base_datas[77]['column5'])/base_datas[77]['column5'] * 100)
-                # base_datas[78]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[78]['column'+str(new_index)] - base_datas[78]['column5'])/base_datas[78]['column5'] * 100)
-                # base_datas[79]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[79]['column'+str(new_index)] - base_datas[79]['column5'])/base_datas[79]['column5'] * 100)
-                # base_datas[80]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[80]['column'+str(new_index)] - base_datas[80]['column5'])/base_datas[80]['column5'] * 100)
-                # base_datas[81]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[81]['column'+str(new_index)] - base_datas[81]['column5'])/base_datas[81]['column5'] * 100)
-                # base_datas[82]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[82]['column'+str(new_index)] - base_datas[82]['column5'])/base_datas[82]['column5'] * 100)
-                # base_datas[83]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[83]['column'+str(new_index)] - base_datas[83]['column5'])/base_datas[83]['column5'] * 100)
-                # base_datas[84]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[84]['column'+str(new_index)] - base_datas[84]['column5'])/base_datas[84]['column5'] * 100)
-                # base_datas[85]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[85]['column'+str(new_index)] - base_datas[85]['column5'])/base_datas[85]['column5'] * 100)
-                # base_datas[86]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[86]['column'+str(new_index)] - base_datas[86]['column5'])/base_datas[86]['column5'] * 100)
-                # base_datas[87]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[87]['column'+str(new_index)] - base_datas[87]['column5'])/base_datas[87]['column5'] * 100)
-                # base_datas[88]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[88]['column'+str(new_index)] - base_datas[88]['column5'])/base_datas[88]['column5'] * 100)
-                # base_datas[89]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[89]['column'+str(new_index)] - base_datas[89]['column5'])/base_datas[89]['column5'] * 100)
-                # base_datas[90]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[90]['column'+str(new_index)] - base_datas[90]['column5'])/base_datas[90]['column5'] * 100)
-                # base_datas[91]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[91]['column'+str(new_index)] - base_datas[91]['column5'])/base_datas[91]['column5'] * 100)
-                # base_datas[92]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[92]['column'+str(new_index)] - base_datas[92]['column5'])/base_datas[92]['column5'] * 100)
-                # base_datas[93]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[93]['column'+str(new_index)] - base_datas[93]['column5'])/base_datas[93]['column5'] * 100)
-                # base_datas[94]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[94]['column'+str(new_index)] - base_datas[94]['column5'])/base_datas[94]['column5'] * 100)
-                # base_datas[95]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[95]['column'+str(new_index)] - base_datas[95]['column5'])/base_datas[95]['column5'] * 100)
-                # base_datas[96]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[96]['column'+str(new_index)] - base_datas[96]['column5'])/base_datas[96]['column5'] * 100)
-                # base_datas[97]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[97]['column'+str(new_index)] - base_datas[97]['column5'])/base_datas[97]['column5'] * 100)
-                # base_datas[98]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[98]['column'+str(new_index)] - base_datas[98]['column5'])/base_datas[98]['column5'] * 100)
-                # base_datas[99]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[99]['column'+str(new_index)] - base_datas[99]['column5'])/base_datas[99]['column5'] * 100)
-                # base_datas[100]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[100]['column'+str(new_index)] - base_datas[100]['column5'])/base_datas[100]['column5'] * 100)
-                # base_datas[101]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[101]['column'+str(new_index)] - base_datas[101]['column5'])/base_datas[101]['column5'] * 100)
-                # base_datas[102]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[102]['column'+str(new_index)] - base_datas[102]['column5'])/base_datas[102]['column5'] * 100)
-                # base_datas[103]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[103]['column'+str(new_index)] - base_datas[103]['column5'])/base_datas[103]['column5'] * 100)
-                # base_datas[104]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[104]['column'+str(new_index)] - base_datas[104]['column5'])/base_datas[104]['column5'] * 100)
-                # base_datas[105]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[105]['column'+str(new_index)] - base_datas[105]['column5'])/base_datas[105]['column5'] * 100)
-                # base_datas[106]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[106]['column'+str(new_index)] - base_datas[106]['column5'])/base_datas[106]['column5'] * 100)
-                # base_datas[107]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[107]['column'+str(new_index)] - base_datas[107]['column5'])/base_datas[107]['column5'] * 100)
-                # base_datas[108]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[108]['column'+str(new_index)] - base_datas[108]['column5'])/base_datas[108]['column5'] * 100)
-                # base_datas[109]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[109]['column'+str(new_index)] - base_datas[109]['column5'])/base_datas[109]['column5'] * 100)
-                # base_datas[110]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[110]['column'+str(new_index)] - base_datas[110]['column5'])/base_datas[110]['column5'] * 100)
-                # base_datas[111]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[111]['column'+str(new_index)] - base_datas[111]['column5'])/base_datas[111]['column5'] * 100)
-                # base_datas[112]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[112]['column'+str(new_index)] - base_datas[112]['column5'])/base_datas[112]['column5'] * 100)
-                # base_datas[113]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[113]['column'+str(new_index)] - base_datas[113]['column5'])/base_datas[113]['column5'] * 100)
-                # base_datas[114]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[114]['column'+str(new_index)] - base_datas[114]['column5'])/base_datas[114]['column5'] * 100)
-                # base_datas[115]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[115]['column'+str(new_index)] - base_datas[115]['column5'])/base_datas[115]['column5'] * 100)
-                # base_datas[116]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[116]['column'+str(new_index)] - base_datas[116]['column5'])/base_datas[116]['column5'] * 100)
-                # base_datas[117]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[117]['column'+str(new_index)] - base_datas[117]['column5'])/base_datas[117]['column5'] * 100)
-                # base_datas[118]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[118]['column'+str(new_index)] - base_datas[118]['column5'])/base_datas[118]['column5'] * 100)
-                # base_datas[119]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[119]['column'+str(new_index)] - base_datas[119]['column5'])/base_datas[119]['column5'] * 100)
-                # base_datas[120]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[120]['column'+str(new_index)] - base_datas[120]['column5'])/base_datas[120]['column5'] * 100)
-                # base_datas[121]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[121]['column'+str(new_index)] - base_datas[121]['column5'])/base_datas[121]['column5'] * 100)
-                # base_datas[122]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[122]['column'+str(new_index)] - base_datas[122]['column5'])/base_datas[122]['column5'] * 100)
-                # base_datas[123]['column' + str(new_index + 1)] = "%.2f%%" % ((base_datas[123]['column'+str(new_index)] - base_datas[123]['column5'])/base_datas[123]['column5'] * 100)
-        cpu2006_data = {'others': others, 'data': base_datas}
-        return json_response(cpu2006_data, status.HTTP_200_OK, '列表')
+                if not comparsion_queryset:
+                    return json_response({}, status.HTTP_200_OK, '列表')
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+        return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_cpu2006_errors = []
