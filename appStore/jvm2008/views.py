@@ -59,7 +59,7 @@ class Jvm2008ViewSet(CusModelViewSet):
             column_index += 1
             title_index += 1
             # 基准数据和对比数据的平均数据
-            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
@@ -173,7 +173,7 @@ class Jvm2008ViewSet(CusModelViewSet):
                         datas[26]['column' + str(column_index)] = data.Noncompliant_pomposite_result
                 column_index += 1
                 title_index += 1
-            title = '平均值(基准数据)' if not base_column_index else '平均数据'
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
@@ -211,30 +211,10 @@ class Jvm2008ViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = '对比值'
                 datas[1]['column' + str(column_index)] = ''
                 datas[2]['column' + str(column_index)] = ''
-                datas[3]['column' + str(column_index)] =  "%.2f%%" % ((datas[3]['column' + str(column_index - 1)] - datas[3]['column' + str(base_column_index)]) / datas[3]['column' + str(base_column_index)] * 100) if datas[3]['column' + str(column_index - 1)] is not None and datas[3]['column' + str(base_column_index)] is not None else None
-                datas[4]['column' + str(column_index)] =  "%.2f%%" % ((datas[4]['column' + str(column_index - 1)] - datas[4]['column' + str(base_column_index)]) / datas[4]['column' + str(base_column_index)] * 100) if datas[4]['column' + str(column_index - 1)] is not None and datas[4]['column' + str(base_column_index)] is not None else None
-                datas[5]['column' + str(column_index)] =  "%.2f%%" % ((datas[5]['column' + str(column_index - 1)] - datas[5]['column' + str(base_column_index)]) / datas[5]['column' + str(base_column_index)] * 100) if datas[5]['column' + str(column_index - 1)] is not None and datas[5]['column' + str(base_column_index)] is not None else None
-                datas[6]['column' + str(column_index)] =  "%.2f%%" % ((datas[6]['column' + str(column_index - 1)] - datas[6]['column' + str(base_column_index)]) / datas[6]['column' + str(base_column_index)] * 100) if datas[6]['column' + str(column_index - 1)] is not None and datas[6]['column' + str(base_column_index)] is not None else None
-                datas[7]['column' + str(column_index)] =  "%.2f%%" % ((datas[7]['column' + str(column_index - 1)] - datas[7]['column' + str(base_column_index)]) / datas[7]['column' + str(base_column_index)] * 100) if datas[7]['column' + str(column_index - 1)] is not None and datas[7]['column' + str(base_column_index)] is not None else None
-                datas[8]['column' + str(column_index)] =  "%.2f%%" % ((datas[8]['column' + str(column_index - 1)] - datas[8]['column' + str(base_column_index)]) / datas[8]['column' + str(base_column_index)] * 100) if datas[8]['column' + str(column_index - 1)] is not None and datas[8]['column' + str(base_column_index)] is not None else None
-                datas[9]['column' + str(column_index)] =  "%.2f%%" % ((datas[9]['column' + str(column_index - 1)] - datas[9]['column' + str(base_column_index)]) / datas[9]['column' + str(base_column_index)] * 100) if datas[9]['column' + str(column_index - 1)] is not None and datas[9]['column' + str(base_column_index)] is not None else None
-                datas[10]['column' + str(column_index)] =  "%.2f%%" % ((datas[10]['column' + str(column_index - 1)] - datas[10]['column' + str(base_column_index)]) / datas[10]['column' + str(base_column_index)] * 100) if datas[10]['column' + str(column_index - 1)] is not None and datas[10]['column' + str(base_column_index)] is not None else None
-                datas[11]['column' + str(column_index)] =  "%.2f%%" % ((datas[11]['column' + str(column_index - 1)] - datas[11]['column' + str(base_column_index)]) / datas[11]['column' + str(base_column_index)] * 100) if datas[11]['column' + str(column_index - 1)] is not None and datas[11]['column' + str(base_column_index)] is not None else None
-                datas[12]['column' + str(column_index)] =  "%.2f%%" % ((datas[12]['column' + str(column_index - 1)] - datas[12]['column' + str(base_column_index)]) / datas[12]['column' + str(base_column_index)] * 100) if datas[12]['column' + str(column_index - 1)] is not None and datas[12]['column' + str(base_column_index)] is not None else None
-                datas[13]['column' + str(column_index)] =  "%.2f%%" % ((datas[13]['column' + str(column_index - 1)] - datas[13]['column' + str(base_column_index)]) / datas[13]['column' + str(base_column_index)] * 100) if datas[13]['column' + str(column_index - 1)] is not None and datas[13]['column' + str(base_column_index)] is not None else None
-                datas[14]['column' + str(column_index)] =  "%.2f%%" % ((datas[14]['column' + str(column_index - 1)] - datas[14]['column' + str(base_column_index)]) / datas[14]['column' + str(base_column_index)] * 100) if datas[14]['column' + str(column_index - 1)] is not None and datas[14]['column' + str(base_column_index)] is not None else None
-                datas[15]['column' + str(column_index)] =  "%.2f%%" % ((datas[15]['column' + str(column_index - 1)] - datas[15]['column' + str(base_column_index)]) / datas[15]['column' + str(base_column_index)] * 100) if datas[15]['column' + str(column_index - 1)] is not None and datas[15]['column' + str(base_column_index)] is not None else None
-                datas[16]['column' + str(column_index)] =  "%.2f%%" % ((datas[16]['column' + str(column_index - 1)] - datas[16]['column' + str(base_column_index)]) / datas[16]['column' + str(base_column_index)] * 100) if datas[16]['column' + str(column_index - 1)] is not None and datas[16]['column' + str(base_column_index)] is not None else None
-                datas[17]['column' + str(column_index)] =  "%.2f%%" % ((datas[17]['column' + str(column_index - 1)] - datas[17]['column' + str(base_column_index)]) / datas[17]['column' + str(base_column_index)] * 100) if datas[17]['column' + str(column_index - 1)] is not None and datas[17]['column' + str(base_column_index)] is not None else None
-                datas[18]['column' + str(column_index)] =  "%.2f%%" % ((datas[18]['column' + str(column_index - 1)] - datas[18]['column' + str(base_column_index)]) / datas[18]['column' + str(base_column_index)] * 100) if datas[18]['column' + str(column_index - 1)] is not None and datas[18]['column' + str(base_column_index)] is not None else None
-                datas[19]['column' + str(column_index)] =  "%.2f%%" % ((datas[19]['column' + str(column_index - 1)] - datas[19]['column' + str(base_column_index)]) / datas[19]['column' + str(base_column_index)] * 100) if datas[19]['column' + str(column_index - 1)] is not None and datas[19]['column' + str(base_column_index)] is not None else None
-                datas[20]['column' + str(column_index)] =  "%.2f%%" % ((datas[20]['column' + str(column_index - 1)] - datas[20]['column' + str(base_column_index)]) / datas[20]['column' + str(base_column_index)] * 100) if datas[20]['column' + str(column_index - 1)] is not None and datas[20]['column' + str(base_column_index)] is not None else None
-                datas[21]['column' + str(column_index)] =  "%.2f%%" % ((datas[21]['column' + str(column_index - 1)] - datas[21]['column' + str(base_column_index)]) / datas[21]['column' + str(base_column_index)] * 100) if datas[21]['column' + str(column_index - 1)] is not None and datas[21]['column' + str(base_column_index)] is not None else None
-                datas[22]['column' + str(column_index)] =  "%.2f%%" % ((datas[22]['column' + str(column_index - 1)] - datas[22]['column' + str(base_column_index)]) / datas[22]['column' + str(base_column_index)] * 100) if datas[22]['column' + str(column_index - 1)] is not None and datas[22]['column' + str(base_column_index)] is not None else None
-                datas[23]['column' + str(column_index)] =  "%.2f%%" % ((datas[23]['column' + str(column_index - 1)] - datas[23]['column' + str(base_column_index)]) / datas[23]['column' + str(base_column_index)] * 100) if datas[23]['column' + str(column_index - 1)] is not None and datas[23]['column' + str(base_column_index)] is not None else None
-                datas[24]['column' + str(column_index)] =  "%.2f%%" % ((datas[24]['column' + str(column_index - 1)] - datas[24]['column' + str(base_column_index)]) / datas[24]['column' + str(base_column_index)] * 100) if datas[24]['column' + str(column_index - 1)] is not None and datas[24]['column' + str(base_column_index)] is not None else None
-                datas[25]['column' + str(column_index)] =  "%.2f%%" % ((datas[25]['column' + str(column_index - 1)] - datas[25]['column' + str(base_column_index)]) / datas[25]['column' + str(base_column_index)] * 100) if datas[25]['column' + str(column_index - 1)] is not None and datas[25]['column' + str(base_column_index)] is not None else None
-                datas[26]['column' + str(column_index)] =  "%.2f%%" % ((datas[26]['column' + str(column_index - 1)] - datas[26]['column' + str(base_column_index)]) / datas[26]['column' + str(base_column_index)] * 100) if datas[26]['column' + str(column_index - 1)] is not None and datas[26]['column' + str(base_column_index)] is not None else None
+                for i in range(27):
+                        if i > 2:
+                            datas[i]['column' + str(column_index)] = \
+                                "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
                 column_index += 1
         return datas, title_index, column_index, base_column_index
 
