@@ -763,7 +763,7 @@ class Cpu2006ViewSet(CusModelViewSet):
         base_queryset = Cpu2006.objects.filter(env_id=env_id).all()
         datas = [{'column1': 'Cpu2006', 'column2': '', 'column3': '', 'column4': ''},
                  {'column1': '执行命令', 'column2': '', 'column3': '', 'column4': ''},
-                 {'column1': '修改参数：', 'column2': '', 'column3': '', 'column4': ''},
+                 {'column1': '修改参数', 'column2': '', 'column3': '', 'column4': ''},
                  {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '400.perlbench'},
                  {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '401.bzip2'},
                  {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': '403.gcc'},

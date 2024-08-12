@@ -252,7 +252,7 @@ class FioViewSet(CusModelViewSet):
             temp_data.extend(data)
         others = [{'column1': 'Fio', 'column2': '', },
                   {'column1': '执行命令', 'column2': ''},
-                  {'column1': '修改参数：', 'column2': ''}]
+                  {'column1': '修改参数', 'column2': ''}]
         new_data = others + temp_data
         return new_data
 

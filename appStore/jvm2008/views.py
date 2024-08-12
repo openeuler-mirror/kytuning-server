@@ -233,7 +233,7 @@ class Jvm2008ViewSet(CusModelViewSet):
         datas = [
             {'column1': 'Jvm2008', 'column2': ''},
             {'column1': '执行命令', 'column2': ''},
-            {'column1': '修改参数：', 'column2': ''},
+            {'column1': '修改参数', 'column2': ''},
             {'column1': 'base', 'column2': 'compiler size'},
             {'column1': 'base', 'column2': 'compress'},
             {'column1': 'base', 'column2': 'crypto'},
@@ -263,7 +263,6 @@ class Jvm2008ViewSet(CusModelViewSet):
         column_index = 3
         base_column_index = ''
         datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index, column_index, base_column_index)
-
         if comparsionIds != ['']:
             # 处理对比数据
             for comparativeId in comparsionIds:
