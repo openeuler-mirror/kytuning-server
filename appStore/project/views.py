@@ -29,8 +29,8 @@ class ProjectViewSet(CusModelViewSet):
         data_project['project_name'] = request.__dict__['data_project']['project_name']
         data_project['os_version'] = request.__dict__['data_project']['envinfo']['swinfo']['os']['osversion']
         data_project['cpu_module_name'] = request.__dict__['data_project']['envinfo']['hwinfo']['cpu']['model_name']
-        data_project['hwinfo_machineinfo_serialnumber'] = \
-        request.__dict__['data_project']['envinfo']['hwinfo']['machineinfo']['serialnumber']
+        data_project['ip'] = \
+            request.__dict__['data_project']['envinfo']['nwinfo']['nic'][0]['ip']
         # 获取所有文件名对应的key，判断每种测试迭代了几次
         # 对应数据条数默认值为0，遍历、判断这个key的startwith，在取最后一位数+1，与对应数据条数对比，如果大于则替换，
         data_project['cpu2006'] = 0
@@ -60,7 +60,7 @@ class ProjectViewSet(CusModelViewSet):
                 data_project['unixbench'] = int(key[-1]) + 1 if int(key[-1]) + 1 > data_project['unxibench'] else data_project['unxibench']
         # 查到serialnumber数据的次数后+1
         queryset = Project.objects.filter(
-            hwinfo_machineinfo_serialnumber=data_project['hwinfo_machineinfo_serialnumber']).order_by('times').last()
+            ip=data_project['ip']).order_by('times').last()
         if not queryset:
             data_project['times'] = 1
         else:
