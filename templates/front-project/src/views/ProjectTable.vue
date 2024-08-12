@@ -27,7 +27,7 @@
         <th>第几次</th>
         <th>系统版本</th>
         <th>cpu型号</th>
-        <th>serialnumber</th>
+        <th>ip</th>
         <th>stream</th>
         <th>lmbench</th>
         <th>unixbench</th>
@@ -57,7 +57,7 @@
         <td>{{ project.times }}</td>
         <td>{{ project.os_version }}</td>
         <td>{{ project.cpu_module_name }}</td>
-        <td>{{ project.hwinfo_machineinfo_serialnumber }}</td>
+        <td>{{ project.ip }}</td>
         <td>{{ project.stream }}</td>
         <td>{{ project.lmbench }}</td>
         <td>{{ project.unixbench }}</td>
