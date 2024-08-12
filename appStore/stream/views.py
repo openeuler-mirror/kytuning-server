@@ -55,7 +55,6 @@ class StreamViewSet(CusModelViewSet):
             datas[11]['column' + str(column_index)] = serializer.data[0]['multi_add']
             datas[12]['column' + str(column_index)] = serializer.data[0]['multi_triad']
             column_index += 1
-            title_index += 1
             if not base_column_index:
                 # 记录基准数据
                 base_column_index = column_index - 1

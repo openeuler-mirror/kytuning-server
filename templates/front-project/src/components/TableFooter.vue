@@ -1,21 +1,33 @@
 <template>
   <div class="footer">
     <el-card>
-        <el-button type="primary" icon="el-icon-download" @click="exportTableData">导出表格数据</el-button>
+      <el-button type="primary" icon="el-icon-download" @click="exportTableData">导出表格数据</el-button>
+      <el-button type="primary" icon="el-icon-view" @click="toggleDataVisibility">
+        {{ showAllData ? '隐藏数据' : '显示全部数据' }}
+      </el-button>
     </el-card>
   </div>
 </template>
 <script>
 export default {
-  props: {
-    otherList: Array,    // 接收 other-list 属性
-    tableDatas: Array,    // 接收 table-datas 属性
-    dataName:String
+  data() {
+    return {
+      localShowAllData: this.showAllData
+    }
   },
-  methods:{
-     // 导出表格数据为 CSV 格式
+  props: {
+    tableDatas: Array,    // 接收 table-datas 属性
+    dataName: String,
+    showAllData: null
+  },
+  methods: {
+    toggleDataVisibility() {
+      this.localShowAllData = !this.localShowAllData;
+      this.$emit('data-loaded', this.localShowAllData);
+    },
+    // 导出表格数据为 CSV 格式
     exportTableData() {
-      const data = [this.otherList, this.tableDatas];
+      const data = [this.tableDatas];
 
       // 生成 CSV 格式的数据字符串
       const csvData = data.map(rows => {
