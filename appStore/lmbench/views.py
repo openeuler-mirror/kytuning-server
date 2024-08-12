@@ -455,7 +455,7 @@ class LmbenchViewSet(CusModelViewSet):
         datas = [
         {'column1':'Lmbench','column2':''},
         {'column1': '执行命令','column2':''},
-        {'column1': '修改参数：', 'column2':''},
+        {'column1': '修改参数', 'column2':''},
         {'column1':'Basic system parameters','column2':'Mhz'},
         {'column1':'Basic system parameters','column2':'tlb pages'},
         {'column1':'Basic system parameters','column2':'cache line bytes'},

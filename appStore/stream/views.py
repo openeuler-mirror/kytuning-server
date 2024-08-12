@@ -42,8 +42,8 @@ class StreamViewSet(CusModelViewSet):
             # 基准数据和对比数据的平均数据
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             datas[0]['column' + str(column_index)] = title
-            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
             datas[3]['column' + str(column_index)] = serializer.data[0]['single_array_size']
             datas[4]['column' + str(column_index)] = serializer.data[0]['single_copy']
             datas[5]['column' + str(column_index)] = serializer.data[0]['single_scale']
@@ -156,7 +156,7 @@ class StreamViewSet(CusModelViewSet):
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '列表')
         datas = [{'column1': 'Stream', 'column2': ''}, {'column1': '执行命令', 'column2': ''},
-                 {'column1': '修改参数：', 'column2': ''}, {'column1': '单线程', 'column2': 'Array size'},
+                 {'column1': '修改参数', 'column2': ''}, {'column1': '单线程', 'column2': 'Array size'},
                  {'column1': '单线程', 'column2': 'Copy'}, {'column1': '单线程', 'column2': 'Scale'},
                  {'column1': '单线程', 'column2': 'Add'}, {'column1': '单线程', 'column2': 'Triad'},
                  {'column1': '多线程', 'column2': 'Array size'}, {'column1': '多线程', 'column2': 'Copy'},
@@ -173,7 +173,6 @@ class StreamViewSet(CusModelViewSet):
                 if not comparsion_queryset:
                     return json_response({}, status.HTTP_200_OK, '列表')
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
-        print(datas)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):

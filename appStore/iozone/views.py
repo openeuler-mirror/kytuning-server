@@ -278,7 +278,7 @@ class IozoneViewSet(CusModelViewSet):
         datas = [
             {'column1': 'Iozone', 'column2': ''},
             {'column1': '执行命令', 'column2': ''},
-            {'column1': '修改参数：', 'column2': ''},
+            {'column1': '修改参数', 'column2': ''},
             {'column1': 'double-读测试（KB/s）'},
             {'column1': 'double-重读测试（KB/s）'},
             {'column1': 'double-随机读测试（KB/s）'},

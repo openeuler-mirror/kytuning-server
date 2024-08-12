@@ -233,7 +233,7 @@ class UnixbenchViewSet(CusModelViewSet):
                         multi_index_score = data.index_score
 
                 # 基准数据和对比数据的全部数据
-                datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
+                datas[0]['column' + str(column_index)] = 'Unixbench#' + str(title_index)
                 datas[1]['column' + str(column_index)] = execute_cmd
                 datas[2]['column' + str(column_index)] = modify_parameters
                 datas[3]['column' + str(column_index)] = single_Dhrystone
@@ -328,7 +328,7 @@ class UnixbenchViewSet(CusModelViewSet):
         datas = [
             {'column1': 'Unxibench', 'column2': ''},
             {'column1': '执行命令', 'column2': ''},
-            {'column1': '修改参数：', 'column2': ''},
+            {'column1': '修改参数', 'column2': ''},
             {'column1': '单线程', 'column2': 'Dhrystone 2 using register variables(lps)'},
             {'column1': '单线程', 'column2': 'Double-Precision Whetstone(MWIPS)'},
             {'column1': '单线程', 'column2': 'Execl Throughput(lps)'},

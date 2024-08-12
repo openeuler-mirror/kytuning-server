@@ -646,7 +646,7 @@ class Cpu2017ViewSet(CusModelViewSet):
         datas = [
             {'column1': 'Cpu2017', 'column2': '', 'column3': '', 'column4': '', 'column5': ''},
             {'column1': '执行命令', 'column2': '', 'column3': '', 'column4': '', 'column5': ''},
-            {'column1': '修改参数：', 'column2': '', 'column3': '', 'column4': '', 'column5': ''},
+            {'column1': '修改参数', 'column2': '', 'column3': '', 'column4': '', 'column5': ''},
             {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': 'rate', 'column5': '500.perlbench_r'},
             {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': 'rate', 'column5': '502.gcc_r'},
             {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': 'rate', 'column5': '505.mcf_r'},
