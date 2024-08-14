@@ -130,13 +130,13 @@ class IozoneViewSet(CusModelViewSet):
                 random_read_test_list = [d.random_read_test for d in test_type_data_ if d.random_read_test is not None]
                 random_write_test_list = [d.random_write_test for d in test_type_data_ if d.random_write_test is not None]
                 # 计算每个数组的平均值
-                file_size = np.mean(file_size_list).round(2) if not np.isnan(np.mean(file_size_list)) else None
-                write_test = np.mean(write_test_list).round(2) if not np.isnan(np.mean(write_test_list)) else None
-                rewrite_test = np.mean(rewrite_test_list).round(2) if not np.isnan(np.mean(rewrite_test_list)) else None
-                read_test = np.mean(read_test_list).round(2) if not np.isnan(np.mean(read_test_list)) else None
-                reread_test = np.mean(reread_test_list).round(2) if not np.isnan(np.mean(reread_test_list)) else None
-                random_read_test = np.mean(random_read_test_list).round(2) if not np.isnan(np.mean(random_read_test_list)) else None
-                random_write_test = np.mean(random_write_test_list).round(2) if not np.isnan(np.mean(random_write_test_list)) else None
+                file_size = np.mean(file_size_list).round(2) if not file_size_list else None
+                write_test = np.mean(write_test_list).round(2) if not write_test_list else None
+                rewrite_test = np.mean(rewrite_test_list).round(2) if not rewrite_test_list else None
+                read_test = np.mean(read_test_list).round(2) if not read_test_list else None
+                reread_test = np.mean(reread_test_list).round(2) if not reread_test_list else None
+                random_read_test = np.mean(random_read_test_list).round(2) if not random_read_test_list else None
+                random_write_test = np.mean(random_write_test_list).round(2) if not random_write_test_list else None
 
                 data = {'testcase_name': test_type,
                         test_type + '_file_size': file_size,

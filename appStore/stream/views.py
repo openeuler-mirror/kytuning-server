@@ -1,8 +1,4 @@
 import numpy as np
-
-from django.http import JsonResponse, request
-from django.shortcuts import render
-
 # Create your views here.
 from rest_framework import status
 
@@ -70,28 +66,28 @@ class StreamViewSet(CusModelViewSet):
                 column_index += 1
         else:
             # 计算平均值
-            single_array_size_list = [d.single_array_size for d in serializer_]
-            single_copy_list = [d.single_copy for d in serializer_]
-            single_scale_list = [d.single_scale for d in serializer_]
-            single_add_list = [d.single_add for d in serializer_]
-            single_triad_list = [d.single_triad for d in serializer_]
-            multi_array_size_list = [d.multi_array_size for d in serializer_]
-            multi_copy_list = [d.multi_copy for d in serializer_]
-            multi_scale_list = [d.multi_scale for d in serializer_]
-            multi_add_list = [d.multi_add for d in serializer_]
-            multi_triad_list = [d.multi_triad for d in serializer_]
+            single_array_size_list = [d.single_array_size for d in serializer_ if d.single_array_size is not None]
+            single_copy_list = [d.single_copy for d in serializer_ if d.single_copy is not None]
+            single_scale_list = [d.single_scale for d in serializer_ if d.single_scale is not None]
+            single_add_list = [d.single_add for d in serializer_ if d.single_add is not None]
+            single_triad_list = [d.single_triad for d in serializer_ if d.single_triad is not None]
+            multi_array_size_list = [d.multi_array_size for d in serializer_ if d.multi_array_size is not None]
+            multi_copy_list = [d.multi_copy for d in serializer_ if d.multi_copy is not None]
+            multi_scale_list = [d.multi_scale for d in serializer_ if d.multi_scale is not None]
+            multi_add_list = [d.multi_add for d in serializer_ if d.multi_add is not None]
+            multi_triad_list = [d.multi_triad for d in serializer_ if d.multi_triad is not None]
 
             # 计算每个数组的平均值
-            average_single_array_size = np.mean(single_array_size_list).round(2) if not np.isnan(np.mean(single_array_size_list)) else None
-            average_single_copy = np.mean(single_copy_list).round(2) if not np.isnan(np.mean(single_copy_list)) else None
-            average_single_scale = np.mean(single_scale_list).round(2) if not np.isnan(np.mean(single_scale_list)) else None
-            average_single_add = np.mean(single_add_list).round(2) if not np.isnan(np.mean(single_add_list)) else None
-            average_single_triad = np.mean(single_triad_list).round(2) if not np.isnan(np.mean(single_triad_list)) else None
-            average_multi_array_size = np.mean(multi_array_size_list).round(2) if not np.isnan(np.mean(multi_array_size_list)) else None
-            average_multi_copy = np.mean(multi_copy_list).round(2) if not np.isnan(np.mean(multi_copy_list)) else None
-            average_multi_scale = np.mean(multi_scale_list).round(2) if not np.isnan(np.mean(multi_scale_list)) else None
-            average_multi_add = np.mean(multi_add_list).round(2) if not np.isnan(np.mean(multi_add_list)) else None
-            average_multi_triad = np.mean(multi_triad_list).round(2) if not np.isnan(np.mean(multi_triad_list)) else None
+            average_single_array_size = np.mean(single_array_size_list).round(2) if single_array_size_list else None
+            average_single_copy = np.mean(single_copy_list).round(2) if single_copy_list else None
+            average_single_scale = np.mean(single_scale_list).round(2) if single_scale_list else None
+            average_single_add = np.mean(single_add_list).round(2) if single_add_list else None
+            average_single_triad = np.mean(single_triad_list).round(2) if single_triad_list else None
+            average_multi_array_size = np.mean(multi_array_size_list).round(2) if multi_array_size_list else None
+            average_multi_copy = np.mean(multi_copy_list).round(2) if multi_copy_list else None
+            average_multi_scale = np.mean(multi_scale_list).round(2) if multi_scale_list else None
+            average_multi_add = np.mean(multi_add_list).round(2) if multi_add_list else None
+            average_multi_triad = np.mean(multi_triad_list).round(2) if multi_triad_list else None
 
             # 基准数据和对比数据的全部数据
             for data in serializer_:
