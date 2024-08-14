@@ -41,7 +41,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="project in allProjectDatas" :key="project.id">
+      <tr v-for="project in compData" :key="project.id">
         <td style="text-align: center;">
           <label style="display: inline-block;">
             <input type="checkbox" v-model="baseData" :value="project">
@@ -71,6 +71,19 @@
       </tr>
       </tbody>
     </table>
+    <br>
+    <div class="parent-container">
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 20, 30, 50]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -85,37 +98,45 @@ export default {
       baseData: [], // 用户选择的基准数据
       comparativeData: [], // 用户选择的对比数据
       selected: '',
-      selectedType: '',
+      selectedType: 'stream',
+      currentPage: 1, //当前页数
+      pageSize: 10, // 每页显示条数
+      total: 0, // 总条数
     }
   },
   created() {
     axios.get('/api/project/').then((response) => {
       this.allProjectDatas = response.data.data
+      console.log(this.allProjectDatas, 11);
+      this.total = this.allProjectDatas.length;
     });
   },
-
+  computed: {
+    compData() {
+      return this.allProjectDatas.slice(
+          (this.currentPage - 1) * this.pageSize,
+          this.currentPage * this.pageSize
+      );
+    },
+  },
   methods: {
-    // toggleCheckbox(event) {
-    //   const project = event.target.dataset.project;
-    //   const index = this.baseData.indexOf(project);
-    //   if (index === -1) {
-    //     this.baseData.push(project);
-    //   } else {
-    //     this.baseData.splice(index, 1);
-    //   }
-    // },
-
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.currentPage = 1;
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+    },
     ShowSingleData() {
       //跳转详情页面
-
       if (this.selectedType) {
-        const env_id = this.baseData.map(project => {return project.env_id})
+        const env_id = this.baseData.map(project => {
+          return project.env_id
+        })
         if (env_id.length !== 1) {
           ElMessage.error('请选择基准数据');
           return
         } else {
-          // 跳转env详情页面
-
           if (this.selectedType === "env") {
             this.$router.push({name: 'env', "params": {baseId: env_id[0]}});
           } else if (this.selectedType === "stream") {
@@ -199,18 +220,37 @@ export default {
     },
     getComparativeData() {
       if (this.selectedType) {
-        const env_id = this.baseData.map(project => {return project.env_id})
-        const env_ids = this.comparativeData.map(project => {return project.env_id})
+        const env_id = this.baseData.map(project => {
+          return project.env_id
+        })
+        const env_ids = this.comparativeData.map(project => {
+          return project.env_id
+        })
         const comparsionIds = env_ids.join(',')
-
-        const streams = this.comparativeData.map(project => {return project.stream})
-        const unixbenchs = this.comparativeData.map(project => {return project.unixbench})
-        const lmbenchs = this.comparativeData.map(project => {return project.lmbench})
-        const fios = this.comparativeData.map(project => {return project.fio})
-        const iozones = this.comparativeData.map(project => {return project.iozone})
-        const cpu2006s = this.comparativeData.map(project => {return project.cpu2006})
-        const cpu2017s = this.comparativeData.map(project => {return project.cpu2017})
-        const jvm2008s = this.comparativeData.map(project => {return project.jvm2008})
+        const streams = this.comparativeData.map(project => {
+          return project.stream
+        })
+        const unixbenchs = this.comparativeData.map(project => {
+          return project.unixbench
+        })
+        const lmbenchs = this.comparativeData.map(project => {
+          return project.lmbench
+        })
+        const fios = this.comparativeData.map(project => {
+          return project.fio
+        })
+        const iozones = this.comparativeData.map(project => {
+          return project.iozone
+        })
+        const cpu2006s = this.comparativeData.map(project => {
+          return project.cpu2006
+        })
+        const cpu2017s = this.comparativeData.map(project => {
+          return project.cpu2017
+        })
+        const jvm2008s = this.comparativeData.map(project => {
+          return project.jvm2008
+        })
 
         if (this.selectedType === "env") {
           ElMessage.error('环境信息数据不支持对比');
@@ -363,4 +403,11 @@ button {
 .custom-table tbody tr:hover {
   background-color: #f5f5f5;
 }
+
+.parent-container {
+  display: flex;
+  justify-content: center;
+  /*background-color: #f2f2f2;*/
+}
 </style>
+
