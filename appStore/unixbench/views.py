@@ -150,19 +150,19 @@ class UnixbenchViewSet(CusModelViewSet):
             single_system_call_overhead_list = [d.system_call_overhead for d in single_data_ if d.system_call_overhead is not None]
             single_index_score_list = [d.index_score for d in single_data_ if d.index_score is not None]
             # 计算每个数组的平均值
-            average_single_Dhrystone = np.mean(single_Dhrystone_list).round(2) if not np.isnan(np.mean(single_Dhrystone_list)) else None
-            average_single_Double_Precision = np.mean(single_Double_Precision_list).round(2) if not np.isnan(np.mean(single_Double_Precision_list)) else None
-            average_single_execl_throughput = np.mean(single_execl_throughput_list).round(2) if not np.isnan(np.mean(single_execl_throughput_list)) else None
-            average_single_file_copy_1024 = np.mean(single_file_copy_1024_list).round(2) if not np.isnan(np.mean(single_file_copy_1024_list)) else None
-            average_single_file_copy_256 = np.mean(single_file_copy_256_list).round(2) if not np.isnan(np.mean(single_file_copy_256_list)) else None
-            average_single_file_copy_4096 = np.mean(single_file_copy_4096_list).round(2) if not np.isnan(np.mean(single_file_copy_4096_list)) else None
-            average_single_pipe_throughput = np.mean(single_pipe_throughput_list).round(2) if not np.isnan(np.mean(single_pipe_throughput_list)) else None
-            average_single_pipe_based = np.mean(single_pipe_based_list).round(2) if not np.isnan(np.mean(single_pipe_based_list)) else None
-            average_single_process_creation = np.mean(single_process_creation_list).round(2) if not np.isnan(np.mean(single_process_creation_list)) else None
-            average_single_shell_scripts_1 = np.mean(single_shell_scripts_1_list).round(2) if not np.isnan(np.mean(single_shell_scripts_1_list)) else None
-            average_single_shell_scripts_8 = np.mean(single_shell_scripts_8_list).round(2) if not np.isnan(np.mean(single_shell_scripts_8_list)) else None
-            average_single_system_call_overhead = np.mean(single_system_call_overhead_list).round(2) if not np.isnan(np.mean(single_system_call_overhead_list)) else None
-            average_single_index_score = np.mean(single_index_score_list).round(2) if not np.isnan(np.mean(single_index_score_list)) else None
+            average_single_Dhrystone = np.mean(single_Dhrystone_list).round(2) if single_Dhrystone_list else None
+            average_single_Double_Precision = np.mean(single_Double_Precision_list).round(2) if single_Double_Precision_list else None
+            average_single_execl_throughput = np.mean(single_execl_throughput_list).round(2) if single_execl_throughput_list else None
+            average_single_file_copy_1024 = np.mean(single_file_copy_1024_list).round(2) if single_file_copy_1024_list else None
+            average_single_file_copy_256 = np.mean(single_file_copy_256_list).round(2) if single_file_copy_256_list else None
+            average_single_file_copy_4096 = np.mean(single_file_copy_4096_list).round(2) if single_file_copy_4096_list else None
+            average_single_pipe_throughput = np.mean(single_pipe_throughput_list).round(2) if single_pipe_throughput_list else None
+            average_single_pipe_based = np.mean(single_pipe_based_list).round(2) if single_pipe_based_list else None
+            average_single_process_creation = np.mean(single_process_creation_list).round(2) if single_process_creation_list else None
+            average_single_shell_scripts_1 = np.mean(single_shell_scripts_1_list).round(2) if single_shell_scripts_1_list else None
+            average_single_shell_scripts_8 = np.mean(single_shell_scripts_8_list).round(2) if single_shell_scripts_8_list else None
+            average_single_system_call_overhead = np.mean(single_system_call_overhead_list).round(2) if single_system_call_overhead_list else None
+            average_single_index_score = np.mean(single_index_score_list).round(2) if single_index_score_list else None
 
             # 多线程数据
             multi_Dhrystone_list = [d.Dhrystone for d in multi_data_ if d.Dhrystone is not None]
@@ -179,19 +179,19 @@ class UnixbenchViewSet(CusModelViewSet):
             multi_system_call_overhead_list = [d.system_call_overhead for d in multi_data_ if d.system_call_overhead is not None]
             multi_index_score_list = [d.index_score for d in multi_data_ if d.index_score is not None]
             # 计算每个数组的平均值
-            average_multi_Dhrystone = np.mean(multi_Dhrystone_list).round(2) if not np.isnan(np.mean(multi_Dhrystone_list)) else None
-            average_multi_Double_Precision = np.mean(multi_Double_Precision_list).round(2) if not np.isnan(np.mean(multi_Double_Precision_list)) else None
-            average_multi_execl_throughput = np.mean(multi_execl_throughput_list).round(2) if not np.isnan(np.mean(multi_execl_throughput_list)) else None
-            average_multi_file_copy_1024 = np.mean(multi_file_copy_1024_list).round(2) if not np.isnan(np.mean(multi_file_copy_1024_list)) else None
-            average_multi_file_copy_256 = np.mean(multi_file_copy_256_list).round(2) if not np.isnan(np.mean(multi_file_copy_256_list)) else None
-            average_multi_file_copy_4096 = np.mean(multi_file_copy_4096_list).round(2) if not np.isnan(np.mean(multi_file_copy_4096_list)) else None
-            average_multi_pipe_throughput = np.mean(multi_pipe_throughput_list).round(2) if not np.isnan(np.mean(multi_pipe_throughput_list)) else None
-            average_multi_pipe_based = np.mean(multi_pipe_based_list).round(2) if not np.isnan(np.mean(multi_pipe_based_list)) else None
-            average_multi_process_creation = np.mean(multi_process_creation_list).round(2) if not np.isnan(np.mean(multi_process_creation_list)) else None
-            average_multi_shell_scripts_1 = np.mean(multi_shell_scripts_1_list).round(2) if not np.isnan(np.mean(multi_shell_scripts_1_list)) else None
-            average_multi_shell_scripts_8 = np.mean(multi_shell_scripts_8_list).round(2) if not np.isnan(np.mean(multi_shell_scripts_8_list)) else None
-            average_multi_system_call_overhead = np.mean(multi_system_call_overhead_list).round(2) if not np.isnan(np.mean(multi_system_call_overhead_list)) else None
-            average_multi_index_score = np.mean(multi_index_score_list).round(2) if not np.isnan(np.mean(multi_index_score_list)) else None
+            average_multi_Dhrystone = np.mean(multi_Dhrystone_list).round(2) if multi_Dhrystone_list else None
+            average_multi_Double_Precision = np.mean(multi_Double_Precision_list).round(2) if multi_Double_Precision_list else None
+            average_multi_execl_throughput = np.mean(multi_execl_throughput_list).round(2) if multi_execl_throughput_list else None
+            average_multi_file_copy_1024 = np.mean(multi_file_copy_1024_list).round(2) if multi_file_copy_1024_list else None
+            average_multi_file_copy_256 = np.mean(multi_file_copy_256_list).round(2) if multi_file_copy_256_list else None
+            average_multi_file_copy_4096 = np.mean(multi_file_copy_4096_list).round(2) if multi_file_copy_4096_list else None
+            average_multi_pipe_throughput = np.mean(multi_pipe_throughput_list).round(2) if multi_pipe_throughput_list else None
+            average_multi_pipe_based = np.mean(multi_pipe_based_list).round(2) if multi_pipe_based_list else None
+            average_multi_process_creation = np.mean(multi_process_creation_list).round(2) if multi_process_creation_list else None
+            average_multi_shell_scripts_1 = np.mean(multi_shell_scripts_1_list).round(2) if multi_shell_scripts_1_list else None
+            average_multi_shell_scripts_8 = np.mean(multi_shell_scripts_8_list).round(2) if multi_shell_scripts_8_list else None
+            average_multi_system_call_overhead = np.mean(multi_system_call_overhead_list).round(2) if multi_system_call_overhead_list else None
+            average_multi_index_score = np.mean(multi_index_score_list).round(2) if multi_index_score_list else None
 
             # 查到mark-name相同的数据拼接为一组：serializer.data
             for mark_name in groups:
@@ -369,6 +369,7 @@ class UnixbenchViewSet(CusModelViewSet):
                     return json_response({}, status.HTTP_200_OK, '列表')
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index,
                                                                                     column_index, base_column_index)
+        print(datas)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
