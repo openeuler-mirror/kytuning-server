@@ -30,7 +30,7 @@ class Cpu2006ViewSet(CusModelViewSet):
             datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
             datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
             # 初始化所有数据为空
-            for i in range(5, 127):
+            for i in range(3, 127):
                 datas[i]['column' + str(column_index)] = None
             for data in serializer.data:
                 # 判断数据的TuneType确定是base还是peak

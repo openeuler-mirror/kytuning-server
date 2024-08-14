@@ -1,12 +1,14 @@
 <template>
   <div>
-    <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+    <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"/>
     <div style="overflow-x: auto;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
         <template v-for="(value, key,index) in tableDatas[0]" :key="key">
           <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 3 ? '90' : ''" align="center">
             <template v-slot="{ row }">
-              <span :style="getStyle(row, key)">{{ row[key] }}</span>
+              <div :class="getCellClassName(row, key)">
+                {{ row[key] }}
+              </div>
             </template>
           </el-table-column>
         </template>
@@ -37,7 +39,7 @@ export default {
     };
   },
   created() {
-    axios.get('/api/'+this.dataName+'/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
+    axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
       this.tableDatas = response.data.data;
       this.numColumns = Object.keys(this.tableDatas[0]).length;
       this.showAllData = false; // 默认显示平均数据
@@ -58,7 +60,7 @@ export default {
         modifiedTableData.forEach(row => {
           Object.entries(row).forEach(([key, value]) => {
             if (typeof value === 'string' && key.startsWith('column') && value.startsWith('平均值')) {
-              row[key] = this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#"+`${count}`; // 将"平均值"替换为"Stream#"
+              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"Stream#"
               count++;
             }
           });
@@ -68,37 +70,28 @@ export default {
     }
   },
   methods: {
-    handleDataLoaded(value) {
-      this.showAllData = value; // 访问 Left 子组件的 tableTitle 数据
-      // 在这里处理子组件的数据
-    },
-    getStyle(row, key) {
+    getCellClassName(row, key) {
       let value = row[key];
       if (typeof value === 'string' && value.endsWith('%')) {
         // 去除百分比符号 "%"
         value = value.replace('%', '');
-        // 将百分比转换为小数
+         // 将百分比转换为小数
         value = parseFloat(value);
         if (value >= 5) {
-          return {
-            color: 'red',
-            // backgroundColor: 'cyan'
-          };
+          return 'green-cell';
         } else if (value < -5) {
-          return {
-            color: 'green',
-            // backgroundColor: 'cyan'
-          };
+          return 'red-cell';
         }
       }
+      return '';
     },
-    titleObjectSpanMethod({columnIndex }) {
-        if (columnIndex === 0) {
-            return [1, 4];
-          } else if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3) {
-            return [0, 0];
-          }
-      },
+    titleObjectSpanMethod({columnIndex}) {
+      if (columnIndex === 0) {
+        return [1, 4];
+      } else if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3) {
+        return [0, 0];
+      }
+    },
 
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
@@ -128,7 +121,7 @@ export default {
               spanOneArr.push(1);
               concatOne = index;
             }
-          } else if (colIndex === 1){
+          } else if (colIndex === 1) {
             if (item['column2'] === arr[index - 1]['column2']) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);
@@ -136,7 +129,7 @@ export default {
               spanOneArr.push(1);
               concatOne = index;
             }
-          } else if (colIndex === 2){
+          } else if (colIndex === 2) {
             if (item['column3'] === arr[index - 1]['column3']) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);
@@ -157,5 +150,15 @@ export default {
 </script>
 
 <style>
-@import url("//unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css");
+.green-cell {
+  color: green;
+  background-color: greenyellow;
+  /* 其他样式属性 */
+}
+
+.red-cell {
+  color: red;
+  background-color: pink;
+  /* 其他样式属性 */
+}
 </style>
