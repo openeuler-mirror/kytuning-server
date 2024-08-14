@@ -54,10 +54,6 @@ export default {
     });
   },
   computed: {
-    handleDataLoaded(value) {
-      this.showAllData = value;
-      // 在这里处理子组件的数据
-    },
     displayTableData() {
       if (this.showAllData) {
         return this.tableDatas;
@@ -67,7 +63,7 @@ export default {
         modifiedTableData.forEach(row => {
           Object.entries(row).forEach(([key, value]) => {
             if (typeof value === 'string' && key.startsWith('column') && value.startsWith('平均值')) {
-              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"Stream#"
+              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"this.dataName#"
               count++;
             }
           });
@@ -77,6 +73,10 @@ export default {
     }
   },
   methods: {
+    handleDataLoaded(value) {
+      this.showAllData = value;
+      // 在这里处理子组件的数据
+    },
     getCellClassName(row, key) {
       let value = row[key];
       if (typeof value === 'string' && value.endsWith('%')) {

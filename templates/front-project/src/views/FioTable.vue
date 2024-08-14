@@ -63,7 +63,7 @@ export default {
         modifiedTableData.forEach(row => {
           Object.entries(row).forEach(([key, value]) => {
             if (typeof value === 'string' && key.startsWith('column') && value.startsWith('平均值')) {
-              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"Stream#"
+              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"this.dataName#"
               count++;
             }
           });

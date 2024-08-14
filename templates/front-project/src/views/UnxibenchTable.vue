@@ -62,7 +62,7 @@ export default {
         modifiedTableData.forEach(row => {
           Object.entries(row).forEach(([key, value]) => {
             if (typeof value === 'string' && key.startsWith('column') && value.startsWith('平均值')) {
-              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"Stream#"
+              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"this.dataName#"
               count++;
             }
           });
@@ -75,6 +75,14 @@ export default {
     handleDataLoaded(value) {
       this.showAllData = value;
       // 在这里处理子组件的数据
+    },
+    tableRowClassName({rowIndex}) {
+        if (rowIndex === 15) {
+          return 'warning-row';
+        } else if (rowIndex === 28) {
+          return 'success-row';
+        }
+        return '';
     },
     getCellClassName(row, key) {
       let value = row[key];
@@ -145,7 +153,6 @@ export default {
   height: 15px;
   line-height: 15px;
 }
-/*总分的背景色*/
 .el-table .warning-row {
   background: oldlace;
 }
@@ -153,7 +160,7 @@ export default {
 .el-table .success-row {
   background: #f0f9eb;
 }
-/*对比值的背景色*/
+
 .green-cell {
   color:green;
   background-color: greenyellow;
