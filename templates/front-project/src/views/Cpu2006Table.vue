@@ -1,10 +1,12 @@
 <template>
   <div>
-    <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"/>
+    <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     <div style="overflow-x: auto;">
-      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
+      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
+                :show-header="false">
         <template v-for="(value, key,index) in tableDatas[0]" :key="key">
-          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 3 ? '90' : ''" align="center">
+          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 3 ? '90' : ''"
+                           align="center">
             <template v-slot="{ row }">
               <div :class="getCellClassName(row, key)">
                 {{ row[key] }}
@@ -41,6 +43,7 @@ export default {
   created() {
     axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
       this.tableDatas = response.data.data;
+      console.log(response.data.data)
       this.numColumns = Object.keys(this.tableDatas[0]).length;
       this.showAllData = false; // 默认显示平均数据
       const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
@@ -51,6 +54,10 @@ export default {
     });
   },
   computed: {
+    handleDataLoaded(value) {
+      this.showAllData = value;
+      // 在这里处理子组件的数据
+    },
     displayTableData() {
       if (this.showAllData) {
         return this.tableDatas;
@@ -151,13 +158,12 @@ export default {
 
 <style>
 .green-cell {
-  color: green;
+  color:green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
-
 .red-cell {
-  color: red;
+  color:red;
   background-color: pink;
   /* 其他样式属性 */
 }
