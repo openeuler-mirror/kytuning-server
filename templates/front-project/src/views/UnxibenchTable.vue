@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"/>
+    <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     <div style="overflow-x: auto;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
                 :show-header="false" :row-class-name="tableRowClassName">
@@ -72,6 +72,10 @@ export default {
     }
   },
   methods: {
+    handleDataLoaded(value) {
+      this.showAllData = value;
+      // 在这里处理子组件的数据
+    },
     getCellClassName(row, key) {
       let value = row[key];
       if (typeof value === 'string' && value.endsWith('%')) {
