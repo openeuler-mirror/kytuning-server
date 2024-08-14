@@ -749,7 +749,7 @@ class Cpu2017ViewSet(CusModelViewSet):
             {'column1': 'peak', 'column2': '多线程', 'column3': 'fp', 'column4': 'rate', 'column5': 'SPECrate2017_fp'},
         ]
         title_index = 1
-        column_index = 5
+        column_index = 6
         base_column_index = ''
         datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index, column_index, base_column_index)
 
