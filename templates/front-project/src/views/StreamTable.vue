@@ -80,7 +80,7 @@ export default {
       if (typeof value === 'string' && value.endsWith('%')) {
         // 去除百分比符号 "%"
         value = value.replace('%', '');
-         // 将百分比转换为小数
+        // 将百分比转换为小数
         value = parseFloat(value);
         if (value >= 5) {
           return 'green-cell';
@@ -91,30 +91,52 @@ export default {
       return '';
     },
     objectSpanMethod({rowIndex, columnIndex}) {
-      // columnIndex 表示需要合并的列，多列时用 || 隔开
+      //columnIndex 表示需要合并的列，多列时用 || 隔开
       if (columnIndex === 0) {
-        const _row = this.displayTableData[rowIndex];
-        if (_row && _row.span) {
-          return {
-            rowspan: _row.span.rowspan,
-            colspan: _row.span.colspan,
-          };
+        const _row = this.filterData(this.tableDatas, columnIndex).one[rowIndex];
+        const _col = _row > 0 ? 1 : 0;  // 为0是不执行合并。 为1是从当前单元格开始，执行合并1列
+        return {
+          rowspan: _row,
+          colspan: _col,
         }
       }
     },
-
+    filterData(arr, colIndex) {
+      let spanOneArr = [];
+      let concatOne = 0;
+      arr.forEach((item, index) => {
+        if (index === 0) {
+          spanOneArr.push(1);
+        } else {
+          //first second 分别表示表格数据第一列和第二列对应的参数字段，根据实际参数修改
+          if (colIndex === 0) {
+            if (item.column1 === arr[index - 1].column1) {
+              spanOneArr[concatOne] += 1;
+              spanOneArr.push(0);
+            } else {
+              spanOneArr.push(1);
+              concatOne = index;
+            }
+          }
+        }
+      });
+      return {
+        one: spanOneArr,
+      };
+    }
   }
 };
 </script>
 
 <style>
 .green-cell {
-  color:green;
+  color: green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
+
 .red-cell {
-  color:red;
+  color: red;
   background-color: pink;
   /* 其他样式属性 */
 }
