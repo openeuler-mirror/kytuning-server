@@ -126,17 +126,17 @@ class FioViewSet(CusModelViewSet):
                 for bs_ in bs_list:
                     value, bs_unit = self.get_unit(bs_)
                     bs += float(value)
-                bs = bs / len(bs_list)
+                bs = "%.2f" % (bs / len(bs_list))
                 io = 0
                 for io_ in io_list:
                     value, io_unit = self.get_unit(io_)
                     io += float(value)
-                io = io / len(io_list)
+                io = "%.2f" % (io / len(io_list))
                 iops = 0
                 for iops_ in iops_list:
                     value, iops_unit = self.get_unit(iops_)
                     iops += float(value)
-                iops = iops / len(iops_list)
+                iops = "%.2f" % (iops / len(iops_list))
                 # 获取bw的平均值
                 value1 = 0
                 value2 = 0
@@ -144,8 +144,8 @@ class FioViewSet(CusModelViewSet):
                     value1_, value2_, bw_unit1, bw_unit2 = self.get_bw_unit(bw_)
                     value1 += float(value1_)
                     value2 += float(value2_)
-                value1 = value1 / len(bw_list)
-                value2 = value2 / len(bw_list)
+                value1 = "%.2f" % (value1 / len(bw_list))
+                value2 = "%.2f" % (value2 / len(bw_list))
                 bw = str(value1) + bw_unit1 + '(' + str(value2) +bw_unit2
 
                 data = {'rw': data_[0].rw + '(' + str(data_[0].bs + ')'),
@@ -280,6 +280,7 @@ class FioViewSet(CusModelViewSet):
                 if not comparsion_queryset:
                     return json_response({}, status.HTTP_200_OK, '列表')
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+        print(datas)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
