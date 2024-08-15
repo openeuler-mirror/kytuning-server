@@ -11,6 +11,7 @@ from appStore.lmbench.views import LmbenchViewSet
 from appStore.project.views import ProjectViewSet
 from appStore.stream.views import StreamViewSet
 from appStore.unixbench.views import UnixbenchViewSet
+from appStore.users.views import UserProfileViewSet
 
 router = routers.DefaultRouter()
 ####################
@@ -26,10 +27,11 @@ router.register(r'lmbench', LmbenchViewSet, basename='lmbench')
 router.register(r'project', ProjectViewSet, basename='project')
 router.register(r'stream', StreamViewSet, basename='stream')
 router.register(r'unixbench', UnixbenchViewSet, basename='unixbench')
+router.register(r'users', UserProfileViewSet, basename='users')
 
 urlpatterns = [
     # url(r'^y_upload_file/', y_upload_file),  # upload_file
     url(r'', include(router.urls)),
-    url('^stream_title/', StreamViewSet.as_view({'get': 'get_stream_title'}), name='stream_title'),
+    url('^get_filter_name/', ProjectViewSet.as_view({'get': 'get_filter_name'}), name='get_filter_name'),
     url('^stream_data/', StreamViewSet.as_view({'get': 'get_stream_data'}), name='stream_data'),
 ]
