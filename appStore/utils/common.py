@@ -74,17 +74,19 @@ def model_to_dict_myself(queryset, **kwargs):
     return data
 
 
-# def jwt_response_payload_handler(token, user=None, request=None):
-#     """
-#     自定义jwt认证成功返回数据
-#     """
-#     return {
-#         'token': token,
-#         'user_id': user.id,
-#         'username': user.username,
-#         'user_group_id':user.user_group_id,
-#         'user_type':user.user_type
-#     }
+def jwt_response_payload_handler(token, user=None, request=None):
+    """
+    自定义jwt认证成功返回数据
+    """
+    return {
+        'token': token,
+        'user_id': user.id,
+        'username': user.username,
+        'is_superuser': user.is_superuser,
+        'is_staff': user.is_staff,
+        'code': 200,
+    }
+
 
 def get_error_message(serializer):
     """
