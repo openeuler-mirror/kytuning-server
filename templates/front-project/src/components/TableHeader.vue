@@ -10,14 +10,14 @@
       </el-row>
       <br>
       <el-row class="mb-4">
-        <el-button type="success" @click="goToStream" :disabled="toStream">stream</el-button>
-        <el-button type="success" @click="goToLmbench">lmbench</el-button>
-        <el-button type="success" @click="goToUnixbench">unixbench</el-button>
-        <el-button type="success" @click="goToFio">fio</el-button>
-        <el-button type="success" @click="goToIozone">iozone</el-button>
-        <el-button type="success" @click="goToJvm2008">jvm2008</el-button>
-        <el-button type="success" @click="goToCpu2016">cpu2016</el-button>
-        <el-button type="success" @click="goToCpu2017">cpu2017</el-button>
+        <el-button type="success" @click="goTo('stream')" :disabled="toDisabled('stream')">stream</el-button>
+        <el-button type="success" @click="goTo('lmbench')" :disabled="toDisabled('lmbench')">lmbench</el-button>
+        <el-button type="success" @click="goTo('unixbench')" :disabled="toDisabled('unixbench')">unixbench</el-button>
+        <el-button type="success" @click="goTo('fio')" :disabled="toDisabled('fio')">fio</el-button>
+        <el-button type="success" @click="goTo('iozone')" :disabled="toDisabled('iozone')">iozone</el-button>
+        <el-button type="success" @click="goTo('jvm2008')" :disabled="toDisabled('jvm2008')">jvm2008</el-button>
+        <el-button type="success" @click="goTo('cpu2006')" :disabled="toDisabled('cpu2006')">cpu2006</el-button>
+        <el-button type="success" @click="goTo('cpu2017')" :disabled="toDisabled('cpu2017')">cpu2017</el-button>
       </el-row>
     </el-card>
   </div>
@@ -42,54 +42,34 @@ export default {
   created() {
     axios.get('/api/project/').then((response) => {
       this.allProjectDatas = response.data.data
-      console.log(this.allProjectDatas);
       this.isDataLoaded = true;
     });
   },
   computed: {
-    toStream() {
-      if (!this.isDataLoaded) {
-      return false; // 数据尚未加载完成，返回默认值
-    }
-      const baseData = this.allProjectDatas.find(data => data.id === parseInt(this.$route.params.baseId));
-      const comparsionIdsArray = this.$route.params.comparsionIds.split(',');
-      let disabled = false
-      if (baseData && baseData.stream === 0) {
-        disabled = true
-      }
-      comparsionIdsArray.some(compId => {
-        const comparData = this.allProjectDatas.find(data => data.env_id === parseInt(compId));
-        if (comparData && comparData.stream === 0){
+    toDisabled() {
+      return (name) => {
+        if (!this.isDataLoaded) {
+          return false; // 数据尚未加载完成，返回默认值
+        }
+        const baseData = this.allProjectDatas.find(data => data.id === parseInt(this.$route.params.baseId));
+        const comparsionIdsArray = this.$route.params.comparsionIds.split(',');
+        let disabled = false
+        if (baseData && baseData[name] === 0) {
           disabled = true
         }
-      });
-      return disabled;
-    }
+        comparsionIdsArray.some(compId => {
+          const comparData = this.allProjectDatas.find(data => data.env_id === parseInt(compId));
+          if (comparData && comparData[name] === 0) {
+            disabled = true
+          }
+        });
+        return disabled;
+      };
+    },
   },
   methods: {
-    goToStream(){
-      this.$router.push({name: 'stream',"params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
-    },
-    goToLmbench(){
-      this.$router.push({name: 'lmbench',"params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
-    },
-    goToUnixbench(){
-      this.$router.push({name: 'unixbench', "params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
-    },
-    goToFio() {
-      this.$router.push({name: 'fio', "params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
-    },
-    goToIozone() {
-      this.$router.push({name: 'iozone', "params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
-    },
-    goToJvm2008() {
-      this.$router.push({name: 'jvm2008', "params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
-    },
-    goToCpu2016() {
-      this.$router.push({name: 'cpu2006', "params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
-    },
-    goToCpu2017() {
-      this.$router.push({name: 'cpu2017', "params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
+    goTo(name){
+      this.$router.push({name: name,"params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
     },
     toggleDataVisibility() {
       this.localShowAllData = !this.localShowAllData;
