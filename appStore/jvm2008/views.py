@@ -26,7 +26,7 @@ class Jvm2008ViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
             datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
             datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
-            # 初始化所有数据为空
+            # 初始化所有数据为None
             for i in range(3, 27):
                 datas[i]['column' + str(column_index)] = None
             for data in serializer.data:
@@ -98,18 +98,18 @@ class Jvm2008ViewSet(CusModelViewSet):
             base_xml_list = [d.xml for d in base_data_]
             base_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in base_data_]
             # 计算每个数组的平均值
-            average_base_compiler = np.mean(base_compiler_list).round(2) if not base_compiler_list else None
-            average_base_compress = np.mean(base_compress_list).round(2) if not base_compress_list else None
-            average_base_crypto = np.mean(base_crypto_list).round(2) if not base_crypto_list else None
-            average_base_derby = np.mean(base_derby_list).round(2) if not base_derby_list else None
-            average_base_mpegaudio = np.mean(base_mpegaudio_list).round(2) if not base_mpegaudio_list else None
-            average_base_scimark_large = np.mean(base_scimark_large_list).round(2) if not base_scimark_large_list else None
-            average_base_scimark_small = np.mean(base_scimark_small_list).round(2) if not base_scimark_small_list else None
-            average_base_serial = np.mean(base_serial_list).round(2) if not base_serial_list else None
-            average_base_startup = np.mean(base_startup_list).round(2) if not base_startup_list else None
-            average_base_sunflow = np.mean(base_sunflow_list).round(2) if not base_sunflow_list else None
-            average_base_xml = np.mean(base_xml_list).round(2) if not base_xml_list else None
-            average_base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2) if not base_Noncompliant_pomposite_result_list else None
+            average_base_compiler = np.mean(base_compiler_list).round(2) if not np.isnan(np.mean(base_compiler_list)) else None
+            average_base_compress = np.mean(base_compress_list).round(2) if not np.isnan(np.mean(base_compress_list)) else None
+            average_base_crypto = np.mean(base_crypto_list).round(2) if not np.isnan(np.mean(base_crypto_list)) else None
+            average_base_derby = np.mean(base_derby_list).round(2) if not np.isnan(np.mean(base_derby_list)) else None
+            average_base_mpegaudio = np.mean(base_mpegaudio_list).round(2) if not np.isnan(np.mean(base_mpegaudio_list)) else None
+            average_base_scimark_large = np.mean(base_scimark_large_list).round(2) if not np.isnan(np.mean(base_scimark_large_list)) else None
+            average_base_scimark_small = np.mean(base_scimark_small_list).round(2) if not np.isnan(np.mean(base_scimark_small_list)) else None
+            average_base_serial = np.mean(base_serial_list).round(2) if not np.isnan(np.mean(base_serial_list)) else None
+            average_base_startup = np.mean(base_startup_list).round(2) if not np.isnan(np.mean(base_startup_list)) else None
+            average_base_sunflow = np.mean(base_sunflow_list).round(2) if not np.isnan(np.mean(base_sunflow_list)) else None
+            average_base_xml = np.mean(base_xml_list).round(2) if not np.isnan(np.mean(base_xml_list)) else None
+            average_base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2) if not np.isnan(np.mean(base_Noncompliant_pomposite_result_list)) else None
 
             peak_compiler_list = [d.compiler for d in peak_data_ if d.compiler is not None]
             peak_compress_list = [d.compress for d in peak_data_ if d.compress is not None]
@@ -124,18 +124,18 @@ class Jvm2008ViewSet(CusModelViewSet):
             peak_xml_list = [d.xml for d in peak_data_ if d.xml is not None]
             peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_ if d.Noncompliant_pomposite_result is not None]
             # 计算每个数组的平均值
-            average_peak_compiler = np.mean(peak_compiler_list).round(2) if not peak_compiler_list else None
-            average_peak_compress = np.mean(peak_compress_list).round(2) if not peak_compress_list else None
-            average_peak_crypto = np.mean(peak_crypto_list).round(2) if not peak_crypto_list else None
-            average_peak_derby = np.mean(peak_derby_list).round(2) if not peak_derby_list else None
-            average_peak_mpegaudio = np.mean(peak_mpegaudio_list).round(2) if not peak_mpegaudio_list else None
-            average_peak_scimark_large = np.mean(peak_scimark_large_list).round(2) if not peak_scimark_large_list else None
-            average_peak_scimark_small = np.mean(peak_scimark_small_list).round(2) if not peak_scimark_small_list else None
-            average_peak_serial = np.mean(peak_serial_list).round(2) if not peak_serial_list else None
-            average_peak_startup = np.mean(peak_startup_list).round(2) if not peak_startup_list else None
-            average_peak_sunflow = np.mean(peak_sunflow_list).round(2) if not peak_sunflow_list else None
-            average_peak_xml = np.mean(peak_xml_list).round(2) if not peak_xml_list else None
-            average_peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list).round(2) if not peak_Noncompliant_pomposite_result_list else None
+            average_peak_compiler = np.mean(peak_compiler_list).round(2) if not np.isnan(np.mean(peak_compiler_list)) else None
+            average_peak_compress = np.mean(peak_compress_list).round(2) if not np.isnan(np.mean(peak_compress_list)) else None
+            average_peak_crypto = np.mean(peak_crypto_list).round(2) if not np.isnan(np.mean(peak_crypto_list)) else None
+            average_peak_derby = np.mean(peak_derby_list).round(2) if not np.isnan(np.mean(peak_derby_list)) else None
+            average_peak_mpegaudio = np.mean(peak_mpegaudio_list).round(2) if not np.isnan(np.mean(peak_mpegaudio_list)) else None
+            average_peak_scimark_large = np.mean(peak_scimark_large_list).round(2) if not np.isnan(np.mean(peak_scimark_large_list)) else None
+            average_peak_scimark_small = np.mean(peak_scimark_small_list).round(2) if not np.isnan(np.mean(peak_scimark_small_list)) else None
+            average_peak_serial = np.mean(peak_serial_list).round(2) if not np.isnan(np.mean(peak_serial_list)) else None
+            average_peak_startup = np.mean(peak_startup_list).round(2) if not np.isnan(np.mean(peak_startup_list)) else None
+            average_peak_sunflow = np.mean(peak_sunflow_list).round(2) if not np.isnan(np.mean(peak_sunflow_list)) else None
+            average_peak_xml = np.mean(peak_xml_list).round(2) if not np.isnan(np.mean(peak_xml_list)) else None
+            average_peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list).round(2) if not np.isnan(np.mean(peak_Noncompliant_pomposite_result_list)) else None
 
             # 查到mark-name相同的数据拼接为一组：serializer.data
             for mark_name in groups:
@@ -143,8 +143,11 @@ class Jvm2008ViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
                 datas[1]['column' + str(column_index)] = temp_datas[0].execute_cmd
                 datas[2]['column' + str(column_index)] = temp_datas[0].modify_parameters
+                # 基准数据和对比数据的全部数据
+                # 初始化所有数据为None
+                for i in range(3, 27):
+                    datas[i]['column' + str(column_index)] = None
                 for data in temp_datas:
-                    # 基准数据和对比数据的全部数据
                     if data.tune_type == 'base':
                         datas[3]['column' + str(column_index)] = data.compiler
                         datas[4]['column' + str(column_index)] = data.compress
