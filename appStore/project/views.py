@@ -1,16 +1,11 @@
-import json
-from base64 import b64decode
-
-from django.http import JsonResponse, request, HttpRequest
-from django.shortcuts import render
-
 # Create your views here.
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from appStore.project.models import Project
 from appStore.project.serializers import ProjectSerializer
-from appStore.utils import constants
-from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
+from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
 
@@ -18,9 +13,36 @@ class ProjectViewSet(CusModelViewSet):
     """
     project数据管理
     """
+    # authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
     queryset = Project.objects.all().order_by('id')
     serializer_class = ProjectSerializer
-    # pagination_class = LimsPageSet
+
+    def list(self, request, *args, **kwargs):
+        """
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        project_queryset = Project.objects.all()
+        if not project_queryset:
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未查询到区域')
+        serializer = self.get_serializer(project_queryset, many=True)
+        return json_response(serializer.data, status.HTTP_200_OK, 'project数据获取完成')
+
+    def get_filter_name(self, request, *args, **kwargs):
+        project_queryset = Project.objects.all()
+        serializer = self.get_serializer(project_queryset, many=True)
+        projectNames_ = set([d['project_name'] for d in serializer.data])
+        userNames_ = list(set([d['user_name'] for d in serializer.data]))
+        osNames_ = list(set([d['os_version'] for d in serializer.data]))
+        cpuNames_ = list(set([d['cpu_module_name'] for d in serializer.data]))
+        projectNames = [{'text': name, 'value': name} for name in projectNames_]
+        userNames = [{'text': name, 'value': name} for name in userNames_]
+        osNames = [{'text': name, 'value': name} for name in osNames_]
+        cpuNames = [{'text': name, 'value': name} for name in cpuNames_]
+        datas = {'projectNames': projectNames, 'userNames': userNames, 'osNames': osNames, 'cpuNames': cpuNames}
+        return json_response(datas, status.HTTP_200_OK, '筛选数据获取完成')
 
     def create(self, request, *args, **kwargs):
         data_project = {}
