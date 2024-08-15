@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+import datetime
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -36,17 +36,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'appStore.cpu2006.apps.Cpu2006Config',
-    'appStore.cpu2017.apps.Cpu2017Config',
+    'corsheaders',
+    ################自定义
+    'rest_framework',
+    'rest_framework_jwt',
+    'appStore.users.apps.UsersConfig',
+    'appStore.project.apps.ProjectConfig',
     'appStore.env.apps.EnvConfig',
+    'appStore.stream.apps.StreamConfig',
+    'appStore.lmbench.apps.LmbenchConfig',
+    'appStore.unixbench.apps.UnixbenchConfig',
     'appStore.fio.apps.FioConfig',
     'appStore.iozone.apps.IozoneConfig',
     'appStore.jvm2008.apps.Jvm2008Config',
-    'appStore.lmbench.apps.LmbenchConfig',
-    'appStore.stream.apps.StreamConfig',
-    'appStore.unixbench.apps.UnixbenchConfig',
-    'appStore.project.apps.ProjectConfig',
-    'corsheaders',
+    'appStore.cpu2006.apps.Cpu2006Config',
+    'appStore.cpu2017.apps.Cpu2017Config',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -146,3 +150,70 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+]
+
+######################
+#      认证          #
+######################
+REST_FRAMEWORK = {
+    # 权限认证
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    # 身份认证
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': ('rest_framework.pagination.PageNumberPagination',
+                                 'rest_framework.pagination.LimitOffsetPagination'),
+    'PAGE_SIZE': 100,
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',  # 数据异常
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.AutoSchema',
+}
+
+JWT_AUTH = {
+    'JWT_ENCODE_HANDLER':
+        'rest_framework_jwt.utils.jwt_encode_handler',
+
+    'JWT_DECODE_HANDLER':
+        'rest_framework_jwt.utils.jwt_decode_handler',
+
+    'JWT_PAYLOAD_HANDLER':
+        'rest_framework_jwt.utils.jwt_payload_handler',
+
+    'JWT_PAYLOAD_GET_USER_ID_HANDLER':
+        'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+        'appStore.utils.common.jwt_response_payload_handler',
+
+    # 这是用于签署JWT的密钥，确保这是安全的，不共享不公开的
+    'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_GET_USER_SECRET_KEY': None,
+    'JWT_PUBLIC_KEY': None,
+    'JWT_PRIVATE_KEY': None,
+    'JWT_ALGORITHM': 'HS256',
+    # 如果秘钥是错误的，它会引发一个jwt.DecodeError
+    'JWT_VERIFY': True,
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LEEWAY': 0,
+    # Token过期时间设置
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=360),
+    'JWT_AUDIENCE': None,
+    'JWT_ISSUER': None,
+
+    # 是否开启允许Token刷新服务，及限制Token刷新间隔时间，从原始Token获取开始计算
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+
+    # 定义与令牌一起发送的Authorization标头值前缀
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_AUTH_COOKIE': None,
+}
