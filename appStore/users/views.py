@@ -27,3 +27,17 @@ class UserProfileViewSet(CusModelViewSet):
         return json_response(serializer.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer))
 
 
+    def change_password(self, request, *args, **kwargs):
+        # 获取当前用户
+        user = request.user
+        # 获取新密码
+        new_password1 = request.POST.get('new_password1')
+        new_password2 = request.POST.get('new_password2')
+        if new_password1 == new_password2:
+            # 修改密码
+            user.set_password(new_password1)
+            user.save()
+            # 返回密码修改成功的响应
+            return json_response({'new_password':new_password1}, status.HTTP_200_OK, '修改密码完成')
+        else:
+            return json_response({}, status.HTTP_201_CREATED, '两次密码不一致')
