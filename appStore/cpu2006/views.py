@@ -1,4 +1,3 @@
-import math
 import numpy as np
 # Create your views here.
 from rest_framework import status
@@ -941,12 +940,14 @@ class Cpu2006ViewSet(CusModelViewSet):
                             data_cpu2006['fp_481_wrf'] = value[key1]['481.wrf']
                             data_cpu2006['fp_482_sphinx3'] = value[key1]['482.sphinx3']
                             data_cpu2006['fp_SPECfp_2006'] = value[key1]['SPECfp_2006']
-                            data_cpu2006['test_time'] = return_time(cpu2006_json['time'])
+                            data_cpu2006 = {key: value if not isinstance(value, str) or value != '' else None for
+                                            key, value in data_cpu2006.items()}
                             serializer_cpu2006 = Cpu2006Serializer(data=data_cpu2006)
                             if serializer_cpu2006.is_valid():
                                 self.perform_create(serializer_cpu2006)
-                            serializer_cpu2006_errors.append(serializer_cpu2006.errors)
-                            error_message.append(get_error_message(serializer_cpu2006))
+                            else:
+                                serializer_cpu2006_errors.append(serializer_cpu2006.errors)
+                                error_message.append(get_error_message(serializer_cpu2006))
                     elif key.split("_")[1] == "int":
                         for key1 in value:
                             data_cpu2006['execute_cmd'] = "xx"
@@ -966,7 +967,6 @@ class Cpu2006ViewSet(CusModelViewSet):
                             data_cpu2006['int_473_astar'] = value[key1]['473.astar']
                             data_cpu2006['int_483_xalancbmk'] = value[key1]['483.xalancbmk']
                             data_cpu2006['int_SPECint_2006'] = value[key1]['SPECint_2006']
-                            data_cpu2006['test_time'] = return_time(cpu2006_json['time'])
                             data_cpu2006 = {key: value if not isinstance(value, str) or value != '' else None for
                                             key, value in data_cpu2006.items()}
                             serializer_cpu2006 = Cpu2006Serializer(data=data_cpu2006)

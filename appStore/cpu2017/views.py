@@ -796,12 +796,14 @@ class Cpu2017ViewSet(CusModelViewSet):
                             data_cpu2017['fp_549_fotonik3d_r'] = value[key1]['549.fotonik3d_r']
                             data_cpu2017['fp_554_roms_r'] = value[key1]['554.roms_r']
                             data_cpu2017['fp_PECrate2017_fp'] = value[key1]['SPECrate2017_fp']
-                            data_cpu2017['test_time'] = return_time(cpu2017_json['time'])
                             serializer_cpu2017 = Cpu2017Serializer(data=data_cpu2017)
+                            data_cpu2017 = {key: value if not isinstance(value, str) or value != '' else None for
+                                            key, value in data_cpu2017.items()}
                             if serializer_cpu2017.is_valid():
                                 self.perform_create(serializer_cpu2017)
-                            serializer_cpu2017_errors.append(serializer_cpu2017.errors)
-                            error_message.append(get_error_message(serializer_cpu2017))
+                            else:
+                                serializer_cpu2017_errors.append(serializer_cpu2017.errors)
+                                error_message.append(get_error_message(serializer_cpu2017))
                     elif key.split("_")[1] == "int":
                         for key1 in value:
                             data_cpu2017['execute_cmd'] = "xx"
@@ -819,9 +821,8 @@ class Cpu2017ViewSet(CusModelViewSet):
                             data_cpu2017['int_548_exchange2_r'] = value[key1]['548.exchange2_r']
                             data_cpu2017['int_557_xz_r'] = value[key1]['557.xz_r']
                             data_cpu2017['int_SPECrate2017_int'] = value[key1]['SPECrate2017_int']
-                            data_cpu2017['test_time'] = return_time(cpu2017_json['time'])
-                            data_cpu2017 = {key: value if not isinstance(value, str) or value != '' else None for key, value
-                                        in data_cpu2017.items()}
+                            data_cpu2017 = {key: value if not isinstance(value, str) or value != '' else None for
+                                            key, value in data_cpu2017.items()}
                             serializer_cpu2017 = Cpu2017Serializer(data=data_cpu2017)
                             if serializer_cpu2017.is_valid():
                                 self.perform_create(serializer_cpu2017)

@@ -49,7 +49,7 @@ export default {
         if (!this.isDataLoaded) {
           return false; // 数据尚未加载完成，返回默认值
         }
-        const baseData = this.allProjectDatas.find(data => data.id === parseInt(this.$route.params.baseId));
+        const baseData = this.allProjectDatas.find(data => data.env_id === parseInt(this.$route.params.baseId));
         const comparsionIdsArray = this.$route.params.comparsionIds.split(',');
         let disabled = false
         if (baseData && baseData[name] === 0) {
