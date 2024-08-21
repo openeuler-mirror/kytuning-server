@@ -66,8 +66,10 @@ export default {
     },
   },
   methods: {
-    goToHome(){
-      this.$router.push({name: 'project'})
+    goToHome() {
+      this.$nextTick(() => {
+        this.$router.push({name: 'project'})
+      })
     },
     goTo(name){
       this.$router.push({name: name,"params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
