@@ -11,10 +11,11 @@ export function login(data) {
 }
 
 // project
-export function project() {
+export function project(type, data) {
     return service({
-        method: 'get',
+        method: type,
         url: '/project/',
+        data
     })
 }
 
