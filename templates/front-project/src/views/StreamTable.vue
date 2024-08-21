@@ -20,9 +20,9 @@
 </template>
 
 <script>
-import axios from 'axios';
 import {ElTable, ElTableColumn} from 'element-plus';
 import Header from "@/components/common/TableHeader.vue";
+import { stream } from "@/api/api.js";
 
 export default {
   components: {
@@ -37,10 +37,14 @@ export default {
       keysToHide: [],
       showAllData: false,
       dataName: this.$route.name,
+      paramsData: {
+        env_id: this.$route.params.baseId,
+        comparsionIds: this.$route.params.comparsionIds,
+      },
     };
   },
   created() {
-    axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
+    stream(this.paramsData).then((response) => {
       this.tableDatas = response.data.data;
       this.numColumns = Object.keys(this.tableDatas[0]).length;
       this.showAllData = false; // 默认显示全部数据
@@ -51,6 +55,8 @@ export default {
       this.keysToHide = keysToHide;
     });
   },
+
+
   computed: {
     displayTableData() {
       if (this.showAllData) {
