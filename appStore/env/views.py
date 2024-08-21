@@ -146,7 +146,7 @@ class EnvViewSet(CusModelViewSet):
         #查数据库中是否有这条数据，如果有返回对应数据对应的时间戳
         filter_env = Env.objects.filter(time=data_env['time'])
         if filter_env:
-            return json_response({'time':filter_env[0].time}, status.HTTP_400_BAD_REQUEST, '该数据已存入')
+            return json_response({'env_id':filter_env[0].id}, status.HTTP_400_BAD_REQUEST, '该数据在环境信息表中已存入')
 
         data_env['hwinfo_machineinfo_manufacturer'] = request.data['envinfo']['hwinfo']['machineinfo']['manufacturer']
         data_env['hwinfo_machineinfo_product'] = request.data['envinfo']['hwinfo']['machineinfo']['product']

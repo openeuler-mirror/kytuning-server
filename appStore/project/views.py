@@ -6,7 +6,8 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from appStore.project.models import Project
 from appStore.project.serializers import ProjectSerializer
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
+from appStore.utils.customer_mixin import CusUpdateModelMixin
+from appStore.utils.customer_view import CusModelViewSet, CusUpdateModelViewSet
 
 
 class ProjectViewSet(CusModelViewSet):
@@ -26,9 +27,21 @@ class ProjectViewSet(CusModelViewSet):
         """
         project_queryset = Project.objects.all()
         if not project_queryset:
-            return json_response({}, status.HTTP_204_NO_CONTENT, '未查询到区域')
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未查询到project')
         serializer = self.get_serializer(project_queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, 'project数据获取完成')
+
+    def put(self, request):
+        id = request.data.get('id', None)
+        user_name = request.data.get('user_name', None)
+        project_name = request.data.get('project_name', None)
+        message = request.data.get('message', None)
+        print(id,user_name,project_name,message)
+        Project.objects.filter(id=id).update(id=id,user_name=user_name,project_name=project_name,message=message)
+        queryset = Project.objects.filter(id=id)
+        serializer = self.get_serializer(queryset, many=True)
+        return json_response(serializer.data, status.HTTP_200_OK, '修改project数据完成')
+
 
     def get_filter_name(self, request, *args, **kwargs):
         project_queryset = Project.objects.all()
