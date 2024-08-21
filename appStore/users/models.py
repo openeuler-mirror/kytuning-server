@@ -16,15 +16,9 @@ class UserProfile(AbstractUser):
     """
     用户模型类
     """
-    user_type_choices = (
-        (1, '普通用户'),
-        (2, '管理员'),
-    )
-    # user_group_id = models.IntegerField(null=True,verbose_name='用户组id')
     user_phone = models.CharField(unique=True,null=True, max_length=22, verbose_name='手机号')
     is_superuser = models.BooleanField(default=False, verbose_name='是否是管理员')
     is_staff = models.BooleanField(default=True, verbose_name='是否是员工')
-    # user_type = models.IntegerField(choices=user_type_choices, verbose_name='用户类型')
 
     class Meta:
         db_table = 'user_profile'

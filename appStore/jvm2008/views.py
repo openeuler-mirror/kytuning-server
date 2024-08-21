@@ -276,99 +276,6 @@ class Jvm2008ViewSet(CusModelViewSet):
                                                                                     title_index, column_index,
                                                                                     base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
-        # if comparsionIds != ['']:
-        #     # 处理对比数据
-        #     for index, comparativeId in enumerate(comparsionIds):
-        #         new_index = 2 * index + 4
-        #         comparsion_queryset = Jvm2008.objects.filter(env_id=comparativeId).all()
-        #         comparsion_datas = self.get_data(comparsion_queryset)
-        #         others[0]['column' + str(new_index)] = 'Jvm2008#' + str(index + 2)
-        #         others[1]['column' + str(new_index)] = comparsion_datas['execute_cmd']
-        #         others[2]['column' + str(new_index)] = comparsion_datas['modify_parameters']
-        #         others[0]['column' + str(new_index + 1)] = ''
-        #         others[1]['column' + str(new_index + 1)] = ''
-        #         others[2]['column' + str(new_index + 1)] = ''
-        #
-        #         datas[0]['column' + str(new_index)] = comparsion_datas['base_compiler']
-        #         datas[1]['column' + str(new_index)] = comparsion_datas['base_compress']
-        #         datas[2]['column' + str(new_index)] = comparsion_datas['base_crypto']
-        #         datas[3]['column' + str(new_index)] = comparsion_datas['base_derby']
-        #         datas[4]['column' + str(new_index)] = comparsion_datas['base_mpegaudio']
-        #         datas[5]['column' + str(new_index)] = comparsion_datas['base_scimark_large']
-        #         datas[6]['column' + str(new_index)] = comparsion_datas['base_scimark_small']
-        #         datas[7]['column' + str(new_index)] = comparsion_datas['base_serial']
-        #         datas[8]['column' + str(new_index)] = comparsion_datas['base_startup']
-        #         datas[9]['column' + str(new_index)] = comparsion_datas['base_sunflow']
-        #         datas[10]['column' + str(new_index)] = comparsion_datas['base_xml']
-        #         datas[11]['column' + str(new_index)] = comparsion_datas['base_Noncompliant_pomposite_result']
-        #         datas[12]['column' + str(new_index)] = comparsion_datas['peak_compiler']
-        #         datas[13]['column' + str(new_index)] = comparsion_datas['peak_compress']
-        #         datas[14]['column' + str(new_index)] = comparsion_datas['peak_crypto']
-        #         datas[15]['column' + str(new_index)] = comparsion_datas['peak_derby']
-        #         datas[16]['column' + str(new_index)] = comparsion_datas['peak_mpegaudio']
-        #         datas[17]['column' + str(new_index)] = comparsion_datas['peak_scimark_large']
-        #         datas[18]['column' + str(new_index)] = comparsion_datas['peak_scimark_small']
-        #         datas[19]['column' + str(new_index)] = comparsion_datas['peak_serial']
-        #         datas[20]['column' + str(new_index)] = comparsion_datas['peak_startup']
-        #         datas[21]['column' + str(new_index)] = comparsion_datas['peak_sunflow']
-        #         datas[22]['column' + str(new_index)] = comparsion_datas['peak_xml']
-        #         datas[23]['column' + str(new_index)] = comparsion_datas['peak_Noncompliant_pomposite_result']
-        #
-        #         for i in range(24):
-        #             if datas[i]['column' + str(new_index)] and datas[i]['column3']:
-        #                 datas[i]['column' + str(new_index + 1)] = "%.2f%%" % ((datas[i]['column' + str(new_index)] - datas[i]['column3']) / datas[i]['column3'] * 100)
-        #             else:
-        #                 datas[i]['column' + str(new_index + 1)] = None
-        #
-        #         # datas[0]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[0]['column' + str(new_index)] - datas[0]['column3']) / datas[0]['column3'] * 100)
-        #         # datas[1]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[1]['column' + str(new_index)] - datas[1]['column3']) / datas[1]['column3'] * 100)
-        #         # datas[2]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[2]['column' + str(new_index)] - datas[2]['column3']) / datas[2]['column3'] * 100)
-        #         # datas[3]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[3]['column' + str(new_index)] - datas[3]['column3']) / datas[3]['column3'] * 100)
-        #         # datas[4]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[4]['column' + str(new_index)] - datas[4]['column3']) / datas[4]['column3'] * 100)
-        #         # datas[5]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[5]['column' + str(new_index)] - datas[5]['column3']) / datas[5]['column3'] * 100)
-        #         # datas[6]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[6]['column' + str(new_index)] - datas[6]['column3']) / datas[6]['column3'] * 100)
-        #         # datas[7]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[7]['column' + str(new_index)] - datas[7]['column3']) / datas[7]['column3'] * 100)
-        #         # datas[8]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #         (datas[8]['column' + str(new_index)] - datas[8]['column3']) / datas[8]['column3'] * 100)
-        #         # datas[9]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[9]['column' + str(new_index)] - datas[9]['column3']) / datas[9]['column3'] * 100)
-        #         # datas[10]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[10]['column' + str(new_index)] - datas[10]['column3']) / datas[10]['column3'] * 100)
-        #         # datas[11]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[11]['column' + str(new_index)] - datas[11]['column3']) / datas[11]['column3'] * 100)
-        #         # datas[12]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[12]['column' + str(new_index)] - datas[12]['column3']) / datas[12]['column3'] * 100)
-        #         # datas[13]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[13]['column' + str(new_index)] - datas[13]['column3']) / datas[13]['column3'] * 100)
-        #         # datas[14]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[14]['column' + str(new_index)] - datas[14]['column3']) / datas[14]['column3'] * 100)
-        #         # datas[15]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[15]['column' + str(new_index)] - datas[15]['column3']) / datas[15]['column3'] * 100)
-        #         # datas[16]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[16]['column' + str(new_index)] - datas[16]['column3']) / datas[16]['column3'] * 100)
-        #         # datas[17]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[17]['column' + str(new_index)] - datas[17]['column3']) / datas[17]['column3'] * 100)
-        #         # datas[18]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[18]['column' + str(new_index)] - datas[18]['column3']) / datas[18]['column3'] * 100)
-        #         # datas[19]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[19]['column' + str(new_index)] - datas[19]['column3']) / datas[19]['column3'] * 100)
-        #         # datas[20]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[20]['column' + str(new_index)] - datas[20]['column3']) / datas[20]['column3'] * 100)
-        #         # datas[21]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[21]['column' + str(new_index)] - datas[21]['column3']) / datas[21]['column3'] * 100)
-        #         # datas[22]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[22]['column' + str(new_index)] - datas[22]['column3']) / datas[22]['column3'] * 100)
-        #         # datas[23]['column' + str(new_index + 1)] = "%.2f%%" % (
-        #         #             (datas[23]['column' + str(new_index)] - datas[23]['column3']) / datas[23]['column3'] * 100)
-        return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_jvm2008_errors = []
@@ -394,8 +301,8 @@ class Jvm2008ViewSet(CusModelViewSet):
                 data_jvm2008['startup'] = jvm2008_json['items'][tune_type]['startup']
                 data_jvm2008['sunflow'] = jvm2008_json['items'][tune_type]['sunflow']
                 data_jvm2008['xml'] = jvm2008_json['items'][tune_type]['xml']
-                data_jvm2008['Noncompliant_pomposite_result'] = jvm2008_json['items'][tune_type][
-                    'Noncompliant composite result:']
+                data_jvm2008['Noncompliant_pomposite_result'] = jvm2008_json['items'][tune_type].get(
+                    'Noncompliant composite result:')
                 data_jvm2008['test_time'] = return_time(jvm2008_json['time'])
                 data_jvm2008 = {key: value if not isinstance(value, str) or value != '' else None for key, value in
                                 data_jvm2008.items()}
