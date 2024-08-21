@@ -1,31 +1,104 @@
 // 项目中我们大多数时候都会把对应的接口请求封装成api来调用
 import service from '../service.js'
-import qs from 'qs'
-
-export function test() {
-    return service({
-        method: 'get',
-        url: '/stream/1',
-    })
-}
 
 // 登录接口
 export function login(data) {
     return service({
         method: 'post',
-        url: '/login',
+        url: '/api-token-auth/',
         data
     })
 }
 
-// 学生列表查询接口
-export function students(params) {
+// project
+export function project() {
     return service({
         method: 'get',
-        url: '/students',
+        url: '/project/',
+    })
+}
+
+// 筛选字段接口
+export function get_filter_name() {
+    return service({
+        method: 'get',
+        url: '/get_filter_name/',
+    })
+}
+
+// stream
+export function stream(params) {
+    return service({
+        method: 'get',
+        url: '/stream/',
         params
     })
 }
+
+// lmbench
+export function lmbench(params) {
+    return service({
+        method: 'get',
+        url: '/lmbench/',
+        params
+    })
+}
+
+// unixbench
+export function unixbench(params) {
+    return service({
+        method: 'get',
+        url: '/unixbench/',
+        params
+    })
+}
+
+// fio
+export function fio(params) {
+    return service({
+        method: 'get',
+        url: '/fio/',
+        params
+    })
+}
+
+// iozone
+export function iozone(params) {
+    return service({
+        method: 'get',
+        url: '/iozone/',
+        params
+    })
+}
+
+// jvm2008
+export function jvm2008(params) {
+    return service({
+        method: 'get',
+        url: '/jvm2008/',
+        params
+    })
+}
+
+// cpu2006
+export function cpu2006(params) {
+    return service({
+        method: 'get',
+        url: '/cpu2006/',
+        params
+    })
+}
+
+// cpu2017
+export function cpu2017(params) {
+    return service({
+        method: 'get',
+        url: '/cpu2017/',
+        params
+    })
+}
+
+
 
 // 学生列表删除接口
 export function studentDel(id) {
@@ -45,12 +118,14 @@ export function studentDel(id) {
 //     })
 // }
 
+/*
 // 信息列表新增和修改接口
 export function info(type, data) {
     data = qs.stringify(data)
     let obj = { method: type, url: '/info', data }
     return service(obj)
 }
+*/
 
 
 // 信息列表查询接口
