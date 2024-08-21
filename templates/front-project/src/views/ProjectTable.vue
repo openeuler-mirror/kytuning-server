@@ -80,9 +80,6 @@
         <el-form-item label="项目名称" :label-width="formLabelWidth" prop="project_name">
           <el-input v-model="form.project_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="上传人员" :label-width="formLabelWidth" prop="user_name">
-          <el-input v-model="form.user_name" autocomplete="off"></el-input>
-        </el-form-item>
         <el-form-item label="message" :label-width="formLabelWidth" prop="message">
           <el-input v-model="form.message" autocomplete="off"></el-input>
         </el-form-item>
@@ -135,24 +132,16 @@ export default {
       userNames: [],//筛选用户名称
       osNames: [],//筛选os版本
       cpuNames: [],//筛选cpu型号
-      itemKey: 0, //跟新数据后生成随机数从而刷新页面数据
-      newProject: {
-        id: 0,
-        user_name: '',
-        project_name: '',
-        message: '',
-      },//用户修改后的数据
 
+      itemKey: 0, //跟新数据后生成随机数从而刷新页面数据
       dialogFormVisible: false,
       form: {
         id: 0,
         project_name: "",
-        user_name: "",
         message: "",
-      },
+      },//用户修改后的数据
       formLabelWidth: "80px",
       rules: {
-        user_name: [{required: true,message: '请输入上传人员名称'}],
         project_name: [{required: true, message: '请输入项目名称'}],
       },
     }
@@ -183,7 +172,6 @@ export default {
     sure(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          // let methods = ''
           console.log(this.form, 1122)
           // // 发送数据
           project('put', this.form).then(response => {
@@ -210,7 +198,16 @@ export default {
     },
     del(row) {
       // delData(this, '/info', row.id, getData)
-      console.log(row,222)
+      project('delete', {id: row.id}).then(response => {
+            console.log(response.data)
+            if (response.data.code === 200) {
+              ElMessage({message: response.data.message, type: 'success'})
+              //更新页面数据，绑定key，每次key改变后就会刷新数据
+              this.itemKey = Math.random()
+              this.refreshData();
+              this.dialogFormVisible = false
+            }
+          })
     },
 
     //更新数据后刷新页面数据
