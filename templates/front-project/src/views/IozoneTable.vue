@@ -19,9 +19,9 @@
 
 
 <script>
-import axios from 'axios'
 import {ElTable, ElTableColumn} from 'element-plus';
 import Header from "@/components/common/TableHeader.vue";
+import { iozone } from "@/api/api.js";
 
 export default {
   components: {
@@ -36,10 +36,14 @@ export default {
       keysToHide: [],
       showAllData: false,
       dataName: this.$route.name,
+      paramsData: {
+        env_id: this.$route.params.baseId,
+        comparsionIds: this.$route.params.comparsionIds,
+      },
     };
   },
   created() {
-    axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
+    iozone(this.paramsData).then((response) => {
       this.tableDatas = response.data.data;
       this.numColumns = Object.keys(this.tableDatas[0]).length;
       this.showAllData = false; // 默认显示平均数据
@@ -60,7 +64,7 @@ export default {
         modifiedTableData.forEach(row => {
           Object.entries(row).forEach(([key, value]) => {
             if (typeof value === 'string' && key.startsWith('column') && value.startsWith('平均值')) {
-              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"Stream#"
+              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"this.dataName#"
               count++;
             }
           });

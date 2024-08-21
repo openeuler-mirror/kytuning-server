@@ -21,9 +21,9 @@
 
 
 <script>
-import axios from 'axios'
 import {ElTable, ElTableColumn} from 'element-plus';
 import Header from "@/components/common/TableHeader.vue";
+import { lmbench } from "@/api/api.js";
 
 export default {
   components: {
@@ -38,10 +38,14 @@ export default {
       keysToHide: [],
       showAllData: false,
       dataName: this.$route.name,
+      paramsData: {
+        env_id: this.$route.params.baseId,
+        comparsionIds: this.$route.params.comparsionIds,
+      },
     };
   },
   created() {
-    axios.get('/api/' + this.dataName + '/?env_id=' + this.$route.params.baseId + '&comparsionIds=' + this.$route.params.comparsionIds).then((response) => {
+    lmbench(this.paramsData).then((response) => {
       this.tableDatas = response.data.data;
       this.numColumns = Object.keys(this.tableDatas[0]).length;
       this.showAllData = false; // 默认显示平均数据
@@ -81,7 +85,7 @@ export default {
       if (typeof value === 'string' && value.endsWith('%')) {
         // 去除百分比符号 "%"
         value = value.replace('%', '');
-         // 将百分比转换为小数
+        // 将百分比转换为小数
         value = parseFloat(value);
         if (value >= 5) {
           return 'green-cell';
@@ -141,12 +145,13 @@ export default {
 <style>
 /*对比值的背景色*/
 .green-cell {
-  color:green;
+  color: green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
+
 .red-cell {
-  color:red;
+  color: red;
   background-color: pink;
   /* 其他样式属性 */
 }
