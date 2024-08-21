@@ -26,6 +26,7 @@
       tooltip-effect="dark"
       border
       style="width: 100%"
+      :key="itemKey"
   >
     <el-table-column label="基准数据" width="55">
       <template #default="{ row }">
@@ -64,8 +65,37 @@
     <el-table-column prop="jvm2008" label="jvm2008" width="90"/>
     <el-table-column prop="test_time" sortable label="录入时间"/>
     <el-table-column prop="message" label="描述"/>
+
+    <el-table-column label="操作" width="180">
+      <template #default="scope">
+        <el-button type="primary" @click="edit(scope.row)">修改</el-button>
+                <el-button type="danger" @click="del(scope.row)">删除</el-button>
+  </template>
+    </el-table-column>
   </el-table>
   <br>
+<el-dialog :title="修改project信息" v-model="dialogFormVisible" width="500px">
+      <el-form :model="form" :rules="rules" ref="form">
+        <el-form-item label="项目名称" :label-width="formLabelWidth" prop="project_name">
+          <el-input v-model="form.project_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="上传人员" :label-width="formLabelWidth" prop="user_name">
+          <el-input v-model="form.user_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="message" :label-width="formLabelWidth" prop="message">
+          <el-input v-model="form.message" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="closeInfo('form')">取 消</el-button>
+          <el-button type="primary" @click="sure('form')"
+          >确 定
+          </el-button
+          >
+        </span>
+      </template>
+    </el-dialog>
   <div class="parent-container">
     <el-pagination
         @size-change="handleSizeChange"
@@ -82,15 +112,16 @@
 
 
 <script>
-// import axios from 'axios'
 import {ElMessage} from 'element-plus';
 import 'element-ui/lib/theme-chalk/index.css';
 import { project, get_filter_name } from "@/api/api.js";
 
-export default {
 
+export default {
   data() {
     return {
+      showEditButton: true,
+      showDeleteButton: false,
       allProjectDatas: [], // 从后端获取的全部数据
       base: {}, // 用户选择的基准数据id
       compar: {}, // 用户选择的对比数据id
@@ -99,16 +130,35 @@ export default {
       currentPage: 1, //当前页数
       pageSize: 10, // 每页显示条数
       total: 0, // 总条数
-      projectNames: [],
-      userNames: [],
-      osNames: [],
-      cpuNames: [],
+      projectNames: [],//筛选项目名称
+      userNames: [],//筛选用户名称
+      osNames: [],//筛选os版本
+      cpuNames: [],//筛选cpu型号
+      itemKey: 0, //跟新数据后生成随机数从而刷新页面数据
+      newProject: {
+        id: 0,
+        user_name: '',
+        project_name: '',
+        message: '',
+      },//用户修改后的数据
+
+      dialogFormVisible: false,
+      form: {
+        id: 0,
+        project_name: "",
+        user_name: "",
+        message: "",
+      },
+      formLabelWidth: "80px",
+      rules: {
+        user_name: [{required: true,message: '请输入上传人员名称'}],
+        project_name: [{required: true, message: '请输入项目名称'}],
+      },
     }
   },
 
   created() {
-    project().then(response => {
-      console.log(response,111)
+    project('get','').then(response => {
       this.allProjectDatas = response.data.data
       this.total = this.allProjectDatas.length;
     });
@@ -129,7 +179,54 @@ export default {
     },
   },
   methods: {
-    //处理点击事件
+    sure(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          // let methods = ''
+          console.log(this.form, 1122)
+          // // 发送数据
+          project('put', this.form).then(response => {
+            console.log(response.data)
+            if (response.data.code === 200) {
+              ElMessage({message: response.data.message, type: 'success'})
+              //更新页面数据，绑定key，每次key改变后就会刷新数据
+              this.itemKey = Math.random()
+              this.refreshData();
+              this.dialogFormVisible = false
+            } else {
+              ElMessage({message: response.data.message || 'error', type: 'warning'})
+            }
+          });
+        }
+      })
+
+    },
+    edit(row) {
+      this.form = {...row}
+      this.dialogFormVisible = true
+    },
+    closeInfo(form) {
+      console.log(form)
+      this.$refs[form].resetFields()
+      this.dialogFormVisible = false
+    },
+    del(row) {
+      // delData(this, '/info', row.id, getData)
+      console.log(row,222)
+    },
+
+    //更新数据后刷新页面数据
+    refreshData() {
+      // 调用 getProjects() 方法重新获取数据
+      project('get', '').then(response => {
+        this.allProjectDatas = response.data.data
+        this.total = this.allProjectDatas.length;
+      }).catch(error => {
+        console.error(error);
+      });
+    },
+
+    //处理前两列的选择框
     handleBaseDataChange(row) {
       if (!this.base[row.id]) {
         delete this.base[row.id];
@@ -144,11 +241,9 @@ export default {
       this.base = {};
       this.compar = {};
     },
+
     //查询
     filterHandler(value, row, column) {
-      console.log(value, 11)
-      console.log(row, 22)
-      console.log(column, 33)
       const property = column['property'];
       return row[property] === value;
     },
@@ -168,7 +263,7 @@ export default {
         console.log(this.base, 11)
         const env_id = Object.keys(this.base).map(key => parseInt(key));
         if (env_id.length !== 1) {
-          ElMessage.error('请选择一条数据作为基准数据');
+          ElMessage.error({message:'请选择一条数据作为基准数据',duration: 1000});
           return
         } else {
           if (this.selectedType === "env") {
@@ -179,7 +274,7 @@ export default {
                 name: 'stream', "params": {baseId: env_id[0], comparsionIds: ''}
               });
             } else {
-              ElMessage.error('该数据没有stream数据');
+              ElMessage.error({message:'该数据没有stream数据',duration: 1000});
             }
           } else if (this.selectedType === "lmbench") {
             if (this.allProjectDatas.find(item => item.id === env_id[0]).lmbench) {
@@ -188,7 +283,7 @@ export default {
                 "params": {baseId: env_id[0], comparsionIds: ''}
               });
             } else {
-              ElMessage.error('该数据没有lmbench数据');
+              ElMessage.error({message:'该数据没有lmbench数据',duration: 1000});
             }
           } else if (this.selectedType === "unixbench") {
             if (this.allProjectDatas.find(item => item.id === env_id[0]).unixbench) {
@@ -197,7 +292,7 @@ export default {
                 "params": {baseId: env_id[0], comparsionIds: ''}
               });
             } else {
-              ElMessage.error('该数据没有unixbench数据');
+              ElMessage.error({message:'该数据没有unixbench数据',duration: 1000});
             }
           } else if (this.selectedType === "fio") {
             if (this.allProjectDatas.find(item => item.id === env_id[0]).fio) {
@@ -206,7 +301,7 @@ export default {
                 "params": {baseId: env_id[0], comparsionIds: ''}
               });
             } else {
-              ElMessage.error('该数据没有fio数据');
+              ElMessage.error({message:'该数据没有fio数据',duration: 1000});
             }
           } else if (this.selectedType === "iozone") {
             if (this.allProjectDatas.find(item => item.id === env_id[0]).iozone) {
@@ -215,7 +310,7 @@ export default {
                 "params": {baseId: env_id[0], comparsionIds: ''}
               });
             } else {
-              ElMessage.error('该数据没有iozone数据');
+              ElMessage.error({message:'该数据没有iozone数据',duration: 1000});
             }
           } else if (this.selectedType === "cpu2006") {
             if (this.allProjectDatas.find(item => item.id === env_id[0]).cpu2006) {
@@ -224,7 +319,7 @@ export default {
                 "params": {baseId: env_id[0], comparsionIds: ''}
               });
             } else {
-              ElMessage.error('该数据没有cpu2006数据');
+              ElMessage.error({message:'该数据没有cpu2006数据',duration: 1000});
             }
           } else if (this.selectedType === "cpu2017") {
             if (this.allProjectDatas.find(item => item.id === env_id[0]).cpu2017) {
@@ -233,7 +328,7 @@ export default {
                 "params": {baseId: env_id[0], comparsionIds: ''}
               });
             } else {
-              ElMessage.error('该数据没有cpu2017数据');
+              ElMessage.error({message:'该数据没有cpu2017数据',duration: 1000});
             }
           } else if (this.selectedType === "jvm2008") {
             if (this.allProjectDatas.find(item => item.id === env_id[0]).jvm2008) {
@@ -242,12 +337,12 @@ export default {
                 "params": {baseId: env_id[0], comparsionIds: ''}
               });
             } else {
-              ElMessage.error('该数据没有jvm2008数据');
+              ElMessage.error({message:'该数据没有jvm2008数据',duration: 1000});
             }
           }
         }
       } else {
-        ElMessage.error('请选择数据类型');
+        ElMessage.error({message:'请选择数据类型',duration: 1000});
       }
       console.log("跳转成功")
     },
@@ -284,12 +379,12 @@ export default {
         })
 
         if (this.selectedType === "env") {
-          ElMessage.error('环境信息数据不支持对比');
+          ElMessage.error({message:'环境信息数据不支持对比',duration: 1000});
         } else if (this.selectedType === "stream") {
           if (baseData.stream && !streams.includes(0)) {
             this.$router.push({name: 'stream', "params": {baseId: env_id[0], comparsionIds: comparsionIds}});
           } else {
-            ElMessage.error('该数据中有stream为空');
+            ElMessage.error({message:'该数据中有stream为空',duration: 1000});
           }
         } else if (this.selectedType === "lmbench") {
           if (baseData.lmbench && !lmbenchs.includes(0)) {
@@ -298,7 +393,7 @@ export default {
               "params": {baseId: env_id[0], comparsionIds: comparsionIds}
             });
           } else {
-            ElMessage.error('该数据中有lmbench为空');
+            ElMessage.error({message:'该数据中有lmbench为空',duration: 1000});
           }
         } else if (this.selectedType === "unixbench") {
           if (baseData.unixbench && !unixbenchs.includes(0)) {
@@ -307,7 +402,7 @@ export default {
               "params": {baseId: env_id[0], comparsionIds: comparsionIds}
             });
           } else {
-            ElMessage.error('该数据中有unixbench为空');
+            ElMessage.error({message:'该数据中有unixbench为空',duration: 1000});
           }
         } else if (this.selectedType === "fio") {
           if (baseData.fio && !fios.includes(0)) {
@@ -316,7 +411,7 @@ export default {
               "params": {baseId: env_id[0], comparsionIds: comparsionIds}
             });
           } else {
-            ElMessage.error('该数据中有fio为空');
+            ElMessage.error({message:'该数据中有fio为空',duration: 1000});
           }
         } else if (this.selectedType === "iozone") {
           if (baseData.iozone && !iozones.includes(0)) {
@@ -325,7 +420,7 @@ export default {
               "params": {baseId: env_id[0], comparsionIds: comparsionIds}
             });
           } else {
-            ElMessage.error('该数据中有iozone为空');
+            ElMessage.error({message:'该数据中有iozone为空',duration: 1000});
           }
         } else if (this.selectedType === "cpu2006") {
           if (baseData.cpu2006 && !cpu2006s.includes(0)) {
@@ -334,7 +429,7 @@ export default {
               "params": {baseId: env_id[0], comparsionIds: comparsionIds}
             });
           } else {
-            ElMessage.error('该数据中有cpu2006为空');
+            ElMessage.error({message:'该数据中有cpu2006为空',duration: 1000});
           }
         } else if (this.selectedType === "cpu2017") {
           if (baseData.cpu2017 && !cpu2017s.includes(0)) {
@@ -343,7 +438,7 @@ export default {
               "params": {baseId: env_id[0], comparsionIds: comparsionIds}
             });
           } else {
-            ElMessage.error('该数据中有cpu2017为空');
+            ElMessage.error({message:'该数据中有cpu2017为空',duration: 1000});
           }
         } else if (this.selectedType === "jvm2008") {
           if (baseData.jvm2008 && !jvm2008s.includes(0)) {
@@ -352,11 +447,11 @@ export default {
               "params": {baseId: env_id[0], comparsionIds: comparsionIds}
             });
           } else {
-            ElMessage.error('该数据中有jvm2008为空');
+            ElMessage.error({message:'该数据中有jvm2008为空',duration: 1000});
           }
         }
       } else {
-        ElMessage.error('请选择数据类型');
+        ElMessage.error({message:'请选择数据类型',duration: 1000});
       }
     },
   }
