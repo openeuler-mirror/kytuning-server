@@ -6,10 +6,8 @@
         <el-button type="primary" @click="toggleDataVisibility">
           {{ showAllData ? '隐藏数据' : '显示全部数据' }}
         </el-button>
-        <el-button type="primary" @click="$router.back()">返回</el-button>
-      </el-row>
-      <br>
-      <el-row class="mb-4">
+        <el-button type="primary" @click="$router.back()">返回上一步</el-button>
+        <el-button type="primary" @click="goToHome">返回首页</el-button>
         <el-button type="success" @click="goTo('stream')" :disabled="toDisabled('stream')">stream</el-button>
         <el-button type="success" @click="goTo('lmbench')" :disabled="toDisabled('lmbench')">lmbench</el-button>
         <el-button type="success" @click="goTo('unixbench')" :disabled="toDisabled('unixbench')">unixbench</el-button>
@@ -25,7 +23,7 @@
 
 
 <script>
-import axios from 'axios'
+import { project } from "@/api/api.js";
 export default {
   data() {
     return {
@@ -40,7 +38,7 @@ export default {
     showAllData: null
   },
   created() {
-    axios.get('/api/project/').then((response) => {
+    project().then((response) => {
       this.allProjectDatas = response.data.data
       this.isDataLoaded = true;
     });
@@ -68,6 +66,9 @@ export default {
     },
   },
   methods: {
+    goToHome(){
+      this.$router.push({name: 'project'})
+    },
     goTo(name){
       this.$router.push({name: name,"params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
     },
