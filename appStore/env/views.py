@@ -1,3 +1,4 @@
+import os
 import json
 from base64 import b64decode
 
@@ -127,7 +128,6 @@ class EnvViewSet(CusModelViewSet):
            ]
         datas[30:30] = disk_and_nicinfo_datas
         datas.extend(nic_datas)
-
         env_data = {'data': datas}
         return json_response(env_data, status.HTTP_200_OK, '列表')
 
@@ -221,6 +221,15 @@ class EnvViewSet(CusModelViewSet):
             return json_response(serializer_env.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_env))
         if not request.data['env_id']:
             return json_response({}, status.HTTP_400_BAD_REQUEST, '没有env_id')
+
+        """保存all_json文件"""
+        json_file_path = '/var/www/html/all_json_data_file/'
+        folder_path = os.path.dirname(json_file_path)
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        file_name = '%s.json' % (data_env['time'])
+        with open(json_file_path + file_name, 'w') as file:
+            json.dump(request.data, file)
 
         """speccpu2006数据处理"""
         from appStore.cpu2006.views import Cpu2006ViewSet
