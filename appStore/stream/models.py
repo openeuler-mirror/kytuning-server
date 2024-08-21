@@ -1,29 +1,30 @@
-from datetime import datetime
-
 from django.db import models
 import django.utils.timezone as timezone
 
 
 # Create your models here.
-class Project(models.Model):
-    """Project表"""
+class Stream(models.Model):
+    """stream表"""
+    ThreadType = (
+        ("单线程", "单线程"),
+        ("多线程", "多线程"),
+    )
     env_id = models.IntegerField(verbose_name='环境id')
-    user_name = models.CharField(max_length=255, verbose_name='测试人员名称')
-    project_name = models.CharField(max_length=255, verbose_name='项目名称',null=True,blank=True)
-    arm = models.CharField( max_length=255, verbose_name='架构',null=True,blank=True)
-    hwinfo_machineinfo_serialnumber = models.CharField(max_length=255,verbose_name='环境表中的hwinfo_machineinfo_serialnumber',null=True,blank=True)
-    os_version = models.CharField(max_length=255, verbose_name='操作系统版本',null=True,blank=True)
-    message = models.CharField(max_length=255, verbose_name='项目描述',null=True,blank=True)
-    times = models.IntegerField(verbose_name='第几次测试')
-    cpu2006 = models.BooleanField(default=False, verbose_name='cpu2006数据')
-    cpu2017 = models.BooleanField(default=False, verbose_name='cpu2017数据')
-    fio = models.BooleanField(default=False, verbose_name='fio数据')
-    iozone = models.BooleanField(default=False, verbose_name='iozone数据')
-    jvm2008 = models.BooleanField(default=False, verbose_name='jvm2008数据')
-    lmbench = models.BooleanField(default=False, verbose_name='lmbench数据')
-    stream = models.BooleanField(default=False, verbose_name='stream数据')
-    unixbench = models.BooleanField(default=False, verbose_name='unxibench数据')
-    test_time = models.DateTimeField(verbose_name="记录时间", default=timezone.now)
+    execute_cmd = models.CharField(max_length=255, verbose_name='执行命令',null=True,blank=True)
+    modify_parameters = models.CharField(max_length=255, verbose_name='修改参数',null=True,blank=True)
+    # modify_parameters = models.TextField(null=True, blank=True, verbose_name='修改参数') #如果是很多的化可以使用text文本类型
+    single_thread = models.CharField(choices=ThreadType, max_length=10, verbose_name='单线程',null=True,blank=True)
+    single_array_size = models.IntegerField(verbose_name='single_array_size',null=True,blank=True)
+    single_copy = models.FloatField(verbose_name='single_copy',null=True,blank=True)
+    single_scale = models.FloatField(verbose_name='single_scale',null=True,blank=True)
+    single_add = models.FloatField(verbose_name='single_add',null=True,blank=True)
+    single_triad = models.FloatField(verbose_name='single_triad',null=True,blank=True)
+    multi_threading = models.CharField(choices=ThreadType, max_length=10, verbose_name='多线程',null=True,blank=True)
+    multi_array_size = models.IntegerField(verbose_name='multi_array_size',null=True,blank=True)
+    multi_copy = models.FloatField(verbose_name='multi_copy',null=True,blank=True)
+    multi_scale = models.FloatField(verbose_name='multi_scale',null=True,blank=True)
+    multi_add = models.FloatField(verbose_name='multi_add',null=True,blank=True)
+    multi_triad = models.FloatField(verbose_name='multi_triad',null=True,blank=True)
 
     class Meta:
-        db_table = 'project'
+        db_table = 'stream'

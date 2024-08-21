@@ -280,7 +280,6 @@ class FioViewSet(CusModelViewSet):
                 if not comparsion_queryset:
                     return json_response({}, status.HTTP_200_OK, '列表')
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
-        print(datas)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
@@ -299,7 +298,6 @@ class FioViewSet(CusModelViewSet):
                 data_fio['io'] = fio_json['items']['io']
                 data_fio['iops'] = fio_json['items']['iops']
                 data_fio['bw'] = fio_json['items']['bw']
-                data_fio['test_time'] = return_time(fio_json['time'])
                 data_fio = {key: value if not isinstance(value, str) or value != '' else None for key, value in
                                data_fio.items()}
                 serializer_fio = FioSerializer(data=data_fio)

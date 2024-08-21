@@ -78,16 +78,16 @@ class StreamViewSet(CusModelViewSet):
             multi_triad_list = [d.multi_triad for d in serializer_ if d.multi_triad is not None]
 
             # 计算每个数组的平均值
-            average_single_array_size = np.mean(single_array_size_list).round(2) if single_array_size_list else None
-            average_single_copy = np.mean(single_copy_list).round(2) if single_copy_list else None
-            average_single_scale = np.mean(single_scale_list).round(2) if single_scale_list else None
-            average_single_add = np.mean(single_add_list).round(2) if single_add_list else None
-            average_single_triad = np.mean(single_triad_list).round(2) if single_triad_list else None
-            average_multi_array_size = np.mean(multi_array_size_list).round(2) if multi_array_size_list else None
-            average_multi_copy = np.mean(multi_copy_list).round(2) if multi_copy_list else None
-            average_multi_scale = np.mean(multi_scale_list).round(2) if multi_scale_list else None
-            average_multi_add = np.mean(multi_add_list).round(2) if multi_add_list else None
-            average_multi_triad = np.mean(multi_triad_list).round(2) if multi_triad_list else None
+            average_single_array_size = np.mean(single_array_size_list).round(2) if not np.isnan(np.mean(single_array_size_list)) else None
+            average_single_copy = np.mean(single_copy_list).round(2) if not np.isnan(np.mean(single_copy_list)) else None
+            average_single_scale = np.mean(single_scale_list).round(2) if not np.isnan(np.mean(single_scale_list)) else None
+            average_single_add = np.mean(single_add_list).round(2) if not np.isnan(np.mean(single_add_list)) else None
+            average_single_triad = np.mean(single_triad_list).round(2) if not np.isnan(np.mean(single_triad_list)) else None
+            average_multi_array_size = np.mean(multi_array_size_list).round(2) if not np.isnan(np.mean(multi_array_size_list)) else None
+            average_multi_copy = np.mean(multi_copy_list).round(2) if not np.isnan(np.mean(multi_copy_list)) else None
+            average_multi_scale = np.mean(multi_scale_list).round(2) if not np.isnan(np.mean(multi_scale_list)) else None
+            average_multi_add = np.mean(multi_add_list).round(2) if not np.isnan(np.mean(multi_add_list)) else None
+            average_multi_triad = np.mean(multi_triad_list).round(2) if not np.isnan(np.mean(multi_triad_list)) else None
 
             # 基准数据和对比数据的全部数据
             for data in serializer_:
@@ -194,7 +194,6 @@ class StreamViewSet(CusModelViewSet):
                 data_stream['multi_scale'] = stream_json['多线程']['Scale']
                 data_stream['multi_add'] = stream_json['多线程']['Add']
                 data_stream['multi_triad'] = stream_json['多线程']['Triad']
-                data_stream['test_time'] = return_time(stream_json['time'])
                 data_stream = {key: value if not isinstance(value, str) or value != '' else None for key, value in
                                data_stream.items()}
                 serializer_stream = StreamSerializer(data=data_stream)

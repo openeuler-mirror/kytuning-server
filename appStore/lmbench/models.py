@@ -95,7 +95,6 @@ class Lmbench(models.Model):
     memory_L2 = models.FloatField(verbose_name="Memory latencies in nanoseconds, L2 $",null=True,blank=True)
     memory_Main_mem = models.FloatField(verbose_name="Memory latencies in nanoseconds, Main mem",null=True,blank=True)
     memory_Rand_mem = models.FloatField(verbose_name="Memory latencies in nanoseconds, Rand mem",null=True,blank=True)
-    test_time = models.DateTimeField(verbose_name="测试时间", default=timezone.now)
 
     class Meta:
         db_table = 'lmbench'
