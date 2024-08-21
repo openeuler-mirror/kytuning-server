@@ -13,12 +13,11 @@
 
 <script>
 import axios from 'axios'
-
 export default {
-  data() {
+  data(){
     return {
-      tableTitle: [],
-      numColumns: 0,
+      tableTitle:[],
+      numColumns : 0,
       isDataLoaded: false,
     }
   },
@@ -33,11 +32,11 @@ export default {
     },
   },
   created() {
-    axios.get('/api/' + this.dataName + '_title/').then((response) => {
-      this.tableTitle = response.data.data
-      this.numColumns = Object.keys(response.data.data[0]).length
-      this.isDataLoaded = true;
-      this.$emit('data-loaded', this.tableTitle);
+    axios.get('/api/'+ this.dataName +'_title/').then((response) => {
+          this.tableTitle = response.data.data
+          this.numColumns = Object.keys(response.data.data[0]).length
+          this.isDataLoaded = true;
+          this.$emit('data-loaded', this.tableTitle);
     })
   },
   methods: {
