@@ -3,9 +3,9 @@
     <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     <div style="overflow-x: auto;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
-                :show-header="false">
+                :show-header="false" highlight-current-row>
         <template v-for="(value, key,index) in tableDatas[0]" :key="key">
-          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 4 ? '80' : ''"
+          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 4 ? '85' : ''"
                            align="center">
             <template v-slot="{ row }">
               <div :class="getCellClassName(row, key)">
@@ -22,7 +22,7 @@
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
 import Header from "@/components/common/TableHeader.vue";
-import { cpu2017 } from "@/api/api.js";
+import {cpu2017} from "@/api/api.js";
 
 export default {
   components: {
@@ -84,7 +84,7 @@ export default {
       if (typeof value === 'string' && value.endsWith('%')) {
         // 去除百分比符号 "%"
         value = value.replace('%', '');
-         // 将百分比转换为小数
+        // 将百分比转换为小数
         value = parseFloat(value);
         if (value >= 5) {
           return 'green-cell';
@@ -167,12 +167,13 @@ export default {
 </script>
 <style>
 .green-cell {
-  color:green;
+  color: green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
+
 .red-cell {
-  color:red;
+  color: red;
   background-color: pink;
   /* 其他样式属性 */
 }
