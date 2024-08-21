@@ -30,13 +30,14 @@
   >
     <el-table-column label="基准数据" width="55">
       <template #default="{ row }">
-        <el-checkbox v-model="base[row.id]" :label="row" :key="row.id" @change="handleBaseDataChange(row)">{{}}
+<!--        <el-checkbox v-model="base[row.id]" :label="row" :key="row.id" @change="handleBaseDataChange(row)">{{}}-->
+        <el-checkbox v-model="base[row.env_id]" :label="row" :key="row.id" @change="handleBaseDataChange(row)">{{}}
         </el-checkbox>
       </template>
     </el-table-column>
     <el-table-column label="对比数据" width="55">
       <template #default="{ row }">
-        <el-checkbox v-model="compar[row.id]" :label="row" :key="row.id" @change="handleComparativeDataChange(row)">
+        <el-checkbox v-model="compar[row.env_id]" :label="row" :key="row.id" @change="handleComparativeDataChange(row)">
           {{}}
         </el-checkbox>
       </template>
@@ -193,13 +194,10 @@ export default {
               this.itemKey = Math.random()
               this.refreshData();
               this.dialogFormVisible = false
-            } else {
-              ElMessage({message: response.data.message || 'error', type: 'warning'})
             }
           });
         }
       })
-
     },
     edit(row) {
       this.form = {...row}
@@ -262,6 +260,7 @@ export default {
       if (this.selectedType) {
         console.log(this.base, 11)
         const env_id = Object.keys(this.base).map(key => parseInt(key));
+        console.log(env_id,222);
         if (env_id.length !== 1) {
           ElMessage.error({message:'请选择一条数据作为基准数据',duration: 1000});
           return
@@ -269,7 +268,7 @@ export default {
           if (this.selectedType === "env") {
             this.$router.push({name: 'env', "params": {baseId: env_id[0]}});
           } else if (this.selectedType === "stream") {
-            if (this.allProjectDatas.find(item => item.id === env_id[0]).stream) {
+            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).stream) {
               this.$router.push({
                 name: 'stream', "params": {baseId: env_id[0], comparsionIds: ''}
               });
@@ -277,7 +276,7 @@ export default {
               ElMessage.error({message:'该数据没有stream数据',duration: 1000});
             }
           } else if (this.selectedType === "lmbench") {
-            if (this.allProjectDatas.find(item => item.id === env_id[0]).lmbench) {
+            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).lmbench) {
               this.$router.push({
                 name: 'lmbench',
                 "params": {baseId: env_id[0], comparsionIds: ''}
@@ -286,7 +285,7 @@ export default {
               ElMessage.error({message:'该数据没有lmbench数据',duration: 1000});
             }
           } else if (this.selectedType === "unixbench") {
-            if (this.allProjectDatas.find(item => item.id === env_id[0]).unixbench) {
+            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).unixbench) {
               this.$router.push({
                 name: 'unixbench',
                 "params": {baseId: env_id[0], comparsionIds: ''}
@@ -295,7 +294,7 @@ export default {
               ElMessage.error({message:'该数据没有unixbench数据',duration: 1000});
             }
           } else if (this.selectedType === "fio") {
-            if (this.allProjectDatas.find(item => item.id === env_id[0]).fio) {
+            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).fio) {
               this.$router.push({
                 name: 'fio',
                 "params": {baseId: env_id[0], comparsionIds: ''}
@@ -304,7 +303,7 @@ export default {
               ElMessage.error({message:'该数据没有fio数据',duration: 1000});
             }
           } else if (this.selectedType === "iozone") {
-            if (this.allProjectDatas.find(item => item.id === env_id[0]).iozone) {
+            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).iozone) {
               this.$router.push({
                 name: 'iozone',
                 "params": {baseId: env_id[0], comparsionIds: ''}
@@ -313,7 +312,7 @@ export default {
               ElMessage.error({message:'该数据没有iozone数据',duration: 1000});
             }
           } else if (this.selectedType === "cpu2006") {
-            if (this.allProjectDatas.find(item => item.id === env_id[0]).cpu2006) {
+            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).cpu2006) {
               this.$router.push({
                 name: 'cpu2006',
                 "params": {baseId: env_id[0], comparsionIds: ''}
@@ -322,7 +321,7 @@ export default {
               ElMessage.error({message:'该数据没有cpu2006数据',duration: 1000});
             }
           } else if (this.selectedType === "cpu2017") {
-            if (this.allProjectDatas.find(item => item.id === env_id[0]).cpu2017) {
+            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).cpu2017) {
               this.$router.push({
                 name: 'cpu2017',
                 "params": {baseId: env_id[0], comparsionIds: ''}
@@ -331,7 +330,7 @@ export default {
               ElMessage.error({message:'该数据没有cpu2017数据',duration: 1000});
             }
           } else if (this.selectedType === "jvm2008") {
-            if (this.allProjectDatas.find(item => item.id === env_id[0]).jvm2008) {
+            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).jvm2008) {
               this.$router.push({
                 name: 'jvm2008',
                 "params": {baseId: env_id[0], comparsionIds: ''}
@@ -351,7 +350,7 @@ export default {
         const env_id = Object.keys(this.base).map(key => parseInt(key));
         const baseData = this.allProjectDatas.find(item => env_id.includes(item.id))
         const env_ids = Object.keys(this.compar).map(key => parseInt(key));
-        const comparData = this.allProjectDatas.filter(item => env_ids.includes(item.id))
+        const comparData = this.allProjectDatas.filter(item => env_ids.includes(item.env_id))
         const comparsionIds = env_ids.join(',')
         const streams = comparData.map(project => {
           return project.stream
