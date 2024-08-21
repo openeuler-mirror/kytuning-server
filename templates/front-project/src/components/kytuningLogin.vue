@@ -26,7 +26,7 @@
 <script>
 import background from '@/assets/background.jpg';
 import { ElMessage } from 'element-plus';
-import { setToken,getToken } from '@/utils/setToken.js'
+import { setToken,getToken,removeToken } from '@/utils/setToken.js'
 import { login } from '@/api/api.js'
 
 export default {
@@ -48,10 +48,11 @@ export default {
     login() {
       login(this.form).then(res => {
         if (res.data.code === 200) {
+          removeToken('token')
+          removeToken('username')
           setToken('username', res.data.username)
           setToken('token', 'Bearer ' + res.data.token)
           this.$message({message: '登录成功', type: 'success'})
-          console.log(getToken('token'),222);
           this.$router.push('/project')
         }
       }).catch(error => {
@@ -62,17 +63,8 @@ export default {
     }
     })
     },
-    handleSubmit() {
-      // 处理登录逻辑
-      if (this.form.password === 'kylin' && this.form.password === 'kylin') {
-        this.$router.push({name: 'project'});
-      } else {
-        // 提示用户名或密码错误
-        ElMessage.error({message:'用户名或密码错误',duration: 1000});
-      }
-    },
     handleEnterKey() {
-      this.handleSubmit();
+      this.login();
     },
     handleReset() {
       this.username = '';
