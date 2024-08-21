@@ -40,7 +40,7 @@ export default {
       const blob = new Blob(["\uFEFF" + csvData], {type: "text/csv;charset=utf-8;"});
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = this.dataName;
+      link.download = this.dataName + '_table';
       link.click();
     },
   }

@@ -26,7 +26,7 @@
 import Left from "./TableLeft.vue";
 import Base from "./BaseData.vue";
 import Compar from "./ComparData.vue";
-import Footer from "./TableFooter.vue";
+import Footer from "./TableHeader.vue";
 export default {
   components: {
     // Header,
@@ -39,12 +39,12 @@ export default {
     return {
       dataName: this.$route.name,
       baseId: this.$route.params.baseId,
-      titleIndex: 1,
+      titleIndex:1,
       comparsionIds: this.$route.params.comparsionIds.split(","),
 
-      otherList: [],
-      tableTitle: [],
-      tableDatas: [],
+      otherList:[],
+      tableTitle:[],
+      tableDatas:[],
       // baseDatas:[],
       comparDatas: {}, // 初始化 comparDatas 对象
 
@@ -53,9 +53,9 @@ export default {
     };
   },
   created() {
-    this.isAllDataLoaded = true;
-    this.isComparDataLoaded = Array(this.comparsionIds.length + 1).fill(false)
-  },
+  this.isAllDataLoaded = true;
+  this.isComparDataLoaded = Array(this.comparsionIds.length+1).fill(false)
+},
   methods: {
     getHeadrData(value) {
       // const headerComponent = this.$refs.headerComponent; // 获取 Header 子组件的引用
