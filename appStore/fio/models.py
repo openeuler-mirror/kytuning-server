@@ -20,7 +20,6 @@ class Fio(models.Model):
     io = models.CharField(max_length=20, verbose_name="io")
     iops = models.CharField(max_length=20, verbose_name="iops")
     bw = models.CharField(max_length=20, verbose_name="bw")
-    test_time = models.DateTimeField(verbose_name="测试时间", default=timezone.now)
 
     class Meta:
         db_table = 'fio'

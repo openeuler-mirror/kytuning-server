@@ -57,7 +57,7 @@ class Cpu2006(models.Model):
     fp_481_wrf = models.FloatField(verbose_name="481.wrf",null=True,blank=True)
     fp_482_sphinx3 = models.FloatField(verbose_name="482.sphinx3",null=True,blank=True)
     fp_SPECfp_2006 = models.FloatField(verbose_name="SPECfp_2006",null=True,blank=True)
-    test_time = models.DateTimeField(verbose_name="测试时间", default=timezone.now)
+
 
     class Meta:
         db_table = 'cpu2006'

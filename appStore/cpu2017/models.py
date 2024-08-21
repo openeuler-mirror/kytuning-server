@@ -51,7 +51,6 @@ class Cpu2017(models.Model):
     fp_549_fotonik3d_r = models.FloatField(verbose_name="549.fotonik3d_r", null=True, blank=True)
     fp_554_roms_r = models.FloatField(verbose_name="554.roms_r", null=True, blank=True)
     fp_PECrate2017_fp = models.FloatField(verbose_name="SPECrate2017_fp", null=True, blank=True)
-    test_time = models.DateTimeField(verbose_name="测试时间", default=timezone.now)
 
     class Meta:
         db_table = 'cpu_2017'

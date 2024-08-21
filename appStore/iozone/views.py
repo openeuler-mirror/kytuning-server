@@ -331,7 +331,6 @@ class IozoneViewSet(CusModelViewSet):
                 data_iozone['reread_test'] = iozone_json['测试记录'][0]['重读测试（KB/s）']
                 data_iozone['random_read_test'] = iozone_json['测试记录'][0]['随机读测试（KB/s）']
                 data_iozone['random_write_test'] = iozone_json['测试记录'][0]['随机写测试（KB/s）']
-                data_iozone['test_time'] = return_time(iozone_json['time'])
                 data_iozone = {key: value if not isinstance(value, str) or value != '' else None for key, value in
                                 data_iozone.items()}
                 serializer_iozone = IozoneSerializer(data=data_iozone)

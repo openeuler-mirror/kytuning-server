@@ -303,7 +303,6 @@ class Jvm2008ViewSet(CusModelViewSet):
                 data_jvm2008['xml'] = jvm2008_json['items'][tune_type]['xml']
                 data_jvm2008['Noncompliant_pomposite_result'] = jvm2008_json['items'][tune_type].get(
                     'Noncompliant composite result:')
-                data_jvm2008['test_time'] = return_time(jvm2008_json['time'])
                 data_jvm2008 = {key: value if not isinstance(value, str) or value != '' else None for key, value in
                                 data_jvm2008.items()}
                 serializer_jvm2008 = Jvm2008Serializer(data=data_jvm2008)

@@ -26,7 +26,6 @@ class Unixbench(models.Model):
     shell_scripts_8 = models.FloatField(verbose_name='Shell Scripts (8 concurrent)(lpm)',null=True,blank=True)
     system_call_overhead = models.FloatField(verbose_name='System Call Overhead(lps)',null=True,blank=True)
     index_score = models.FloatField(verbose_name='Index Score(sum)',null=True,blank=True)
-    test_time = models.DateTimeField(verbose_name="测试时间", default=timezone.now)
 
     class Meta:
         db_table = 'unixbench'
