@@ -30,7 +30,7 @@ import { setToken,getToken } from '@/utils/setToken.js'
 import { login } from '@/api/api.js'
 
 export default {
-  // name: 'Login',
+  name: 'kytuningLogin',
   data() {
     return {
       form: {
@@ -58,7 +58,7 @@ export default {
     // 捕获错误
     if (error.response) {
       // 请求已发送，并且服务器返回非 2xx 响应
-      ElMessage.error('用户名或密码错误');
+      ElMessage.error({message:'用户名或密码错误',duration: 1000});
     }
     })
     },
@@ -68,7 +68,7 @@ export default {
         this.$router.push({name: 'project'});
       } else {
         // 提示用户名或密码错误
-        ElMessage.error('用户名或密码错误');
+        ElMessage.error({message:'用户名或密码错误',duration: 1000});
       }
     },
     handleEnterKey() {
@@ -94,10 +94,6 @@ export default {
   /*margin-left: -100px;*/
 }
 
-.reset-button, .submit-button {
-  flex: 1;
-  margin-right: 10px; /* 可根据需要进行调整 */
-}
 
 .login-container {
   position: absolute;
@@ -143,21 +139,5 @@ input {
   font-size: 16px;
   padding: 10px;
 }
-
-.submit-button {
-  background-color: #00bcd4;
-  color: #fff;
-  border: none;
-  outline: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-}
-
-.submit-button:hover {
-  background-color: #008ba3;
-}
-
 </style>
 

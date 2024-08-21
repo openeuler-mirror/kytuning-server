@@ -3,7 +3,7 @@
     <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     <div style="overflow-x: auto;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
-                :show-header="false">
+                :show-header="false" highlight-current-row>
         <template v-for="(value, key,index) in tableDatas[0]" :key="key">
           <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 3 ? '90' : ''"
                            align="center">

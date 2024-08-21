@@ -2,7 +2,7 @@
   <div>
     <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     <div style="overflow-x: auto;">
-      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
+      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" highlight-current-row>
         <template v-for="(value, key,index) in tableDatas[0]" :key="key">
           <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index === 0 ? '100' :(index < 2 ? '150' : '')" align="center">
             <template v-slot="{ row }">
@@ -83,7 +83,7 @@ export default {
       if (typeof value === 'string' && value.endsWith('%')) {
         // 去除百分比符号 "%"
         value = value.replace('%', '');
-        // 将百分比转换为小数
+         // 将百分比转换为小数
         value = parseFloat(value);
         if (value >= 5) {
           return 'green-cell';
@@ -93,13 +93,13 @@ export default {
       }
       return '';
     },
-    titleObjectSpanMethod({columnIndex}) {
-      if (columnIndex === 0) {
-        return [1, 2];
-      } else if (columnIndex === 1) {
-        return [0, 0];
-      }
-    },
+    titleObjectSpanMethod({columnIndex }) {
+        if (columnIndex === 0) {
+            return [1, 2];
+          } else if (columnIndex === 1) {
+            return [0, 0];
+          }
+      },
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
       //columnIndex 表示需要合并的列，多列时用 || 隔开
@@ -142,13 +142,12 @@ export default {
 
 <style>
 .green-cell {
-  color: green;
+  color:green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
-
 .red-cell {
-  color: red;
+  color:red;
   background-color: pink;
   /* 其他样式属性 */
 }
