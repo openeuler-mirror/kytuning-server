@@ -36,12 +36,16 @@ class ProjectViewSet(CusModelViewSet):
         user_name = request.data.get('user_name', None)
         project_name = request.data.get('project_name', None)
         message = request.data.get('message', None)
-        print(id,user_name,project_name,message)
-        Project.objects.filter(id=id).update(id=id,user_name=user_name,project_name=project_name,message=message)
+        old_user_name = Project.objects.filter(id=id).first().user_name
+        if request.user.is_superuser:
+            Project.objects.filter(id=id).update(id=id,user_name=user_name,project_name=project_name,message=message)
+        elif request.user.username == old_user_name:
+            Project.objects.filter(id=id).update(id=id,project_name=project_name,message=message)
+        else:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '该用户不允许修改此数据')
         queryset = Project.objects.filter(id=id)
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '修改project数据完成')
-
 
     def get_filter_name(self, request, *args, **kwargs):
         project_queryset = Project.objects.all()
