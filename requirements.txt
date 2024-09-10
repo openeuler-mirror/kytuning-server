@@ -7,3 +7,4 @@ numpy==1.21.6
 django-filter==23.2
 uWSGI==2.0.19.1
 openpyxl==3.1.2
+schedule==0.3.2
