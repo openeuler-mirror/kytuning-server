@@ -23,14 +23,12 @@
 
 <script>
 // import Header from "./TableHeader.vue";
-import Left from "./TableLeft.vue";
 import Base from "./BaseData.vue";
 import Compar from "./ComparData.vue";
 import Footer from "./TableHeader.vue";
 export default {
   components: {
     // Header,
-    Left,
     Base,
     Compar,
     Footer

@@ -97,6 +97,7 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 
 DATABASES = {
     'default': {
+        # todo 需要修改为自己的数据库及密码
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'kytuning',
         'HOST': 'localhost',
