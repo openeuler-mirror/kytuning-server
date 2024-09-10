@@ -172,10 +172,8 @@ export default {
     sure(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
-          console.log(this.form, 1122)
           // // 发送数据
           project('put', this.form).then(response => {
-            console.log(response.data)
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'})
               //更新页面数据，绑定key，每次key改变后就会刷新数据
@@ -192,14 +190,11 @@ export default {
       this.dialogFormVisible = true
     },
     closeInfo(form) {
-      console.log(form)
       this.$refs[form].resetFields()
       this.dialogFormVisible = false
     },
     del(row) {
-      // delData(this, '/info', row.id, getData)
       project('delete', {id: row.id}).then(response => {
-            console.log(response.data)
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'})
               //更新页面数据，绑定key，每次key改变后就会刷新数据
@@ -255,9 +250,7 @@ export default {
     //跳转base页面
     ShowSingleData() {
       if (this.selectedType) {
-        console.log(this.base, 11)
         const env_id = Object.keys(this.base).map(key => parseInt(key));
-        console.log(env_id,222);
         if (env_id.length !== 1) {
           ElMessage.error({message:'请选择一条数据作为基准数据',duration: 1000});
           return
@@ -345,7 +338,7 @@ export default {
     getComparativeData() {
       if (this.selectedType) {
         const env_id = Object.keys(this.base).map(key => parseInt(key));
-        const baseData = this.allProjectDatas.find(item => env_id.includes(item.id))
+        const baseData = this.allProjectDatas.find(item => env_id.includes(item.env_id))
         const env_ids = Object.keys(this.compar).map(key => parseInt(key));
         const comparData = this.allProjectDatas.filter(item => env_ids.includes(item.env_id))
         const comparsionIds = env_ids.join(',')
@@ -431,7 +424,7 @@ export default {
           if (baseData.cpu2017 && !cpu2017s.includes(0)) {
             this.$router.push({
               name: 'cpu2017',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIds}
+              "params": {baseId: env_id[0],comparsionIds: comparsionIds}
             });
           } else {
             ElMessage.error({message:'该数据中有cpu2017为空',duration: 1000});
