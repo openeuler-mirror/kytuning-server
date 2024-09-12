@@ -27,7 +27,6 @@ import { project } from "@/api/api.js";
 export default {
   data() {
     return {
-      localShowAllData: this.showAllData,
       allProjectDatas:[],
       isDataLoaded:false,
     }
@@ -35,7 +34,7 @@ export default {
   props: {
     tableDatas: Array,    // 接收 table-datas 属性
     dataName: String,
-    showAllData: null
+    showAllData: Boolean
   },
   created() {
     project().then((response) => {
@@ -75,8 +74,7 @@ export default {
       this.$router.push({name: name,"params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
     },
     toggleDataVisibility() {
-      this.localShowAllData = !this.localShowAllData;
-      this.$emit('data-loaded', this.localShowAllData);
+      this.$emit('data-loaded', !this.showAllData);
     },
     // 导出表格数据为 CSV 格式
     exportTableData() {
