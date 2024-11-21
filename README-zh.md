@@ -24,8 +24,8 @@
 
    #### 安装
 
-   1. pip3 install -r requirements.txt
-   2. yun install -r nginx httpd
+   1. yum install -y nginx httpd python3-devel
+   2. pip3 install -r requirements.txt
 
    #### 指令
 
