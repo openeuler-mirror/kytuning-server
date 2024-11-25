@@ -3,16 +3,6 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
     {
-        name: 'Test',
-        path: '/test',
-        component: () => import('@/views/test_1'),
-    },
-    {
-        name: 'tablehome',
-        path: '/tablehome',
-        component: () => import('@/components/common/TableHome'),
-    },
-    {
         name: 'Home',
         path: '/',
         component: () => import('@/components/kytuningLogin'),
