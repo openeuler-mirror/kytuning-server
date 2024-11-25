@@ -26,7 +26,7 @@
 <script>
 import background from '@/assets/background.jpg';
 import { ElMessage } from 'element-plus';
-import { setToken,getToken,removeToken } from '@/utils/setToken.js'
+import { setToken,removeToken } from '@/utils/setToken.js'
 import { login } from '@/api/api.js'
 
 export default {

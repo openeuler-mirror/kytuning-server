@@ -20,7 +20,7 @@
 
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
-import Header from "@/components/common/TableHeader.vue";
+import Header from "@/components/TableHeader.vue";
 import { iozone } from "@/api/api.js";
 
 export default {
