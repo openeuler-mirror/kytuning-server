@@ -2,8 +2,27 @@
   <div style="overflow-x: auto;">
     <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false">
       <template v-for="i in numColumns" :key="i">
-<!--        <el-table-column :prop="`column${i}`" align="center" :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null"></el-table-column>-->
-        <el-table-column :prop="`column${i}`" align="center"></el-table-column>
+        <el-table-column :prop="`column${i}`" align="center" :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null">
+             <template #default="{row}">
+              <span v-if="row[`column${i}`]?.length <= 50">
+                {{ row[`column${i}`] && row[`column${i}`].toString() || ''  }}
+              </span>
+              <span v-else-if="!row[`column${i}`]?.length"> --- </span>
+              <span v-else>
+                <el-popover
+                  effect="light"
+                  placement="bottom"
+                  :width="400"
+                  trigger="hover"
+                >
+                    <div v-html="processConfigString(row[`column${i}`])"></div>
+                  <template #reference>
+                    {{ row[`column${i}`]?.slice(0, 50) }}...
+                  </template>
+                </el-popover>
+              </span>
+             </template>
+           </el-table-column>
       </template>
     </el-table>
   </div>
@@ -31,7 +50,18 @@ export default {
     })
   },
   methods: {
+    processConfigString(inputString) {
+      // 使用正则表达式将 = 左右的空格删除
+      let processedString = inputString.replace(/\s*=\s*/g, "=");
 
+      // 将处理后的字符串按空格分割成数组
+      let lines = processedString.split(/\s+/);
+
+      // 将数组中的元素用换行符连接成新的字符串
+      let result = lines.join("<br/>");
+      // console.log(result);
+      return result;
+    },
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
       //columnIndex 表示需要合并的列，多列时用 || 隔开
