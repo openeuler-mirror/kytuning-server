@@ -30,7 +30,8 @@
    #### 指令
 
    1. 构建和配置nginx+uwsgi服务 
-   2. 启动uwsgi : uwsgi --ini uwsgi.ini
+   2. sudo mkdir /var/log/kytuning/
+   3. 启动uwsgi : uwsgi --ini uwsgi.ini
    3. 重启nginx : systemctl 重启nginx.service
 
    #### Contribution
