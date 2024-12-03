@@ -1,3 +1,10 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Fri Mar 1 09:53:11 2024 +0800
+"""
 from datetime import datetime
 
 from django.db import models

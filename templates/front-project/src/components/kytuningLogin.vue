@@ -1,3 +1,10 @@
+<!--
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * See LICENSE file for more details.
+ * Author: wqz <wangqingzheng@kylinos.cn>
+ * Date: Wed Aug 21 10:54:14 2024 +0800
+-->
 <template>
   <div class="login-container" :style="{ backgroundImage: `url(${background})` }">
     <div class="login-form">
