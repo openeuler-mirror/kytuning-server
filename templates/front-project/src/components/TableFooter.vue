@@ -19,18 +19,16 @@
 export default {
   data() {
     return {
-      localShowAllData: this.showAllData
     }
   },
   props: {
     tableDatas: Array,    // 接收 table-datas 属性
     dataName: String,
-    showAllData: null
+    showAllData: Boolean
   },
   methods: {
     toggleDataVisibility() {
-      this.localShowAllData = !this.localShowAllData;
-      this.$emit('data-loaded', this.localShowAllData);
+      this.$emit('data-loaded', !this.showAllData);
     },
     // 导出表格数据为 CSV 格式
     exportTableData() {
