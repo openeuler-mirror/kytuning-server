@@ -174,13 +174,12 @@ export default {
 </script>
 <style>
 .green-cell {
-  color: green;
+  color:green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
-
 .red-cell {
-  color: red;
+  color:red;
   background-color: pink;
   /* 其他样式属性 */
 }

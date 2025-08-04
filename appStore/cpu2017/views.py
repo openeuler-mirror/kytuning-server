@@ -33,7 +33,7 @@ class Cpu2017ViewSet(CusModelViewSet):
         # 先判断数据的TuneType确定是base还是peak
         # 在判断数据的thread确定是单线程还是多线程
         # 在判断tuneType确定是int还是fp
-        groups = set([d['mark_name'] for d in serializer.data])
+        groups = set([d.mark_name for d in serializer_])
         if len(groups) == 1:
             # 基准数据和对比数据的全部数据
             datas[0]['column' + str(column_index)] = 'Cpu2017#' + str(title_index)
@@ -165,23 +165,9 @@ class Cpu2017ViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(103):
-                if i > 2:
-                    datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
+            for i in range(3, 103):
+                datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
-            if not base_column_index:
-                # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-               # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(103):
-                    if i > 2:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
         else:
             # 计算平均值
             base_single_data_ = serializer_.filter(tuneType='base').filter(thread='单线程')
@@ -625,19 +611,19 @@ class Cpu2017ViewSet(CusModelViewSet):
             datas[101]['column' + str(column_index)] = average_peak_multi_fp_rate_554_roms_r
             datas[102]['column' + str(column_index)] = average_peak_multi_fp_rate_PECrate2017_fp
             column_index += 1
-            if not base_column_index:
-                # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-                # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(103):
-                    if i > 2:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
+        if not base_column_index:
+            # 记录基准数据
+            base_column_index = column_index - 1
+        else:
+            # 对比数据的对比值
+            datas[0]['column' + str(column_index)] = '对比值'
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(103):
+                if i > 2:
+                    datas[i]['column' + str(column_index)] = \
+                        "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+            column_index += 1
         return datas, title_index, column_index, base_column_index
 
 
@@ -767,8 +753,6 @@ class Cpu2017ViewSet(CusModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Cpu2017.objects.filter(env_id=comparativeId).all()
-                if not comparsion_queryset:
-                    return json_response({}, status.HTTP_200_OK, '列表')
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
 

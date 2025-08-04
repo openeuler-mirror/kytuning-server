@@ -13,7 +13,7 @@ from rest_framework import status
 from appStore.jvm2008.models import Jvm2008
 from appStore.jvm2008.serializers import Jvm2008Serializer
 from appStore.utils import constants
-from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
+from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
 
@@ -27,66 +27,63 @@ class Jvm2008ViewSet(CusModelViewSet):
     def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
         # 0-0 或者0-1这样的数据有几组，以此来判断需不需要计算平均值
-        groups = set([d['mark_name'] for d in serializer.data])
-        if len(groups) == 1:
-            # 基准数据和对比数据的全部数据
-            datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
-            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
-            # 初始化所有数据为None
-            for i in range(3, 27):
-                datas[i]['column' + str(column_index)] = None
-            for data in serializer.data:
-                if data['tune_type'] == 'base':
-                    datas[3]['column' + str(column_index)] = data['compiler']
-                    datas[4]['column' + str(column_index)] = data['compress']
-                    datas[5]['column' + str(column_index)] = data['crypto']
-                    datas[6]['column' + str(column_index)] = data['derby']
-                    datas[7]['column' + str(column_index)] = data['mpegaudio']
-                    datas[8]['column' + str(column_index)] = data['scimark_large']
-                    datas[9]['column' + str(column_index)] = data['scimark_small']
-                    datas[10]['column' + str(column_index)] = data['serial']
-                    datas[11]['column' + str(column_index)] = data['startup']
-                    datas[12]['column' + str(column_index)] = data['sunflow']
-                    datas[13]['column' + str(column_index)] = data['xml']
-                    datas[14]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
-                elif data['tune_type'] == 'peak':
-                    datas[15]['column' + str(column_index)] = data['compiler']
-                    datas[16]['column' + str(column_index)] = data['compress']
-                    datas[17]['column' + str(column_index)] = data['crypto']
-                    datas[18]['column' + str(column_index)] = data['derby']
-                    datas[19]['column' + str(column_index)] = data['mpegaudio']
-                    datas[20]['column' + str(column_index)] = data['scimark_large']
-                    datas[21]['column' + str(column_index)] = data['scimark_small']
-                    datas[22]['column' + str(column_index)] = data['serial']
-                    datas[23]['column' + str(column_index)] = data['startup']
-                    datas[24]['column' + str(column_index)] = data['sunflow']
-                    datas[25]['column' + str(column_index)] = data['xml']
-                    datas[26]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
-            column_index += 1
-            title_index += 1
+        groups = set([d.mark_name for d in serializer_])
+        if not groups or len(groups) == 1:
+            if not groups:
+                # 基准数据和对比数据的全部数据
+                datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
+                datas[1]['column' + str(column_index)] = None
+                datas[2]['column' + str(column_index)] = None
+                # 初始化所有数据为None
+                for i in range(3, 27):
+                    datas[i]['column' + str(column_index)] = None
+                column_index += 1
+                title_index += 1
+            elif len(groups) == 1:
+                # 基准数据和对比数据的全部数据
+                datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
+                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+                # 初始化所有数据为None
+                for i in range(3, 27):
+                    datas[i]['column' + str(column_index)] = None
+                for data in serializer.data:
+                    if data['tune_type'] == 'base':
+                        datas[3]['column' + str(column_index)] = data['compiler']
+                        datas[4]['column' + str(column_index)] = data['compress']
+                        datas[5]['column' + str(column_index)] = data['crypto']
+                        datas[6]['column' + str(column_index)] = data['derby']
+                        datas[7]['column' + str(column_index)] = data['mpegaudio']
+                        datas[8]['column' + str(column_index)] = data['scimark_large']
+                        datas[9]['column' + str(column_index)] = data['scimark_small']
+                        datas[10]['column' + str(column_index)] = data['serial']
+                        datas[11]['column' + str(column_index)] = data['startup']
+                        datas[12]['column' + str(column_index)] = data['sunflow']
+                        datas[13]['column' + str(column_index)] = data['xml']
+                        datas[14]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
+                    elif data['tune_type'] == 'peak':
+                        datas[15]['column' + str(column_index)] = data['compiler']
+                        datas[16]['column' + str(column_index)] = data['compress']
+                        datas[17]['column' + str(column_index)] = data['crypto']
+                        datas[18]['column' + str(column_index)] = data['derby']
+                        datas[19]['column' + str(column_index)] = data['mpegaudio']
+                        datas[20]['column' + str(column_index)] = data['scimark_large']
+                        datas[21]['column' + str(column_index)] = data['scimark_small']
+                        datas[22]['column' + str(column_index)] = data['serial']
+                        datas[23]['column' + str(column_index)] = data['startup']
+                        datas[24]['column' + str(column_index)] = data['sunflow']
+                        datas[25]['column' + str(column_index)] = data['xml']
+                        datas[26]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
+                column_index += 1
+                title_index += 1
             # 基准数据和对比数据的平均数据
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(27):
-                if i > 2:
-                    datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
+            for i in range(3, 27):
+                datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
-            if not base_column_index:
-                # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-                # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(27):
-                    if i > 2:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)])/ datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
         else:
             # 计算平均值
             base_data_ = serializer_.filter(tune_type='base')
@@ -213,19 +210,22 @@ class Jvm2008ViewSet(CusModelViewSet):
             datas[25]['column' + str(column_index)] = average_peak_xml
             datas[26]['column' + str(column_index)] = average_peak_Noncompliant_pomposite_result
             column_index += 1
-            if not base_column_index:
-                # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-                # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(27):
-                        if i > 2:
-                            datas[i]['column' + str(column_index)] = \
-                                "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
+
+        if not base_column_index:
+            # 记录基准数据
+            base_column_index = column_index - 1
+        else:
+            # 对比数据的对比值
+            datas[0]['column' + str(column_index)] = '对比值'
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(3, 27):
+                datas[i]['column' + str(column_index)] = \
+                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
+                        'column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if \
+                    datas[i]['column' + str(column_index - 1)] is not None and datas[i][
+                        'column' + str(base_column_index)] is not None else None
+            column_index += 1
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
@@ -277,8 +277,6 @@ class Jvm2008ViewSet(CusModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Jvm2008.objects.filter(env_id=comparativeId).all()
-                if not comparsion_queryset:
-                    return json_response({}, status.HTTP_200_OK, '列表')
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas,
                                                                                     title_index, column_index,
                                                                                     base_column_index)

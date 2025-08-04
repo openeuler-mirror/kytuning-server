@@ -44,14 +44,13 @@ export default {
   },
   created() {
     axios.get('/api/' + this.dataName + '_data' + '/?env_id=' + this.baseId + '&index=' + this.titleIndex)
-        // axios.get('/api/' + this.dataName + '_data' + '/?env_id=' + this.baseId)
         .then((response) => {
-          this.comparDatas = response.data.data
-          this.numColumns = Object.keys(this.comparDatas[0]).length
-          const titleIndex_ = this.titleIndex + this.numColumns - 1
-          this.$emit('data-loaded', this.baseId, titleIndex_, this.comparDatas)
-          this.isDataLoaded = true
-        })
+        this.comparDatas = response.data.data
+        this.numColumns = Object.keys(this.comparDatas[0]).length
+        const titleIndex_ = this.titleIndex + this.numColumns -1
+        this.$emit('data-loaded', this.baseId,titleIndex_, this.comparDatas)
+        this.isDataLoaded = true
+      })
   },
 }
 </script>

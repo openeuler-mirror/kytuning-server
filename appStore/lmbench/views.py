@@ -26,110 +26,104 @@ class LmbenchViewSet(CusModelViewSet):
 
     def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
-        if len(serializer_) == 1:
-            # 基准数据和对比数据的全部数据
-            datas[0]['column' + str(column_index)] = 'Lmbench#' + str(title_index)
-            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
-            datas[3]['column' + str(column_index)] = serializer.data[0]['basic_Mhz']
-            datas[4]['column' + str(column_index)] = serializer.data[0]['basic_tlb_pages']
-            datas[5]['column' + str(column_index)] = serializer.data[0]['basic_cache_line_bytes']
-            datas[6]['column' + str(column_index)] = serializer.data[0]['basic_mem_par']
-            datas[7]['column' + str(column_index)] = serializer.data[0]['basic_scal_load']
-            datas[8]['column' + str(column_index)] = serializer.data[0]['processor_null_call']
-            datas[9]['column' + str(column_index)] = serializer.data[0]['processor_null_I_O']
-            datas[10]['column' + str(column_index)] = serializer.data[0]['processor_stat']
-            datas[11]['column' + str(column_index)] = serializer.data[0]['processor_open_clo']
-            datas[12]['column' + str(column_index)] = serializer.data[0]['processor_slct_TCP']
-            datas[13]['column' + str(column_index)] = serializer.data[0]['processor_sig_inst']
-            datas[14]['column' + str(column_index)] = serializer.data[0]['processor_sig_hndl']
-            datas[15]['column' + str(column_index)] = serializer.data[0]['processor_fork_proc']
-            datas[16]['column' + str(column_index)] = serializer.data[0]['processor_exec_proc']
-            datas[17]['column' + str(column_index)] = serializer.data[0]['processor_sh_proc']
-            datas[18]['column' + str(column_index)] = serializer.data[0]['processor_Mhz']
-            datas[19]['column' + str(column_index)] = serializer.data[0]['basic_intgr_bit']
-            datas[20]['column' + str(column_index)] = serializer.data[0]['basic_intgr_add']
-            datas[21]['column' + str(column_index)] = serializer.data[0]['basic_intgr_mul']
-            datas[22]['column' + str(column_index)] = serializer.data[0]['basic_intgr_div']
-            datas[23]['column' + str(column_index)] = serializer.data[0]['basic_intgr_mod']
-            datas[24]['column' + str(column_index)] = serializer.data[0]['basic_int64_bit']
-            datas[25]['column' + str(column_index)] = serializer.data[0]['basic_int64_add']
-            datas[26]['column' + str(column_index)] = serializer.data[0]['basic_int64_mul']
-            datas[27]['column' + str(column_index)] = serializer.data[0]['basic_int64_div']
-            datas[28]['column' + str(column_index)] = serializer.data[0]['basic_int64_mod']
-            datas[29]['column' + str(column_index)] = serializer.data[0]['basic_float_add']
-            datas[30]['column' + str(column_index)] = serializer.data[0]['basic_float_mul']
-            datas[31]['column' + str(column_index)] = serializer.data[0]['basic_float_div']
-            datas[32]['column' + str(column_index)] = serializer.data[0]['basic_float_bogo']
-            datas[33]['column' + str(column_index)] = serializer.data[0]['basic_double_add']
-            datas[34]['column' + str(column_index)] = serializer.data[0]['basic_double_mul']
-            datas[35]['column' + str(column_index)] = serializer.data[0]['basic_double_div']
-            datas[36]['column' + str(column_index)] = serializer.data[0]['basic_double_bogo']
-            datas[37]['column' + str(column_index)] = serializer.data[0]['context_2p_0K']
-            datas[38]['column' + str(column_index)] = serializer.data[0]['context_2p_16K']
-            datas[39]['column' + str(column_index)] = serializer.data[0]['context_2p_64K']
-            datas[40]['column' + str(column_index)] = serializer.data[0]['context_8p_16K']
-            datas[41]['column' + str(column_index)] = serializer.data[0]['context_8p_64K']
-            datas[42]['column' + str(column_index)] = serializer.data[0]['context_16p_16K']
-            datas[43]['column' + str(column_index)] = serializer.data[0]['context_16p_64K']
-            datas[44]['column' + str(column_index)] = serializer.data[0]['local_2p_0K']
-            datas[45]['column' + str(column_index)] = serializer.data[0]['local_Pipe']
-            datas[46]['column' + str(column_index)] = serializer.data[0]['local_AF_UNIX']
-            datas[47]['column' + str(column_index)] = serializer.data[0]['local_UDP']
-            datas[48]['column' + str(column_index)] = serializer.data[0]['local_TCP']
-            datas[49]['column' + str(column_index)] = serializer.data[0]['local_TCP_conn']
-            datas[50]['column' + str(column_index)] = serializer.data[0]['local_RPC_TCP']
-            datas[51]['column' + str(column_index)] = serializer.data[0]['local_RPC_UDP']
-            datas[52]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mmap_Latency']
-            datas[53]['column' + str(column_index)] = serializer.data[0]['local_bigger_Prot_Fault']
-            datas[54]['column' + str(column_index)] = serializer.data[0]['local_bigger_Page_Fault']
-            datas[55]['column' + str(column_index)] = serializer.data[0]['local_bigger_100fd_selct']
-            datas[56]['column' + str(column_index)] = serializer.data[0]['local_bigger_0K_File_create']
-            datas[57]['column' + str(column_index)] = serializer.data[0]['local_bigger_0K_File_delete']
-            datas[58]['column' + str(column_index)] = serializer.data[0]['local_bigger_10K_File_create']
-            datas[59]['column' + str(column_index)] = serializer.data[0]['local_bigger_10K_File_delete']
-            datas[60]['column' + str(column_index)] = serializer.data[0]['local_bigger_Pipe']
-            datas[61]['column' + str(column_index)] = serializer.data[0]['local_bigger_AF_UNIX']
-            datas[62]['column' + str(column_index)] = serializer.data[0]['local_bigger_TCP']
-            datas[63]['column' + str(column_index)] = serializer.data[0]['local_bigger_File_reread']
-            datas[64]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mmap_reread']
-            datas[65]['column' + str(column_index)] = serializer.data[0]['local_bigger_Bcopy_libc']
-            datas[66]['column' + str(column_index)] = serializer.data[0]['local_bigger_Bcopy_hand']
-            datas[67]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mem_read']
-            datas[68]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mem_write']
-            datas[69]['column' + str(column_index)] = serializer.data[0]['memory_Mhz']
-            datas[70]['column' + str(column_index)] = serializer.data[0]['memory_L1']
-            datas[71]['column' + str(column_index)] = serializer.data[0]['memory_L2']
-            datas[72]['column' + str(column_index)] = serializer.data[0]['memory_Main_mem']
-            datas[73]['column' + str(column_index)] = serializer.data[0]['memory_Rand_mem']
-            title_index += 1
-            column_index += 1
+        if len(serializer_) <= 1:
+            if len(serializer_) == 0:
+                # 基准数据和对比数据的全部数据
+                datas[0]['column' + str(column_index)] = 'Lmbench#' + str(title_index)
+                datas[1]['column' + str(column_index)] = None
+                datas[2]['column' + str(column_index)] = None
+                # 初始化所有数据为None
+                for i in range(3, 74):
+                    datas[i]['column' + str(column_index)] = None
+                title_index += 1
+                column_index += 1
+
+            else:
+                # 基准数据和对比数据的全部数据
+                datas[0]['column' + str(column_index)] = 'Lmbench#' + str(title_index)
+                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+                datas[3]['column' + str(column_index)] = serializer.data[0]['basic_Mhz']
+                datas[4]['column' + str(column_index)] = serializer.data[0]['basic_tlb_pages']
+                datas[5]['column' + str(column_index)] = serializer.data[0]['basic_cache_line_bytes']
+                datas[6]['column' + str(column_index)] = serializer.data[0]['basic_mem_par']
+                datas[7]['column' + str(column_index)] = serializer.data[0]['basic_scal_load']
+                datas[8]['column' + str(column_index)] = serializer.data[0]['processor_null_call']
+                datas[9]['column' + str(column_index)] = serializer.data[0]['processor_null_I_O']
+                datas[10]['column' + str(column_index)] = serializer.data[0]['processor_stat']
+                datas[11]['column' + str(column_index)] = serializer.data[0]['processor_open_clo']
+                datas[12]['column' + str(column_index)] = serializer.data[0]['processor_slct_TCP']
+                datas[13]['column' + str(column_index)] = serializer.data[0]['processor_sig_inst']
+                datas[14]['column' + str(column_index)] = serializer.data[0]['processor_sig_hndl']
+                datas[15]['column' + str(column_index)] = serializer.data[0]['processor_fork_proc']
+                datas[16]['column' + str(column_index)] = serializer.data[0]['processor_exec_proc']
+                datas[17]['column' + str(column_index)] = serializer.data[0]['processor_sh_proc']
+                datas[18]['column' + str(column_index)] = serializer.data[0]['processor_Mhz']
+                datas[19]['column' + str(column_index)] = serializer.data[0]['basic_intgr_bit']
+                datas[20]['column' + str(column_index)] = serializer.data[0]['basic_intgr_add']
+                datas[21]['column' + str(column_index)] = serializer.data[0]['basic_intgr_mul']
+                datas[22]['column' + str(column_index)] = serializer.data[0]['basic_intgr_div']
+                datas[23]['column' + str(column_index)] = serializer.data[0]['basic_intgr_mod']
+                datas[24]['column' + str(column_index)] = serializer.data[0]['basic_int64_bit']
+                datas[25]['column' + str(column_index)] = serializer.data[0]['basic_int64_add']
+                datas[26]['column' + str(column_index)] = serializer.data[0]['basic_int64_mul']
+                datas[27]['column' + str(column_index)] = serializer.data[0]['basic_int64_div']
+                datas[28]['column' + str(column_index)] = serializer.data[0]['basic_int64_mod']
+                datas[29]['column' + str(column_index)] = serializer.data[0]['basic_float_add']
+                datas[30]['column' + str(column_index)] = serializer.data[0]['basic_float_mul']
+                datas[31]['column' + str(column_index)] = serializer.data[0]['basic_float_div']
+                datas[32]['column' + str(column_index)] = serializer.data[0]['basic_float_bogo']
+                datas[33]['column' + str(column_index)] = serializer.data[0]['basic_double_add']
+                datas[34]['column' + str(column_index)] = serializer.data[0]['basic_double_mul']
+                datas[35]['column' + str(column_index)] = serializer.data[0]['basic_double_div']
+                datas[36]['column' + str(column_index)] = serializer.data[0]['basic_double_bogo']
+                datas[37]['column' + str(column_index)] = serializer.data[0]['context_2p_0K']
+                datas[38]['column' + str(column_index)] = serializer.data[0]['context_2p_16K']
+                datas[39]['column' + str(column_index)] = serializer.data[0]['context_2p_64K']
+                datas[40]['column' + str(column_index)] = serializer.data[0]['context_8p_16K']
+                datas[41]['column' + str(column_index)] = serializer.data[0]['context_8p_64K']
+                datas[42]['column' + str(column_index)] = serializer.data[0]['context_16p_16K']
+                datas[43]['column' + str(column_index)] = serializer.data[0]['context_16p_64K']
+                datas[44]['column' + str(column_index)] = serializer.data[0]['local_2p_0K']
+                datas[45]['column' + str(column_index)] = serializer.data[0]['local_Pipe']
+                datas[46]['column' + str(column_index)] = serializer.data[0]['local_AF_UNIX']
+                datas[47]['column' + str(column_index)] = serializer.data[0]['local_UDP']
+                datas[48]['column' + str(column_index)] = serializer.data[0]['local_TCP']
+                datas[49]['column' + str(column_index)] = serializer.data[0]['local_TCP_conn']
+                datas[50]['column' + str(column_index)] = serializer.data[0]['local_RPC_TCP']
+                datas[51]['column' + str(column_index)] = serializer.data[0]['local_RPC_UDP']
+                datas[52]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mmap_Latency']
+                datas[53]['column' + str(column_index)] = serializer.data[0]['local_bigger_Prot_Fault']
+                datas[54]['column' + str(column_index)] = serializer.data[0]['local_bigger_Page_Fault']
+                datas[55]['column' + str(column_index)] = serializer.data[0]['local_bigger_100fd_selct']
+                datas[56]['column' + str(column_index)] = serializer.data[0]['local_bigger_0K_File_create']
+                datas[57]['column' + str(column_index)] = serializer.data[0]['local_bigger_0K_File_delete']
+                datas[58]['column' + str(column_index)] = serializer.data[0]['local_bigger_10K_File_create']
+                datas[59]['column' + str(column_index)] = serializer.data[0]['local_bigger_10K_File_delete']
+                datas[60]['column' + str(column_index)] = serializer.data[0]['local_bigger_Pipe']
+                datas[61]['column' + str(column_index)] = serializer.data[0]['local_bigger_AF_UNIX']
+                datas[62]['column' + str(column_index)] = serializer.data[0]['local_bigger_TCP']
+                datas[63]['column' + str(column_index)] = serializer.data[0]['local_bigger_File_reread']
+                datas[64]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mmap_reread']
+                datas[65]['column' + str(column_index)] = serializer.data[0]['local_bigger_Bcopy_libc']
+                datas[66]['column' + str(column_index)] = serializer.data[0]['local_bigger_Bcopy_hand']
+                datas[67]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mem_read']
+                datas[68]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mem_write']
+                datas[69]['column' + str(column_index)] = serializer.data[0]['memory_Mhz']
+                datas[70]['column' + str(column_index)] = serializer.data[0]['memory_L1']
+                datas[71]['column' + str(column_index)] = serializer.data[0]['memory_L2']
+                datas[72]['column' + str(column_index)] = serializer.data[0]['memory_Main_mem']
+                datas[73]['column' + str(column_index)] = serializer.data[0]['memory_Rand_mem']
+                title_index += 1
+                column_index += 1
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(74):
-                if i > 2:
-                    datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
+            for i in range(3, 74):
+                datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
-            if not base_column_index:
-                # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-                # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(74):
-                    if i > 2:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
-                                'column' + str(base_column_index)]) / datas[i][
-                                            'column' + str(base_column_index)] * 100) if datas[i]['column' + str(
-                                column_index - 1)] is not None and datas[i]['column' + str(
-                                base_column_index)] is not None else None
-                column_index += 1
         else:
             # 计算平均值
             basic_Mhz_list = [d.basic_Mhz for d in serializer_ if d.basic_Mhz is not None]
@@ -430,19 +424,23 @@ class LmbenchViewSet(CusModelViewSet):
             datas[72]['column' + str(column_index)] = average_memory_Main_mem
             datas[73]['column' + str(column_index)] = average_memory_Rand_mem
             column_index += 1
-            if not base_column_index:
-                # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-                # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(74):
-                        if i > 2:
-                            datas[i]['column' + str(column_index)] = \
-                                "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
+
+        if not base_column_index:
+            # 记录基准数据
+            base_column_index = column_index - 1
+        else:
+            # 对比数据的对比值
+            datas[0]['column' + str(column_index)] = '对比值'
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(3, 74):
+                datas[i]['column' + str(column_index)] = \
+                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
+                        'column' + str(base_column_index)]) / datas[i][
+                                    'column' + str(base_column_index)] * 100) if datas[i]['column' + str(
+                        column_index - 1)] is not None and datas[i]['column' + str(
+                        base_column_index)] is not None else None
+            column_index += 1
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
@@ -543,9 +541,7 @@ class LmbenchViewSet(CusModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Lmbench.objects.filter(env_id=comparativeId).all()
-                if not comparsion_queryset:
-                    return json_response({}, status.HTTP_200_OK, '列表')
-                datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index,
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index,
                                                                                     column_index, base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
 

@@ -54,7 +54,6 @@ export default {
   created() {
     fio(this.paramsData).then((response) => {
       this.tableDatas = response.data.data;
-      console.log(response.data.data)
       this.numColumns = Object.keys(this.tableDatas[0]).length;
       this.showAllData = false; // 默认显示平均数据
       const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
