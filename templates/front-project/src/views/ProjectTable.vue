@@ -27,6 +27,7 @@
     </select>
   </div>
   <br>
+
   <el-table
       ref="multipleTable"
       :data="compData"
@@ -37,7 +38,6 @@
   >
     <el-table-column label="基准数据" width="55">
       <template #default="{ row }">
-<!--        <el-checkbox v-model="base[row.id]" :label="row" :key="row.id" @change="handleBaseDataChange(row)">{{}}-->
         <el-checkbox v-model="base[row.env_id]" :label="row" :key="row.id" @change="handleBaseDataChange(row)">{{}}
         </el-checkbox>
       </template>
@@ -50,30 +50,91 @@
       </template>
     </el-table-column>
     <el-table-column prop="project_name" label="项目名称" column-key="project_name"
-                     :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end"
-    />
-    <el-table-column prop="user_name" label="上传人员" width="80"
-                     :filters=userNames
-                     :filter-method="filterHandler" filter-placement="bottom-end"/>
+                     :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="user_name" label="上传人员" width="80" :filters=userNames
+                     :filter-method="filterHandler" filter-placement="bottom-end">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.user_name }}</div>
+      </template>
+    </el-table-column>
     <el-table-column prop="os_version" label="系统版本" width="220"
                      :filters=osNames
-                     :filter-method="filterHandler" filter-placement="bottom-end"/>
+                     :filter-method="filterHandler" filter-placement="bottom-end">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.os_version }}</div>
+      </template>
+    </el-table-column>
     <el-table-column prop="cpu_module_name" label="cpu型号" width="190"
                      :filters=cpuNames
-                     :filter-method="filterHandler" filter-placement="bottom-end"/>
-    <el-table-column prop="times" label="第几次" width="70"/>
-    <el-table-column prop="ip" label="ip"/>
-    <el-table-column prop="stream" label="stream" width="80"/>
-    <el-table-column prop="lmbench" label="lmbench" width="90"/>
-    <el-table-column prop="unixbench" label="unixbench" width="100"/>
-    <el-table-column prop="fio" label="fio" width="50"/>
-    <el-table-column prop="iozone" label="iozone" width="80"/>
-    <el-table-column prop="cpu2006" label="cpu2006" width="90"/>
-    <el-table-column prop="cpu2017" label="cpu2017" width="90"/>
-    <el-table-column prop="jvm2008" label="jvm2008" width="90"/>
-    <el-table-column prop="test_time" sortable label="录入时间"/>
-    <el-table-column prop="message" label="描述"/>
-
+                     :filter-method="filterHandler" filter-placement="bottom-end">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu_module_name }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="times" label="第几次" width="70">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.times }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="ip" label="ip">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.ip }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="stream" label="stream" width="80">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.stream }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="lmbench" label="lmbench" width="90">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.lmbench }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="unixbench" label="unixbench" width="100">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.unixbench }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="fio" label="fio" width="50">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.fio }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="iozone" label="iozone" width="80">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.iozone }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="cpu2006" label="cpu2006" width="90">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2006 }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="cpu2017" label="cpu2017" width="90">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2017 }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="jvm2008" label="jvm2008" width="90">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.jvm2008 }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="test_time" sortable label="录入时间">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.test_time }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="message" label="描述">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.message }}</div>
+      </template>
+    </el-table-column>
     <el-table-column label="操作" width="180">
       <template #default="scope">
         <el-button type="primary" @click="edit(scope.row)">修改</el-button>
@@ -82,7 +143,7 @@
     </el-table-column>
   </el-table>
   <br>
-<el-dialog :title="修改project信息" v-model="dialogFormVisible" width="500px">
+  <el-dialog :title="'修改project信息'" v-model="dialogFormVisible" width="500px">
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="项目名称" :label-width="formLabelWidth" prop="project_name">
           <el-input v-model="form.project_name" autocomplete="off"></el-input>
@@ -120,7 +181,6 @@
 import {ElMessage} from 'element-plus';
 import 'element-ui/lib/theme-chalk/index.css';
 import { project, get_filter_name } from "@/api/api.js";
-
 
 export default {
   data() {
@@ -176,6 +236,37 @@ export default {
     },
   },
   methods: {
+    handleRowClick(row) {
+      const env_id = row.env_id
+      const stream = row.stream
+      const lmbench = row.lmbench
+      const unixbench = row.unixbench
+      const fio = row.fio
+      const iozone = row.iozone
+      const jvm2008 = row.jvm2008
+      const cpu2006 = row.cpu2006
+      const cpu2017 = row.cpu2017
+      if (stream){
+        this.selectedType = 'stream'
+      }else if(lmbench){
+        this.selectedType = 'lmbench'
+      }else if(unixbench){
+        this.selectedType = 'unixbench'
+      }else if(fio){
+        this.selectedType = 'fio'
+      }else if(iozone){
+        this.selectedType = 'iozone'
+      }else if(jvm2008){
+        this.selectedType = 'jvm2008'
+      }else if(cpu2006){
+        this.selectedType = 'cpu2006'
+      }else if(cpu2017){
+        this.selectedType = 'cpu2017'
+      }
+      this.base[env_id] = true;
+      this.ShowSingleData()
+
+    },
     sure(form) {
       this.$refs[form].validate(valid => {
         if (valid) {
@@ -340,7 +431,6 @@ export default {
       } else {
         ElMessage.error({message:'请选择数据类型',duration: 1000});
       }
-      console.log("跳转成功")
     },
     getComparativeData() {
       if (this.selectedType) {
@@ -349,35 +439,41 @@ export default {
         const env_ids = Object.keys(this.compar).map(key => parseInt(key));
         const comparData = this.allProjectDatas.filter(item => env_ids.includes(item.env_id))
         const comparsionIds = env_ids.join(',')
-        const streams = comparData.map(project => {
-          return project.stream
-        })
-        const unixbenchs = comparData.map(project => {
-          return project.unixbench
-        })
-        const lmbenchs = comparData.map(project => {
-          return project.lmbench
-        })
-        const fios = comparData.map(project => {
-          return project.fio
-        })
-        const iozones = comparData.map(project => {
-          return project.iozone
-        })
-        const cpu2006s = comparData.map(project => {
-          return project.cpu2006
-        })
-        const cpu2017s = comparData.map(project => {
-          return project.cpu2017
-        })
-        const jvm2008s = comparData.map(project => {
-          return project.jvm2008
-        })
+        const unixbenchs = comparData.map(project => {return project.unixbench})
+        const lmbenchs = comparData.map(project => {return project.lmbench})
+        const fios = comparData.map(project => {return project.fio})
+        const iozones = comparData.map(project => {return project.iozone})
+        const cpu2006s = comparData.map(project => {return project.cpu2006})
+        const cpu2017s = comparData.map(project => {return project.cpu2017})
+        const jvm2008s = comparData.map(project => {return project.jvm2008})
+
+        console.log(baseData,111)
+
+        //判断base数据中的第一个有值的数据
+        if(this.selectedType !== "env"){
+          if (baseData.stream) {
+            this.selectedType = 'stream'
+          } else if (baseData.lmbench) {
+            this.selectedType = 'lmbench'
+          } else if (baseData.unixbench) {
+            this.selectedType = 'unixbench'
+          } else if (baseData.fio) {
+            this.selectedType = 'fio'
+          } else if (baseData.iozone) {
+            this.selectedType = 'iozone'
+          } else if (baseData.jvm2008) {
+            this.selectedType = 'jvm2008'
+          } else if (baseData.cpu2006) {
+            this.selectedType = 'cpu2006'
+          } else if (baseData.cpu2017) {
+            this.selectedType = 'cpu2017'
+          }
+        }
 
         if (this.selectedType === "env") {
           ElMessage.error({message:'环境信息数据不支持对比',duration: 1000});
         } else if (this.selectedType === "stream") {
-          if (baseData.stream && !streams.includes(0)) {
+          if (baseData.stream) {
             this.$router.push({name: 'stream', "params": {baseId: env_id[0], comparsionIds: comparsionIds}});
           } else {
             ElMessage.error({message:'该数据中有stream为空',duration: 1000});

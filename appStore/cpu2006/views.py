@@ -12,7 +12,7 @@ from rest_framework import status
 from appStore.cpu2006.models import Cpu2006
 from appStore.cpu2006.serializers import Cpu2006Serializer
 from appStore.utils import constants
-from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
+from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
 
@@ -189,19 +189,6 @@ class Cpu2006ViewSet(CusModelViewSet):
                 if i > 2:
                     datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
-            if not base_column_index:
-                # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-                # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(127):
-                    if i > 2:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
         else:
             # 计算平均值
             base_single_data_ = serializer_.filter(tuneType='base').filter(thread='单线程')
@@ -743,19 +730,19 @@ class Cpu2006ViewSet(CusModelViewSet):
             datas[125]['column' + str(column_index)] = average_peak_multi_fp_482_sphinx3
             datas[126]['column' + str(column_index)] = average_peak_multi_fp_SPECfp_2006
             column_index += 1
-            if not base_column_index:
-                # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-                # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(127):
-                        if i > 2:
-                            datas[i]['column' + str(column_index)] = \
-                                "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
+        if not base_column_index:
+            # 记录基准数据
+            base_column_index = column_index - 1
+        else:
+            # 对比数据的对比值
+            datas[0]['column' + str(column_index)] = '对比值'
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(127):
+                    if i > 2:
+                        datas[i]['column' + str(column_index)] = \
+                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+            column_index += 1
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
@@ -907,8 +894,6 @@ class Cpu2006ViewSet(CusModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Cpu2006.objects.filter(env_id=comparativeId).all()
-                if not comparsion_queryset:
-                    return json_response({}, status.HTTP_200_OK, '列表')
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
 

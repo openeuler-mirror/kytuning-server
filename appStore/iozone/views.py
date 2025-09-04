@@ -13,7 +13,7 @@ from rest_framework import status
 from appStore.iozone.models import Iozone
 from appStore.iozone.serializers import IozoneSerializer
 from appStore.utils import constants
-from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
+from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
 
@@ -27,9 +27,26 @@ class IozoneViewSet(CusModelViewSet):
     def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
         average_datas = []
-        groups = set([d['mark_name'] for d in serializer.data])
+        groups = set([d.mark_name for d in serializer_])
 
-        if len(groups) == 1:
+        if not groups:
+            datas[0]['column' + str(column_index)] = 'Iozone#' + str(title_index)
+            datas[1]['column' + str(column_index)] = None
+            datas[2]['column' + str(column_index)] = None
+            # 初始化所有数据为None
+            for i in range(3, 21):
+                datas[i]['column' + str(column_index)] = None
+            column_index += 1
+            title_index += 1
+            # 基准数据和对比数据的平均数据
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(3, 21):
+                datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
+            column_index += 1
+        elif len(groups) == 1:
             for data in serializer.data:
                 data = {'testcase_name': data['testcase_name'],
                         'file_size': data['file_size'],
@@ -101,28 +118,14 @@ class IozoneViewSet(CusModelViewSet):
                     datas[20]['column' + str(column_index)] = data['random_write_test']
             column_index += 1
             title_index += 1
-            title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(21):
-                if i > 2:
-                    datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
+            for i in range(3, 21):
+                datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
-            # 记录基准数据
-            if not base_column_index:
-                base_column_index = column_index - 1
-            # 对比数据的对比值
-            else:
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(21):
-                    if i > 2:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
         else:
             # 计算平均值
             test_types = set([d['testcase_name'] for d in serializer.data])
@@ -251,19 +254,18 @@ class IozoneViewSet(CusModelViewSet):
                     datas[19]['column' + str(column_index)] = data['rewrite_test']
                     datas[20]['column' + str(column_index)] = data['random_write_test']
             column_index += 1
-            if not base_column_index:
-            # 记录基准数据
-                base_column_index = column_index - 1
-            else:
-                # 对比数据的对比值
-                datas[0]['column' + str(column_index)] = '对比值'
-                datas[1]['column' + str(column_index)] = ''
-                datas[2]['column' + str(column_index)] = ''
-                for i in range(21):
-                    if i > 2:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
-                column_index += 1
+        if not base_column_index:
+        # 记录基准数据
+            base_column_index = column_index - 1
+        else:
+            # 对比数据的对比值
+            datas[0]['column' + str(column_index)] = '对比值'
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(3, 21):
+                datas[i]['column' + str(column_index)] = \
+                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+            column_index += 1
 
         return datas, title_index, column_index, base_column_index
 
@@ -313,8 +315,6 @@ class IozoneViewSet(CusModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Iozone.objects.filter(env_id=comparativeId).all()
-                if not comparsion_queryset:
-                    return json_response({}, status.HTTP_200_OK, '列表')
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
