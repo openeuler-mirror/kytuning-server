@@ -11,8 +11,6 @@
 @author: morgan
 @time: 8/7/19 4:29 PM
 """
-from __future__ import unicode_literals
-
 from collections import OrderedDict
 from functools import update_wrapper
 from inspect import getmembers
