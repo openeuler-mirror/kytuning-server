@@ -11,8 +11,6 @@
 @author: morgan
 @time: 8/7/19 4:26 PM
 """
-from __future__ import unicode_literals
-
 from rest_framework import status
 
 from appStore.utils.common import json_response, get_error_message, list_response
