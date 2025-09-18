@@ -190,7 +190,7 @@ class IozoneViewSet(CusModelViewSet):
             for mark_name in groups:
                 temp_mark_datas = serializer_.filter(mark_name=mark_name)
                 # 基准数据和对比数据的全部数据
-                datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
+                datas[0]['column' + str(column_index)] = 'Iozone#' + str(title_index)
                 datas[1]['column' + str(column_index)] = temp_mark_datas[0].execute_cmd
                 datas[2]['column' + str(column_index)] = temp_mark_datas[0].modify_parameters
                 for data in temp_mark_datas:

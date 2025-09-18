@@ -89,18 +89,18 @@ class Jvm2008ViewSet(CusModelViewSet):
             base_data_ = serializer_.filter(tune_type='base')
             peak_data_ = serializer_.filter(tune_type='peak')
             # base数据，将每个字典转换为NumPy数组
-            base_compiler_list = [d.compiler for d in base_data_]
-            base_compress_list = [d.compress for d in base_data_]
-            base_crypto_list = [d.crypto for d in base_data_]
-            base_derby_list = [d.derby for d in base_data_]
-            base_mpegaudio_list = [d.mpegaudio for d in base_data_]
-            base_scimark_large_list = [d.scimark_large for d in base_data_]
-            base_scimark_small_list = [d.scimark_small for d in base_data_]
-            base_serial_list = [d.serial for d in base_data_]
-            base_startup_list = [d.startup for d in base_data_]
-            base_sunflow_list = [d.sunflow for d in base_data_]
-            base_xml_list = [d.xml for d in base_data_]
-            base_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in base_data_]
+            base_compiler_list = [d.compiler for d in base_data_ if d.compiler is not None]
+            base_compress_list = [d.compress for d in base_data_ if d.compress is not None]
+            base_crypto_list = [d.crypto for d in base_data_ if d.crypto is not None]
+            base_derby_list = [d.derby for d in base_data_ if d.derby is not None]
+            base_mpegaudio_list = [d.mpegaudio for d in base_data_ if d.mpegaudio is not None]
+            base_scimark_large_list = [d.scimark_large for d in base_data_ if d.scimark_large is not None]
+            base_scimark_small_list = [d.scimark_small for d in base_data_ if d.scimark_small is not None]
+            base_serial_list = [d.serial for d in base_data_ if d.serial is not None]
+            base_startup_list = [d.startup for d in base_data_ if d.startup is not None]
+            base_sunflow_list = [d.sunflow for d in base_data_ if d.sunflow is not None]
+            base_xml_list = [d.xml for d in base_data_ if d.xml is not None]
+            base_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in base_data_ if d.Noncompliant_pomposite_result is not None]
             # 计算每个数组的平均值
             average_base_compiler = np.mean(base_compiler_list).round(2) if not np.isnan(np.mean(base_compiler_list)) else None
             average_base_compress = np.mean(base_compress_list).round(2) if not np.isnan(np.mean(base_compress_list)) else None
@@ -144,7 +144,7 @@ class Jvm2008ViewSet(CusModelViewSet):
             # 查到mark-name相同的数据拼接为一组：serializer.data
             for mark_name in groups:
                 temp_datas = serializer_.filter(mark_name=mark_name)
-                datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
+                datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
                 datas[1]['column' + str(column_index)] = temp_datas[0].execute_cmd
                 datas[2]['column' + str(column_index)] = temp_datas[0].modify_parameters
                 # 基准数据和对比数据的全部数据

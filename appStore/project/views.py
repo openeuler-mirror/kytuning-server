@@ -63,37 +63,6 @@ class ProjectViewSet(CusModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '修改project数据完成')
 
-    def delete(self, request):
-        id = request.data.get('id', None)
-        if not id:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id')
-        user_name = Project.objects.filter(id=id).first().user_name
-        if request.user.is_superuser or request.user.chinese_name == user_name:
-            project_data = Project.objects.filter(id=id).first()
-            if not project_data:
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-            if project_data.stream:
-                Stream.objects.filter(id=project_data.env_id).delete()
-            if project_data.unixbench:
-                Unixbench.objects.filter(id=project_data.env_id).delete()
-            if project_data.lmbench:
-                Lmbench.objects.filter(id=project_data.env_id).delete()
-            if project_data.fio:
-                Fio.objects.filter(id=project_data.env_id).delete()
-            if project_data.iozone:
-                Iozone.objects.filter(id=project_data.env_id).delete()
-            if project_data.jvm2008:
-                Jvm2008.objects.filter(id=project_data.env_id).delete()
-            if project_data.cpu2006:
-                Cpu2006.objects.filter(id=project_data.env_id).delete()
-            if project_data.cpu2017:
-                Cpu2017.objects.filter(id=project_data.env_id).delete()
-            Env.objects.filter(id=project_data.env_id).delete()
-            Project.objects.filter(id=id).delete()
-            return json_response({}, status.HTTP_200_OK, '删除成功')
-        else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
-
     def get_filter_name(self, request, *args, **kwargs):
         project_queryset = Project.objects.all()
         serializer = self.get_serializer(project_queryset, many=True)
@@ -107,6 +76,172 @@ class ProjectViewSet(CusModelViewSet):
         cpuNames = [{'text': name, 'value': name} for name in cpuNames_]
         datas = {'projectNames': projectNames, 'userNames': userNames, 'osNames': osNames, 'cpuNames': cpuNames}
         return json_response(datas, status.HTTP_200_OK, '筛选数据获取完成')
+
+    def merge_data(self, request, *args, **kwargs):
+        env_id = request.data.get('env_id', None)
+        env_ids = request.data.get('env_ids', None)
+
+        # 1、修改数据的env_id和mark_name
+        stream_number = 0
+        lmbench_number = 0
+        unixbench_number = -1
+        fio_number = -1
+        iozone_number = -1
+        jvm2008_number = -1
+        cpu2006_number = -1
+        cpu2017_number = -1
+        # 多数据测试项目，project的表中在直接替换成这个数据+1
+        if Unixbench.objects.filter(env_id=env_id[0]):
+            unixbench_mark_name_list = set([d.mark_name for d in Unixbench.objects.filter(env_id=env_id[0])])
+            unixbench_number = max(int(string[-1]) for string in unixbench_mark_name_list)
+
+        if Fio.objects.filter(env_id=env_id[0]):
+            fio_mark_name_list = set([d.mark_name for d in Fio.objects.filter(env_id=env_id[0])])
+            fio_number = max(int(string[-1]) for string in fio_mark_name_list)
+
+        if Iozone.objects.filter(env_id=env_id[0]):
+            iozone_mark_name_list = set([d.mark_name for d in Iozone.objects.filter(env_id=env_id[0])])
+            iozone_number = max(int(string[-1]) for string in iozone_mark_name_list)
+
+        if Jvm2008.objects.filter(env_id=env_id[0]):
+            jvm2008_mark_name_list = set([d.mark_name for d in Jvm2008.objects.filter(env_id=env_id[0])])
+            jvm2008_number = max(int(string[-1]) for string in jvm2008_mark_name_list)
+
+        if Cpu2006.objects.filter(env_id=env_id[0]):
+            cpu2006_mark_name_list = set([d.mark_name for d in Cpu2006.objects.filter(env_id=env_id[0])])
+            cpu2006_number = max(int(string[-1]) for string in cpu2006_mark_name_list)
+
+        if Cpu2017.objects.filter(env_id=env_id[0]):
+            cpu2017_mark_name_list = set([d.mark_name for d in Cpu2017.objects.filter(env_id=env_id[0])])
+            cpu2017_number = max(int(string[-1]) for string in cpu2017_mark_name_list)
+
+        print('原始数据的unixbench_number= ', unixbench_number)
+        print('原始数据的fio_number= ', fio_number)
+        print('原始数据的iozone_number= ', iozone_number)
+        print('原始数据的jvm2008_number= ', jvm2008_number)
+        print('原始数据的cpu2006_number= ', cpu2006_number)
+        print('原始数据的cpu2017_number= ', cpu2017_number)
+
+        for id in env_ids:
+            print(Stream.objects.filter(env_id=id), 111111)
+            if Stream.objects.filter(env_id=id):
+                print('stream 合并成功')
+                stream_number += len(Stream.objects.filter(env_id=id))
+                print(stream_number)
+                Stream.objects.filter(env_id=id).update(env_id=env_id[0])
+            if Lmbench.objects.filter(env_id=id):
+                print('Lmbench 合并成功')
+                lmbench_number += len(Lmbench.objects.filter(env_id=id))
+                print(lmbench_number)
+                Lmbench.objects.filter(env_id=id).update(env_id=env_id[0])
+            max_unixbench_number = 0
+            if Unixbench.objects.filter(env_id=id):
+                for obj in Unixbench.objects.filter(env_id=id):
+                    new_unixbench_number = unixbench_number + (int(obj.mark_name[-1]) + 1)
+                    max_unixbench_number = max(max_unixbench_number, new_unixbench_number)
+                    new_mark_name = obj.mark_name[:-1] + str(new_unixbench_number)
+                    obj.env_id = env_id[0]
+                    obj.mark_name = new_mark_name
+                    print('unixbench合并env_id=', id)
+                    print('unixbench的mark_name=', new_mark_name)
+                    obj.save()
+                unixbench_number = max_unixbench_number
+                print('fio的max_unixbench_number(代表最新数据有多少-1条)=', unixbench_number)
+            max_fio_number = 0
+            if Fio.objects.filter(env_id=id):
+                for obj in Fio.objects.filter(env_id=id):
+                    new_fio_number = fio_number + (int(obj.mark_name[-1]) + 1)
+                    max_fio_number = max(max_fio_number, new_fio_number)
+                    new_mark_name = obj.mark_name[:-1] + str(new_fio_number)
+                    obj.env_id = env_id[0]
+                    obj.mark_name = new_mark_name
+                    print('fio合并env_id=', id)
+                    print('fio的mark_name=', new_mark_name)
+                    obj.save()
+                fio_number = max_fio_number
+                print('fio的fio_number(代表最新数据有多少+1条)=', fio_number)
+            max_iozone_number = 0
+            if Iozone.objects.filter(env_id=id):
+                for obj in Iozone.objects.filter(env_id=id):
+                    new_iozone_number = iozone_number + (int(obj.mark_name[-1]) + 1)
+                    max_iozone_number = max(max_iozone_number, new_iozone_number)
+                    new_mark_name = obj.mark_name[:-1] + str(new_iozone_number)
+                    obj.env_id = env_id[0]
+                    obj.mark_name = new_mark_name
+                    print('iozone合并env_id=', id)
+                    print('iozone的mark_name=', new_mark_name)
+                    obj.save()
+                iozone_number = max_iozone_number
+                print('iozone的iozone_number(代表最新数据有多少-1条)=', iozone_number)
+            max_jvm2008_number = 0
+            if Jvm2008.objects.filter(env_id=id):
+                for obj in Jvm2008.objects.filter(env_id=id):
+                    new_jvm2008_number = jvm2008_number + (int(obj.mark_name[-1]) + 1)
+                    max_jvm2008_number = max(max_jvm2008_number, new_jvm2008_number)
+                    new_mark_name = obj.mark_name[:-1] + str(new_jvm2008_number)
+                    obj.env_id = env_id[0]
+                    obj.mark_name = new_mark_name
+                    print('jvm2008合并env_id=', id)
+                    print('jvm2008的mark_name=', new_mark_name)
+                    obj.save()
+                jvm2008_number = max_jvm2008_number
+                print('jvm2008的jvm2008_number(代表最新数据有多少-1条)=', jvm2008_number)
+            max_cpu2006_number = 0
+            if Cpu2006.objects.filter(env_id=id):
+                for obj in Cpu2006.objects.filter(env_id=id):
+                    new_cpu2006_number = cpu2006_number + (int(obj.mark_name[-1]) + 1)
+                    max_cpu2006_number = max(max_cpu2006_number, new_cpu2006_number)
+                    new_mark_name = obj.mark_name[:-1] + str(new_cpu2006_number)
+                    obj.env_id = env_id[0]
+                    obj.mark_name = new_mark_name
+                    print('cpu2006合并env_id=', id)
+                    print('cpu2006的mark_name=', new_mark_name)
+                    obj.save()
+                cpu2006_number = max_cpu2006_number
+                print('cpu2006的cpu2006_number(代表最新数据有多少-1条)=', cpu2006_number)
+            max_cpu2017_number = 0
+            if Cpu2017.objects.filter(env_id=id):
+                for obj in Cpu2017.objects.filter(env_id=id):
+                    new_cpu2017_number = cpu2017_number + (int(obj.mark_name[-1]) + 1)
+                    max_cpu2017_number = max(max_cpu2017_number, new_cpu2017_number)
+                    new_mark_name = obj.mark_name[:-1] + str(new_cpu2017_number)
+                    obj.env_id = env_id[0]
+                    obj.mark_name = new_mark_name
+                    print('cpu2017合并env_id=', id)
+                    print('cpu2017的mark_name=', new_mark_name)
+                    obj.save()
+                cpu2017_number = max_cpu2017_number
+                print('cpu2017的cpu2017_number(代表最新数据有多少-1条)=', cpu2017_number)
+
+        # 2、删除env_id的env表，删除env_id对应的project表
+        Env.objects.filter(id__in=env_ids).delete()
+        Project.objects.filter(env_id__in=env_ids).delete()
+        # 3、修改project表对应测试项目的值
+        print('------')
+        print(Project.objects.filter(env_id=env_id[0]).first().stream, stream_number, 1111)
+        stream_number = Project.objects.filter(env_id=env_id[0]).first().stream + stream_number
+        lmbench_number = Project.objects.filter(env_id=env_id[0]).first().lmbench + lmbench_number
+        print('project中stream=', stream_number)
+        print('project中lmbench=', lmbench_number)
+        print('project中unixbench=', unixbench_number + 1)
+        print('project中fio=', fio_number + 1)
+        print('project中iozone=', iozone_number + 1)
+        print('project中jvm2008=', jvm2008_number + 1)
+        print('project中cpu2006=', cpu2006_number + 1)
+        print('project中cpu2017=', cpu2017_number + 1)
+
+        Project.objects.filter(env_id=env_id[0]).update(
+            stream=stream_number,
+            lmbench=lmbench_number,
+            unixbench=unixbench_number + 1,
+            fio=fio_number + 1,
+            iozone=iozone_number + 1,
+            jvm2008=jvm2008_number + 1,
+            cpu2006=cpu2006_number + 1,
+            cpu2017=cpu2017_number + 1
+        )
+
+        return json_response({}, status.HTTP_200_OK, '合并数据成功')
 
     def create(self, request, *args, **kwargs):
         data_project = {}
@@ -166,3 +301,35 @@ class ProjectViewSet(CusModelViewSet):
             print(serializer_project.errors, "project")
             return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
                                  get_error_message(serializer_project))
+
+
+    def delete(self, request):
+        id = request.data.get('id', None)
+        if not id:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id')
+        user_name = Project.objects.filter(id=id).first().user_name
+        if request.user.is_superuser or request.user.chinese_name == user_name:
+            project_data = Project.objects.filter(id=id).first()
+            if not project_data:
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+            if project_data.stream:
+                Stream.objects.filter(id=project_data.env_id).delete()
+            if project_data.unixbench:
+                Unixbench.objects.filter(id=project_data.env_id).delete()
+            if project_data.lmbench:
+                Lmbench.objects.filter(id=project_data.env_id).delete()
+            if project_data.fio:
+                Fio.objects.filter(id=project_data.env_id).delete()
+            if project_data.iozone:
+                Iozone.objects.filter(id=project_data.env_id).delete()
+            if project_data.jvm2008:
+                Jvm2008.objects.filter(id=project_data.env_id).delete()
+            if project_data.cpu2006:
+                Cpu2006.objects.filter(id=project_data.env_id).delete()
+            if project_data.cpu2017:
+                Cpu2017.objects.filter(id=project_data.env_id).delete()
+            Env.objects.filter(id=project_data.env_id).delete()
+            Project.objects.filter(id=id).delete()
+            return json_response({}, status.HTTP_200_OK, '删除成功')
+        else:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')

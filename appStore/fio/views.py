@@ -111,10 +111,10 @@ class FioViewSet(CusModelViewSet):
                         new_datas.append(data_)
             # new_datas是12组数据
             for data_ in new_datas:
-                bs_list = [d.bs for d in data_]
-                io_list = [d.io for d in data_]
-                iops_list = [d.iops for d in data_]
-                bw_list = [d.bw for d in data_]
+                bs_list = [d.bs for d in data_ if d.bs is not None]
+                io_list = [d.io for d in data_ if d.io is not None]
+                iops_list = [d.iops for d in data_ if d.iops is not None]
+                bw_list = [d.bw for d in data_ if d.bw is not None]
                 # 获取bs、io、iops的平均值
                 bs = 0
                 for bs_ in bs_list:
@@ -223,8 +223,10 @@ class FioViewSet(CusModelViewSet):
 
     def get_left_data(self, serializer_):
         datas = []
-        groups = set([d.mark_name for d in serializer_])
-        filter_datas = serializer_.filter(mark_name=list(groups)[0])
+        # groups = set([d.mark_name for d in serializer_])
+        # 如果使用group的方式，set时无序的，当其它数据部分内容没有数据时旧会导致全都不展示对应的数据，所有这里想到好一点的方法就是
+        # 时用0-0，首先就要确保0-0的数据必须时最全的
+        filter_datas = serializer_.filter(mark_name='0-0')
         for data in filter_datas:
             data_ = {'rw': data.rw + '(' + str(data.bs + ')'),
                     'bs': data.bs,
