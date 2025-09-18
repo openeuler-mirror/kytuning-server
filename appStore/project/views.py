@@ -209,6 +209,7 @@ class ProjectViewSet(CusModelViewSet):
     def create(self, request, *args, **kwargs):
         data_project = {}
         data_project['env_id'] = request.__dict__['data_project']['env_id']
+        data_project['message'] = str(request.__dict__['project_message'])
         data_project['project_name'] = request.__dict__['data_project']['project_name']
         data_project['user_name'] = UserProfile.objects.filter(
             username = request.__dict__['data_project']['user_name']).first().chinese_name

@@ -1,6 +1,6 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Thu Feb 29 16:18:43 2024 +0800
@@ -51,7 +51,7 @@ class LmbenchViewSet(CusModelViewSet):
                 datas[8]['column' + str(column_index)] = serializer.data[0]['processor_null_call']
                 datas[9]['column' + str(column_index)] = serializer.data[0]['processor_null_I_O']
                 datas[10]['column' + str(column_index)] = serializer.data[0]['processor_stat']
-                datas[11]['column' + str(column_index)] = serializer.data[0]['processor_open_clo']
+                datas[11]['column' + str(column_index)] = serializer.data[0]['processor_open_close']
                 datas[12]['column' + str(column_index)] = serializer.data[0]['processor_slct_TCP']
                 datas[13]['column' + str(column_index)] = serializer.data[0]['processor_sig_inst']
                 datas[14]['column' + str(column_index)] = serializer.data[0]['processor_sig_hndl']
@@ -134,7 +134,7 @@ class LmbenchViewSet(CusModelViewSet):
             processor_null_call_list = [d.processor_null_call for d in serializer_ if d.processor_null_call is not None]
             processor_null_I_O_list = [d.processor_null_I_O for d in serializer_ if d.processor_null_I_O is not None]
             processor_stat_list = [d.processor_stat for d in serializer_ if d.processor_stat is not None]
-            processor_open_clo_list = [d.processor_open_clo for d in serializer_ if d.processor_open_clo is not None]
+            processor_open_close_list = [d.processor_open_close for d in serializer_ if d.processor_open_close is not None]
             processor_slct_TCP_list = [d.processor_slct_TCP for d in serializer_ if d.processor_slct_TCP is not None]
             processor_sig_inst_list = [d.processor_sig_inst for d in serializer_ if d.processor_sig_inst is not None]
             processor_sig_hndl_list = [d.processor_sig_hndl for d in serializer_ if d.processor_sig_hndl is not None]
@@ -206,7 +206,7 @@ class LmbenchViewSet(CusModelViewSet):
             average_processor_null_call = np.mean(processor_null_call_list).round(2) if not np.isnan(np.mean(processor_null_call_list)) else None
             average_processor_null_I_O = np.mean(processor_null_I_O_list).round(2) if not np.isnan(np.mean(processor_null_I_O_list)) else None
             average_processor_stat = np.mean(processor_stat_list).round(2) if not np.isnan(np.mean(processor_stat_list)) else None
-            average_processor_open_clo = np.mean(processor_open_clo_list).round(2) if not np.isnan(np.mean(processor_open_clo_list)) else None
+            average_processor_open_close = np.mean(processor_open_close_list).round(2) if not np.isnan(np.mean(processor_open_close_list)) else None
             average_processor_slct_TCP = np.mean(processor_slct_TCP_list).round(2) if not np.isnan(np.mean(processor_slct_TCP_list)) else None
             average_processor_sig_inst = np.mean(processor_sig_inst_list).round(2) if not np.isnan(np.mean(processor_sig_inst_list)) else None
             average_processor_sig_hndl = np.mean(processor_sig_hndl_list).round(2) if not np.isnan(np.mean(processor_sig_hndl_list)) else None
@@ -282,7 +282,7 @@ class LmbenchViewSet(CusModelViewSet):
                 datas[8]['column' + str(column_index)] = data.processor_null_call
                 datas[9]['column' + str(column_index)] = data.processor_null_I_O
                 datas[10]['column' + str(column_index)] = data.processor_stat
-                datas[11]['column' + str(column_index)] = data.processor_open_clo
+                datas[11]['column' + str(column_index)] = data.processor_open_close
                 datas[12]['column' + str(column_index)] = data.processor_slct_TCP
                 datas[13]['column' + str(column_index)] = data.processor_sig_inst
                 datas[14]['column' + str(column_index)] = data.processor_sig_hndl
@@ -360,7 +360,7 @@ class LmbenchViewSet(CusModelViewSet):
             datas[8]['column' + str(column_index)] = average_processor_null_call
             datas[9]['column' + str(column_index)] = average_processor_null_I_O
             datas[10]['column' + str(column_index)] = average_processor_stat
-            datas[11]['column' + str(column_index)] = average_processor_open_clo
+            datas[11]['column' + str(column_index)] = average_processor_open_close
             datas[12]['column' + str(column_index)] = average_processor_slct_TCP
             datas[13]['column' + str(column_index)] = average_processor_sig_inst
             datas[14]['column' + str(column_index)] = average_processor_sig_hndl
@@ -580,7 +580,7 @@ class LmbenchViewSet(CusModelViewSet):
                             lmbench['processor_null_call'] = value['Mhz']
                             lmbench['processor_null_I_O'] = value['null call']
                             lmbench['processor_stat'] = value['null I/O']
-                            lmbench['processor_open_clo'] = value['stat']
+                            lmbench['processor_open_close'] = value['stat']
                             lmbench['processor_slct_TCP'] = value['open close']
                             lmbench['processor_sig_inst'] = value['slct TCP']
                             lmbench['processor_sig_hndl'] = value['sig inst']
