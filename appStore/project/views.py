@@ -1,14 +1,12 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Mar 1 09:58:09 2024 +0800
 """
 # Create your views here.
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from appStore.cpu2006.models import Cpu2006
 from appStore.cpu2017.models import Cpu2017
@@ -23,7 +21,6 @@ from appStore.stream.models import Stream
 from appStore.unixbench.models import Unixbench
 from appStore.users.models import UserProfile
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_mixin import CusUpdateModelMixin
 from appStore.utils.customer_view import CusModelViewSet, CusUpdateModelViewSet
 
 
@@ -31,7 +28,6 @@ class ProjectViewSet(CusModelViewSet):
     """
     project数据管理
     """
-    # authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
     queryset = Project.objects.all().order_by('id')
     serializer_class = ProjectSerializer
 
@@ -80,8 +76,21 @@ class ProjectViewSet(CusModelViewSet):
     def merge_data(self, request, *args, **kwargs):
         env_id = request.data.get('env_id', None)
         env_ids = request.data.get('env_ids', None)
+        # 1、判断是否属于同一个项目等
+        base_project = Project.objects.filter(env_id=env_id[0]).first()
+        project_names = list(set([d.project_name for d in Project.objects.filter(env_id__in=env_ids)]))
+        user_names = list(set([d.user_name for d in Project.objects.filter(env_id__in=env_ids)]))
+        os_versions = list(set([d.os_version for d in Project.objects.filter(env_id__in=env_ids)]))
+        cpu_module_names = list(set([d.cpu_module_name for d in Project.objects.filter(env_id__in=env_ids)]))
+        all_project_names = all(name == base_project.project_name for name in project_names)
+        all_user_names = all(name == base_project.user_name for name in user_names)
+        all_os_versions = all(name == base_project.os_version for name in os_versions)
+        all_cpu_module_names = all(name == base_project.cpu_module_name for name in cpu_module_names)
 
-        # 1、修改数据的env_id和mark_name
+        if not all([all_project_names, all_user_names, all_os_versions, all_cpu_module_names]):
+            return json_response({}, status.HTTP_204_NO_CONTENT, '请确保所有的"项目名称"、"上传人员"、"系统版本"、"cpu型号都相同"')
+
+        # 2、修改数据的env_id和mark_name
         stream_number = 0
         lmbench_number = 0
         unixbench_number = -1
@@ -90,7 +99,7 @@ class ProjectViewSet(CusModelViewSet):
         jvm2008_number = -1
         cpu2006_number = -1
         cpu2017_number = -1
-        # 多数据测试项目，project的表中在直接替换成这个数据+1
+        # 多数据测试项目，project的表中在直接替换成这个数据
         if Unixbench.objects.filter(env_id=env_id[0]):
             unixbench_mark_name_list = set([d.mark_name for d in Unixbench.objects.filter(env_id=env_id[0])])
             unixbench_number = max(int(string[-1]) for string in unixbench_mark_name_list)
@@ -115,24 +124,12 @@ class ProjectViewSet(CusModelViewSet):
             cpu2017_mark_name_list = set([d.mark_name for d in Cpu2017.objects.filter(env_id=env_id[0])])
             cpu2017_number = max(int(string[-1]) for string in cpu2017_mark_name_list)
 
-        print('原始数据的unixbench_number= ', unixbench_number)
-        print('原始数据的fio_number= ', fio_number)
-        print('原始数据的iozone_number= ', iozone_number)
-        print('原始数据的jvm2008_number= ', jvm2008_number)
-        print('原始数据的cpu2006_number= ', cpu2006_number)
-        print('原始数据的cpu2017_number= ', cpu2017_number)
-
         for id in env_ids:
-            print(Stream.objects.filter(env_id=id), 111111)
             if Stream.objects.filter(env_id=id):
-                print('stream 合并成功')
                 stream_number += len(Stream.objects.filter(env_id=id))
-                print(stream_number)
                 Stream.objects.filter(env_id=id).update(env_id=env_id[0])
             if Lmbench.objects.filter(env_id=id):
-                print('Lmbench 合并成功')
                 lmbench_number += len(Lmbench.objects.filter(env_id=id))
-                print(lmbench_number)
                 Lmbench.objects.filter(env_id=id).update(env_id=env_id[0])
             max_unixbench_number = 0
             if Unixbench.objects.filter(env_id=id):
@@ -142,11 +139,8 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_unixbench_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
-                    print('unixbench合并env_id=', id)
-                    print('unixbench的mark_name=', new_mark_name)
                     obj.save()
                 unixbench_number = max_unixbench_number
-                print('fio的max_unixbench_number(代表最新数据有多少-1条)=', unixbench_number)
             max_fio_number = 0
             if Fio.objects.filter(env_id=id):
                 for obj in Fio.objects.filter(env_id=id):
@@ -155,11 +149,8 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_fio_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
-                    print('fio合并env_id=', id)
-                    print('fio的mark_name=', new_mark_name)
                     obj.save()
                 fio_number = max_fio_number
-                print('fio的fio_number(代表最新数据有多少+1条)=', fio_number)
             max_iozone_number = 0
             if Iozone.objects.filter(env_id=id):
                 for obj in Iozone.objects.filter(env_id=id):
@@ -168,11 +159,8 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_iozone_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
-                    print('iozone合并env_id=', id)
-                    print('iozone的mark_name=', new_mark_name)
                     obj.save()
                 iozone_number = max_iozone_number
-                print('iozone的iozone_number(代表最新数据有多少-1条)=', iozone_number)
             max_jvm2008_number = 0
             if Jvm2008.objects.filter(env_id=id):
                 for obj in Jvm2008.objects.filter(env_id=id):
@@ -181,11 +169,8 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_jvm2008_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
-                    print('jvm2008合并env_id=', id)
-                    print('jvm2008的mark_name=', new_mark_name)
                     obj.save()
                 jvm2008_number = max_jvm2008_number
-                print('jvm2008的jvm2008_number(代表最新数据有多少-1条)=', jvm2008_number)
             max_cpu2006_number = 0
             if Cpu2006.objects.filter(env_id=id):
                 for obj in Cpu2006.objects.filter(env_id=id):
@@ -194,11 +179,8 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_cpu2006_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
-                    print('cpu2006合并env_id=', id)
-                    print('cpu2006的mark_name=', new_mark_name)
                     obj.save()
                 cpu2006_number = max_cpu2006_number
-                print('cpu2006的cpu2006_number(代表最新数据有多少-1条)=', cpu2006_number)
             max_cpu2017_number = 0
             if Cpu2017.objects.filter(env_id=id):
                 for obj in Cpu2017.objects.filter(env_id=id):
@@ -207,45 +189,27 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_cpu2017_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
-                    print('cpu2017合并env_id=', id)
-                    print('cpu2017的mark_name=', new_mark_name)
                     obj.save()
                 cpu2017_number = max_cpu2017_number
-                print('cpu2017的cpu2017_number(代表最新数据有多少-1条)=', cpu2017_number)
 
-        # 2、删除env_id的env表，删除env_id对应的project表
+        # 3、删除env_id的env表，删除env_id对应的project表
         Env.objects.filter(id__in=env_ids).delete()
         Project.objects.filter(env_id__in=env_ids).delete()
-        # 3、修改project表对应测试项目的值
-        print('------')
-        print(Project.objects.filter(env_id=env_id[0]).first().stream, stream_number, 1111)
+        # 4、修改project表对应测试项目的值
         stream_number = Project.objects.filter(env_id=env_id[0]).first().stream + stream_number
         lmbench_number = Project.objects.filter(env_id=env_id[0]).first().lmbench + lmbench_number
-        print('project中stream=', stream_number)
-        print('project中lmbench=', lmbench_number)
-        print('project中unixbench=', unixbench_number + 1)
-        print('project中fio=', fio_number + 1)
-        print('project中iozone=', iozone_number + 1)
-        print('project中jvm2008=', jvm2008_number + 1)
-        print('project中cpu2006=', cpu2006_number + 1)
-        print('project中cpu2017=', cpu2017_number + 1)
 
-        Project.objects.filter(env_id=env_id[0]).update(
-            stream=stream_number,
-            lmbench=lmbench_number,
-            unixbench=unixbench_number + 1,
-            fio=fio_number + 1,
-            iozone=iozone_number + 1,
-            jvm2008=jvm2008_number + 1,
-            cpu2006=cpu2006_number + 1,
-            cpu2017=cpu2017_number + 1
-        )
+        Project.objects.filter(env_id=env_id[0]).update(stream=stream_number, lmbench=lmbench_number,
+                                                        unixbench=unixbench_number + 1, fio=fio_number + 1,
+                                                        iozone=iozone_number + 1, jvm2008=jvm2008_number + 1,
+                                                        cpu2006=cpu2006_number + 1, cpu2017=cpu2017_number + 1)
 
         return json_response({}, status.HTTP_200_OK, '合并数据成功')
 
     def create(self, request, *args, **kwargs):
         data_project = {}
         data_project['env_id'] = request.__dict__['data_project']['env_id']
+        data_project['project_name'] = request.__dict__['data_project']['project_name']
         data_project['user_name'] = UserProfile.objects.filter(
             username = request.__dict__['data_project']['user_name']).first().chinese_name
         data_project['os_version'] = request.__dict__['data_project']['envinfo']['swinfo']['os']['osversion']
@@ -302,7 +266,6 @@ class ProjectViewSet(CusModelViewSet):
             return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
                                  get_error_message(serializer_project))
 
-
     def delete(self, request):
         id = request.data.get('id', None)
         if not id:
@@ -333,3 +296,4 @@ class ProjectViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
+
