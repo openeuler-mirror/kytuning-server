@@ -208,16 +208,15 @@ class FioViewSet(CusModelViewSet):
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
             # 获取到最后一组数据、处理数据
-            for i in range(len(datas)):
-                if i > 2:
-                    value = datas[i]['column' + str(column_index - 1)]  # 最后一组数据
-                    base_value = datas[i]['column' + str(base_column_index)]  # base数据
-                    if value is not None and base_value is not None:
-                        value = float("".join(filter(lambda s: s in '0123456789.', value.split('(')[0])))
-                        base_value = float("".join(filter(lambda s: s in '0123456789.', base_value.split('(')[0])))
-                        datas[i]['column' + str(column_index)] = "%.2f%%" % ((value - base_value) / base_value * 100) if value is not None and base_value is not None else None
-                    else:
-                        datas[i]['column' + str(column_index)] = None
+            for i in range(3, len(datas)):
+                value = datas[i]['column' + str(column_index - 1)]  # 最后一组数据
+                base_value = datas[i]['column' + str(base_column_index)]  # base数据
+                if value is not None and base_value is not None:
+                    value = float("".join(filter(lambda s: s in '0123456789.', value.split('(')[0])))
+                    base_value = float("".join(filter(lambda s: s in '0123456789.', base_value.split('(')[0])))
+                    datas[i]['column' + str(column_index)] = "%.2f%%" % ((value - base_value) / base_value * 100) if value is not None and base_value is not None else None
+                else:
+                    datas[i]['column' + str(column_index)] = None
             column_index += 1
         return datas, title_index, column_index, base_column_index
 
