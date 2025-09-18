@@ -27,6 +27,34 @@ class UnixbenchViewSet(CusModelViewSet):
     def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
         groups = set([d.mark_name for d in serializer_])
+
+        single_Dhrystone = None
+        single_Double_Precision = None
+        single_execl_throughput = None
+        single_file_copy_1024 = None
+        single_file_copy_256 = None
+        single_file_copy_4096 = None
+        single_pipe_throughput = None
+        single_pipe_based = None
+        single_process_creation = None
+        single_shell_scripts_1 = None
+        single_shell_scripts_8 = None
+        single_system_call_overhead = None
+        single_index_score = None
+        multi_Dhrystone = None
+        multi_Double_Precision = None
+        multi_execl_throughput = None
+        multi_file_copy_1024 = None
+        multi_file_copy_256 = None
+        multi_file_copy_4096 = None
+        multi_pipe_throughput = None
+        multi_pipe_based = None
+        multi_process_creation = None
+        multi_shell_scripts_1 = None
+        multi_shell_scripts_8 = None
+        multi_system_call_overhead = None
+        multi_index_score = None
+
         if not groups or len(groups) == 1:
             if not groups:
             # 基准数据和对比数据的全部数据

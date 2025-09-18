@@ -26,11 +26,29 @@ export function project(type, data) {
     })
 }
 
+// project 合并数据接口
+export function mergeData(data) {
+    return service({
+        method: 'post',
+        url: '/merge_data/',
+        data
+    })
+}
+
 // 筛选字段接口
-export function get_filter_name() {
+export function getFilterName() {
     return service({
         method: 'get',
         url: '/get_filter_name/',
+    })
+}
+
+// env
+export function env(params) {
+    return service({
+        method: 'get',
+        url: '/env/',
+        params
     })
 }
 

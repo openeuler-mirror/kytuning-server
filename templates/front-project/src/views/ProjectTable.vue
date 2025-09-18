@@ -1,6 +1,6 @@
 <!--
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Mon Mar 11 16:52:35 2024 +0800
@@ -10,7 +10,8 @@
     <el-row class="mb-4">
       <el-button @click="ShowSingleData" type="success" plain>基准数据</el-button>
       <el-button @click="getComparativeData()" type="primary" plain>数据对比</el-button>
-      <el-button @click="restData()" type="danger" plain>取消选择</el-button>
+      <el-button @click="restData()" type="info" plain>取消选择</el-button>
+      <el-button @click="mergeData()" type="danger" plain>合并数据</el-button>
     </el-row>
     <div>数据类型: {{ selected }}</div>
     <select v-model="selectedType">
@@ -21,9 +22,9 @@
       <option value="unixbench">unixbench</option>
       <option value="fio">fio</option>
       <option value="iozone">iozone</option>
+      <option value="jvm2008">jvm2008</option>
       <option value="cpu2006">cpu2006</option>
       <option value="cpu2017">cpu2017</option>
-      <option value="jvm2008">jvm2008</option>
     </select>
   </div>
   <br>
@@ -180,7 +181,7 @@
 <script>
 import {ElMessage} from 'element-plus';
 import 'element-ui/lib/theme-chalk/index.css';
-import { project, get_filter_name } from "@/api/api.js";
+import { project, getFilterName, mergeData } from "@/api/api.js";
 
 export default {
   data() {
@@ -219,7 +220,7 @@ export default {
       this.allProjectDatas = response.data.data
       this.total = this.allProjectDatas.length;
     });
-    get_filter_name().then((response) => {
+    getFilterName().then((response) => {
       this.projectNames = response.data.data.projectNames
       this.userNames = response.data.data.userNames
       this.osNames = response.data.data.osNames
@@ -237,6 +238,7 @@ export default {
   },
   methods: {
     handleRowClick(row) {
+      // const id = row.id
       const env_id = row.env_id
       const stream = row.stream
       const lmbench = row.lmbench
@@ -347,205 +349,85 @@ export default {
 
     //跳转base页面
     ShowSingleData() {
-      if (this.selectedType) {
-        const env_id = Object.keys(this.base).map(key => parseInt(key));
-        if (env_id.length !== 1) {
-          ElMessage.error({message:'请选择一条数据作为基准数据',duration: 1000});
-          return
-        } else {
-          if (this.selectedType === "env") {
-            this.$router.push({name: 'env', "params": {baseId: env_id[0]}});
-          } else if (this.selectedType === "stream") {
-            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).stream) {
-              this.$router.push({
-                name: 'stream', "params": {baseId: env_id[0], comparsionIds: ''}
-              });
-            } else {
-              ElMessage.error({message:'该数据没有stream数据',duration: 1000});
-            }
-          } else if (this.selectedType === "lmbench") {
-            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).lmbench) {
-              this.$router.push({
-                name: 'lmbench',
-                "params": {baseId: env_id[0], comparsionIds: ''}
-              });
-            } else {
-              ElMessage.error({message:'该数据没有lmbench数据',duration: 1000});
-            }
-          } else if (this.selectedType === "unixbench") {
-            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).unixbench) {
-              this.$router.push({
-                name: 'unixbench',
-                "params": {baseId: env_id[0], comparsionIds: ''}
-              });
-            } else {
-              ElMessage.error({message:'该数据没有unixbench数据',duration: 1000});
-            }
-          } else if (this.selectedType === "fio") {
-            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).fio) {
-              this.$router.push({
-                name: 'fio',
-                "params": {baseId: env_id[0], comparsionIds: ''}
-              });
-            } else {
-              ElMessage.error({message:'该数据没有fio数据',duration: 1000});
-            }
-          } else if (this.selectedType === "iozone") {
-            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).iozone) {
-              this.$router.push({
-                name: 'iozone',
-                "params": {baseId: env_id[0], comparsionIds: ''}
-              });
-            } else {
-              ElMessage.error({message:'该数据没有iozone数据',duration: 1000});
-            }
-          } else if (this.selectedType === "cpu2006") {
-            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).cpu2006) {
-              this.$router.push({
-                name: 'cpu2006',
-                "params": {baseId: env_id[0], comparsionIds: ''}
-              });
-            } else {
-              ElMessage.error({message:'该数据没有cpu2006数据',duration: 1000});
-            }
-          } else if (this.selectedType === "cpu2017") {
-            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).cpu2017) {
-              this.$router.push({
-                name: 'cpu2017',
-                "params": {baseId: env_id[0], comparsionIds: ''}
-              });
-            } else {
-              ElMessage.error({message:'该数据没有cpu2017数据',duration: 1000});
-            }
-          } else if (this.selectedType === "jvm2008") {
-            if (this.allProjectDatas.find(item => item.env_id === env_id[0]).jvm2008) {
-              this.$router.push({
-                name: 'jvm2008',
-                "params": {baseId: env_id[0], comparsionIds: ''}
-              });
-            } else {
-              ElMessage.error({message:'该数据没有jvm2008数据',duration: 1000});
-            }
-          }
-        }
-      } else {
-        ElMessage.error({message:'请选择数据类型',duration: 1000});
+      const env_id = Object.keys(this.base).map(key => parseInt(key));
+      if (env_id.length !== 1) {
+        ElMessage.error({message: '请选择一条数据作为基准数据', duration: 1000});
+        return
       }
+      const baseData = this.allProjectDatas.find(item => item.env_id === env_id[0])
+      if (this.selectedType !== "env") {
+        if (baseData.stream) {
+          this.selectedType = 'stream'
+        } else if (baseData.lmbench) {
+          this.selectedType = 'lmbench'
+        } else if (baseData.unixbench) {
+          this.selectedType = 'unixbench'
+        } else if (baseData.fio) {
+          this.selectedType = 'fio'
+        } else if (baseData.iozone) {
+          this.selectedType = 'iozone'
+        } else if (baseData.jvm2008) {
+          this.selectedType = 'jvm2008'
+        } else if (baseData.cpu2006) {
+          this.selectedType = 'cpu2006'
+        } else if (baseData.cpu2017) {
+          this.selectedType = 'cpu2017'
+        }
+      }
+      this.$router.push({name: this.selectedType, "params": {baseId: env_id[0], comparsionIds: ''}});
     },
     getComparativeData() {
-      if (this.selectedType) {
-        const env_id = Object.keys(this.base).map(key => parseInt(key));
-        const baseData = this.allProjectDatas.find(item => env_id.includes(item.env_id))
-        const env_ids = Object.keys(this.compar).map(key => parseInt(key));
-        const comparData = this.allProjectDatas.filter(item => env_ids.includes(item.env_id))
-        const comparsionIds = env_ids.join(',')
-        const unixbenchs = comparData.map(project => {return project.unixbench})
-        const lmbenchs = comparData.map(project => {return project.lmbench})
-        const fios = comparData.map(project => {return project.fio})
-        const iozones = comparData.map(project => {return project.iozone})
-        const cpu2006s = comparData.map(project => {return project.cpu2006})
-        const cpu2017s = comparData.map(project => {return project.cpu2017})
-        const jvm2008s = comparData.map(project => {return project.jvm2008})
-
-        console.log(baseData,111)
-
-        //判断base数据中的第一个有值的数据
-        if(this.selectedType !== "env"){
-          if (baseData.stream) {
-            this.selectedType = 'stream'
-          } else if (baseData.lmbench) {
-            this.selectedType = 'lmbench'
-          } else if (baseData.unixbench) {
-            this.selectedType = 'unixbench'
-          } else if (baseData.fio) {
-            this.selectedType = 'fio'
-          } else if (baseData.iozone) {
-            this.selectedType = 'iozone'
-          } else if (baseData.jvm2008) {
-            this.selectedType = 'jvm2008'
-          } else if (baseData.cpu2006) {
-            this.selectedType = 'cpu2006'
-          } else if (baseData.cpu2017) {
-            this.selectedType = 'cpu2017'
-          }
-        }
-
-        if (this.selectedType === "env") {
-          ElMessage.error({message:'环境信息数据不支持对比',duration: 1000});
-        } else if (this.selectedType === "stream") {
-          if (baseData.stream) {
-            this.$router.push({name: 'stream', "params": {baseId: env_id[0], comparsionIds: comparsionIds}});
-          } else {
-            ElMessage.error({message:'该数据中有stream为空',duration: 1000});
-          }
-        } else if (this.selectedType === "lmbench") {
-          if (baseData.lmbench && !lmbenchs.includes(0)) {
-            this.$router.push({
-              name: 'lmbench',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIds}
-            });
-          } else {
-            ElMessage.error({message:'该数据中有lmbench为空',duration: 1000});
-          }
-        } else if (this.selectedType === "unixbench") {
-          if (baseData.unixbench && !unixbenchs.includes(0)) {
-            this.$router.push({
-              name: 'unixbench',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIds}
-            });
-          } else {
-            ElMessage.error({message:'该数据中有unixbench为空',duration: 1000});
-          }
-        } else if (this.selectedType === "fio") {
-          if (baseData.fio && !fios.includes(0)) {
-            this.$router.push({
-              name: 'fio',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIds}
-            });
-          } else {
-            ElMessage.error({message:'该数据中有fio为空',duration: 1000});
-          }
-        } else if (this.selectedType === "iozone") {
-          if (baseData.iozone && !iozones.includes(0)) {
-            this.$router.push({
-              name: 'iozone',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIds}
-            });
-          } else {
-            ElMessage.error({message:'该数据中有iozone为空',duration: 1000});
-          }
-        } else if (this.selectedType === "cpu2006") {
-          if (baseData.cpu2006 && !cpu2006s.includes(0)) {
-            this.$router.push({
-              name: 'cpu2006',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIds}
-            });
-          } else {
-            ElMessage.error({message:'该数据中有cpu2006为空',duration: 1000});
-          }
-        } else if (this.selectedType === "cpu2017") {
-          if (baseData.cpu2017 && !cpu2017s.includes(0)) {
-            this.$router.push({
-              name: 'cpu2017',
-              "params": {baseId: env_id[0],comparsionIds: comparsionIds}
-            });
-          } else {
-            ElMessage.error({message:'该数据中有cpu2017为空',duration: 1000});
-          }
-        } else if (this.selectedType === "jvm2008") {
-          if (baseData.jvm2008 && !jvm2008s.includes(0)) {
-            this.$router.push({
-              name: 'jvm2008',
-              "params": {baseId: env_id[0], comparsionIds: comparsionIds}
-            });
-          } else {
-            ElMessage.error({message:'该数据中有jvm2008为空',duration: 1000});
-          }
-        }
-      } else {
-        ElMessage.error({message:'请选择数据类型',duration: 1000});
+      const env_id = Object.keys(this.base).map(key => parseInt(key));
+      const baseData = this.allProjectDatas.find(item => env_id.includes(item.env_id))
+      const env_ids = Object.keys(this.compar).map(key => parseInt(key));
+      const comparsionIds = env_ids.join(',')
+      if (this.selectedType === "env") {
+        ElMessage.error({message: '环境信息数据不支持对比', duration: 1000});
+        return;
+      } else if (env_id.length !== 1 || env_ids.length === 0) {
+        ElMessage.error({message: '请选择一条基准数据和至少一条对比数据', duration: 1000});
+        return;
       }
+      //判断base数据中的第一个有值的数据
+      if (baseData.stream) {
+        this.selectedType = 'stream'
+      } else if (baseData.lmbench) {
+        this.selectedType = 'lmbench'
+      } else if (baseData.unixbench) {
+        this.selectedType = 'unixbench'
+      } else if (baseData.fio) {
+        this.selectedType = 'fio'
+      } else if (baseData.iozone) {
+        this.selectedType = 'iozone'
+      } else if (baseData.jvm2008) {
+        this.selectedType = 'jvm2008'
+      } else if (baseData.cpu2006) {
+        this.selectedType = 'cpu2006'
+      } else if (baseData.cpu2017) {
+        this.selectedType = 'cpu2017'
+      }
+      this.$router.push({name: this.selectedType, "params": {baseId: env_id[0], comparsionIds: comparsionIds}});
     },
+    mergeData(){
+      const env_id = Object.keys(this.base).map(key => parseInt(key));
+      const env_ids = Object.keys(this.compar).map(key => parseInt(key));
+      console.log(env_id,env_ids,111)
+      const comparsionIds = env_ids.join(',')
+      if (env_id.length !== 1 || env_ids.length === 0) {
+        ElMessage.error({message: '请选择一条基准数据和至少一条对比数据(合并)', duration: 1000});
+        return;
+      }
+      console.log(env_id[0], comparsionIds, 111)
+      mergeData({env_id: env_id, env_ids: env_ids}).then(response => {
+        if (response.data.code === 200) {
+          ElMessage({message: response.data.message, type: 'success'})
+          //更新页面数据，绑定key，每次key改变后就会刷新数据
+          this.itemKey = Math.random()
+          this.refreshData();
+          this.dialogFormVisible = false
+        }
+      })
+    }
   }
 }
 </script>
