@@ -74,12 +74,38 @@ export default {
       this.tableTitle = value; // 访问 Left 子组件的 tableTitle 数据
       // 在这里处理子组件的数据
     },
-    getBaseData(index, value) {
+    getBaseData(index,value) {
       this.titleIndex = index - 1
+      console.log(this.isComparDataLoaded,999);
+      console.log(this.titleIndex,888);
       this.tableDatas = value; // 访问 base 子组件的 tableDatas 数据
       this.isComparDataLoaded[0] = true
+      // console.log(this.tableDatas, 333);
+      // 在这里处理子组件的数据
+
+      // const comparComponents = this.$refs.comparComponent; // 获取 base 子组件的引用
+      // if (Array.isArray(comparComponents)) {
+      //   // 遍历 comparComponents 数组获取每个 Compar 组件的数据
+      //   comparComponents.forEach((comparComponent, index) => {
+      //     const comparsionId = this.comparsionIds[index];
+      //     if (comparComponent) {
+      //       this.comparDatas[comparsionId] = comparComponent.comparDatas; // 访问 Compar 子组件的 comparDatas 数据
+      //       console.log(comparComponent.comparDatas, 444);
+      //     }
+      //   });
+      // }
+
+      // const baseDatas = [
+      //   {stream1: '1', stream2: '2'},
+      //   {'stream1-1': '1-1', 'stream2-2': '2-2'}
+      // ];
+      // 遍历列表 tableDatas，并将其属性合并到列表 baseDatas(目前没有baseDatas数据，模拟一下) 中对应位置的对象,后期还要加入compar数据。
+      // this.baseDatas.forEach((bObj, index) => {
+      //   const aObj = this.tableDatas[index];
+      //   Object.assign(aObj, bObj);
+      // });
     },
-    getComparData(baseId, titleIndex_, comparDatas) {
+    getComparData(baseId,titleIndex_, comparDatas) {
       this.comparDatas[baseId] = comparDatas;
     },
   }

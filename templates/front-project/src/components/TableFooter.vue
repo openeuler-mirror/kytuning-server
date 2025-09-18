@@ -1,6 +1,6 @@
 <!--
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wqz <wangqingzheng@kylinos.cn>
  * Date: Sat May 11 09:35:57 2024 +0800
@@ -19,16 +19,18 @@
 export default {
   data() {
     return {
+      localShowAllData: this.showAllData
     }
   },
   props: {
     tableDatas: Array,    // 接收 table-datas 属性
     dataName: String,
-    showAllData: Boolean
+    showAllData: null
   },
   methods: {
     toggleDataVisibility() {
-      this.$emit('data-loaded', !this.showAllData);
+      this.localShowAllData = !this.localShowAllData;
+      this.$emit('data-loaded', this.localShowAllData);
     },
     // 导出表格数据为 CSV 格式
     exportTableData() {

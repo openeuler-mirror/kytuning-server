@@ -15,14 +15,14 @@
         </el-button>
         <el-button type="primary" @click="$router.back()">返回上一步</el-button>
         <el-button type="primary" @click="goToHome">返回首页</el-button>
-        <el-button type="success" @click="goTo('stream')" :disabled="toDisabled('stream')">stream</el-button>
-        <el-button type="success" @click="goTo('lmbench')" :disabled="toDisabled('lmbench')">lmbench</el-button>
-        <el-button type="success" @click="goTo('unixbench')" :disabled="toDisabled('unixbench')">unixbench</el-button>
-        <el-button type="success" @click="goTo('fio')" :disabled="toDisabled('fio')">fio</el-button>
-        <el-button type="success" @click="goTo('iozone')" :disabled="toDisabled('iozone')">iozone</el-button>
-        <el-button type="success" @click="goTo('jvm2008')" :disabled="toDisabled('jvm2008')">jvm2008</el-button>
-        <el-button type="success" @click="goTo('cpu2006')" :disabled="toDisabled('cpu2006')">cpu2006</el-button>
-        <el-button type="success" @click="goTo('cpu2017')" :disabled="toDisabled('cpu2017')">cpu2017</el-button>
+        <el-button :type="buttonType('stream')" @click="goTo('stream')" :disabled="toDisabled('stream')">stream</el-button>
+        <el-button :type="buttonType('lmbench')" @click="goTo('lmbench')" :disabled="toDisabled('lmbench')">lmbench</el-button>
+        <el-button :type="buttonType('unixbench')" @click="goTo('unixbench')" :disabled="toDisabled('unixbench')">unixbench</el-button>
+        <el-button :type="buttonType('fio')" @click="goTo('fio')" :disabled="toDisabled('fio')">fio</el-button>
+        <el-button :type="buttonType('iozone')" @click="goTo('iozone')" :disabled="toDisabled('iozone')">iozone</el-button>
+        <el-button :type="buttonType('jvm2008')" @click="goTo('jvm2008')" :disabled="toDisabled('jvm2008')">jvm2008</el-button>
+        <el-button :type="buttonType('cpu2006')" @click="goTo('cpu2006')" :disabled="toDisabled('cpu2006')">cpu2006</el-button>
+        <el-button :type="buttonType('cpu2017')" @click="goTo('cpu2017')" :disabled="toDisabled('cpu2017')">cpu2017</el-button>
       </el-row>
     </el-card>
   </div>
@@ -34,16 +34,19 @@ import { project } from "@/api/api.js";
 export default {
   data() {
     return {
+      localShowAllData: this.showAllData,
       allProjectDatas:[],
       isDataLoaded:false,
+      typeClass:'',
     }
   },
   props: {
     tableDatas: Array,    // 接收 table-datas 属性
     dataName: String,
-    showAllData: Boolean
+    showAllData: null
   },
   created() {
+    // todo 增加project获取具体id的数据，获取全部的，会导致速度过慢
     project().then((response) => {
       this.allProjectDatas = response.data.data
       this.isDataLoaded = true;
@@ -56,22 +59,39 @@ export default {
           return false; // 数据尚未加载完成，返回默认值
         }
         const baseData = this.allProjectDatas.find(data => data.env_id === parseInt(this.$route.params.baseId));
-        const comparsionIdsArray = this.$route.params.comparsionIds.split(',');
+        // const comparsionIdsArray = this.$route.params.comparsionIds.split(',');
         let disabled = false
         if (baseData && baseData[name] === 0) {
           disabled = true
         }
-        comparsionIdsArray.some(compId => {
-          const comparData = this.allProjectDatas.find(data => data.env_id === parseInt(compId));
-          if (comparData && comparData[name] === 0) {
-            disabled = true
-          }
-        });
         return disabled;
       };
     },
   },
   methods: {
+    buttonType(name) {
+      if (!this.isDataLoaded) {
+        return ''; // 数据尚未加载完成，返回默认值
+      }
+      if (this.toDisabled(name)) {
+        return 'info';
+      }
+      const comparsionIdsArray = this.$route.params.comparsionIds.split(',');
+      let foundZero = false;
+      comparsionIdsArray.some(compId => {
+        const comparData = this.allProjectDatas.find(data => data.env_id === parseInt(compId));
+        if (comparData && comparData[name] === 0) {
+          foundZero = true;
+          return true;
+        }
+      });
+      if (foundZero) {
+        this.typeClass = 'warning';
+      } else {
+        this.typeClass = 'success';
+      }
+      return this.typeClass;
+    },
     goToHome() {
       this.$nextTick(() => {
         this.$router.push({name: 'project'})
@@ -81,7 +101,9 @@ export default {
       this.$router.push({name: name,"params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
     },
     toggleDataVisibility() {
-      this.$emit('data-loaded', !this.showAllData);
+      console.log(this.localShowAllData,111)
+      this.localShowAllData = !this.localShowAllData;
+      this.$emit('data-loaded', this.localShowAllData);
     },
     // 导出表格数据为 CSV 格式
     exportTableData() {
