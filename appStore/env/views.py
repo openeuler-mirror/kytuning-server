@@ -1,6 +1,6 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Feb 23 14:07:53 2024 +0800
@@ -9,8 +9,7 @@ import os
 import json
 from base64 import b64decode
 
-from django.http import JsonResponse, request, HttpRequest
-from django.shortcuts import render
+from django.http import HttpRequest
 
 # Create your views here.
 from rest_framework import status
@@ -18,12 +17,11 @@ from rest_framework import status
 from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
-from appStore.utils import constants
 from appStore.utils.customer_view import CusModelViewSet
 
 class EnvViewSet(CusModelViewSet):
     """
-    stream数据管理
+    env数据管理
     """
     queryset = Env.objects.all().order_by('id')
     serializer_class = EnvSerializer
@@ -238,53 +236,7 @@ class EnvViewSet(CusModelViewSet):
         with open(json_file_path + file_name, 'w') as file:
             json.dump(request.data, file)
 
-        """speccpu2006数据处理"""
-        from appStore.cpu2006.views import Cpu2006ViewSet
-        request_cpu2006 = HttpRequest()
-        request_cpu2006.method = 'POST'
-        request_cpu2006.data_cpu2006 = request.data
-        Cpu2006ViewSet = Cpu2006ViewSet()
-        Cpu2006ViewSet.create(request=request_cpu2006, *args, **kwargs)
-
-        """speccpu2017数据处理"""
-        from appStore.cpu2017.views import Cpu2017ViewSet
-        request_cpu2017 = HttpRequest()
-        request_cpu2017.method = 'POST'
-        request_cpu2017.data_cpu2017= request.data
-        Cpu2017ViewSet = Cpu2017ViewSet()
-        Cpu2017ViewSet.create(request=request_cpu2017, *args, **kwargs)
-
-        """fio数据处理"""
-        from appStore.fio.views import FioViewSet
-        request_fio = HttpRequest()
-        request_fio.method = 'POST'
-        request_fio.data_fio = request.data
-        FioViewSet = FioViewSet()
-        FioViewSet.create(request=request_fio, *args, **kwargs)
-
-        """iozone数据处理"""
-        from appStore.iozone.views import IozoneViewSet
-        request_iozone = HttpRequest()
-        request_iozone.method = 'POST'
-        request_iozone.data_iozone = request.data
-        IozoneViewSet = IozoneViewSet()
-        IozoneViewSet.create(request=request_iozone, *args, **kwargs)
-
-        """jvm2008数据处理"""
-        from appStore.jvm2008.views import Jvm2008ViewSet
-        request_jvm2008 = HttpRequest()
-        request_jvm2008.method = 'POST'
-        request_jvm2008.data_jvm2008 = request.data
-        Jvm2008ViewSet = Jvm2008ViewSet()
-        Jvm2008ViewSet.create(request=request_jvm2008, *args, **kwargs)
-
-        """lmbench数据处理"""
-        from appStore.lmbench.views import LmbenchViewSet
-        request_unixbench = HttpRequest()
-        request_unixbench.method = 'POST'
-        request_unixbench.data_lmbench = request.data
-        UnixbenchViewSet = LmbenchViewSet()
-        UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
+        project_message = []
 
         """stream数据处理"""
         from appStore.stream.views import StreamViewSet
@@ -292,7 +244,19 @@ class EnvViewSet(CusModelViewSet):
         request_stream.method = 'POST'
         request_stream.data_stream = request.data
         StreamViewSet = StreamViewSet()
-        StreamViewSet.create(request=request_stream, *args, **kwargs)
+        stream_message = StreamViewSet.create(request=request_stream, *args, **kwargs)
+        if stream_message:
+            project_message.append({"stream": json.loads(stream_message.content.decode('utf-8'))['data']})
+
+        """lmbench数据处理"""
+        from appStore.lmbench.views import LmbenchViewSet
+        request_unixbench = HttpRequest()
+        request_unixbench.method = 'POST'
+        request_unixbench.data_lmbench = request.data
+        LmbenchViewSet = LmbenchViewSet()
+        lmbench_message = LmbenchViewSet.create(request=request_unixbench, *args, **kwargs)
+        if lmbench_message:
+            project_message.append({"lmbench": json.loads(lmbench_message.content.decode('utf-8'))['data']})
 
         """unixbench数据处理"""
         from appStore.unixbench.views import UnixbenchViewSet
@@ -300,13 +264,66 @@ class EnvViewSet(CusModelViewSet):
         request_unixbench.method = 'POST'
         request_unixbench.data_unixbench = request.data
         UnixbenchViewSet = UnixbenchViewSet()
-        UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
+        unixbench_message = UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
+        if unixbench_message:
+            project_message.append({"unixbench": json.loads(unixbench_message.content.decode('utf-8'))['data']})
+
+        """fio数据处理"""
+        from appStore.fio.views import FioViewSet
+        request_fio = HttpRequest()
+        request_fio.method = 'POST'
+        request_fio.data_fio = request.data
+        FioViewSet = FioViewSet()
+        fio_message = FioViewSet.create(request=request_fio, *args, **kwargs)
+        if fio_message:
+            project_message.append({"fio": json.loads(fio_message.content.decode('utf-8'))['data']})
+
+        """iozone数据处理"""
+        from appStore.iozone.views import IozoneViewSet
+        request_iozone = HttpRequest()
+        request_iozone.method = 'POST'
+        request_iozone.data_iozone = request.data
+        IozoneViewSet = IozoneViewSet()
+        iozone_message = IozoneViewSet.create(request=request_iozone, *args, **kwargs)
+        if iozone_message:
+            project_message.append({"iozone": json.loads(iozone_message.content.decode('utf-8'))['data']})
+
+        """jvm2008数据处理"""
+        from appStore.jvm2008.views import Jvm2008ViewSet
+        request_jvm2008 = HttpRequest()
+        request_jvm2008.method = 'POST'
+        request_jvm2008.data_jvm2008 = request.data
+        Jvm2008ViewSet = Jvm2008ViewSet()
+        jvm_message = Jvm2008ViewSet.create(request=request_jvm2008, *args, **kwargs)
+        if jvm_message:
+            project_message.append({"jvm2008": json.loads(jvm_message.content.decode('utf-8'))['data']})
+
+        """speccpu2006数据处理"""
+        from appStore.cpu2006.views import Cpu2006ViewSet
+        request_cpu2006 = HttpRequest()
+        request_cpu2006.method = 'POST'
+        request_cpu2006.data_cpu2006 = request.data
+        Cpu2006ViewSet = Cpu2006ViewSet()
+        cpu2006_message = Cpu2006ViewSet.create(request=request_cpu2006, *args, **kwargs)
+        if cpu2006_message:
+            project_message.append({"cpu2006": json.loads(cpu2006_message.content.decode('utf-8'))['data']})
+
+        """speccpu2017数据处理"""
+        from appStore.cpu2017.views import Cpu2017ViewSet
+        request_cpu2017 = HttpRequest()
+        request_cpu2017.method = 'POST'
+        request_cpu2017.data_cpu2017= request.data
+        Cpu2017ViewSet = Cpu2017ViewSet()
+        cpu2017_message =  Cpu2017ViewSet.create(request=request_cpu2017, *args, **kwargs)
+        if cpu2017_message:
+            project_message.append({"cpu2017": json.loads(cpu2017_message.content.decode('utf-8'))['data']})
 
         """project数据处理"""
         from appStore.project.views import ProjectViewSet
         request_project = HttpRequest()
         request_project.method = 'POST'
         request_project.data_project = request.data
+        request_project.project_message = project_message
         ProjectViewSet = ProjectViewSet()
         ProjectViewSet.create(request=request_project, *args, **kwargs)
 
