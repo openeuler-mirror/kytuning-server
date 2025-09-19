@@ -11,7 +11,6 @@ from rest_framework import status
 
 from appStore.stream.models import Stream
 from appStore.stream.serializers import StreamSerializer
-from appStore.utils import constants
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -168,7 +167,6 @@ class StreamViewSet(CusModelViewSet):
         error_message = []
         for k, stream_json in request.__dict__['data_stream'].items():
             if k.lower().startswith('stream'):
-                constants.STREAM_BOOL = True
                 data_stream = {}
                 data_stream['env_id'] = request.__dict__['data_stream']['env_id']
                 # todo 所有的参数 、 cmd 是在哪里保存的
