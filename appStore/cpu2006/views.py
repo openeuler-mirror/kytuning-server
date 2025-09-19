@@ -450,7 +450,7 @@ class Cpu2006ViewSet(CusModelViewSet):
             # 查到mark-name相同的数据拼接为一组：serializer.data
             for mark_name in groups:
                 temp_datas = serializer_.filter(mark_name=mark_name)
-                datas[0]['column' + str(column_index)] = 'unixbench#' + str(title_index)
+                datas[0]['column' + str(column_index)] = 'Cpu2006#' + str(title_index)
                 datas[1]['column' + str(column_index)] = temp_datas[0].execute_cmd
                 datas[2]['column' + str(column_index)] = temp_datas[0].modify_parameters
                 # 基准数据和对比数据的全部数据

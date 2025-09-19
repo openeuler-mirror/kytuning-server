@@ -16,7 +16,10 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
+
+import os
 import datetime
+import logging
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'kylin-insecure-x2^8x^3_ncycr^&^mr+ss7_n$a5ru=w2glv+mix+1%njt%%(py'
+SECRET_KEY = 'django-insecure-x1^6x^2_ncycr^&^mr+ss4_n$a7ru=w5glv+mix+9%njt%%(py'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -34,7 +37,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*', ]
 
 # Application definition
-
+# APPEND_SLASH=False
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -72,10 +75,11 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-ROOT_URLCONF = 'kytuningProject.urls'
+ROOT_URLCONF = 'djangoProject.urls'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8080',  # 允许从这个地址发出跨域请求
+    'http://172.29.220.200:8080',  # 允许从这个地址发出跨域请求
+    'http://172.29.220.94:8080',  # 允许从这个地址发出跨域请求
     # ...
 ]
 
@@ -95,20 +99,21 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'kytuningProject.wsgi.application'
+WSGI_APPLICATION = 'djangoProject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        # todo 需要修改为自己的数据库及密码
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'kytuning',
-        'HOST': 'localhost',
+        'NAME': 'kytuning_test1',
+        # 'NAME': 'kytuning_django',
+        # 'NAME': 'kytuning',
+        'HOST': '172.29.220.200',
         'PORT': 3306,
         'USER': 'kytuning',
-        'PASSWORD': '123456',
+        'PASSWORD': 'Kylin123',
         'OPTIONS': {
             'sql_mode': 'traditional',
         }
@@ -221,4 +226,60 @@ JWT_AUTH = {
     # 定义与令牌一起发送的Authorization标头值前缀
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     'JWT_AUTH_COOKIE': None,
+}
+
+######################
+#      日志           #
+######################
+# LOGGING_DIR 日志文件存放目录
+LOGGING_DIR = "/opt/kytuning/logs"  # 日志存放路径
+if not os.path.exists(LOGGING_DIR):
+    os.mkdir(LOGGING_DIR)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {  # 格式化器
+        'standard': {
+            'format': '[%(levelname)s][%(asctime)s][%(filename)s][%(funcName)s][%(lineno)d] > %(message)s'
+        },
+        'simple': {
+            'format': '[%(levelname)s]> %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file_handler': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': '%s/django.log' % LOGGING_DIR,  # 具体日志文件的名字
+            'formatter': 'standard'
+        },  # 用于文件输出
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'standard'
+        },
+    },
+    'loggers': {  # 日志分配到哪个handlers中
+        'mydjango': {
+            'handlers': ['console', 'file_handler'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    }
 }
