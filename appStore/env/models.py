@@ -65,7 +65,7 @@ class Env(models.Model):
     swinfo_software_ver_glibcversion = models.CharField(max_length=50, verbose_name='glibcversion',null=True,blank=True)
     swinfo_software_ver_javaversion = models.TextField(verbose_name='javaversion',null=True,blank=True)
     swinfo_software_ver_g_version = models.CharField(max_length=50, verbose_name='g++version',null=True,blank=True)
-    swinfo_software_ver_gfortranversion = models.CharField(max_length=50, verbose_name='gfortranversion',null=True,blank=True)
+    swinfo_software_ver_gfortranversion = models.CharField(max_length=300, verbose_name='gfortranversion',null=True,blank=True)
     swinfo_software_ver_pythonversion = models.CharField(max_length=50, verbose_name='pythonversion',null=True,blank=True)
     nwinfo_nic = models.TextField(verbose_name='nic', default="")
     time= models.CharField(max_length=50, verbose_name='时间戳')

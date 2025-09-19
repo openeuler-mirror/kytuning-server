@@ -17,7 +17,6 @@ from django.forms import model_to_dict
 from django.http import JsonResponse
 from rest_framework import pagination, status
 from rest_framework.permissions import BasePermission
-from appStore.utils import constants
 
 
 def return_time(test_time):
@@ -93,7 +92,6 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'is_staff': user.is_staff,
         'code': 200,
     }
-
 
 def get_error_message(serializer):
     """

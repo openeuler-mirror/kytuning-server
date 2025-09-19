@@ -150,8 +150,8 @@ class EnvViewSet(CusModelViewSet):
         data_env['time'] = request.data['time']
         #查数据库中是否有这条数据，如果有返回对应数据对应的时间戳
         filter_env = Env.objects.filter(time=data_env['time'])
-        if filter_env:
-            return json_response({'env_id':filter_env[0].id}, status.HTTP_400_BAD_REQUEST, '该数据在环境信息表中已存入')
+        # if filter_env:
+        #     return json_response({'env_id':filter_env[0].id}, status.HTTP_400_BAD_REQUEST, '该数据在环境信息表中已存入')
 
         data_env['hwinfo_machineinfo_manufacturer'] = request.data['envinfo']['hwinfo']['machineinfo']['manufacturer']
         data_env['hwinfo_machineinfo_product'] = request.data['envinfo']['hwinfo']['machineinfo']['product']
@@ -222,6 +222,8 @@ class EnvViewSet(CusModelViewSet):
         if serializer_env.is_valid():
             self.perform_create(serializer_env)
             request.data['env_id'] = serializer_env.data['id']
+            # wqz
+            # request.data['env_id'] = 1
         if serializer_env.errors:
             return json_response(serializer_env.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_env))
         if not request.data['env_id']:
