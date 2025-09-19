@@ -17,6 +17,17 @@ export function login(data) {
     })
 }
 
+
+// project
+export function get_project(params) {
+    // console.log(type,data,222)
+    return service({
+        method: 'get',
+        url: '/project/',
+        params
+    })
+}
+
 // project
 export function project(type, data) {
     return service({

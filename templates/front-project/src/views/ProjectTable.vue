@@ -181,7 +181,7 @@
 <script>
 import {ElMessage} from 'element-plus';
 import 'element-ui/lib/theme-chalk/index.css';
-import { project, getFilterName, mergeData } from "@/api/api.js";
+import {project, getFilterName, mergeData, get_project} from "@/api/api.js";
 
 export default {
   data() {
@@ -216,7 +216,7 @@ export default {
   },
 
   created() {
-    project('get','').then(response => {
+    get_project({baseId: '',comparsionIds: ''}).then((response) => {
       this.allProjectDatas = response.data.data
       this.total = this.allProjectDatas.length;
     });
@@ -308,7 +308,7 @@ export default {
     //更新数据后刷新页面数据
     refreshData() {
       // 调用 getProjects() 方法重新获取数据
-      project('get', '').then(response => {
+      get_project({baseId: '',comparsionIds: ''}).then((response) => {
         this.allProjectDatas = response.data.data
         this.total = this.allProjectDatas.length;
       }).catch(error => {
