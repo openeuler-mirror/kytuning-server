@@ -11,7 +11,6 @@ from rest_framework import status
 
 from appStore.unixbench.models import Unixbench
 from appStore.unixbench.serializers import UnixbenchSerializer
-from appStore.utils import constants
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -386,7 +385,6 @@ class UnixbenchViewSet(CusModelViewSet):
         data_unixbench = {}
         for k, unixbench_json in request.__dict__['data_unixbench'].items():
             if k.lower().startswith('unixbench'):
-                constants.UNIXBENCH_BOOL = True
                 data_unixbench['env_id'] = request.__dict__['data_unixbench']['env_id']
                 thread = ""
                 if k.split('-')[-3] == 'single':
