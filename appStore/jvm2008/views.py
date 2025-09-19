@@ -12,7 +12,6 @@ from rest_framework import status
 
 from appStore.jvm2008.models import Jvm2008
 from appStore.jvm2008.serializers import Jvm2008Serializer
-from appStore.utils import constants
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -287,7 +286,6 @@ class Jvm2008ViewSet(CusModelViewSet):
         errors_message = []
         for k, jvm2008_json in request.__dict__['data_jvm2008'].items():
             if k.lower().startswith('specjvm'):
-                constants.JVM2008_BOOL = True
                 data_jvm2008 = {}
                 tune_type = k.split('-')[-3]
                 data_jvm2008['env_id'] = request.__dict__['data_jvm2008']['env_id']

@@ -12,7 +12,6 @@ from rest_framework import status
 
 from appStore.iozone.models import Iozone
 from appStore.iozone.serializers import IozoneSerializer
-from appStore.utils import constants
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -323,7 +322,6 @@ class IozoneViewSet(CusModelViewSet):
         error_message = []
         for k, iozone_json in request.__dict__['data_iozone'].items():
             if k.lower().startswith('iozone'):
-                constants.IOZONE_BOOL = True
                 data_iozone = {}
                 data_iozone['env_id'] = request.__dict__['data_iozone']['env_id']
                 data_iozone['execute_cmd'] = "xxx"

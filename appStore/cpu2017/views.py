@@ -13,7 +13,6 @@ from rest_framework import status
 
 from appStore.cpu2017.models import Cpu2017
 from appStore.cpu2017.serializers import Cpu2017Serializer
-from appStore.utils import constants
 from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -761,7 +760,6 @@ class Cpu2017ViewSet(CusModelViewSet):
         error_message = []
         for k, cpu2017_json in request.__dict__['data_cpu2017'].items():
             if k.lower().startswith('cpu2017'):
-                constants.CPU2017_BOOL = True
                 for key, value in cpu2017_json['items'].items():
                     data_cpu2017 = {}
                     data_cpu2017['env_id'] = request.__dict__['data_cpu2017']['env_id']

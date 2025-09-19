@@ -11,7 +11,6 @@ from rest_framework import status
 
 from appStore.cpu2006.models import Cpu2006
 from appStore.cpu2006.serializers import Cpu2006Serializer
-from appStore.utils import constants
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -902,7 +901,6 @@ class Cpu2006ViewSet(CusModelViewSet):
         error_message = []
         for k, cpu2006_json in request.__dict__['data_cpu2006'].items():
             if k.lower().startswith('cpu2006'):
-                constants.CPU2006_BOOL = True
                 for key, value in cpu2006_json['items'].items():
                     data_cpu2006 = {}
                     data_cpu2006['env_id'] = request.__dict__['data_cpu2006']['env_id']

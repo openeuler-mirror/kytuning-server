@@ -11,7 +11,6 @@ from rest_framework import status
 from appStore.fio.models import Fio
 from appStore.fio.serializers import FioSerializer
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils import constants
 from appStore.utils.customer_view import CusModelViewSet
 
 
@@ -277,7 +276,6 @@ class FioViewSet(CusModelViewSet):
         for k, fio_json in request.__dict__['data_fio'].items():
             data_fio = {}
             if k.lower().startswith('fio'):
-                constants.FIO_BOOL = True
                 data_fio['env_id'] = request.__dict__['data_fio']['env_id']
                 data_fio['execute_cmd'] = 'xx'
                 data_fio['modify_parameters'] = 'xx'
