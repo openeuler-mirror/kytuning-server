@@ -10,8 +10,8 @@
     <el-row class="mb-4">
       <el-button @click="ShowSingleData" type="success" plain>基准数据</el-button>
       <el-button @click="getComparativeData()" type="primary" plain>数据对比</el-button>
-      <el-button @click="restData()" type="info" plain>取消选择</el-button>
       <el-button @click="mergeData()" type="danger" plain>合并数据</el-button>
+      <el-button @click="restData()" type="info" plain>取消选择</el-button>
     </el-row>
     <div>数据类型: {{ selected }}</div>
     <select v-model="selectedType">
@@ -328,6 +328,7 @@ export default {
       }
     },
     restData() {
+      this.itemKey = Math.random()
       this.base = {};
       this.compar = {};
     },
@@ -411,13 +412,11 @@ export default {
     mergeData(){
       const env_id = Object.keys(this.base).map(key => parseInt(key));
       const env_ids = Object.keys(this.compar).map(key => parseInt(key));
-      console.log(env_id,env_ids,111)
-      const comparsionIds = env_ids.join(',')
+      // const comparsionIds = env_ids.join(',')
       if (env_id.length !== 1 || env_ids.length === 0) {
         ElMessage.error({message: '请选择一条基准数据和至少一条对比数据(合并)', duration: 1000});
         return;
       }
-      console.log(env_id[0], comparsionIds, 111)
       mergeData({env_id: env_id, env_ids: env_ids}).then(response => {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})
@@ -425,6 +424,7 @@ export default {
           this.itemKey = Math.random()
           this.refreshData();
           this.dialogFormVisible = false
+          this.restData()
         }
       })
     }
