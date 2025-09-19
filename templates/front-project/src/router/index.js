@@ -10,6 +10,11 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
     {
+        name: 'Test',
+        path: '/test',
+        component: () => import('@/views/test_1'),
+    },
+    {
         name: 'Home',
         path: '/',
         component: () => import('@/components/kytuningLogin'),

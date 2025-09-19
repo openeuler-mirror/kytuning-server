@@ -8,6 +8,9 @@
 # Create your views here.
 import os
 import json
+import logging
+
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 from rest_framework import status
 
@@ -127,8 +130,10 @@ class ProjectViewSet(CusModelViewSet):
 
         for id in env_ids:
             if Stream.objects.filter(env_id=id):
+                log.info('处理的stream的id是 %d，把stream_env = %d 改为 %d ,', Stream.objects.filter(env_id=id).first().id, id, env_id[0])
                 Stream.objects.filter(env_id=id).update(env_id=env_id[0])
             if Lmbench.objects.filter(env_id=id):
+                log.info('处理的lmbench的id是 %d，把lmbench_env = %d 改为 %d ,', Lmbench.objects.filter(env_id=id).first().id, id, env_id[0])
                 Lmbench.objects.filter(env_id=id).update(env_id=env_id[0])
             max_unixbench_number = 0
             if Unixbench.objects.filter(env_id=id):
@@ -138,6 +143,7 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_unixbench_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
+                    log.info('处理的unixbench的id是 %d，把unixbench_env = %d 改为 %d ,', obj.id, id, env_id[0])
                     obj.save()
                 unixbench_number = max_unixbench_number
             max_fio_number = 0
@@ -148,6 +154,7 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_fio_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
+                    log.info('处理的fio的id是 %d，把fio_env = %d 改为 %d ,', obj.id, id, env_id[0])
                     obj.save()
                 fio_number = max_fio_number
             max_iozone_number = 0
@@ -158,6 +165,7 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_iozone_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
+                    log.info('处理的iozone的id是 %d，把iozone_env = %d 改为 %d ,', obj.id, id, env_id[0])
                     obj.save()
                 iozone_number = max_iozone_number
             max_jvm2008_number = 0
@@ -168,6 +176,7 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_jvm2008_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
+                    log.info('处理的jvm2008的id是 %d，把jvm2008_env = %d 改为 %d ,', obj.id, id, env_id[0])
                     obj.save()
                 jvm2008_number = max_jvm2008_number
             max_cpu2006_number = 0
@@ -178,6 +187,7 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_cpu2006_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
+                    log.info('处理的cpu2006的id是 %d，把cpu2006_env = %d 改为 %d ,', obj.id, id, env_id[0])
                     obj.save()
                 cpu2006_number = max_cpu2006_number
             max_cpu2017_number = 0
@@ -188,8 +198,10 @@ class ProjectViewSet(CusModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_cpu2017_number)
                     obj.env_id = env_id[0]
                     obj.mark_name = new_mark_name
+                    log.info('处理的cpu2017的id是 %d，把cpu2017_env = %d 改为 %d ,', obj.id, id, env_id[0])
                     obj.save()
                 cpu2017_number = max_cpu2017_number
+
 
         # 3、合并all_json_data文件
         json_file_path = '/var/www/html/all_json_data_file/'
@@ -197,120 +209,126 @@ class ProjectViewSet(CusModelViewSet):
         base_env_time = Env.objects.filter(id=env_id[0]).first().time
         compar_env_times = list(set([d.time for d in Env.objects.filter(id__in=env_ids)]))
 
-        stream_max_number = -1
-        unixbench_max_number = -1
-        fio_max_number = -1
-        iozone_max_number = -1
-        jvm2008_max_number = -1
-        cpu2006_max_number = -1
-        cpu2017_max_number = -1
-        data_ = None
-        base_lmbench_keys = 'lmbench'
-        with open(json_file_path + base_env_time+'.json', 'r') as f:
-            json_data = f.read()
-            # 将 JSON 字符串解析为 Python 对象
-            base_file_data = json.loads(json_data)
-            # 获取base数据的lmbench最后一位的key
-            if [key for key in base_file_data.keys() if key.startswith('lmbench')]:
-                base_lmbench_keys = sorted([key for key in base_file_data.keys() if key.startswith('lmbench')])[-1]
-            data_ = base_file_data.copy()
-            stream_keys_number = []
-            unixbench_keys_number = []
-            fio_keys_number = []
-            iozone_keys_number = []
-            jvm2008_keys_number = []
-            cpu2006_keys_number = []
-            cpu2017_keys_number = []
-            for key in base_file_data.keys():
-                if key.startswith('stream'):
-                    stream_keys_number.append(int(key.split('-')[-1]))
-                elif key.startswith('Unixbench'):
-                   unixbench_keys_number.append(int(key.split('-')[-1]))
-                elif key.startswith('fio'):
-                   fio_keys_number.append(int(key.split('-')[-1]))
-                elif key.startswith('iozone'):
-                   iozone_keys_number.append(int(key.split('-')[-1]))
-                elif key.startswith('specjvm'):
-                    jvm2008_keys_number.append(int(key.split('-')[-1]))
-                elif key.startswith('cpu2006'):
-                   cpu2006_keys_number.append(int(key.split('-')[-1]))
-                elif key.startswith('cpu2017'):
-                   cpu2017_keys_number.append(int(key.split('-')[-1]))
-
-            stream_max_number = max(stream_keys_number) if stream_keys_number else stream_max_number
-            unixbench_max_number = max(unixbench_keys_number) if unixbench_keys_number else unixbench_max_number
-            fio_max_number = max(fio_keys_number) if fio_keys_number else fio_max_number
-            iozone_max_number = max(iozone_keys_number) if iozone_keys_number else iozone_max_number
-            jvm2008_max_number = max(jvm2008_keys_number) if jvm2008_keys_number else jvm2008_max_number
-            cpu2006_max_number = max(cpu2006_keys_number) if cpu2006_keys_number else cpu2006_max_number
-            cpu2017_max_number = max(cpu2017_keys_number) if cpu2017_keys_number else cpu2017_max_number
-
-        for file_name in compar_env_times:
-            with open(json_file_path + file_name + '.json', 'r') as f:
+        if os.path.exists(json_file_path + base_env_time+'.json'):
+            stream_max_number = -1
+            unixbench_max_number = -1
+            fio_max_number = -1
+            iozone_max_number = -1
+            jvm2008_max_number = -1
+            cpu2006_max_number = -1
+            cpu2017_max_number = -1
+            data_ = None
+            base_lmbench_keys = 'lmbench'
+            with open(json_file_path + base_env_time+'.json', 'r') as f:
                 json_data = f.read()
                 # 将 JSON 字符串解析为 Python 对象
-                compar_file_data = json.loads(json_data)
-                # 因为lmbench的数据存储格式不通单独处理lmbench。lmbench的最后一组数据中有全部的数据
-                lmbench_keys = 'lmbench'
-                if [key for key in compar_file_data.keys() if key.startswith('lmbench')]:
-                    lmbench_keys = sorted([key for key in compar_file_data.keys() if key.startswith('lmbench')])[-1]
-                for key,value in compar_file_data.items():
+                base_file_data = json.loads(json_data)
+                # 获取base数据的lmbench最后一位的key
+                if [key for key in base_file_data.keys() if key.startswith('lmbench')]:
+                    base_lmbench_keys = sorted([key for key in base_file_data.keys() if key.startswith('lmbench')])[-1]
+                data_ = base_file_data.copy()
+                stream_keys_number = []
+                unixbench_keys_number = []
+                fio_keys_number = []
+                iozone_keys_number = []
+                jvm2008_keys_number = []
+                cpu2006_keys_number = []
+                cpu2017_keys_number = []
+                for key in base_file_data.keys():
                     if key.startswith('stream'):
-                        data_['stream-5.9-1-null-0-'+str(int(key.split('-')[-1]) + stream_max_number + 1)] = value
-                    elif key == lmbench_keys:
-                        # 因为lmbench的测试段数据存储是会保存上一条的测试数据，所以特殊处理。
-                        data_[base_lmbench_keys]['items'].extend(value['items'])
+                        stream_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('Unixbench'):
-                        data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + unixbench_max_number + 1)] = value
+                       unixbench_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('fio'):
-                        data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + fio_max_number + 1)] = value
+                       fio_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('iozone'):
-                        data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + iozone_max_number + 1)] = value
+                       iozone_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('specjvm'):
-                        data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + jvm2008_max_number + 1)] = value
+                        jvm2008_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('cpu2006'):
-                        data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
+                       cpu2006_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('cpu2017'):
-                        data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
-                compar_stream_keys = []
-                compar_unixbench_keys = []
-                compar_fio_keys = []
-                compar_iozone_keys = []
-                compar_jvm2008_keys = []
-                compar_cpu2006_keys = []
-                compar_cpu2017_keys = []
-                for key in compar_file_data.keys():
-                    if key.startswith('stream'):
-                        compar_stream_keys.append(int(key.split('-')[-1]))
-                    elif key.startswith('Unixbench'):
-                        compar_unixbench_keys.append(int(key.split('-')[-1]))
-                    elif key.startswith('fio'):
-                        compar_fio_keys.append(int(key.split('-')[-1]))
-                    elif key.startswith('iozone'):
-                        compar_iozone_keys.append(int(key.split('-')[-1]))
-                    elif key.startswith('specjvm'):
-                        compar_jvm2008_keys.append(int(key.split('-')[-1]))
-                    elif key.startswith('cpu2006'):
-                        compar_cpu2006_keys.append(int(key.split('-')[-1]))
-                    elif key.startswith('cpu2017'):
-                        compar_cpu2017_keys.append(int(key.split('-')[-1]))
-                stream_max_number = stream_max_number + max(compar_stream_keys) + 1 if compar_stream_keys else stream_max_number
-                unixbench_max_number = unixbench_max_number + max(compar_unixbench_keys) + 1 if compar_unixbench_keys else unixbench_max_number
-                fio_max_number = fio_max_number + max(compar_fio_keys) + 1 if compar_fio_keys else fio_max_number
-                iozone_max_number = iozone_max_number + max(compar_iozone_keys) + 1 if compar_iozone_keys else iozone_max_number
-                jvm2008_max_number = jvm2008_max_number + max(compar_jvm2008_keys) + 1 if compar_jvm2008_keys else jvm2008_max_number
-                cpu2006_max_number = cpu2006_max_number + max(compar_cpu2006_keys) + 1 if compar_cpu2006_keys else cpu2006_max_number
-                cpu2017_max_number = cpu2017_max_number + max(compar_cpu2017_keys) + 1 if compar_cpu2017_keys else cpu2017_max_number
+                       cpu2017_keys_number.append(int(key.split('-')[-1]))
 
-        new_json_file = json_file_path + str(base_env_time)+'.json'
-        os.rename(new_json_file, new_json_file + '-env_' + str(env_id[0]) + '-base-old')
-        with open(new_json_file, 'w', encoding='utf-8') as f_new:
-            json.dump(data_, f_new)
+                stream_max_number = max(stream_keys_number) if stream_keys_number else stream_max_number
+                unixbench_max_number = max(unixbench_keys_number) if unixbench_keys_number else unixbench_max_number
+                fio_max_number = max(fio_keys_number) if fio_keys_number else fio_max_number
+                iozone_max_number = max(iozone_keys_number) if iozone_keys_number else iozone_max_number
+                jvm2008_max_number = max(jvm2008_keys_number) if jvm2008_keys_number else jvm2008_max_number
+                cpu2006_max_number = max(cpu2006_keys_number) if cpu2006_keys_number else cpu2006_max_number
+                cpu2017_max_number = max(cpu2017_keys_number) if cpu2017_keys_number else cpu2017_max_number
 
-        # 5、删除旧的数据
-        for name in compar_env_times:
-            os.rename(json_file_path + str(name)+'.json', json_file_path + str(name)+'.json-env_' + str(env_id[0]) +'-compar-old')
-            print(new_json_file, '数据和', json_file_path + str(name) + '.json' + '数据合并完成')
+            for file_name in compar_env_times:
+                if os.path.exists(json_file_path + file_name + '.json'):
+                    with open(json_file_path + file_name + '.json', 'r') as f:
+                        json_data = f.read()
+                        # 将 JSON 字符串解析为 Python 对象
+                        compar_file_data = json.loads(json_data)
+                        # 因为lmbench的数据存储格式不通单独处理lmbench。lmbench的最后一组数据中有全部的数据
+                        lmbench_keys = 'lmbench'
+                        if [key for key in compar_file_data.keys() if key.startswith('lmbench')]:
+                            lmbench_keys = sorted([key for key in compar_file_data.keys() if key.startswith('lmbench')])[-1]
+                        for key,value in compar_file_data.items():
+                            if key.startswith('stream'):
+                                data_['stream-5.9-1-null-0-'+str(int(key.split('-')[-1]) + stream_max_number + 1)] = value
+                            elif key == lmbench_keys:
+                                # 因为lmbench的测试段数据存储是会保存上一条的测试数据，所以特殊处理。
+                                if base_lmbench_keys == 'lmbench':
+                                    data_[lmbench_keys] = value
+                                else:
+                                    data_[base_lmbench_keys]['items'].extend(value['items'])
+                            elif key.startswith('Unixbench'):
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + unixbench_max_number + 1)] = value
+                            elif key.startswith('fio'):
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + fio_max_number + 1)] = value
+                            elif key.startswith('iozone'):
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + iozone_max_number + 1)] = value
+                            elif key.startswith('specjvm'):
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + jvm2008_max_number + 1)] = value
+                            elif key.startswith('cpu2006'):
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
+                            elif key.startswith('cpu2017'):
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
+                        compar_stream_keys = []
+                        compar_unixbench_keys = []
+                        compar_fio_keys = []
+                        compar_iozone_keys = []
+                        compar_jvm2008_keys = []
+                        compar_cpu2006_keys = []
+                        compar_cpu2017_keys = []
+                        for key in compar_file_data.keys():
+                            if key.startswith('stream'):
+                                compar_stream_keys.append(int(key.split('-')[-1]))
+                            elif key.startswith('Unixbench'):
+                                compar_unixbench_keys.append(int(key.split('-')[-1]))
+                            elif key.startswith('fio'):
+                                compar_fio_keys.append(int(key.split('-')[-1]))
+                            elif key.startswith('iozone'):
+                                compar_iozone_keys.append(int(key.split('-')[-1]))
+                            elif key.startswith('specjvm'):
+                                compar_jvm2008_keys.append(int(key.split('-')[-1]))
+                            elif key.startswith('cpu2006'):
+                                compar_cpu2006_keys.append(int(key.split('-')[-1]))
+                            elif key.startswith('cpu2017'):
+                                compar_cpu2017_keys.append(int(key.split('-')[-1]))
+                        stream_max_number = stream_max_number + max(compar_stream_keys) + 1 if compar_stream_keys else stream_max_number
+                        unixbench_max_number = unixbench_max_number + max(compar_unixbench_keys) + 1 if compar_unixbench_keys else unixbench_max_number
+                        fio_max_number = fio_max_number + max(compar_fio_keys) + 1 if compar_fio_keys else fio_max_number
+                        iozone_max_number = iozone_max_number + max(compar_iozone_keys) + 1 if compar_iozone_keys else iozone_max_number
+                        jvm2008_max_number = jvm2008_max_number + max(compar_jvm2008_keys) + 1 if compar_jvm2008_keys else jvm2008_max_number
+                        cpu2006_max_number = cpu2006_max_number + max(compar_cpu2006_keys) + 1 if compar_cpu2006_keys else cpu2006_max_number
+                        cpu2017_max_number = cpu2017_max_number + max(compar_cpu2017_keys) + 1 if compar_cpu2017_keys else cpu2017_max_number
+
+            new_json_file = json_file_path + str(base_env_time)+'.json'
+            os.rename(new_json_file, new_json_file + '-env_' + str(env_id[0]) + '-base-old')
+
+            with open(new_json_file, 'w', encoding='utf-8') as f_new:
+                json.dump(data_, f_new)
+
+            # 5、删除旧的数据
+            for name in compar_env_times:
+                os.rename(json_file_path + str(name)+'.json', json_file_path + str(name)+'.json-env_' + str(env_id[0]) +'-compar-old')
+                log.info(new_json_file, '数据和', json_file_path + str(name) + '.json' + '数据合并完成')
 
 
         # 4、删除env_id的env表，删除env_id对应的project表
