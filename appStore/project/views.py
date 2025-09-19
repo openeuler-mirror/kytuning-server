@@ -94,8 +94,6 @@ class ProjectViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_204_NO_CONTENT, '请确保所有的"项目名称"、"上传人员"、"系统版本"、"cpu型号都相同"')
 
         # 2、修改数据的env_id和mark_name
-        stream_number = 0
-        lmbench_number = 0
         unixbench_number = -1
         fio_number = -1
         iozone_number = -1
@@ -129,10 +127,8 @@ class ProjectViewSet(CusModelViewSet):
 
         for id in env_ids:
             if Stream.objects.filter(env_id=id):
-                stream_number += len(Stream.objects.filter(env_id=id))
                 Stream.objects.filter(env_id=id).update(env_id=env_id[0])
             if Lmbench.objects.filter(env_id=id):
-                lmbench_number += len(Lmbench.objects.filter(env_id=id))
                 Lmbench.objects.filter(env_id=id).update(env_id=env_id[0])
             max_unixbench_number = 0
             if Unixbench.objects.filter(env_id=id):
@@ -210,8 +206,7 @@ class ProjectViewSet(CusModelViewSet):
         cpu2017_max_number = -1
         data_ = None
         base_lmbench_keys = 'lmbench'
-
-        with open(json_file_path+base_env_time+'.json', 'r') as f:
+        with open(json_file_path + base_env_time+'.json', 'r') as f:
             json_data = f.read()
             # 将 JSON 字符串解析为 Python 对象
             base_file_data = json.loads(json_data)
@@ -251,7 +246,6 @@ class ProjectViewSet(CusModelViewSet):
             cpu2017_max_number = max(cpu2017_keys_number) if cpu2017_keys_number else cpu2017_max_number
 
         for file_name in compar_env_times:
-            new_stream_number = 0
             with open(json_file_path + file_name + '.json', 'r') as f:
                 json_data = f.read()
                 # 将 JSON 字符串解析为 Python 对象
@@ -309,26 +303,26 @@ class ProjectViewSet(CusModelViewSet):
                 cpu2017_max_number = cpu2017_max_number + max(compar_cpu2017_keys) + 1 if compar_cpu2017_keys else cpu2017_max_number
 
         new_json_file = json_file_path + str(base_env_time)+'.json'
+        os.rename(new_json_file, new_json_file + '-env_' + str(env_id[0]) + '-base-old')
         with open(new_json_file, 'w', encoding='utf-8') as f_new:
             json.dump(data_, f_new)
 
         # 5、删除旧的数据
         for name in compar_env_times:
-            os.rename(json_file_path + str(name)+'.json', json_file_path + str(name)+'.json-old')
+            os.rename(json_file_path + str(name)+'.json', json_file_path + str(name)+'.json-env_' + str(env_id[0]) +'-compar-old')
+            print(new_json_file, '数据和', json_file_path + str(name) + '.json' + '数据合并完成')
+
 
         # 4、删除env_id的env表，删除env_id对应的project表
         Env.objects.filter(id__in=env_ids).delete()
         Project.objects.filter(env_id__in=env_ids).delete()
         # 5、修改project表对应测试项目的值
-        stream_number = Project.objects.filter(env_id=env_id[0]).first().stream + stream_number
-        lmbench_number = Project.objects.filter(env_id=env_id[0]).first().lmbench + lmbench_number
-
+        stream_number = len(Stream.objects.filter(env_id=env_id[0]))
+        lmbench_number = len(Lmbench.objects.filter(env_id=env_id[0]))
         Project.objects.filter(env_id=env_id[0]).update(stream=stream_number, lmbench=lmbench_number,
                                                         unixbench=unixbench_number + 1, fio=fio_number + 1,
                                                         iozone=iozone_number + 1, jvm2008=jvm2008_number + 1,
                                                         cpu2006=cpu2006_number + 1, cpu2017=cpu2017_number + 1)
-
-
 
         return json_response({}, status.HTTP_200_OK, '合并数据成功')
 

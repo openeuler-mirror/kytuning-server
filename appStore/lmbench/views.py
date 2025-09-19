@@ -554,6 +554,8 @@ class LmbenchViewSet(CusModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer_lmbench_error = []
         error_message = []
+        if not [key for key in request.__dict__['data_lmbench'].keys() if key.startswith('lmbench')]:
+            return
         lmbench_keys = sorted([key for key in request.__dict__['data_lmbench'].keys() if key.startswith('lmbench')])[-1]
         for lmbench_json in request.__dict__['data_lmbench'][lmbench_keys]['items']:
             # 每一条lmbench数据
