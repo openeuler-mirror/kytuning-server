@@ -30,7 +30,7 @@
 
 
 <script>
-import { project } from "@/api/api.js";
+import { get_project } from "@/api/api.js";
 export default {
   data() {
     return {
@@ -47,13 +47,15 @@ export default {
   },
   created() {
     // todo 增加project获取具体id的数据，获取全部的，会导致速度过慢
-    project().then((response) => {
+    get_project({baseId: this.$route.params.baseId,comparsionIds: this.$route.params.comparsionIds}).then((response) => {
       this.allProjectDatas = response.data.data
       this.isDataLoaded = true;
     });
   },
   computed: {
     toDisabled() {
+      console.log('toDisabled函数')
+      console.log('isDataLoaded = ', !this.isDataLoaded)
       return (name) => {
         if (!this.isDataLoaded) {
           return false; // 数据尚未加载完成，返回默认值
@@ -64,6 +66,7 @@ export default {
         if (baseData && baseData[name] === 0) {
           disabled = true
         }
+        console.log('disabled = ', disabled)
         return disabled;
       };
     },
@@ -77,20 +80,11 @@ export default {
         return 'info';
       }
       const comparsionIdsArray = this.$route.params.comparsionIds.split(',');
-      let foundZero = false;
-      comparsionIdsArray.some(compId => {
+      let foundZero = comparsionIdsArray.some(compId => {
         const comparData = this.allProjectDatas.find(data => data.env_id === parseInt(compId));
-        if (comparData && comparData[name] === 0) {
-          foundZero = true;
-          return true;
-        }
+        return comparData && comparData[name] === 0;
       });
-      if (foundZero) {
-        this.typeClass = 'warning';
-      } else {
-        this.typeClass = 'success';
-      }
-      return this.typeClass;
+      return foundZero ? 'warning' : 'success';
     },
     goToHome() {
       this.$nextTick(() => {
