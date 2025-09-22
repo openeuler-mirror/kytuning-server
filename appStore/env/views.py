@@ -16,6 +16,7 @@ from rest_framework import status
 
 from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
+from appStore.project.models import Project
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -77,8 +78,8 @@ class EnvViewSet(CusModelViewSet):
                 {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'mtu', 'column4': value['mtu']},
             ]
             nic_datas.extend(nic)
-
-        datas = [{'column1': 'hwinfo','column2': 'machineinfo','column3': 'manufacturer','column4': data_['hwinfo_machineinfo_manufacturer']},
+        datas = [{'column1': '项目名称','column2': '','column3': '','column4': Project.objects.filter(env_id=data_['id']).first().project_name},
+            {'column1': 'hwinfo','column2': 'machineinfo','column3': 'manufacturer','column4': data_['hwinfo_machineinfo_manufacturer']},
             {'column1': 'hwinfo', 'column2': 'machineinfo', 'column3': 'product','column4': data_['hwinfo_machineinfo_product']},
             {'column1': 'hwinfo','column2': 'machineinfo','column3': 'serialnumber','column4': data_['hwinfo_machineinfo_serialnumber']},
             {'column1': 'hwinfo', 'column2': 'bios', 'column3': 'vendor', 'column4': data_['hwinfo_bios_vendor']},
@@ -132,7 +133,7 @@ class EnvViewSet(CusModelViewSet):
             {'column1': 'swinfo','column2': 'software_ver','column3': 'gfortranversion','column4': data_['swinfo_software_ver_gfortranversion']},
             {'column1': 'swinfo','column2': 'software_ver','column3': 'pythonversion','column4': data_['swinfo_software_ver_pythonversion']},
            ]
-        datas[30:30] = disk_and_nicinfo_datas
+        datas[31:31] = disk_and_nicinfo_datas
         datas.extend(nic_datas)
         start_number = 5
         nic_number = len(datas) - len(nic_datas)
@@ -140,49 +141,50 @@ class EnvViewSet(CusModelViewSet):
             queryset = Env.objects.filter(id=comparsionId).all()
             serializer = self.get_serializer(queryset, many=True)
             compar_data_ = serializer.data[0]
-            datas[0].update({'column%d'%(start_number):compar_data_['hwinfo_machineinfo_manufacturer']})
-            datas[1].update({'column%d'%(start_number):compar_data_['hwinfo_machineinfo_product']})
-            datas[2].update({'column%d'%(start_number):compar_data_['hwinfo_machineinfo_serialnumber']})
-            datas[3].update({'column%d'%(start_number):compar_data_['hwinfo_bios_vendor']})
-            datas[4].update({'column%d'%(start_number):compar_data_['hwinfo_bios_version']})
-            datas[5].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Vendor_ID']})
-            datas[6].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPU_family']})
-            datas[7].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_model_name']})
-            datas[8].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPU_MHz']})
-            datas[9].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPUs']})
-            datas[10].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Threads_per_core']})
-            datas[11].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPU_Arch']})
-            datas[12].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPU_op_mode']})
-            datas[13].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Byte_Order']})
-            datas[14].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_On_line_CPUs_list']})
-            datas[15].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Virtualization']})
-            datas[16].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Virtualization_type']})
-            datas[17].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_L1d_cache']})
-            datas[18].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_L1i_cache']})
-            datas[19].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_L2_cache']})
-            datas[20].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_L3_cache']})
-            datas[21].update({'column%d'%(start_number):compar_data_['hwinfo_memory_Flags']})
-            datas[22].update({'column%d'%(start_number):compar_data_['hwinfo_memory_vendor']})
-            datas[23].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_type']})
-            datas[24].update({'column%d'%(start_number):compar_data_['hwinfo_memory_total_size']})
-            datas[25].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_used']})
-            datas[26].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_count']})
-            datas[27].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_free']})
-            datas[28].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_freq']})
-            datas[29].update({'column%d'%(start_number):compar_data_['hwinfo_memory_swap']})
+            datas[0].update({'column%d'%(start_number): Project.objects.filter(env_id=compar_data_['id']).first().project_name})
+            datas[1].update({'column%d'%(start_number):compar_data_['hwinfo_machineinfo_manufacturer']})
+            datas[2].update({'column%d'%(start_number):compar_data_['hwinfo_machineinfo_product']})
+            datas[3].update({'column%d'%(start_number):compar_data_['hwinfo_machineinfo_serialnumber']})
+            datas[4].update({'column%d'%(start_number):compar_data_['hwinfo_bios_vendor']})
+            datas[5].update({'column%d'%(start_number):compar_data_['hwinfo_bios_version']})
+            datas[6].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Vendor_ID']})
+            datas[7].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPU_family']})
+            datas[8].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_model_name']})
+            datas[9].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPU_MHz']})
+            datas[10].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPUs']})
+            datas[11].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Threads_per_core']})
+            datas[12].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPU_Arch']})
+            datas[13].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_CPU_op_mode']})
+            datas[14].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Byte_Order']})
+            datas[15].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_On_line_CPUs_list']})
+            datas[16].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Virtualization']})
+            datas[17].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_Virtualization_type']})
+            datas[18].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_L1d_cache']})
+            datas[19].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_L1i_cache']})
+            datas[20].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_L2_cache']})
+            datas[21].update({'column%d'%(start_number):compar_data_['hwinfo_cpu_L3_cache']})
+            datas[22].update({'column%d'%(start_number):compar_data_['hwinfo_memory_Flags']})
+            datas[23].update({'column%d'%(start_number):compar_data_['hwinfo_memory_vendor']})
+            datas[24].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_type']})
+            datas[25].update({'column%d'%(start_number):compar_data_['hwinfo_memory_total_size']})
+            datas[26].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_used']})
+            datas[27].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_count']})
+            datas[28].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_free']})
+            datas[29].update({'column%d'%(start_number):compar_data_['hwinfo_memory_mem_freq']})
+            datas[30].update({'column%d'%(start_number):compar_data_['hwinfo_memory_swap']})
             # disk的处理，因为不能确保compar的磁盘数量一定大于base的磁盘数量，如果大于的话会出现错误，为了避免错误，所以对比数据的磁盘只显示一个
-            datas[30].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['name']})
-            datas[31].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['part_type']})
-            datas[32].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['vendor']})
-            datas[33].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['model']})
-            datas[34].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['size']})
-            datas[35].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['rota']})
-            datas[36].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['sched']})
-            datas[37].update({'column%d' % (start_number): str(eval(compar_data_['hwinfo_disk'])[0]['rq_size']) if isinstance(
+            datas[31].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['name']})
+            datas[32].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['part_type']})
+            datas[33].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['vendor']})
+            datas[34].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['model']})
+            datas[35].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['size']})
+            datas[36].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['rota']})
+            datas[37].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['sched']})
+            datas[38].update({'column%d' % (start_number): str(eval(compar_data_['hwinfo_disk'])[0]['rq_size']) if isinstance(
                 eval(compar_data_['hwinfo_disk'])[0]['rq_size'], int) else eval(compar_data_['hwinfo_disk'])[0]['rq_size']})
-            datas[38].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['tran']})
-            datas[39].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['mntpoint=/']})
-            datas[40].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['mntpoint=/home']})
+            datas[39].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['tran']})
+            datas[40].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['mntpoint=/']})
+            datas[41].update({'column%d'%(start_number):eval(compar_data_['hwinfo_disk'])[0]['mntpoint=/home']})
             #其它数据
             datas[nic_number-23].update({'column%d'%(start_number):compar_data_['swinfo_os_curr_UTC_time']})
             datas[nic_number-22].update({'column%d'%(start_number):compar_data_['swinfo_os_os_id']})
