@@ -357,22 +357,24 @@ export default {
       }
       const baseData = this.allProjectDatas.find(item => item.env_id === env_id[0])
       if (this.selectedType !== "env") {
-        if (baseData.stream) {
-          this.selectedType = 'stream'
-        } else if (baseData.lmbench) {
-          this.selectedType = 'lmbench'
-        } else if (baseData.unixbench) {
-          this.selectedType = 'unixbench'
-        } else if (baseData.fio) {
-          this.selectedType = 'fio'
-        } else if (baseData.iozone) {
-          this.selectedType = 'iozone'
-        } else if (baseData.jvm2008) {
-          this.selectedType = 'jvm2008'
-        } else if (baseData.cpu2006) {
-          this.selectedType = 'cpu2006'
-        } else if (baseData.cpu2017) {
-          this.selectedType = 'cpu2017'
+        if (this.selectedType === 'stream') {
+          if (baseData.stream) {
+            this.selectedType = 'stream'
+          } else if (baseData.lmbench) {
+            this.selectedType = 'lmbench'
+          } else if (baseData.unixbench) {
+            this.selectedType = 'unixbench'
+          } else if (baseData.fio) {
+            this.selectedType = 'fio'
+          } else if (baseData.iozone) {
+            this.selectedType = 'iozone'
+          } else if (baseData.jvm2008) {
+            this.selectedType = 'jvm2008'
+          } else if (baseData.cpu2006) {
+            this.selectedType = 'cpu2006'
+          } else if (baseData.cpu2017) {
+            this.selectedType = 'cpu2017'
+          }
         }
       }
       this.$router.push({name: this.selectedType, "params": {baseId: env_id[0], comparsionIds: ''}});
@@ -382,37 +384,37 @@ export default {
       const baseData = this.allProjectDatas.find(item => env_id.includes(item.env_id))
       const env_ids = Object.keys(this.compar).map(key => parseInt(key));
       const comparsionIds = env_ids.join(',')
-      if (this.selectedType === "env") {
-        ElMessage.error({message: '环境信息数据不支持对比', duration: 1000});
-        return;
-      } else if (env_id.length !== 1 || env_ids.length === 0) {
+      if (env_id.length !== 1 || env_ids.length === 0) {
         ElMessage.error({message: '请选择一条基准数据和至少一条对比数据', duration: 1000});
         return;
       }
       //判断base数据中的第一个有值的数据
-      if (baseData.stream) {
-        this.selectedType = 'stream'
-      } else if (baseData.lmbench) {
-        this.selectedType = 'lmbench'
-      } else if (baseData.unixbench) {
-        this.selectedType = 'unixbench'
-      } else if (baseData.fio) {
-        this.selectedType = 'fio'
-      } else if (baseData.iozone) {
-        this.selectedType = 'iozone'
-      } else if (baseData.jvm2008) {
-        this.selectedType = 'jvm2008'
-      } else if (baseData.cpu2006) {
-        this.selectedType = 'cpu2006'
-      } else if (baseData.cpu2017) {
-        this.selectedType = 'cpu2017'
+      if (this.selectedType !== "env") {
+        if (this.selectedType === 'stream') {
+          if (baseData.stream) {
+            this.selectedType = 'stream'
+          } else if (baseData.lmbench) {
+            this.selectedType = 'lmbench'
+          } else if (baseData.unixbench) {
+            this.selectedType = 'unixbench'
+          } else if (baseData.fio) {
+            this.selectedType = 'fio'
+          } else if (baseData.iozone) {
+            this.selectedType = 'iozone'
+          } else if (baseData.jvm2008) {
+            this.selectedType = 'jvm2008'
+          } else if (baseData.cpu2006) {
+            this.selectedType = 'cpu2006'
+          } else if (baseData.cpu2017) {
+            this.selectedType = 'cpu2017'
+          }
+        }
       }
       this.$router.push({name: this.selectedType, "params": {baseId: env_id[0], comparsionIds: comparsionIds}});
     },
     mergeData(){
       const env_id = Object.keys(this.base).map(key => parseInt(key));
       const env_ids = Object.keys(this.compar).map(key => parseInt(key));
-      // const comparsionIds = env_ids.join(',')
       if (env_id.length !== 1 || env_ids.length === 0) {
         ElMessage.error({message: '请选择一条基准数据和至少一条对比数据(合并)', duration: 1000});
         return;
