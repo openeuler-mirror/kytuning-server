@@ -775,7 +775,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                     if key.split("_")[1] == "fp":
                         for key1 in value:
                             data_cpu2017['execute_cmd'] = cpu2017_json.get('execute_cmd')
-                            data_cpu2017['modify_parameters'] = str(cpu2017_json.get('modify_parameters'))[1:-2] if cpu2017_json.get('modify_parameters') else None
+                            data_cpu2017['modify_parameters'] = cpu2017_json.get('modify_parameters')
                             data_cpu2017['dtype'] = "fp"
                             data_cpu2017['tuneType'] = key1
                             data_cpu2017['fp_503_bwaves_r'] = value[key1]['503.bwaves_r']
@@ -803,7 +803,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                     elif key.split("_")[1] == "int":
                         for key1 in value:
                             data_cpu2017['execute_cmd'] = cpu2017_json.get('execute_cmd')
-                            data_cpu2017['modify_parameters'] = str(cpu2017_json.get('modify_parameters'))[1:-2] if cpu2017_json.get('modify_parameters') else None
+                            data_cpu2017['modify_parameters'] = cpu2017_json.get('modify_parameters')
                             data_cpu2017['dtype'] = "int"
                             data_cpu2017['tuneType'] = key1
                             data_cpu2017['int_500_perlbench_r'] = value[key1]['500.perlbench_r']

@@ -570,7 +570,7 @@ class LmbenchViewSet(CusModelViewSet):
             lmbench = {}
             lmbench['env_id'] = request.__dict__['data_lmbench']['env_id']
             lmbench['execute_cmd'] = request.__dict__['data_lmbench'][lmbench_keys].get('execute_cmd')
-            lmbench['modify_parameters'] = str(request.__dict__['data_lmbench'][lmbench_keys].get('modify_parameters'))[1:-2] if request.__dict__['data_lmbench'][lmbench_keys].get('modify_parameters') else None
+            lmbench['modify_parameters'] = request.__dict__['data_lmbench'][lmbench_keys].get('modify_parameters')
             # 处理数据，原始数据每个一级标就是一个json，把所有以及字段放到一个json中
             new_lmbench = {}
             for i in lmbench_json:

@@ -176,11 +176,10 @@ class StreamViewSet(CusModelViewSet):
             if k.lower().startswith('stream'):
                 data_stream = {}
                 data_stream['env_id'] = request.__dict__['data_stream']['env_id']
-                # todo 所有的参数 、 cmd 是在哪里保存的
                 data_stream['single_thread'] = '单线程'
                 data_stream['multi_threading'] = '多线程'
                 data_stream['execute_cmd'] = stream_json.get('execute_cmd')
-                data_stream['modify_parameters'] = str(stream_json.get('modify_parameters'))[1:-2] if stream_json.get('modify_parameters') else None
+                data_stream['modify_parameters'] = stream_json.get('modify_parameters')
                 data_stream['single_array_size'] = stream_json['单线程']['Array size']
                 data_stream['single_copy'] = stream_json['单线程']['Copy']
                 data_stream['single_scale'] = stream_json['单线程']['Scale']

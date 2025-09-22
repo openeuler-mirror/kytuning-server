@@ -299,7 +299,7 @@ class Jvm2008ViewSet(CusModelViewSet):
                 data_jvm2008['env_id'] = request.__dict__['data_jvm2008']['env_id']
                 data_jvm2008['tune_type'] = tune_type
                 data_jvm2008['execute_cmd'] = jvm2008_json.get('execute_cmd')
-                data_jvm2008['modify_parameters'] = str(jvm2008_json.get('modify_parameters'))[1:-2] if jvm2008_json.get('modify_parameters') else None
+                data_jvm2008['modify_parameters'] = jvm2008_json.get('modify_parameters')
                 data_jvm2008['mark_name'] = k[-3:]
                 data_jvm2008['compiler'] = jvm2008_json['items'][tune_type]['compiler']
                 data_jvm2008['compress'] = jvm2008_json['items'][tune_type]['compress']
