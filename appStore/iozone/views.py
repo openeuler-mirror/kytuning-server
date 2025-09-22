@@ -324,8 +324,8 @@ class IozoneViewSet(CusModelViewSet):
             if k.lower().startswith('iozone'):
                 data_iozone = {}
                 data_iozone['env_id'] = request.__dict__['data_iozone']['env_id']
-                data_iozone['execute_cmd'] = "xxx"
-                data_iozone['modify_parameters'] = "xxx"
+                data_iozone['execute_cmd'] = iozone_json.get('execute_cmd')
+                data_iozone['modify_parameters'] = str(iozone_json.get('modify_parameters'))[1:-2] if iozone_json.get('modify_parameters') else None
                 data_iozone['testcase_name'] = k.split('-')[-3]
                 data_iozone['mark_name'] = k[-3:]
                 data_iozone['file_size'] = iozone_json['测试记录'][0]['文件大小']

@@ -182,8 +182,8 @@ class FioViewSet(CusModelViewSet):
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
-            datas[1]['column' + str(column_index)] = serializer_[0].execute_cmd
-            datas[2]['column' + str(column_index)] = serializer_[0].modify_parameters
+            datas[1]['column' + str(column_index)] = ""
+            datas[2]['column' + str(column_index)] = ""
             for i in range(3, len(datas)):
                 datas[i]['column' + str(column_index)] = None
             for value in average_datas:
@@ -277,8 +277,8 @@ class FioViewSet(CusModelViewSet):
             data_fio = {}
             if k.lower().startswith('fio'):
                 data_fio['env_id'] = request.__dict__['data_fio']['env_id']
-                data_fio['execute_cmd'] = 'xx'
-                data_fio['modify_parameters'] = 'xx'
+                data_fio['execute_cmd'] = fio_json.get('execute_cmd')
+                data_fio['modify_parameters'] = str(fio_json.get('modify_parameters'))[1:-2] if fio_json.get('modify_parameters') else None
                 data_fio['mark_name'] = k[-3:]
                 data_fio['rw'] = fio_json['rw']
                 data_fio['bs'] = fio_json['items']['bs']
