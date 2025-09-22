@@ -74,7 +74,6 @@ class FioViewSet(CusModelViewSet):
                 datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
                 # 增加数据部分
                 # 先初始化所有数据为空
-                # todo 后期查看之前代码是如何实现的
                 for i in range(4,len(datas)):
                     datas[i]['column' + str(column_index)] = None
                 for value in temp_datas:
@@ -286,7 +285,7 @@ class FioViewSet(CusModelViewSet):
             if k.lower().startswith('fio'):
                 data_fio['env_id'] = request.__dict__['data_fio']['env_id']
                 data_fio['execute_cmd'] = fio_json.get('execute_cmd')
-                data_fio['modify_parameters'] = str(fio_json.get('modify_parameters'))[1:-2] if fio_json.get('modify_parameters') else None
+                data_fio['modify_parameters'] = fio_json.get('modify_parameters')
                 data_fio['mark_name'] = k[-3:]
                 data_fio['rw'] = fio_json['rw']
                 data_fio['bs'] = fio_json['items']['bs']
