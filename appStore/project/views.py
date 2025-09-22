@@ -44,7 +44,14 @@ class ProjectViewSet(CusModelViewSet):
         :param kwargs:
         :return:
         """
-        project_queryset = Project.objects.all()
+        baseId = request.GET.get('baseId',None)
+        comparsionIds = request.GET.get('comparsionIds',None)
+        if comparsionIds:
+            baseId = baseId + ',' + comparsionIds
+        if baseId:
+            project_queryset = Project.objects.filter(env_id__in=(baseId.split(',')))
+        else:
+            project_queryset = Project.objects.all()
         if not project_queryset:
             return json_response({}, status.HTTP_204_NO_CONTENT, '未查询到project')
         serializer = self.get_serializer(project_queryset, many=True)
@@ -82,6 +89,10 @@ class ProjectViewSet(CusModelViewSet):
     def merge_data(self, request, *args, **kwargs):
         env_id = request.data.get('env_id', None)
         env_ids = request.data.get('env_ids', None)
+        user_name = Project.objects.filter(id=env_id[0]).first().user_name
+        if not (request.user.is_superuser or request.user.chinese_name == user_name):
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '只能合并自己管理的数据')
+
         # 1、判断是否属于同一个项目等
         base_project = Project.objects.filter(env_id=env_id[0]).first()
         project_names = list(set([d.project_name for d in Project.objects.filter(env_id__in=env_ids)]))
