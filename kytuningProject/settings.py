@@ -111,7 +111,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': 3306,
         'USER': 'kytuning',
-        'PASSWORD': 'Kylin123',
+        'PASSWORD': '********',
         'OPTIONS': {
             'sql_mode': 'traditional',
         }
