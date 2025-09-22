@@ -88,9 +88,9 @@ export default {
       // 在这里处理子组件的数据
     },
     tableRowClassName({rowIndex}) {
-        if (rowIndex === 15) {
+        if (rowIndex === 16) {
           return 'warning-row';
-        } else if (rowIndex === 28) {
+        } else if (rowIndex === 29) {
           return 'success-row';
         }
         return '';

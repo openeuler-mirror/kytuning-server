@@ -9,6 +9,7 @@ import numpy as np
 # Create your views here.
 from rest_framework import status
 
+from appStore.project.models import Project
 from appStore.stream.models import Stream
 from appStore.stream.serializers import StreamSerializer
 from appStore.utils.common import json_response, get_error_message
@@ -26,23 +27,26 @@ class StreamViewSet(CusModelViewSet):
         if len(serializer) == 0 or len(serializer) == 1:
             if len(serializer) == 0:
                 datas[0]['column' + str(column_index)] = 'Stream#' + str(title_index)
-                for i in range(1, 13):
+                for i in range(1, 14):
                     datas[i]['column' + str(column_index)] = None
             else:
                 # 基准数据和对比数据的全部数据
                 datas[0]['column' + str(column_index)] = 'Stream#' + str(title_index)
-                datas[1]['column' + str(column_index)] = serializer.first().execute_cmd
-                datas[2]['column' + str(column_index)] = serializer.first().modify_parameters
-                datas[3]['column' + str(column_index)] = serializer.first().single_array_size
-                datas[4]['column' + str(column_index)] = serializer.first().single_copy
-                datas[5]['column' + str(column_index)] = serializer.first().single_scale
-                datas[6]['column' + str(column_index)] = serializer.first().single_add
-                datas[7]['column' + str(column_index)] = serializer.first().single_triad
-                datas[8]['column' + str(column_index)] = serializer.first().multi_array_size
-                datas[9]['column' + str(column_index)] = serializer.first().multi_copy
-                datas[10]['column' + str(column_index)] = serializer.first().multi_scale
-                datas[11]['column' + str(column_index)] = serializer.first().multi_add
-                datas[12]['column' + str(column_index)] = serializer.first().multi_triad
+                print(serializer.first().env_id )
+                print(Project.objects.filter(env_id=serializer.first().env_id).first().project_name)
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.first().env_id).first().project_name
+                datas[2]['column' + str(column_index)] = serializer.first().execute_cmd
+                datas[3]['column' + str(column_index)] = serializer.first().modify_parameters
+                datas[4]['column' + str(column_index)] = serializer.first().single_array_size
+                datas[5]['column' + str(column_index)] = serializer.first().single_copy
+                datas[6]['column' + str(column_index)] = serializer.first().single_scale
+                datas[7]['column' + str(column_index)] = serializer.first().single_add
+                datas[8]['column' + str(column_index)] = serializer.first().single_triad
+                datas[9]['column' + str(column_index)] = serializer.first().multi_array_size
+                datas[10]['column' + str(column_index)] = serializer.first().multi_copy
+                datas[11]['column' + str(column_index)] = serializer.first().multi_scale
+                datas[12]['column' + str(column_index)] = serializer.first().multi_add
+                datas[13]['column' + str(column_index)] = serializer.first().multi_triad
             column_index += 1
             title_index += 1
             title = '平均值(基准数据)' if not base_column_index else '平均值'
@@ -50,7 +54,7 @@ class StreamViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 13):
+            for i in range(4, 14):
                 datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
         else:
@@ -81,18 +85,19 @@ class StreamViewSet(CusModelViewSet):
             # 基准数据和对比数据的全部数据
             for data in serializer:
                 datas[0]['column' + str(column_index)] = 'Stream#' + str(title_index)
-                datas[1]['column' + str(column_index)] = data.execute_cmd
-                datas[2]['column' + str(column_index)] = data.modify_parameters
-                datas[3]['column' + str(column_index)] = data.single_array_size
-                datas[4]['column' + str(column_index)] = data.single_copy
-                datas[5]['column' + str(column_index)] = data.single_scale
-                datas[6]['column' + str(column_index)] = data.single_add
-                datas[7]['column' + str(column_index)] = data.single_triad
-                datas[8]['column' + str(column_index)] = data.multi_array_size
-                datas[9]['column' + str(column_index)] = data.multi_copy
-                datas[10]['column' + str(column_index)] = data.multi_scale
-                datas[11]['column' + str(column_index)] = data.multi_add
-                datas[12]['column' + str(column_index)] = data.multi_triad
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.first().env_id).first().project_name
+                datas[2]['column' + str(column_index)] = data.execute_cmd
+                datas[3]['column' + str(column_index)] = data.modify_parameters
+                datas[4]['column' + str(column_index)] = data.single_array_size
+                datas[5]['column' + str(column_index)] = data.single_copy
+                datas[6]['column' + str(column_index)] = data.single_scale
+                datas[7]['column' + str(column_index)] = data.single_add
+                datas[8]['column' + str(column_index)] = data.single_triad
+                datas[9]['column' + str(column_index)] = data.multi_array_size
+                datas[10]['column' + str(column_index)] = data.multi_copy
+                datas[11]['column' + str(column_index)] = data.multi_scale
+                datas[12]['column' + str(column_index)] = data.multi_add
+                datas[13]['column' + str(column_index)] = data.multi_triad
                 column_index += 1
                 title_index += 1
             title = '平均值(基准数据)' if not base_column_index else '平均值'
@@ -100,16 +105,17 @@ class StreamViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            datas[3]['column' + str(column_index)] = average_single_array_size
-            datas[4]['column' + str(column_index)] = average_single_copy
-            datas[5]['column' + str(column_index)] = average_single_scale
-            datas[6]['column' + str(column_index)] = average_single_add
-            datas[7]['column' + str(column_index)] = average_single_triad
-            datas[8]['column' + str(column_index)] = average_multi_array_size
-            datas[9]['column' + str(column_index)] = average_multi_copy
-            datas[10]['column' + str(column_index)] = average_multi_scale
-            datas[11]['column' + str(column_index)] = average_multi_add
-            datas[12]['column' + str(column_index)] = average_multi_triad
+            datas[3]['column' + str(column_index)] = ''
+            datas[4]['column' + str(column_index)] = average_single_array_size
+            datas[5]['column' + str(column_index)] = average_single_copy
+            datas[6]['column' + str(column_index)] = average_single_scale
+            datas[7]['column' + str(column_index)] = average_single_add
+            datas[8]['column' + str(column_index)] = average_single_triad
+            datas[9]['column' + str(column_index)] = average_multi_array_size
+            datas[10]['column' + str(column_index)] = average_multi_copy
+            datas[11]['column' + str(column_index)] = average_multi_scale
+            datas[12]['column' + str(column_index)] = average_multi_add
+            datas[13]['column' + str(column_index)] = average_multi_triad
             column_index += 1
 
         if not base_column_index:
@@ -120,7 +126,8 @@ class StreamViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = '对比值'
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 13):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 14):
                 datas[i]['column' + str(column_index)] = \
                     "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
                         'column' + str(base_column_index)]) / datas[i][
@@ -144,13 +151,13 @@ class StreamViewSet(CusModelViewSet):
         base_queryset = Stream.objects.filter(env_id=env_id).all()
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '列表')
-        datas = [{'column1': 'Stream', 'column2': ''}, {'column1': '执行命令', 'column2': ''},
-                 {'column1': '修改参数', 'column2': ''}, {'column1': '单线程', 'column2': 'Array size'},
-                 {'column1': '单线程', 'column2': 'Copy'}, {'column1': '单线程', 'column2': 'Scale'},
-                 {'column1': '单线程', 'column2': 'Add'}, {'column1': '单线程', 'column2': 'Triad'},
-                 {'column1': '多线程', 'column2': 'Array size'}, {'column1': '多线程', 'column2': 'Copy'},
-                 {'column1': '多线程', 'column2': 'Scale'}, {'column1': '多线程', 'column2': 'Add'},
-                 {'column1': '多线程', 'column2': 'Triad'}, ]
+        datas = [{'column1': 'Stream', 'column2': ''}, {'column1': '项目名称', 'column2': ''},
+                 {'column1': '执行命令', 'column2': ''}, {'column1': '修改参数', 'column2': ''},
+                 {'column1': '单线程', 'column2': 'Array size'}, {'column1': '单线程', 'column2': 'Copy'},
+                 {'column1': '单线程', 'column2': 'Scale'}, {'column1': '单线程', 'column2': 'Add'},
+                 {'column1': '单线程', 'column2': 'Triad'}, {'column1': '多线程', 'column2': 'Array size'},
+                 {'column1': '多线程', 'column2': 'Copy'}, {'column1': '多线程', 'column2': 'Scale'},
+                 {'column1': '多线程', 'column2': 'Add'}, {'column1': '多线程', 'column2': 'Triad'}, ]
         title_index = 1
         column_index = 3
         base_column_index = ''

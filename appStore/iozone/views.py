@@ -12,6 +12,7 @@ from rest_framework import status
 
 from appStore.iozone.models import Iozone
 from appStore.iozone.serializers import IozoneSerializer
+from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -32,8 +33,9 @@ class IozoneViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = 'Iozone#' + str(title_index)
             datas[1]['column' + str(column_index)] = None
             datas[2]['column' + str(column_index)] = None
+            datas[3]['column' + str(column_index)] = None
             # 初始化所有数据为None
-            for i in range(3, 21):
+            for i in range(4, 22):
                 datas[i]['column' + str(column_index)] = None
             column_index += 1
             title_index += 1
@@ -42,7 +44,8 @@ class IozoneViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 21):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 22):
                 datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
         elif len(groups) == 1:
@@ -62,59 +65,61 @@ class IozoneViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = '(file size)'
                 datas[1]['column' + str(column_index)] = ''
                 datas[2]['column' + str(column_index)] = ''
+                datas[3]['column' + str(column_index)] = ''
                 for data in average_datas:
                     if data['testcase_name'] == 'double':
-                        datas[3]['column' + str(column_index)] = data['file_size']
                         datas[4]['column' + str(column_index)] = data['file_size']
                         datas[5]['column' + str(column_index)] = data['file_size']
                         datas[6]['column' + str(column_index)] = data['file_size']
                         datas[7]['column' + str(column_index)] = data['file_size']
                         datas[8]['column' + str(column_index)] = data['file_size']
-                    elif data['testcase_name'] == 'full':
                         datas[9]['column' + str(column_index)] = data['file_size']
+                    elif data['testcase_name'] == 'full':
                         datas[10]['column' + str(column_index)] = data['file_size']
                         datas[11]['column' + str(column_index)] = data['file_size']
                         datas[12]['column' + str(column_index)] = data['file_size']
                         datas[13]['column' + str(column_index)] = data['file_size']
                         datas[14]['column' + str(column_index)] = data['file_size']
-                    elif data['testcase_name'] == 'half':
                         datas[15]['column' + str(column_index)] = data['file_size']
+                    elif data['testcase_name'] == 'half':
                         datas[16]['column' + str(column_index)] = data['file_size']
                         datas[17]['column' + str(column_index)] = data['file_size']
                         datas[18]['column' + str(column_index)] = data['file_size']
                         datas[19]['column' + str(column_index)] = data['file_size']
                         datas[20]['column' + str(column_index)] = data['file_size']
+                        datas[21]['column' + str(column_index)] = data['file_size']
                 column_index += 1
 
             # 基准数据和对比数据的全部数据
             datas[0]['column' + str(column_index)] = 'Iozone#' + str(title_index)
-            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.data[0]['env_id']).first().project_name
+            datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+            datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
             for data in average_datas:
                 if data['testcase_name'] == 'double':
                     # 增加double数据
-                    datas[3]['column' + str(column_index)] = data['read_test']
-                    datas[4]['column' + str(column_index)] = data['reread_test']
-                    datas[5]['column' + str(column_index)] = data['random_read_test']
-                    datas[6]['column' + str(column_index)] = data['write_test']
-                    datas[7]['column' + str(column_index)] = data['rewrite_test']
-                    datas[8]['column' + str(column_index)] = data['random_write_test']
+                    datas[4]['column' + str(column_index)] = data['read_test']
+                    datas[5]['column' + str(column_index)] = data['reread_test']
+                    datas[6]['column' + str(column_index)] = data['random_read_test']
+                    datas[7]['column' + str(column_index)] = data['write_test']
+                    datas[8]['column' + str(column_index)] = data['rewrite_test']
+                    datas[9]['column' + str(column_index)] = data['random_write_test']
                 elif data['testcase_name']== 'full':
                     # 增加full数据
-                    datas[9]['column' + str(column_index)] = data['read_test']
-                    datas[10]['column' + str(column_index)] = data['reread_test']
-                    datas[11]['column' + str(column_index)] = data['random_read_test']
-                    datas[12]['column' + str(column_index)] = data['write_test']
-                    datas[13]['column' + str(column_index)] = data['rewrite_test']
-                    datas[14]['column' + str(column_index)] = data['random_write_test']
+                    datas[10]['column' + str(column_index)] = data['read_test']
+                    datas[11]['column' + str(column_index)] = data['reread_test']
+                    datas[12]['column' + str(column_index)] = data['random_read_test']
+                    datas[13]['column' + str(column_index)] = data['write_test']
+                    datas[14]['column' + str(column_index)] = data['rewrite_test']
+                    datas[15]['column' + str(column_index)] = data['random_write_test']
                 elif data['testcase_name'] == 'half':
                     # 增加half数据
-                    datas[15]['column' + str(column_index)] = data['read_test']
-                    datas[16]['column' + str(column_index)] = data['reread_test']
-                    datas[17]['column' + str(column_index)] = data['random_read_test']
-                    datas[18]['column' + str(column_index)] = data['write_test']
-                    datas[19]['column' + str(column_index)] = data['rewrite_test']
-                    datas[20]['column' + str(column_index)] = data['random_write_test']
+                    datas[16]['column' + str(column_index)] = data['read_test']
+                    datas[17]['column' + str(column_index)] = data['reread_test']
+                    datas[18]['column' + str(column_index)] = data['random_read_test']
+                    datas[19]['column' + str(column_index)] = data['write_test']
+                    datas[20]['column' + str(column_index)] = data['rewrite_test']
+                    datas[21]['column' + str(column_index)] = data['random_write_test']
             column_index += 1
             title_index += 1
             # 基准数据和对比数据的平均数据
@@ -122,7 +127,8 @@ class IozoneViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 21):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 22):
                 datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
         else:
@@ -161,28 +167,29 @@ class IozoneViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = '(file size)'
                 datas[1]['column' + str(column_index)] = ''
                 datas[2]['column' + str(column_index)] = ''
+                datas[3]['column' + str(column_index)] = ''
                 for data in average_datas:
                     if data['testcase_name'] == 'double':
-                        datas[3]['column' + str(column_index)] = data['double_file_size']
                         datas[4]['column' + str(column_index)] = data['double_file_size']
                         datas[5]['column' + str(column_index)] = data['double_file_size']
                         datas[6]['column' + str(column_index)] = data['double_file_size']
                         datas[7]['column' + str(column_index)] = data['double_file_size']
                         datas[8]['column' + str(column_index)] = data['double_file_size']
+                        datas[9]['column' + str(column_index)] = data['double_file_size']
                     elif data['testcase_name'] == 'full':
-                        datas[9]['column' + str(column_index)] = data['full_file_size']
                         datas[10]['column' + str(column_index)] = data['full_file_size']
                         datas[11]['column' + str(column_index)] = data['full_file_size']
                         datas[12]['column' + str(column_index)] = data['full_file_size']
                         datas[13]['column' + str(column_index)] = data['full_file_size']
                         datas[14]['column' + str(column_index)] = data['full_file_size']
+                        datas[15]['column' + str(column_index)] = data['full_file_size']
                     elif data['testcase_name'] == 'half':
-                        datas[15]['column' + str(column_index)] = data['half_file_size']
                         datas[16]['column' + str(column_index)] = data['half_file_size']
                         datas[17]['column' + str(column_index)] = data['half_file_size']
                         datas[18]['column' + str(column_index)] = data['half_file_size']
                         datas[19]['column' + str(column_index)] = data['half_file_size']
                         datas[20]['column' + str(column_index)] = data['half_file_size']
+                        datas[21]['column' + str(column_index)] = data['half_file_size']
                 column_index += 1
 
             # 基准数据和对比数据的全部数据
@@ -190,68 +197,70 @@ class IozoneViewSet(CusModelViewSet):
                 temp_mark_datas = serializer_.filter(mark_name=mark_name)
                 # 基准数据和对比数据的全部数据
                 datas[0]['column' + str(column_index)] = 'Iozone#' + str(title_index)
-                datas[1]['column' + str(column_index)] = temp_mark_datas[0].execute_cmd
-                datas[2]['column' + str(column_index)] = temp_mark_datas[0].modify_parameters
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=temp_mark_datas[0].env_id).first().project_name
+                datas[2]['column' + str(column_index)] = temp_mark_datas[0].execute_cmd
+                datas[3]['column' + str(column_index)] = temp_mark_datas[0].modify_parameters
                 for data in temp_mark_datas:
                     if data.testcase_name == 'double':
                         # 增加double数据
-                        datas[3]['column' + str(column_index)] = data.read_test
-                        datas[4]['column' + str(column_index)] = data.reread_test
-                        datas[5]['column' + str(column_index)] = data.random_read_test
-                        datas[6]['column' + str(column_index)] = data.write_test
-                        datas[7]['column' + str(column_index)] = data.rewrite_test
-                        datas[8]['column' + str(column_index)] = data.random_write_test
+                        datas[4]['column' + str(column_index)] = data.read_test
+                        datas[5]['column' + str(column_index)] = data.reread_test
+                        datas[6]['column' + str(column_index)] = data.random_read_test
+                        datas[7]['column' + str(column_index)] = data.write_test
+                        datas[8]['column' + str(column_index)] = data.rewrite_test
+                        datas[9]['column' + str(column_index)] = data.random_write_test
                     elif data.testcase_name == 'full':
                         # 增加full数据
-                        datas[9]['column' + str(column_index)] = data.read_test
-                        datas[10]['column' + str(column_index)] = data.reread_test
-                        datas[11]['column' + str(column_index)] = data.random_read_test
-                        datas[12]['column' + str(column_index)] = data.write_test
-                        datas[13]['column' + str(column_index)] = data.rewrite_test
-                        datas[14]['column' + str(column_index)] = data.random_write_test
+                        datas[10]['column' + str(column_index)] = data.read_test
+                        datas[11]['column' + str(column_index)] = data.reread_test
+                        datas[12]['column' + str(column_index)] = data.random_read_test
+                        datas[13]['column' + str(column_index)] = data.write_test
+                        datas[14]['column' + str(column_index)] = data.rewrite_test
+                        datas[15]['column' + str(column_index)] = data.random_write_test
                     elif data.testcase_name == 'half':
                         # 增加half数据
-                        datas[15]['column' + str(column_index)] = data.read_test
-                        datas[16]['column' + str(column_index)] = data.reread_test
-                        datas[17]['column' + str(column_index)] = data.random_read_test
-                        datas[18]['column' + str(column_index)] = data.write_test
-                        datas[19]['column' + str(column_index)] = data.rewrite_test
-                        datas[20]['column' + str(column_index)] = data.random_write_test
+                        datas[16]['column' + str(column_index)] = data.read_test
+                        datas[17]['column' + str(column_index)] = data.reread_test
+                        datas[18]['column' + str(column_index)] = data.random_read_test
+                        datas[19]['column' + str(column_index)] = data.write_test
+                        datas[20]['column' + str(column_index)] = data.rewrite_test
+                        datas[21]['column' + str(column_index)] = data.random_write_test
                 column_index += 1
                 title_index += 1
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
-            datas[1]['column' + str(column_index)] = serializer_[0].execute_cmd
-            datas[2]['column' + str(column_index)] = serializer_[0].modify_parameters
+            datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer_[0].env_id).first().project_name
+            datas[2]['column' + str(column_index)] = serializer_[0].execute_cmd
+            datas[3]['column' + str(column_index)] = serializer_[0].modify_parameters
             # 因为当没有某种数据的时候会出现column为增加的情况，所以需要先初始化一下所有的column为空
-            for i in range(3,21):
+            for i in range(4,22):
                 datas[i]['column' + str(column_index)] = None
             for data in average_datas:
                 if data['testcase_name'] == 'double':
                     # 增加double数据
-                    datas[3]['column' + str(column_index)] = data['read_test']
-                    datas[4]['column' + str(column_index)] = data['reread_test']
-                    datas[5]['column' + str(column_index)] = data['random_read_test']
-                    datas[6]['column' + str(column_index)] = data['write_test']
-                    datas[7]['column' + str(column_index)] = data['rewrite_test']
-                    datas[8]['column' + str(column_index)] = data['random_write_test']
+                    datas[4]['column' + str(column_index)] = data['read_test']
+                    datas[5]['column' + str(column_index)] = data['reread_test']
+                    datas[6]['column' + str(column_index)] = data['random_read_test']
+                    datas[7]['column' + str(column_index)] = data['write_test']
+                    datas[8]['column' + str(column_index)] = data['rewrite_test']
+                    datas[9]['column' + str(column_index)] = data['random_write_test']
                 elif data['testcase_name'] == 'full':
                     # 增加full数据
-                    datas[9]['column' + str(column_index)] = data['read_test']
-                    datas[10]['column' + str(column_index)] = data['reread_test']
-                    datas[11]['column' + str(column_index)] = data['random_read_test']
-                    datas[12]['column' + str(column_index)] = data['write_test']
-                    datas[13]['column' + str(column_index)] = data['rewrite_test']
-                    datas[14]['column' + str(column_index)] = data['random_write_test']
+                    datas[10]['column' + str(column_index)] = data['read_test']
+                    datas[11]['column' + str(column_index)] = data['reread_test']
+                    datas[12]['column' + str(column_index)] = data['random_read_test']
+                    datas[13]['column' + str(column_index)] = data['write_test']
+                    datas[14]['column' + str(column_index)] = data['rewrite_test']
+                    datas[15]['column' + str(column_index)] = data['random_write_test']
                 elif data['testcase_name'] == 'half':
                     # 增加half数据
-                    datas[15]['column' + str(column_index)] = data['read_test']
-                    datas[16]['column' + str(column_index)] = data['reread_test']
-                    datas[17]['column' + str(column_index)] = data['random_read_test']
-                    datas[18]['column' + str(column_index)] = data['write_test']
-                    datas[19]['column' + str(column_index)] = data['rewrite_test']
-                    datas[20]['column' + str(column_index)] = data['random_write_test']
+                    datas[16]['column' + str(column_index)] = data['read_test']
+                    datas[17]['column' + str(column_index)] = data['reread_test']
+                    datas[18]['column' + str(column_index)] = data['random_read_test']
+                    datas[19]['column' + str(column_index)] = data['write_test']
+                    datas[20]['column' + str(column_index)] = data['rewrite_test']
+                    datas[21]['column' + str(column_index)] = data['random_write_test']
             column_index += 1
         if not base_column_index:
         # 记录基准数据
@@ -261,7 +270,8 @@ class IozoneViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = '对比值'
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 21):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 22):
                 datas[i]['column' + str(column_index)] = \
                     "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
             column_index += 1
@@ -285,6 +295,7 @@ class IozoneViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_200_OK, '未获取到数据')
         datas = [
             {'column1': 'Iozone', 'column2': ''},
+            {'column1': '项目名称', 'column2': ''},
             {'column1': '执行命令', 'column2': ''},
             {'column1': '修改参数', 'column2': ''},
             {'column1': 'double-读测试（KB/s）'},

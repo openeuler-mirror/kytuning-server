@@ -9,6 +9,7 @@
 import numpy as np
 from rest_framework import status
 
+from appStore.project.models import Project
 from appStore.unixbench.models import Unixbench
 from appStore.unixbench.serializers import UnixbenchSerializer
 from appStore.utils.common import json_response, get_error_message
@@ -60,18 +61,20 @@ class UnixbenchViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = 'Unixbench#' + str(title_index)
                 datas[1]['column' + str(column_index)] = None
                 datas[2]['column' + str(column_index)] = None
+                datas[3]['column' + str(column_index)] = None
                 # 初始化所有数据为None
-                for i in range(3, 29):
+                for i in range(4, 30):
                     datas[i]['column' + str(column_index)] = None
                 column_index += 1
                 title_index += 1
             else:
                 # 基准数据和对比数据的全部数据
                 datas[0]['column' + str(column_index)] = 'Unixbench#' + str(title_index)
-                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.data[0]['env_id']).first().project_name
+                datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+                datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
                 # 初始化所有数据为None
-                for i in range(3, 29):
+                for i in range(4, 30):
                     datas[i]['column' + str(column_index)] = None
                 for data in serializer.data:
                     if data['thread'] == '单线程':
@@ -104,32 +107,32 @@ class UnixbenchViewSet(CusModelViewSet):
                         multi_shell_scripts_8 = data['shell_scripts_8']
                         multi_system_call_overhead = data['system_call_overhead']
                         multi_index_score = data['index_score']
-                datas[3]['column' + str(column_index)] = single_Dhrystone
-                datas[4]['column' + str(column_index)] = single_Double_Precision
-                datas[5]['column' + str(column_index)] = single_execl_throughput
-                datas[6]['column' + str(column_index)] = single_file_copy_1024
-                datas[7]['column' + str(column_index)] = single_file_copy_256
-                datas[8]['column' + str(column_index)] = single_file_copy_4096
-                datas[9]['column' + str(column_index)] = single_pipe_throughput
-                datas[10]['column' + str(column_index)] = single_pipe_based
-                datas[11]['column' + str(column_index)] = single_process_creation
-                datas[12]['column' + str(column_index)] = single_shell_scripts_1
-                datas[13]['column' + str(column_index)] = single_shell_scripts_8
-                datas[14]['column' + str(column_index)] = single_system_call_overhead
-                datas[15]['column' + str(column_index)] = single_index_score
-                datas[16]['column' + str(column_index)] = multi_Dhrystone
-                datas[17]['column' + str(column_index)] = multi_Double_Precision
-                datas[18]['column' + str(column_index)] = multi_execl_throughput
-                datas[19]['column' + str(column_index)] = multi_file_copy_1024
-                datas[20]['column' + str(column_index)] = multi_file_copy_256
-                datas[21]['column' + str(column_index)] = multi_file_copy_4096
-                datas[22]['column' + str(column_index)] = multi_pipe_throughput
-                datas[23]['column' + str(column_index)] = multi_pipe_based
-                datas[24]['column' + str(column_index)] = multi_process_creation
-                datas[25]['column' + str(column_index)] = multi_shell_scripts_1
-                datas[26]['column' + str(column_index)] = multi_shell_scripts_8
-                datas[27]['column' + str(column_index)] = multi_system_call_overhead
-                datas[28]['column' + str(column_index)] = multi_index_score
+                datas[4]['column' + str(column_index)] = single_Dhrystone
+                datas[5]['column' + str(column_index)] = single_Double_Precision
+                datas[6]['column' + str(column_index)] = single_execl_throughput
+                datas[7]['column' + str(column_index)] = single_file_copy_1024
+                datas[8]['column' + str(column_index)] = single_file_copy_256
+                datas[9]['column' + str(column_index)] = single_file_copy_4096
+                datas[10]['column' + str(column_index)] = single_pipe_throughput
+                datas[11]['column' + str(column_index)] = single_pipe_based
+                datas[12]['column' + str(column_index)] = single_process_creation
+                datas[13]['column' + str(column_index)] = single_shell_scripts_1
+                datas[14]['column' + str(column_index)] = single_shell_scripts_8
+                datas[15]['column' + str(column_index)] = single_system_call_overhead
+                datas[16]['column' + str(column_index)] = single_index_score
+                datas[17]['column' + str(column_index)] = multi_Dhrystone
+                datas[18]['column' + str(column_index)] = multi_Double_Precision
+                datas[19]['column' + str(column_index)] = multi_execl_throughput
+                datas[20]['column' + str(column_index)] = multi_file_copy_1024
+                datas[21]['column' + str(column_index)] = multi_file_copy_256
+                datas[22]['column' + str(column_index)] = multi_file_copy_4096
+                datas[23]['column' + str(column_index)] = multi_pipe_throughput
+                datas[24]['column' + str(column_index)] = multi_pipe_based
+                datas[25]['column' + str(column_index)] = multi_process_creation
+                datas[26]['column' + str(column_index)] = multi_shell_scripts_1
+                datas[27]['column' + str(column_index)] = multi_shell_scripts_8
+                datas[28]['column' + str(column_index)] = multi_system_call_overhead
+                datas[29]['column' + str(column_index)] = multi_index_score
                 column_index += 1
                 title_index += 1
             title = '平均值(基准数据)' if not base_column_index else '平均值'
@@ -137,7 +140,8 @@ class UnixbenchViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 29):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 30):
                 datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
         else:
@@ -207,10 +211,11 @@ class UnixbenchViewSet(CusModelViewSet):
                 temp_datas = serializer_.filter(mark_name=mark_name)
                 # 基准数据和对比数据的全部数据
                 datas[0]['column' + str(column_index)] = 'Unixbench#' + str(title_index)
-                datas[1]['column' + str(column_index)] = temp_datas[0].execute_cmd
-                datas[2]['column' + str(column_index)] = temp_datas[0].modify_parameters
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=temp_datas[0].env_id).first().project_name
+                datas[2]['column' + str(column_index)] = temp_datas[0].execute_cmd
+                datas[3]['column' + str(column_index)] = temp_datas[0].modify_parameters
                 # 初始化所有数据为None
-                for i in range(3, 29):
+                for i in range(4, 30):
                     datas[i]['column' + str(column_index)] = None
                 for data in temp_datas:
                     if data.thread == '单线程':
@@ -243,32 +248,32 @@ class UnixbenchViewSet(CusModelViewSet):
                         multi_shell_scripts_8 = data.shell_scripts_8
                         multi_system_call_overhead = data.system_call_overhead
                         multi_index_score = data.index_score
-                datas[3]['column' + str(column_index)] = single_Dhrystone
-                datas[4]['column' + str(column_index)] = single_Double_Precision
-                datas[5]['column' + str(column_index)] = single_execl_throughput
-                datas[6]['column' + str(column_index)] = single_file_copy_1024
-                datas[7]['column' + str(column_index)] = single_file_copy_256
-                datas[8]['column' + str(column_index)] = single_file_copy_4096
-                datas[9]['column' + str(column_index)] = single_pipe_throughput
-                datas[10]['column' + str(column_index)] = single_pipe_based
-                datas[11]['column' + str(column_index)] = single_process_creation
-                datas[12]['column' + str(column_index)] = single_shell_scripts_1
-                datas[13]['column' + str(column_index)] = single_shell_scripts_8
-                datas[14]['column' + str(column_index)] = single_system_call_overhead
-                datas[15]['column' + str(column_index)] = single_index_score
-                datas[16]['column' + str(column_index)] = multi_Dhrystone
-                datas[17]['column' + str(column_index)] = multi_Double_Precision
-                datas[18]['column' + str(column_index)] = multi_execl_throughput
-                datas[19]['column' + str(column_index)] = multi_file_copy_1024
-                datas[20]['column' + str(column_index)] = multi_file_copy_256
-                datas[21]['column' + str(column_index)] = multi_file_copy_4096
-                datas[22]['column' + str(column_index)] = multi_pipe_throughput
-                datas[23]['column' + str(column_index)] = multi_pipe_based
-                datas[24]['column' + str(column_index)] = multi_process_creation
-                datas[25]['column' + str(column_index)] = multi_shell_scripts_1
-                datas[26]['column' + str(column_index)] = multi_shell_scripts_8
-                datas[27]['column' + str(column_index)] = multi_system_call_overhead
-                datas[28]['column' + str(column_index)] = multi_index_score
+                datas[4]['column' + str(column_index)] = single_Dhrystone
+                datas[5]['column' + str(column_index)] = single_Double_Precision
+                datas[6]['column' + str(column_index)] = single_execl_throughput
+                datas[7]['column' + str(column_index)] = single_file_copy_1024
+                datas[8]['column' + str(column_index)] = single_file_copy_256
+                datas[9]['column' + str(column_index)] = single_file_copy_4096
+                datas[10]['column' + str(column_index)] = single_pipe_throughput
+                datas[11]['column' + str(column_index)] = single_pipe_based
+                datas[12]['column' + str(column_index)] = single_process_creation
+                datas[13]['column' + str(column_index)] = single_shell_scripts_1
+                datas[14]['column' + str(column_index)] = single_shell_scripts_8
+                datas[15]['column' + str(column_index)] = single_system_call_overhead
+                datas[16]['column' + str(column_index)] = single_index_score
+                datas[17]['column' + str(column_index)] = multi_Dhrystone
+                datas[18]['column' + str(column_index)] = multi_Double_Precision
+                datas[19]['column' + str(column_index)] = multi_execl_throughput
+                datas[20]['column' + str(column_index)] = multi_file_copy_1024
+                datas[21]['column' + str(column_index)] = multi_file_copy_256
+                datas[22]['column' + str(column_index)] = multi_file_copy_4096
+                datas[23]['column' + str(column_index)] = multi_pipe_throughput
+                datas[24]['column' + str(column_index)] = multi_pipe_based
+                datas[25]['column' + str(column_index)] = multi_process_creation
+                datas[26]['column' + str(column_index)] = multi_shell_scripts_1
+                datas[27]['column' + str(column_index)] = multi_shell_scripts_8
+                datas[28]['column' + str(column_index)] = multi_system_call_overhead
+                datas[29]['column' + str(column_index)] = multi_index_score
                 column_index += 1
                 title_index += 1
             title = '平均值(基准数据)' if not base_column_index else '平均值'
@@ -276,32 +281,33 @@ class UnixbenchViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            datas[3]['column' + str(column_index)] = average_single_Dhrystone
-            datas[4]['column' + str(column_index)] = average_single_Double_Precision
-            datas[5]['column' + str(column_index)] = average_single_execl_throughput
-            datas[6]['column' + str(column_index)] = average_single_file_copy_1024
-            datas[7]['column' + str(column_index)] = average_single_file_copy_256
-            datas[8]['column' + str(column_index)] = average_single_file_copy_4096
-            datas[9]['column' + str(column_index)] = average_single_pipe_throughput
-            datas[10]['column' + str(column_index)] = average_single_pipe_based
-            datas[11]['column' + str(column_index)] = average_single_process_creation
-            datas[12]['column' + str(column_index)] = average_single_shell_scripts_1
-            datas[13]['column' + str(column_index)] = average_single_shell_scripts_8
-            datas[14]['column' + str(column_index)] = average_single_system_call_overhead
-            datas[15]['column' + str(column_index)] = average_single_index_score
-            datas[16]['column' + str(column_index)] = average_multi_Dhrystone
-            datas[17]['column' + str(column_index)] = average_multi_Double_Precision
-            datas[18]['column' + str(column_index)] = average_multi_execl_throughput
-            datas[19]['column' + str(column_index)] = average_multi_file_copy_1024
-            datas[20]['column' + str(column_index)] = average_multi_file_copy_256
-            datas[21]['column' + str(column_index)] = average_multi_file_copy_4096
-            datas[22]['column' + str(column_index)] = average_multi_pipe_throughput
-            datas[23]['column' + str(column_index)] = average_multi_pipe_based
-            datas[24]['column' + str(column_index)] = average_multi_process_creation
-            datas[25]['column' + str(column_index)] = average_multi_shell_scripts_1
-            datas[26]['column' + str(column_index)] = average_multi_shell_scripts_8
-            datas[27]['column' + str(column_index)] = average_multi_system_call_overhead
-            datas[28]['column' + str(column_index)] = average_multi_index_score
+            datas[3]['column' + str(column_index)] = ''
+            datas[4]['column' + str(column_index)] = average_single_Dhrystone
+            datas[5]['column' + str(column_index)] = average_single_Double_Precision
+            datas[6]['column' + str(column_index)] = average_single_execl_throughput
+            datas[7]['column' + str(column_index)] = average_single_file_copy_1024
+            datas[8]['column' + str(column_index)] = average_single_file_copy_256
+            datas[9]['column' + str(column_index)] = average_single_file_copy_4096
+            datas[10]['column' + str(column_index)] = average_single_pipe_throughput
+            datas[11]['column' + str(column_index)] = average_single_pipe_based
+            datas[12]['column' + str(column_index)] = average_single_process_creation
+            datas[13]['column' + str(column_index)] = average_single_shell_scripts_1
+            datas[14]['column' + str(column_index)] = average_single_shell_scripts_8
+            datas[15]['column' + str(column_index)] = average_single_system_call_overhead
+            datas[16]['column' + str(column_index)] = average_single_index_score
+            datas[17]['column' + str(column_index)] = average_multi_Dhrystone
+            datas[18]['column' + str(column_index)] = average_multi_Double_Precision
+            datas[19]['column' + str(column_index)] = average_multi_execl_throughput
+            datas[20]['column' + str(column_index)] = average_multi_file_copy_1024
+            datas[21]['column' + str(column_index)] = average_multi_file_copy_256
+            datas[22]['column' + str(column_index)] = average_multi_file_copy_4096
+            datas[23]['column' + str(column_index)] = average_multi_pipe_throughput
+            datas[24]['column' + str(column_index)] = average_multi_pipe_based
+            datas[25]['column' + str(column_index)] = average_multi_process_creation
+            datas[26]['column' + str(column_index)] = average_multi_shell_scripts_1
+            datas[27]['column' + str(column_index)] = average_multi_shell_scripts_8
+            datas[28]['column' + str(column_index)] = average_multi_system_call_overhead
+            datas[29]['column' + str(column_index)] = average_multi_index_score
             column_index += 1
 
         if not base_column_index:
@@ -312,7 +318,8 @@ class UnixbenchViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = '对比值'
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 29):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 30):
                 datas[i]['column' + str(column_index)] = \
                     "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
                         'column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if \
@@ -337,6 +344,7 @@ class UnixbenchViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_200_OK, '列表')
         datas = [
             {'column1': 'Unxibench', 'column2': ''},
+            {'column1': '项目名称', 'column2': ''},
             {'column1': '执行命令', 'column2': ''},
             {'column1': '修改参数', 'column2': ''},
             {'column1': '单线程', 'column2': 'Dhrystone 2 using register variables(lps)'},

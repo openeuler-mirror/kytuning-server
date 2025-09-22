@@ -13,6 +13,7 @@ from rest_framework import status
 
 from appStore.cpu2017.models import Cpu2017
 from appStore.cpu2017.serializers import Cpu2017Serializer
+from appStore.project.models import Project
 from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -36,127 +37,128 @@ class Cpu2017ViewSet(CusModelViewSet):
         if len(groups) == 1:
             # 基准数据和对比数据的全部数据
             datas[0]['column' + str(column_index)] = 'Cpu2017#' + str(title_index)
-            datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-            datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.data[0]['env_id']).first().project_name
+            datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+            datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
             # 初始化所有数据为None
-            for i in range(5, 103):
+            for i in range(6, 104):
                 datas[i]['column' + str(column_index)] = None
             for data in serializer.data:
                 # 判断数据的TuneType确定是base还是peak
                 if data['tuneType'] == 'base':
                     if data['thread'] == '单线程':
                         if data['dtype'] == 'int':
-                            datas[3]['column' + str(column_index)] = data['int_500_perlbench_r']
-                            datas[4]['column' + str(column_index)] = data['int_502_gcc_r']
-                            datas[5]['column' + str(column_index)] = data['int_505_mcf_r']
-                            datas[6]['column' + str(column_index)] = data['int_520_omnetpp_r']
-                            datas[7]['column' + str(column_index)] = data['int_523_xalancbmk_r']
-                            datas[8]['column' + str(column_index)] = data['int_525_x264_r']
-                            datas[9]['column' + str(column_index)] = data['int_531_deepsjeng_r']
-                            datas[10]['column' + str(column_index)] = data['int_541_leela_r']
-                            datas[11]['column' + str(column_index)] = data['int_548_exchange2_r']
-                            datas[12]['column' + str(column_index)] = data['int_557_xz_r']
-                            datas[13]['column' + str(column_index)] = data['int_SPECrate2017_int']
+                            datas[4]['column' + str(column_index)] = data['int_500_perlbench_r']
+                            datas[5]['column' + str(column_index)] = data['int_502_gcc_r']
+                            datas[6]['column' + str(column_index)] = data['int_505_mcf_r']
+                            datas[7]['column' + str(column_index)] = data['int_520_omnetpp_r']
+                            datas[8]['column' + str(column_index)] = data['int_523_xalancbmk_r']
+                            datas[9]['column' + str(column_index)] = data['int_525_x264_r']
+                            datas[10]['column' + str(column_index)] = data['int_531_deepsjeng_r']
+                            datas[11]['column' + str(column_index)] = data['int_541_leela_r']
+                            datas[12]['column' + str(column_index)] = data['int_548_exchange2_r']
+                            datas[13]['column' + str(column_index)] = data['int_557_xz_r']
+                            datas[14]['column' + str(column_index)] = data['int_SPECrate2017_int']
                         elif data['dtype'] == 'fp':
-                            datas[14]['column' + str(column_index)] = data['fp_503_bwaves_r']
-                            datas[15]['column' + str(column_index)] = data['fp_507_cactuBSSN_r']
-                            datas[16]['column' + str(column_index)] = data['fp_508_namd_r']
-                            datas[17]['column' + str(column_index)] = data['fp_510_parest_r']
-                            datas[18]['column' + str(column_index)] = data['fp_511_povray_r']
-                            datas[19]['column' + str(column_index)] = data['fp_519_lbm_r']
-                            datas[20]['column' + str(column_index)] = data['fp_521_wrf_r']
-                            datas[21]['column' + str(column_index)] = data['fp_526_blender_r']
-                            datas[22]['column' + str(column_index)] = data['fp_527_cam4_r']
-                            datas[23]['column' + str(column_index)] = data['fp_538_imagick_r']
-                            datas[24]['column' + str(column_index)] = data['fp_544_nab_r']
-                            datas[25]['column' + str(column_index)] = data['fp_549_fotonik3d_r']
-                            datas[26]['column' + str(column_index)] = data['fp_554_roms_r']
-                            datas[27]['column' + str(column_index)] = data['fp_PECrate2017_fp']
+                            datas[15]['column' + str(column_index)] = data['fp_503_bwaves_r']
+                            datas[16]['column' + str(column_index)] = data['fp_507_cactuBSSN_r']
+                            datas[17]['column' + str(column_index)] = data['fp_508_namd_r']
+                            datas[18]['column' + str(column_index)] = data['fp_510_parest_r']
+                            datas[19]['column' + str(column_index)] = data['fp_511_povray_r']
+                            datas[20]['column' + str(column_index)] = data['fp_519_lbm_r']
+                            datas[21]['column' + str(column_index)] = data['fp_521_wrf_r']
+                            datas[22]['column' + str(column_index)] = data['fp_526_blender_r']
+                            datas[23]['column' + str(column_index)] = data['fp_527_cam4_r']
+                            datas[24]['column' + str(column_index)] = data['fp_538_imagick_r']
+                            datas[25]['column' + str(column_index)] = data['fp_544_nab_r']
+                            datas[26]['column' + str(column_index)] = data['fp_549_fotonik3d_r']
+                            datas[27]['column' + str(column_index)] = data['fp_554_roms_r']
+                            datas[28]['column' + str(column_index)] = data['fp_PECrate2017_fp']
                     elif data['thread'] == '多线程':
                         if data['dtype'] == 'int':
-                            datas[28]['column' + str(column_index)] = data['int_500_perlbench_r']
-                            datas[29]['column' + str(column_index)] = data['int_502_gcc_r']
-                            datas[30]['column' + str(column_index)] = data['int_505_mcf_r']
-                            datas[31]['column' + str(column_index)] = data['int_520_omnetpp_r']
-                            datas[32]['column' + str(column_index)] = data['int_523_xalancbmk_r']
-                            datas[33]['column' + str(column_index)] = data['int_525_x264_r']
-                            datas[34]['column' + str(column_index)] = data['int_531_deepsjeng_r']
-                            datas[35]['column' + str(column_index)] = data['int_541_leela_r']
-                            datas[36]['column' + str(column_index)] = data['int_548_exchange2_r']
-                            datas[37]['column' + str(column_index)] = data['int_557_xz_r']
-                            datas[38]['column' + str(column_index)] = data['int_SPECrate2017_int']
+                            datas[29]['column' + str(column_index)] = data['int_500_perlbench_r']
+                            datas[30]['column' + str(column_index)] = data['int_502_gcc_r']
+                            datas[31]['column' + str(column_index)] = data['int_505_mcf_r']
+                            datas[32]['column' + str(column_index)] = data['int_520_omnetpp_r']
+                            datas[33]['column' + str(column_index)] = data['int_523_xalancbmk_r']
+                            datas[34]['column' + str(column_index)] = data['int_525_x264_r']
+                            datas[35]['column' + str(column_index)] = data['int_531_deepsjeng_r']
+                            datas[36]['column' + str(column_index)] = data['int_541_leela_r']
+                            datas[37]['column' + str(column_index)] = data['int_548_exchange2_r']
+                            datas[38]['column' + str(column_index)] = data['int_557_xz_r']
+                            datas[39]['column' + str(column_index)] = data['int_SPECrate2017_int']
                         elif data['dtype'] == 'fp':
-                            datas[39]['column' + str(column_index)] = data['fp_503_bwaves_r']
-                            datas[40]['column' + str(column_index)] = data['fp_507_cactuBSSN_r']
-                            datas[41]['column' + str(column_index)] = data['fp_508_namd_r']
-                            datas[42]['column' + str(column_index)] = data['fp_510_parest_r']
-                            datas[43]['column' + str(column_index)] = data['fp_511_povray_r']
-                            datas[44]['column' + str(column_index)] = data['fp_519_lbm_r']
-                            datas[45]['column' + str(column_index)] = data['fp_521_wrf_r']
-                            datas[46]['column' + str(column_index)] = data['fp_526_blender_r']
-                            datas[47]['column' + str(column_index)] = data['fp_527_cam4_r']
-                            datas[48]['column' + str(column_index)] = data['fp_538_imagick_r']
-                            datas[49]['column' + str(column_index)] = data['fp_544_nab_r']
-                            datas[50]['column' + str(column_index)] = data['fp_549_fotonik3d_r']
-                            datas[51]['column' + str(column_index)] = data['fp_554_roms_r']
-                            datas[52]['column' + str(column_index)] = data['fp_PECrate2017_fp']
+                            datas[40]['column' + str(column_index)] = data['fp_503_bwaves_r']
+                            datas[41]['column' + str(column_index)] = data['fp_507_cactuBSSN_r']
+                            datas[42]['column' + str(column_index)] = data['fp_508_namd_r']
+                            datas[43]['column' + str(column_index)] = data['fp_510_parest_r']
+                            datas[44]['column' + str(column_index)] = data['fp_511_povray_r']
+                            datas[45]['column' + str(column_index)] = data['fp_519_lbm_r']
+                            datas[46]['column' + str(column_index)] = data['fp_521_wrf_r']
+                            datas[47]['column' + str(column_index)] = data['fp_526_blender_r']
+                            datas[48]['column' + str(column_index)] = data['fp_527_cam4_r']
+                            datas[49]['column' + str(column_index)] = data['fp_538_imagick_r']
+                            datas[50]['column' + str(column_index)] = data['fp_544_nab_r']
+                            datas[51]['column' + str(column_index)] = data['fp_549_fotonik3d_r']
+                            datas[52]['column' + str(column_index)] = data['fp_554_roms_r']
+                            datas[53]['column' + str(column_index)] = data['fp_PECrate2017_fp']
                 elif data['tuneType'] == 'peak':
                     if data['thread'] == '单线程':
                         if data['dtype'] == 'int':
-                            datas[53]['column' + str(column_index)] = data['int_500_perlbench_r']
-                            datas[54]['column' + str(column_index)] = data['int_502_gcc_r']
-                            datas[55]['column' + str(column_index)] = data['int_505_mcf_r']
-                            datas[56]['column' + str(column_index)] = data['int_520_omnetpp_r']
-                            datas[57]['column' + str(column_index)] = data['int_523_xalancbmk_r']
-                            datas[58]['column' + str(column_index)] = data['int_525_x264_r']
-                            datas[59]['column' + str(column_index)] = data['int_531_deepsjeng_r']
-                            datas[60]['column' + str(column_index)] = data['int_541_leela_r']
-                            datas[61]['column' + str(column_index)] = data['int_548_exchange2_r']
-                            datas[62]['column' + str(column_index)] = data['int_557_xz_r']
-                            datas[63]['column' + str(column_index)] = data['int_SPECrate2017_int']
+                            datas[54]['column' + str(column_index)] = data['int_500_perlbench_r']
+                            datas[55]['column' + str(column_index)] = data['int_502_gcc_r']
+                            datas[56]['column' + str(column_index)] = data['int_505_mcf_r']
+                            datas[57]['column' + str(column_index)] = data['int_520_omnetpp_r']
+                            datas[58]['column' + str(column_index)] = data['int_523_xalancbmk_r']
+                            datas[59]['column' + str(column_index)] = data['int_525_x264_r']
+                            datas[60]['column' + str(column_index)] = data['int_531_deepsjeng_r']
+                            datas[61]['column' + str(column_index)] = data['int_541_leela_r']
+                            datas[62]['column' + str(column_index)] = data['int_548_exchange2_r']
+                            datas[63]['column' + str(column_index)] = data['int_557_xz_r']
+                            datas[64]['column' + str(column_index)] = data['int_SPECrate2017_int']
                         elif data['dtype'] == 'fp':
-                            datas[64]['column' + str(column_index)] = data['fp_503_bwaves_r']
-                            datas[65]['column' + str(column_index)] = data['fp_507_cactuBSSN_r']
-                            datas[66]['column' + str(column_index)] = data['fp_508_namd_r']
-                            datas[67]['column' + str(column_index)] = data['fp_510_parest_r']
-                            datas[68]['column' + str(column_index)] = data['fp_511_povray_r']
-                            datas[69]['column' + str(column_index)] = data['fp_519_lbm_r']
-                            datas[70]['column' + str(column_index)] = data['fp_521_wrf_r']
-                            datas[71]['column' + str(column_index)] = data['fp_526_blender_r']
-                            datas[72]['column' + str(column_index)] = data['fp_527_cam4_r']
-                            datas[73]['column' + str(column_index)] = data['fp_538_imagick_r']
-                            datas[74]['column' + str(column_index)] = data['fp_544_nab_r']
-                            datas[75]['column' + str(column_index)] = data['fp_549_fotonik3d_r']
-                            datas[76]['column' + str(column_index)] = data['fp_554_roms_r']
-                            datas[77]['column' + str(column_index)] = data['fp_PECrate2017_fp']
+                            datas[65]['column' + str(column_index)] = data['fp_503_bwaves_r']
+                            datas[66]['column' + str(column_index)] = data['fp_507_cactuBSSN_r']
+                            datas[67]['column' + str(column_index)] = data['fp_508_namd_r']
+                            datas[68]['column' + str(column_index)] = data['fp_510_parest_r']
+                            datas[69]['column' + str(column_index)] = data['fp_511_povray_r']
+                            datas[70]['column' + str(column_index)] = data['fp_519_lbm_r']
+                            datas[71]['column' + str(column_index)] = data['fp_521_wrf_r']
+                            datas[72]['column' + str(column_index)] = data['fp_526_blender_r']
+                            datas[73]['column' + str(column_index)] = data['fp_527_cam4_r']
+                            datas[74]['column' + str(column_index)] = data['fp_538_imagick_r']
+                            datas[75]['column' + str(column_index)] = data['fp_544_nab_r']
+                            datas[76]['column' + str(column_index)] = data['fp_549_fotonik3d_r']
+                            datas[77]['column' + str(column_index)] = data['fp_554_roms_r']
+                            datas[78]['column' + str(column_index)] = data['fp_PECrate2017_fp']
                     elif data['thread'] == '多线程':
                         if data['dtype'] == 'int':
-                            datas[78]['column' + str(column_index)] = data['int_500_perlbench_r']
-                            datas[79]['column' + str(column_index)] = data['int_502_gcc_r']
-                            datas[80]['column' + str(column_index)] = data['int_505_mcf_r']
-                            datas[81]['column' + str(column_index)] = data['int_520_omnetpp_r']
-                            datas[82]['column' + str(column_index)] = data['int_523_xalancbmk_r']
-                            datas[83]['column' + str(column_index)] = data['int_525_x264_r']
-                            datas[84]['column' + str(column_index)] = data['int_531_deepsjeng_r']
-                            datas[85]['column' + str(column_index)] = data['int_541_leela_r']
-                            datas[86]['column' + str(column_index)] = data['int_548_exchange2_r']
-                            datas[87]['column' + str(column_index)] = data['int_557_xz_r']
-                            datas[88]['column' + str(column_index)] = data['int_SPECrate2017_int']
+                            datas[79]['column' + str(column_index)] = data['int_500_perlbench_r']
+                            datas[80]['column' + str(column_index)] = data['int_502_gcc_r']
+                            datas[81]['column' + str(column_index)] = data['int_505_mcf_r']
+                            datas[82]['column' + str(column_index)] = data['int_520_omnetpp_r']
+                            datas[83]['column' + str(column_index)] = data['int_523_xalancbmk_r']
+                            datas[84]['column' + str(column_index)] = data['int_525_x264_r']
+                            datas[85]['column' + str(column_index)] = data['int_531_deepsjeng_r']
+                            datas[86]['column' + str(column_index)] = data['int_541_leela_r']
+                            datas[87]['column' + str(column_index)] = data['int_548_exchange2_r']
+                            datas[88]['column' + str(column_index)] = data['int_557_xz_r']
+                            datas[89]['column' + str(column_index)] = data['int_SPECrate2017_int']
                         elif data['dtype'] == 'fp':
-                            datas[89]['column' + str(column_index)] = data['fp_503_bwaves_r']
-                            datas[90]['column' + str(column_index)] = data['fp_507_cactuBSSN_r']
-                            datas[91]['column' + str(column_index)] = data['fp_508_namd_r']
-                            datas[92]['column' + str(column_index)] = data['fp_510_parest_r']
-                            datas[93]['column' + str(column_index)] = data['fp_511_povray_r']
-                            datas[94]['column' + str(column_index)] = data['fp_519_lbm_r']
-                            datas[95]['column' + str(column_index)] = data['fp_521_wrf_r']
-                            datas[96]['column' + str(column_index)] = data['fp_526_blender_r']
-                            datas[97]['column' + str(column_index)] = data['fp_527_cam4_r']
-                            datas[98]['column' + str(column_index)] = data['fp_538_imagick_r']
-                            datas[99]['column' + str(column_index)] = data['fp_544_nab_r']
-                            datas[100]['column' + str(column_index)] = data['fp_549_fotonik3d_r']
-                            datas[101]['column' + str(column_index)] = data['fp_554_roms_r']
-                            datas[102]['column' + str(column_index)] = data['fp_PECrate2017_fp']
+                            datas[90]['column' + str(column_index)] = data['fp_503_bwaves_r']
+                            datas[91]['column' + str(column_index)] = data['fp_507_cactuBSSN_r']
+                            datas[92]['column' + str(column_index)] = data['fp_508_namd_r']
+                            datas[93]['column' + str(column_index)] = data['fp_510_parest_r']
+                            datas[94]['column' + str(column_index)] = data['fp_511_povray_r']
+                            datas[95]['column' + str(column_index)] = data['fp_519_lbm_r']
+                            datas[96]['column' + str(column_index)] = data['fp_521_wrf_r']
+                            datas[97]['column' + str(column_index)] = data['fp_526_blender_r']
+                            datas[98]['column' + str(column_index)] = data['fp_527_cam4_r']
+                            datas[99]['column' + str(column_index)] = data['fp_538_imagick_r']
+                            datas[100]['column' + str(column_index)] = data['fp_544_nab_r']
+                            datas[101]['column' + str(column_index)] = data['fp_549_fotonik3d_r']
+                            datas[102]['column' + str(column_index)] = data['fp_554_roms_r']
+                            datas[103]['column' + str(column_index)] = data['fp_PECrate2017_fp']
             column_index += 1
             title_index += 1
             # 基准数据和对比数据的平均数据
@@ -164,7 +166,8 @@ class Cpu2017ViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 103):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 104):
                 datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
         else:
@@ -381,127 +384,128 @@ class Cpu2017ViewSet(CusModelViewSet):
             for mark_name in groups:
                 temp_datas = serializer_.filter(mark_name=mark_name)
                 datas[0]['column' + str(column_index)] = 'Cpu2017#' + str(title_index)
-                datas[1]['column' + str(column_index)] = temp_datas[0].execute_cmd
-                datas[2]['column' + str(column_index)] = temp_datas[0].modify_parameters
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=temp_datas[0].env_id).first().project_name
+                datas[2]['column' + str(column_index)] = temp_datas[0].execute_cmd
+                datas[3]['column' + str(column_index)] = temp_datas[0].modify_parameters
                 # 基准数据和对比数据的全部数据
                 # 初始化所有数据为None
-                for i in range(5, 103):
+                for i in range(6, 104):
                     datas[i]['column' + str(column_index)] = None
                 for data in temp_datas:
                     if data.tuneType == 'base':
                         if data.thread == '单线程':
                             if data.dtype == 'int':
-                                datas[3]['column' + str(column_index)] = data.int_500_perlbench_r
-                                datas[4]['column' + str(column_index)] = data.int_502_gcc_r
-                                datas[5]['column' + str(column_index)] = data.int_505_mcf_r
-                                datas[6]['column' + str(column_index)] = data.int_520_omnetpp_r
-                                datas[7]['column' + str(column_index)] = data.int_523_xalancbmk_r
-                                datas[8]['column' + str(column_index)] = data.int_525_x264_r
-                                datas[9]['column' + str(column_index)] = data.int_531_deepsjeng_r
-                                datas[10]['column' + str(column_index)] = data.int_541_leela_r
-                                datas[11]['column' + str(column_index)] = data.int_548_exchange2_r
-                                datas[12]['column' + str(column_index)] = data.int_557_xz_r
-                                datas[13]['column' + str(column_index)] = data.int_SPECrate2017_int
+                                datas[4]['column' + str(column_index)] = data.int_500_perlbench_r
+                                datas[5]['column' + str(column_index)] = data.int_502_gcc_r
+                                datas[6]['column' + str(column_index)] = data.int_505_mcf_r
+                                datas[7]['column' + str(column_index)] = data.int_520_omnetpp_r
+                                datas[8]['column' + str(column_index)] = data.int_523_xalancbmk_r
+                                datas[9]['column' + str(column_index)] = data.int_525_x264_r
+                                datas[10]['column' + str(column_index)] = data.int_531_deepsjeng_r
+                                datas[11]['column' + str(column_index)] = data.int_541_leela_r
+                                datas[12]['column' + str(column_index)] = data.int_548_exchange2_r
+                                datas[13]['column' + str(column_index)] = data.int_557_xz_r
+                                datas[14]['column' + str(column_index)] = data.int_SPECrate2017_int
                             elif data.dtype == 'fp':
-                                datas[14]['column' + str(column_index)] = data.fp_503_bwaves_r
-                                datas[15]['column' + str(column_index)] = data.fp_507_cactuBSSN_r
-                                datas[16]['column' + str(column_index)] = data.fp_508_namd_r
-                                datas[17]['column' + str(column_index)] = data.fp_510_parest_r
-                                datas[18]['column' + str(column_index)] = data.fp_511_povray_r
-                                datas[19]['column' + str(column_index)] = data.fp_519_lbm_r
-                                datas[20]['column' + str(column_index)] = data.fp_521_wrf_r
-                                datas[21]['column' + str(column_index)] = data.fp_526_blender_r
-                                datas[22]['column' + str(column_index)] = data.fp_527_cam4_r
-                                datas[23]['column' + str(column_index)] = data.fp_538_imagick_r
-                                datas[24]['column' + str(column_index)] = data.fp_544_nab_r
-                                datas[25]['column' + str(column_index)] = data.fp_549_fotonik3d_r
-                                datas[26]['column' + str(column_index)] = data.fp_554_roms_r
-                                datas[27]['column' + str(column_index)] = data.fp_PECrate2017_fp
+                                datas[15]['column' + str(column_index)] = data.fp_503_bwaves_r
+                                datas[16]['column' + str(column_index)] = data.fp_507_cactuBSSN_r
+                                datas[17]['column' + str(column_index)] = data.fp_508_namd_r
+                                datas[18]['column' + str(column_index)] = data.fp_510_parest_r
+                                datas[19]['column' + str(column_index)] = data.fp_511_povray_r
+                                datas[20]['column' + str(column_index)] = data.fp_519_lbm_r
+                                datas[21]['column' + str(column_index)] = data.fp_521_wrf_r
+                                datas[22]['column' + str(column_index)] = data.fp_526_blender_r
+                                datas[23]['column' + str(column_index)] = data.fp_527_cam4_r
+                                datas[24]['column' + str(column_index)] = data.fp_538_imagick_r
+                                datas[25]['column' + str(column_index)] = data.fp_544_nab_r
+                                datas[26]['column' + str(column_index)] = data.fp_549_fotonik3d_r
+                                datas[27]['column' + str(column_index)] = data.fp_554_roms_r
+                                datas[28]['column' + str(column_index)] = data.fp_PECrate2017_fp
                         elif data.thread == '多线程':
                             if data.dtype == 'int':
-                                datas[28]['column' + str(column_index)] = data.int_500_perlbench_r
-                                datas[29]['column' + str(column_index)] = data.int_502_gcc_r
-                                datas[30]['column' + str(column_index)] = data.int_505_mcf_r
-                                datas[31]['column' + str(column_index)] = data.int_520_omnetpp_r
-                                datas[32]['column' + str(column_index)] = data.int_523_xalancbmk_r
-                                datas[33]['column' + str(column_index)] = data.int_525_x264_r
-                                datas[34]['column' + str(column_index)] = data.int_531_deepsjeng_r
-                                datas[35]['column' + str(column_index)] = data.int_541_leela_r
-                                datas[36]['column' + str(column_index)] = data.int_548_exchange2_r
-                                datas[37]['column' + str(column_index)] = data.int_557_xz_r
-                                datas[38]['column' + str(column_index)] = data.int_SPECrate2017_int
+                                datas[29]['column' + str(column_index)] = data.int_500_perlbench_r
+                                datas[30]['column' + str(column_index)] = data.int_502_gcc_r
+                                datas[31]['column' + str(column_index)] = data.int_505_mcf_r
+                                datas[32]['column' + str(column_index)] = data.int_520_omnetpp_r
+                                datas[33]['column' + str(column_index)] = data.int_523_xalancbmk_r
+                                datas[34]['column' + str(column_index)] = data.int_525_x264_r
+                                datas[35]['column' + str(column_index)] = data.int_531_deepsjeng_r
+                                datas[36]['column' + str(column_index)] = data.int_541_leela_r
+                                datas[37]['column' + str(column_index)] = data.int_548_exchange2_r
+                                datas[38]['column' + str(column_index)] = data.int_557_xz_r
+                                datas[39]['column' + str(column_index)] = data.int_SPECrate2017_int
                             elif data.dtype == 'fp':
-                                datas[39]['column' + str(column_index)] = data.fp_503_bwaves_r
-                                datas[40]['column' + str(column_index)] = data.fp_507_cactuBSSN_r
-                                datas[41]['column' + str(column_index)] = data.fp_508_namd_r
-                                datas[42]['column' + str(column_index)] = data.fp_510_parest_r
-                                datas[43]['column' + str(column_index)] = data.fp_511_povray_r
-                                datas[44]['column' + str(column_index)] = data.fp_519_lbm_r
-                                datas[45]['column' + str(column_index)] = data.fp_521_wrf_r
-                                datas[46]['column' + str(column_index)] = data.fp_526_blender_r
-                                datas[47]['column' + str(column_index)] = data.fp_527_cam4_r
-                                datas[48]['column' + str(column_index)] = data.fp_538_imagick_r
-                                datas[49]['column' + str(column_index)] = data.fp_544_nab_r
-                                datas[50]['column' + str(column_index)] = data.fp_549_fotonik3d_r
-                                datas[51]['column' + str(column_index)] = data.fp_554_roms_r
-                                datas[52]['column' + str(column_index)] = data.fp_PECrate2017_fp
+                                datas[40]['column' + str(column_index)] = data.fp_503_bwaves_r
+                                datas[41]['column' + str(column_index)] = data.fp_507_cactuBSSN_r
+                                datas[42]['column' + str(column_index)] = data.fp_508_namd_r
+                                datas[43]['column' + str(column_index)] = data.fp_510_parest_r
+                                datas[44]['column' + str(column_index)] = data.fp_511_povray_r
+                                datas[45]['column' + str(column_index)] = data.fp_519_lbm_r
+                                datas[46]['column' + str(column_index)] = data.fp_521_wrf_r
+                                datas[47]['column' + str(column_index)] = data.fp_526_blender_r
+                                datas[48]['column' + str(column_index)] = data.fp_527_cam4_r
+                                datas[49]['column' + str(column_index)] = data.fp_538_imagick_r
+                                datas[50]['column' + str(column_index)] = data.fp_544_nab_r
+                                datas[51]['column' + str(column_index)] = data.fp_549_fotonik3d_r
+                                datas[52]['column' + str(column_index)] = data.fp_554_roms_r
+                                datas[53]['column' + str(column_index)] = data.fp_PECrate2017_fp
                     elif data.tuneType == 'peak':
                         if data.thread == '单线程':
                             if data.dtype == 'int':
-                                datas[53]['column' + str(column_index)] = data.int_500_perlbench_r
-                                datas[54]['column' + str(column_index)] = data.int_502_gcc_r
-                                datas[55]['column' + str(column_index)] = data.int_505_mcf_r
-                                datas[56]['column' + str(column_index)] = data.int_520_omnetpp_r
-                                datas[57]['column' + str(column_index)] = data.int_523_xalancbmk_r
-                                datas[58]['column' + str(column_index)] = data.int_525_x264_r
-                                datas[59]['column' + str(column_index)] = data.int_531_deepsjeng_r
-                                datas[60]['column' + str(column_index)] = data.int_541_leela_r
-                                datas[61]['column' + str(column_index)] = data.int_548_exchange2_r
-                                datas[62]['column' + str(column_index)] = data.int_557_xz_r
-                                datas[63]['column' + str(column_index)] = data.int_SPECrate2017_int
+                                datas[54]['column' + str(column_index)] = data.int_500_perlbench_r
+                                datas[55]['column' + str(column_index)] = data.int_502_gcc_r
+                                datas[56]['column' + str(column_index)] = data.int_505_mcf_r
+                                datas[57]['column' + str(column_index)] = data.int_520_omnetpp_r
+                                datas[58]['column' + str(column_index)] = data.int_523_xalancbmk_r
+                                datas[59]['column' + str(column_index)] = data.int_525_x264_r
+                                datas[60]['column' + str(column_index)] = data.int_531_deepsjeng_r
+                                datas[61]['column' + str(column_index)] = data.int_541_leela_r
+                                datas[62]['column' + str(column_index)] = data.int_548_exchange2_r
+                                datas[63]['column' + str(column_index)] = data.int_557_xz_r
+                                datas[64]['column' + str(column_index)] = data.int_SPECrate2017_int
                             elif data.dtype == 'fp':
-                                datas[64]['column' + str(column_index)] = data.fp_503_bwaves_r
-                                datas[65]['column' + str(column_index)] = data.fp_507_cactuBSSN_r
-                                datas[66]['column' + str(column_index)] = data.fp_508_namd_r
-                                datas[67]['column' + str(column_index)] = data.fp_510_parest_r
-                                datas[68]['column' + str(column_index)] = data.fp_511_povray_r
-                                datas[69]['column' + str(column_index)] = data.fp_519_lbm_r
-                                datas[70]['column' + str(column_index)] = data.fp_521_wrf_r
-                                datas[71]['column' + str(column_index)] = data.fp_526_blender_r
-                                datas[72]['column' + str(column_index)] = data.fp_527_cam4_r
-                                datas[73]['column' + str(column_index)] = data.fp_538_imagick_r
-                                datas[74]['column' + str(column_index)] = data.fp_544_nab_r
-                                datas[75]['column' + str(column_index)] = data.fp_549_fotonik3d_r
-                                datas[76]['column' + str(column_index)] = data.fp_554_roms_r
-                                datas[77]['column' + str(column_index)] = data.fp_PECrate2017_fp
+                                datas[65]['column' + str(column_index)] = data.fp_503_bwaves_r
+                                datas[66]['column' + str(column_index)] = data.fp_507_cactuBSSN_r
+                                datas[67]['column' + str(column_index)] = data.fp_508_namd_r
+                                datas[68]['column' + str(column_index)] = data.fp_510_parest_r
+                                datas[69]['column' + str(column_index)] = data.fp_511_povray_r
+                                datas[70]['column' + str(column_index)] = data.fp_519_lbm_r
+                                datas[71]['column' + str(column_index)] = data.fp_521_wrf_r
+                                datas[72]['column' + str(column_index)] = data.fp_526_blender_r
+                                datas[73]['column' + str(column_index)] = data.fp_527_cam4_r
+                                datas[74]['column' + str(column_index)] = data.fp_538_imagick_r
+                                datas[75]['column' + str(column_index)] = data.fp_544_nab_r
+                                datas[76]['column' + str(column_index)] = data.fp_549_fotonik3d_r
+                                datas[77]['column' + str(column_index)] = data.fp_554_roms_r
+                                datas[78]['column' + str(column_index)] = data.fp_PECrate2017_fp
                         elif data.thread == '多线程':
                             if data.dtype == 'int':
-                                datas[78]['column' + str(column_index)] = data.int_500_perlbench_r
-                                datas[79]['column' + str(column_index)] = data.int_502_gcc_r
-                                datas[80]['column' + str(column_index)] = data.int_505_mcf_r
-                                datas[81]['column' + str(column_index)] = data.int_520_omnetpp_r
-                                datas[82]['column' + str(column_index)] = data.int_523_xalancbmk_r
-                                datas[83]['column' + str(column_index)] = data.int_525_x264_r
-                                datas[84]['column' + str(column_index)] = data.int_531_deepsjeng_r
-                                datas[85]['column' + str(column_index)] = data.int_541_leela_r
-                                datas[86]['column' + str(column_index)] = data.int_548_exchange2_r
-                                datas[87]['column' + str(column_index)] = data.int_557_xz_r
-                                datas[88]['column' + str(column_index)] = data.int_SPECrate2017_int
+                                datas[79]['column' + str(column_index)] = data.int_500_perlbench_r
+                                datas[80]['column' + str(column_index)] = data.int_502_gcc_r
+                                datas[81]['column' + str(column_index)] = data.int_505_mcf_r
+                                datas[82]['column' + str(column_index)] = data.int_520_omnetpp_r
+                                datas[83]['column' + str(column_index)] = data.int_523_xalancbmk_r
+                                datas[84]['column' + str(column_index)] = data.int_525_x264_r
+                                datas[85]['column' + str(column_index)] = data.int_531_deepsjeng_r
+                                datas[86]['column' + str(column_index)] = data.int_541_leela_r
+                                datas[87]['column' + str(column_index)] = data.int_548_exchange2_r
+                                datas[88]['column' + str(column_index)] = data.int_557_xz_r
+                                datas[89]['column' + str(column_index)] = data.int_SPECrate2017_int
                             elif data.dtype == 'fp':
-                                datas[89]['column' + str(column_index)] = data.fp_503_bwaves_r
-                                datas[90]['column' + str(column_index)] = data.fp_507_cactuBSSN_r
-                                datas[91]['column' + str(column_index)] = data.fp_508_namd_r
-                                datas[92]['column' + str(column_index)] = data.fp_510_parest_r
-                                datas[93]['column' + str(column_index)] = data.fp_511_povray_r
-                                datas[94]['column' + str(column_index)] = data.fp_519_lbm_r
-                                datas[95]['column' + str(column_index)] = data.fp_521_wrf_r
-                                datas[96]['column' + str(column_index)] = data.fp_526_blender_r
-                                datas[97]['column' + str(column_index)] = data.fp_527_cam4_r
-                                datas[98]['column' + str(column_index)] = data.fp_538_imagick_r
-                                datas[99]['column' + str(column_index)] = data.fp_544_nab_r
-                                datas[100]['column' + str(column_index)] = data.fp_549_fotonik3d_r
-                                datas[101]['column' + str(column_index)] = data.fp_554_roms_r
-                                datas[102]['column' + str(column_index)] = data.fp_PECrate2017_fp
+                                datas[90]['column' + str(column_index)] = data.fp_503_bwaves_r
+                                datas[91]['column' + str(column_index)] = data.fp_507_cactuBSSN_r
+                                datas[92]['column' + str(column_index)] = data.fp_508_namd_r
+                                datas[93]['column' + str(column_index)] = data.fp_510_parest_r
+                                datas[94]['column' + str(column_index)] = data.fp_511_povray_r
+                                datas[95]['column' + str(column_index)] = data.fp_519_lbm_r
+                                datas[96]['column' + str(column_index)] = data.fp_521_wrf_r
+                                datas[97]['column' + str(column_index)] = data.fp_526_blender_r
+                                datas[98]['column' + str(column_index)] = data.fp_527_cam4_r
+                                datas[99]['column' + str(column_index)] = data.fp_538_imagick_r
+                                datas[100]['column' + str(column_index)] = data.fp_544_nab_r
+                                datas[101]['column' + str(column_index)] = data.fp_549_fotonik3d_r
+                                datas[102]['column' + str(column_index)] = data.fp_554_roms_r
+                                datas[103]['column' + str(column_index)] = data.fp_PECrate2017_fp
                 column_index += 1
                 title_index += 1
             # 基准数据和对比数据的平均数据
@@ -509,106 +513,107 @@ class Cpu2017ViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            datas[3]['column' + str(column_index)] = average_base_single_int_rate_500_perlbench_r
-            datas[4]['column' + str(column_index)] = average_base_single_int_rate_502_gcc_r
-            datas[5]['column' + str(column_index)] = average_base_single_int_rate_505_mcf_r
-            datas[6]['column' + str(column_index)] = average_base_single_int_rate_520_omnetpp_r
-            datas[7]['column' + str(column_index)] = average_base_single_int_rate_523_xalancbmk_r
-            datas[8]['column' + str(column_index)] = average_base_single_int_rate_525_x264_r
-            datas[9]['column' + str(column_index)] = average_base_single_int_rate_531_deepsjeng_r
-            datas[10]['column' + str(column_index)] = average_base_single_int_rate_541_leela_r
-            datas[11]['column' + str(column_index)] = average_base_single_int_rate_548_exchange2_r
-            datas[12]['column' + str(column_index)] = average_base_single_int_rate_557_xz_r
-            datas[13]['column' + str(column_index)] = average_base_single_int_rate_SPECrate2017_int
-            datas[14]['column' + str(column_index)] = average_base_single_fp_rate_503_bwaves_r
-            datas[15]['column' + str(column_index)] = average_base_single_fp_rate_507_cactuBSSN_r
-            datas[16]['column' + str(column_index)] = average_base_single_fp_rate_508_namd_r
-            datas[17]['column' + str(column_index)] = average_base_single_fp_rate_510_parest_r
-            datas[18]['column' + str(column_index)] = average_base_single_fp_rate_511_povray_r
-            datas[19]['column' + str(column_index)] = average_base_single_fp_rate_519_lbm_r
-            datas[20]['column' + str(column_index)] = average_base_single_fp_rate_521_wrf_r
-            datas[21]['column' + str(column_index)] = average_base_single_fp_rate_526_blender_r
-            datas[22]['column' + str(column_index)] = average_base_single_fp_rate_527_cam4_r
-            datas[23]['column' + str(column_index)] = average_base_single_fp_rate_538_imagick_r
-            datas[24]['column' + str(column_index)] = average_base_single_fp_rate_544_nab_r
-            datas[25]['column' + str(column_index)] = average_base_single_fp_rate_549_fotonik3d_r
-            datas[26]['column' + str(column_index)] = average_base_single_fp_rate_554_roms_r
-            datas[27]['column' + str(column_index)] = average_base_single_fp_rate_PECrate2017_fp
-            datas[28]['column' + str(column_index)] = average_base_multi_int_rate_500_perlbench_r
-            datas[29]['column' + str(column_index)] = average_base_multi_int_rate_502_gcc_r
-            datas[30]['column' + str(column_index)] = average_base_multi_int_rate_505_mcf_r
-            datas[31]['column' + str(column_index)] = average_base_multi_int_rate_520_omnetpp_r
-            datas[32]['column' + str(column_index)] = average_base_multi_int_rate_523_xalancbmk_r
-            datas[33]['column' + str(column_index)] = average_base_multi_int_rate_525_x264_r
-            datas[34]['column' + str(column_index)] = average_base_multi_int_rate_531_deepsjeng_r
-            datas[35]['column' + str(column_index)] = average_base_multi_int_rate_541_leela_r
-            datas[36]['column' + str(column_index)] = average_base_multi_int_rate_548_exchange2_r
-            datas[37]['column' + str(column_index)] = average_base_multi_int_rate_557_xz_r
-            datas[38]['column' + str(column_index)] = average_base_multi_int_rate_SPECrate2017_int
-            datas[39]['column' + str(column_index)] = average_base_multi_fp_rate_503_bwaves_r
-            datas[40]['column' + str(column_index)] = average_base_multi_fp_rate_507_cactuBSSN_r
-            datas[41]['column' + str(column_index)] = average_base_multi_fp_rate_508_namd_r
-            datas[42]['column' + str(column_index)] = average_base_multi_fp_rate_510_parest_r
-            datas[43]['column' + str(column_index)] = average_base_multi_fp_rate_511_povray_r
-            datas[44]['column' + str(column_index)] = average_base_multi_fp_rate_519_lbm_r
-            datas[45]['column' + str(column_index)] = average_base_multi_fp_rate_521_wrf_r
-            datas[46]['column' + str(column_index)] = average_base_multi_fp_rate_526_blender_r
-            datas[47]['column' + str(column_index)] = average_base_multi_fp_rate_527_cam4_r
-            datas[48]['column' + str(column_index)] = average_base_multi_fp_rate_538_imagick_r
-            datas[49]['column' + str(column_index)] = average_base_multi_fp_rate_544_nab_r
-            datas[50]['column' + str(column_index)] = average_base_multi_fp_rate_549_fotonik3d_r
-            datas[51]['column' + str(column_index)] = average_base_multi_fp_rate_554_roms_r
-            datas[52]['column' + str(column_index)] = average_base_multi_fp_rate_PECrate2017_fp
-            datas[53]['column' + str(column_index)] = average_peak_single_int_rate_500_perlbench_r
-            datas[54]['column' + str(column_index)] = average_peak_single_int_rate_502_gcc_r
-            datas[55]['column' + str(column_index)] = average_peak_single_int_rate_505_mcf_r
-            datas[56]['column' + str(column_index)] = average_peak_single_int_rate_520_omnetpp_r
-            datas[57]['column' + str(column_index)] = average_peak_single_int_rate_523_xalancbmk_r
-            datas[58]['column' + str(column_index)] = average_peak_single_int_rate_525_x264_r
-            datas[59]['column' + str(column_index)] = average_peak_single_int_rate_531_deepsjeng_r
-            datas[60]['column' + str(column_index)] = average_peak_single_int_rate_541_leela_r
-            datas[61]['column' + str(column_index)] = average_peak_single_int_rate_548_exchange2_r
-            datas[62]['column' + str(column_index)] = average_peak_single_int_rate_557_xz_r
-            datas[63]['column' + str(column_index)] = average_peak_single_int_rate_SPECrate2017_int
-            datas[64]['column' + str(column_index)] = average_peak_single_fp_rate_503_bwaves_r
-            datas[65]['column' + str(column_index)] = average_peak_single_fp_rate_507_cactuBSSN_r
-            datas[66]['column' + str(column_index)] = average_peak_single_fp_rate_508_namd_r
-            datas[67]['column' + str(column_index)] = average_peak_single_fp_rate_510_parest_r
-            datas[68]['column' + str(column_index)] = average_peak_single_fp_rate_511_povray_r
-            datas[69]['column' + str(column_index)] = average_peak_single_fp_rate_519_lbm_r
-            datas[70]['column' + str(column_index)] = average_peak_single_fp_rate_521_wrf_r
-            datas[71]['column' + str(column_index)] = average_peak_single_fp_rate_526_blender_r
-            datas[72]['column' + str(column_index)] = average_peak_single_fp_rate_527_cam4_r
-            datas[73]['column' + str(column_index)] = average_peak_single_fp_rate_538_imagick_r
-            datas[74]['column' + str(column_index)] = average_peak_single_fp_rate_544_nab_r
-            datas[75]['column' + str(column_index)] = average_peak_single_fp_rate_549_fotonik3d_r
-            datas[76]['column' + str(column_index)] = average_peak_single_fp_rate_554_roms_r
-            datas[77]['column' + str(column_index)] = average_peak_single_fp_rate_PECrate2017_fp
-            datas[78]['column' + str(column_index)] = average_peak_multi_int_rate_500_perlbench_r
-            datas[79]['column' + str(column_index)] = average_peak_multi_int_rate_502_gcc_r
-            datas[80]['column' + str(column_index)] = average_peak_multi_int_rate_505_mcf_r
-            datas[81]['column' + str(column_index)] = average_peak_multi_int_rate_520_omnetpp_r
-            datas[82]['column' + str(column_index)] = average_peak_multi_int_rate_523_xalancbmk_r
-            datas[83]['column' + str(column_index)] = average_peak_multi_int_rate_525_x264_r
-            datas[84]['column' + str(column_index)] = average_peak_multi_int_rate_531_deepsjeng_r
-            datas[85]['column' + str(column_index)] = average_peak_multi_int_rate_541_leela_r
-            datas[86]['column' + str(column_index)] = average_peak_multi_int_rate_548_exchange2_r
-            datas[87]['column' + str(column_index)] = average_peak_multi_int_rate_557_xz_r
-            datas[88]['column' + str(column_index)] = average_peak_multi_int_rate_SPECrate2017_int
-            datas[89]['column' + str(column_index)] = average_peak_multi_fp_rate_503_bwaves_r
-            datas[90]['column' + str(column_index)] = average_peak_multi_fp_rate_507_cactuBSSN_r
-            datas[91]['column' + str(column_index)] = average_peak_multi_fp_rate_508_namd_r
-            datas[92]['column' + str(column_index)] = average_peak_multi_fp_rate_510_parest_r
-            datas[93]['column' + str(column_index)] = average_peak_multi_fp_rate_511_povray_r
-            datas[94]['column' + str(column_index)] = average_peak_multi_fp_rate_519_lbm_r
-            datas[95]['column' + str(column_index)] = average_peak_multi_fp_rate_521_wrf_r
-            datas[96]['column' + str(column_index)] = average_peak_multi_fp_rate_526_blender_r
-            datas[97]['column' + str(column_index)] = average_peak_multi_fp_rate_527_cam4_r
-            datas[98]['column' + str(column_index)] = average_peak_multi_fp_rate_538_imagick_r
-            datas[99]['column' + str(column_index)] = average_peak_multi_fp_rate_544_nab_r
-            datas[100]['column' + str(column_index)] = average_peak_multi_fp_rate_549_fotonik3d_r
-            datas[101]['column' + str(column_index)] = average_peak_multi_fp_rate_554_roms_r
-            datas[102]['column' + str(column_index)] = average_peak_multi_fp_rate_PECrate2017_fp
+            datas[3]['column' + str(column_index)] = ''
+            datas[4]['column' + str(column_index)] = average_base_single_int_rate_500_perlbench_r
+            datas[5]['column' + str(column_index)] = average_base_single_int_rate_502_gcc_r
+            datas[6]['column' + str(column_index)] = average_base_single_int_rate_505_mcf_r
+            datas[7]['column' + str(column_index)] = average_base_single_int_rate_520_omnetpp_r
+            datas[8]['column' + str(column_index)] = average_base_single_int_rate_523_xalancbmk_r
+            datas[9]['column' + str(column_index)] = average_base_single_int_rate_525_x264_r
+            datas[10]['column' + str(column_index)] = average_base_single_int_rate_531_deepsjeng_r
+            datas[11]['column' + str(column_index)] = average_base_single_int_rate_541_leela_r
+            datas[12]['column' + str(column_index)] = average_base_single_int_rate_548_exchange2_r
+            datas[13]['column' + str(column_index)] = average_base_single_int_rate_557_xz_r
+            datas[14]['column' + str(column_index)] = average_base_single_int_rate_SPECrate2017_int
+            datas[15]['column' + str(column_index)] = average_base_single_fp_rate_503_bwaves_r
+            datas[16]['column' + str(column_index)] = average_base_single_fp_rate_507_cactuBSSN_r
+            datas[17]['column' + str(column_index)] = average_base_single_fp_rate_508_namd_r
+            datas[18]['column' + str(column_index)] = average_base_single_fp_rate_510_parest_r
+            datas[19]['column' + str(column_index)] = average_base_single_fp_rate_511_povray_r
+            datas[20]['column' + str(column_index)] = average_base_single_fp_rate_519_lbm_r
+            datas[21]['column' + str(column_index)] = average_base_single_fp_rate_521_wrf_r
+            datas[22]['column' + str(column_index)] = average_base_single_fp_rate_526_blender_r
+            datas[23]['column' + str(column_index)] = average_base_single_fp_rate_527_cam4_r
+            datas[24]['column' + str(column_index)] = average_base_single_fp_rate_538_imagick_r
+            datas[25]['column' + str(column_index)] = average_base_single_fp_rate_544_nab_r
+            datas[26]['column' + str(column_index)] = average_base_single_fp_rate_549_fotonik3d_r
+            datas[27]['column' + str(column_index)] = average_base_single_fp_rate_554_roms_r
+            datas[28]['column' + str(column_index)] = average_base_single_fp_rate_PECrate2017_fp
+            datas[29]['column' + str(column_index)] = average_base_multi_int_rate_500_perlbench_r
+            datas[30]['column' + str(column_index)] = average_base_multi_int_rate_502_gcc_r
+            datas[31]['column' + str(column_index)] = average_base_multi_int_rate_505_mcf_r
+            datas[32]['column' + str(column_index)] = average_base_multi_int_rate_520_omnetpp_r
+            datas[33]['column' + str(column_index)] = average_base_multi_int_rate_523_xalancbmk_r
+            datas[34]['column' + str(column_index)] = average_base_multi_int_rate_525_x264_r
+            datas[35]['column' + str(column_index)] = average_base_multi_int_rate_531_deepsjeng_r
+            datas[36]['column' + str(column_index)] = average_base_multi_int_rate_541_leela_r
+            datas[37]['column' + str(column_index)] = average_base_multi_int_rate_548_exchange2_r
+            datas[38]['column' + str(column_index)] = average_base_multi_int_rate_557_xz_r
+            datas[39]['column' + str(column_index)] = average_base_multi_int_rate_SPECrate2017_int
+            datas[40]['column' + str(column_index)] = average_base_multi_fp_rate_503_bwaves_r
+            datas[41]['column' + str(column_index)] = average_base_multi_fp_rate_507_cactuBSSN_r
+            datas[42]['column' + str(column_index)] = average_base_multi_fp_rate_508_namd_r
+            datas[43]['column' + str(column_index)] = average_base_multi_fp_rate_510_parest_r
+            datas[44]['column' + str(column_index)] = average_base_multi_fp_rate_511_povray_r
+            datas[45]['column' + str(column_index)] = average_base_multi_fp_rate_519_lbm_r
+            datas[46]['column' + str(column_index)] = average_base_multi_fp_rate_521_wrf_r
+            datas[47]['column' + str(column_index)] = average_base_multi_fp_rate_526_blender_r
+            datas[48]['column' + str(column_index)] = average_base_multi_fp_rate_527_cam4_r
+            datas[49]['column' + str(column_index)] = average_base_multi_fp_rate_538_imagick_r
+            datas[50]['column' + str(column_index)] = average_base_multi_fp_rate_544_nab_r
+            datas[51]['column' + str(column_index)] = average_base_multi_fp_rate_549_fotonik3d_r
+            datas[52]['column' + str(column_index)] = average_base_multi_fp_rate_554_roms_r
+            datas[53]['column' + str(column_index)] = average_base_multi_fp_rate_PECrate2017_fp
+            datas[54]['column' + str(column_index)] = average_peak_single_int_rate_500_perlbench_r
+            datas[55]['column' + str(column_index)] = average_peak_single_int_rate_502_gcc_r
+            datas[56]['column' + str(column_index)] = average_peak_single_int_rate_505_mcf_r
+            datas[57]['column' + str(column_index)] = average_peak_single_int_rate_520_omnetpp_r
+            datas[58]['column' + str(column_index)] = average_peak_single_int_rate_523_xalancbmk_r
+            datas[59]['column' + str(column_index)] = average_peak_single_int_rate_525_x264_r
+            datas[60]['column' + str(column_index)] = average_peak_single_int_rate_531_deepsjeng_r
+            datas[61]['column' + str(column_index)] = average_peak_single_int_rate_541_leela_r
+            datas[62]['column' + str(column_index)] = average_peak_single_int_rate_548_exchange2_r
+            datas[63]['column' + str(column_index)] = average_peak_single_int_rate_557_xz_r
+            datas[64]['column' + str(column_index)] = average_peak_single_int_rate_SPECrate2017_int
+            datas[65]['column' + str(column_index)] = average_peak_single_fp_rate_503_bwaves_r
+            datas[66]['column' + str(column_index)] = average_peak_single_fp_rate_507_cactuBSSN_r
+            datas[67]['column' + str(column_index)] = average_peak_single_fp_rate_508_namd_r
+            datas[68]['column' + str(column_index)] = average_peak_single_fp_rate_510_parest_r
+            datas[69]['column' + str(column_index)] = average_peak_single_fp_rate_511_povray_r
+            datas[70]['column' + str(column_index)] = average_peak_single_fp_rate_519_lbm_r
+            datas[71]['column' + str(column_index)] = average_peak_single_fp_rate_521_wrf_r
+            datas[72]['column' + str(column_index)] = average_peak_single_fp_rate_526_blender_r
+            datas[73]['column' + str(column_index)] = average_peak_single_fp_rate_527_cam4_r
+            datas[74]['column' + str(column_index)] = average_peak_single_fp_rate_538_imagick_r
+            datas[75]['column' + str(column_index)] = average_peak_single_fp_rate_544_nab_r
+            datas[76]['column' + str(column_index)] = average_peak_single_fp_rate_549_fotonik3d_r
+            datas[77]['column' + str(column_index)] = average_peak_single_fp_rate_554_roms_r
+            datas[78]['column' + str(column_index)] = average_peak_single_fp_rate_PECrate2017_fp
+            datas[79]['column' + str(column_index)] = average_peak_multi_int_rate_500_perlbench_r
+            datas[80]['column' + str(column_index)] = average_peak_multi_int_rate_502_gcc_r
+            datas[81]['column' + str(column_index)] = average_peak_multi_int_rate_505_mcf_r
+            datas[82]['column' + str(column_index)] = average_peak_multi_int_rate_520_omnetpp_r
+            datas[83]['column' + str(column_index)] = average_peak_multi_int_rate_523_xalancbmk_r
+            datas[84]['column' + str(column_index)] = average_peak_multi_int_rate_525_x264_r
+            datas[85]['column' + str(column_index)] = average_peak_multi_int_rate_531_deepsjeng_r
+            datas[86]['column' + str(column_index)] = average_peak_multi_int_rate_541_leela_r
+            datas[87]['column' + str(column_index)] = average_peak_multi_int_rate_548_exchange2_r
+            datas[88]['column' + str(column_index)] = average_peak_multi_int_rate_557_xz_r
+            datas[89]['column' + str(column_index)] = average_peak_multi_int_rate_SPECrate2017_int
+            datas[90]['column' + str(column_index)] = average_peak_multi_fp_rate_503_bwaves_r
+            datas[91]['column' + str(column_index)] = average_peak_multi_fp_rate_507_cactuBSSN_r
+            datas[92]['column' + str(column_index)] = average_peak_multi_fp_rate_508_namd_r
+            datas[93]['column' + str(column_index)] = average_peak_multi_fp_rate_510_parest_r
+            datas[94]['column' + str(column_index)] = average_peak_multi_fp_rate_511_povray_r
+            datas[95]['column' + str(column_index)] = average_peak_multi_fp_rate_519_lbm_r
+            datas[96]['column' + str(column_index)] = average_peak_multi_fp_rate_521_wrf_r
+            datas[97]['column' + str(column_index)] = average_peak_multi_fp_rate_526_blender_r
+            datas[98]['column' + str(column_index)] = average_peak_multi_fp_rate_527_cam4_r
+            datas[99]['column' + str(column_index)] = average_peak_multi_fp_rate_538_imagick_r
+            datas[100]['column' + str(column_index)] = average_peak_multi_fp_rate_544_nab_r
+            datas[101]['column' + str(column_index)] = average_peak_multi_fp_rate_549_fotonik3d_r
+            datas[102]['column' + str(column_index)] = average_peak_multi_fp_rate_554_roms_r
+            datas[103]['column' + str(column_index)] = average_peak_multi_fp_rate_PECrate2017_fp
             column_index += 1
         if not base_column_index:
             # 记录基准数据
@@ -618,8 +623,9 @@ class Cpu2017ViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = '对比值'
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(103):
-                if i > 2:
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(104):
+                if i > 3:
                     datas[i]['column' + str(column_index)] = \
                         "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
             column_index += 1
@@ -640,6 +646,7 @@ class Cpu2017ViewSet(CusModelViewSet):
         base_queryset = Cpu2017.objects.filter(env_id=env_id).all()
         datas = [
             {'column1': 'Cpu2017', 'column2': '', 'column3': '', 'column4': '', 'column5': ''},
+            {'column1': '项目名称', 'column2': '', 'column3': '', 'column4': '', 'column5': ''},
             {'column1': '执行命令', 'column2': '', 'column3': '', 'column4': '', 'column5': ''},
             {'column1': '修改参数', 'column2': '', 'column3': '', 'column4': '', 'column5': ''},
             {'column1': 'base', 'column2': '单线程', 'column3': 'int', 'column4': 'rate', 'column5': '500.perlbench_r'},

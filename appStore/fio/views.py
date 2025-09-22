@@ -10,6 +10,7 @@ from rest_framework import status
 
 from appStore.fio.models import Fio
 from appStore.fio.serializers import FioSerializer
+from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -50,8 +51,9 @@ class FioViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = 'Fio#' + str(title_index)
                 datas[1]['column' + str(column_index)] = None
                 datas[2]['column' + str(column_index)] = None
+                datas[3]['column' + str(column_index)] = None
                 # 初始化所有数据为None
-                for i in range(3, len(datas)):
+                for i in range(4, len(datas)):
                     datas[i]['column' + str(column_index)] = None
                 column_index += 1
                 title_index += 1
@@ -67,12 +69,13 @@ class FioViewSet(CusModelViewSet):
                     temp_datas.append(data)
                 # 先增加头部的内容
                 datas[0]['column' + str(column_index)] = 'Fio#' + str(title_index)
-                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.data[0]['env_id']).first().project_name
+                datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+                datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
                 # 增加数据部分
                 # 先初始化所有数据为空
                 # todo 后期查看之前代码是如何实现的
-                for i in range(3,len(datas)):
+                for i in range(4,len(datas)):
                     datas[i]['column' + str(column_index)] = None
                 for value in temp_datas:
                     # 判断comparsion_datas数据中的rw字段和datas中的rw（column）字段相同，则在datas中增加值
@@ -91,6 +94,7 @@ class FioViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
+            datas[3]['column' + str(column_index)] = ''
             for index,data in enumerate(datas):
                 if index > 2:
                     datas[index]['column' + str(column_index)] = datas[index]['column' + str(column_index - 1)]
@@ -153,8 +157,9 @@ class FioViewSet(CusModelViewSet):
                 temp_mark_datas = serializer_.filter(mark_name=mark_name)
                 # 先增加头部的内容
                 datas[0]['column' + str(column_index)] = 'Fio#' + str(title_index)
-                datas[1]['column' + str(column_index)] = temp_mark_datas[0].execute_cmd
-                datas[2]['column' + str(column_index)] = temp_mark_datas[0].modify_parameters
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=temp_mark_datas[0].env_id).first().project_name
+                datas[2]['column' + str(column_index)] = temp_mark_datas[0].execute_cmd
+                datas[3]['column' + str(column_index)] = temp_mark_datas[0].modify_parameters
                 for data in temp_mark_datas:
                     data = {'rw': data.rw + '(' + str(data.bs + ')'),
                             'bs': data.bs,
@@ -164,7 +169,7 @@ class FioViewSet(CusModelViewSet):
                     group_data.append(data)
                 # 增加数据部分
                 # 先初始化所有数据为空
-                for i in range(3, len(datas)):
+                for i in range(4, len(datas)):
                     datas[i]['column' + str(column_index)] = None
                 for value in group_data:
                     # 判断comparsion_datas数据中的rw字段和datas中的rw（column）字段相同，则在datas中增加值
@@ -184,7 +189,8 @@ class FioViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ""
             datas[2]['column' + str(column_index)] = ""
-            for i in range(3, len(datas)):
+            datas[3]['column' + str(column_index)] = ""
+            for i in range(4, len(datas)):
                 datas[i]['column' + str(column_index)] = None
             for value in average_datas:
                 for index, data_ in enumerate(datas):
@@ -206,8 +212,9 @@ class FioViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = '对比值'
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
+            datas[3]['column' + str(column_index)] = ''
             # 获取到最后一组数据、处理数据
-            for i in range(3, len(datas)):
+            for i in range(4, len(datas)):
                 value = datas[i]['column' + str(column_index - 1)]  # 最后一组数据
                 base_value = datas[i]['column' + str(base_column_index)]  # base数据
                 if value is not None and base_value is not None:
@@ -241,6 +248,7 @@ class FioViewSet(CusModelViewSet):
                     {'column1': value['rw'], 'column2': 'bw'}]
             temp_data.extend(data)
         others = [{'column1': 'Fio', 'column2': '', },
+                  {'column1': '项目名称', 'column2': ''},
                   {'column1': '执行命令', 'column2': ''},
                   {'column1': '修改参数', 'column2': ''}]
         new_data = others + temp_data
