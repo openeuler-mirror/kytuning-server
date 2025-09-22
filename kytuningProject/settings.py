@@ -107,10 +107,8 @@ WSGI_APPLICATION = 'djangoProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'kytuning_test1',
-        # 'NAME': 'kytuning_django',
-        # 'NAME': 'kytuning',
-        'HOST': '172.29.220.200',
+        'NAME': 'kytuning',
+        'HOST': 'localhost',
         'PORT': 3306,
         'USER': 'kytuning',
         'PASSWORD': 'Kylin123',
