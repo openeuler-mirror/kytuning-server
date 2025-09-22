@@ -103,7 +103,6 @@ export default {
          // 将百分比转换为小数
         value = parseFloat(value);
         if (value >= 5) {
-          console.log(value,111)
           return 'green-cell';
         } else if (value < -5) {
           return 'red-cell';
