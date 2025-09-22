@@ -54,8 +54,6 @@ export default {
   },
   computed: {
     toDisabled() {
-      console.log('toDisabled函数')
-      console.log('isDataLoaded = ', !this.isDataLoaded)
       return (name) => {
         if (!this.isDataLoaded) {
           return false; // 数据尚未加载完成，返回默认值
@@ -66,7 +64,6 @@ export default {
         if (baseData && baseData[name] === 0) {
           disabled = true
         }
-        console.log('disabled = ', disabled)
         return disabled;
       };
     },
@@ -95,7 +92,6 @@ export default {
       this.$router.push({name: name,"params": {baseId: this.$route.params.baseId, comparsionIds: this.$route.params.comparsionIds}})
     },
     toggleDataVisibility() {
-      console.log(this.localShowAllData,111)
       this.localShowAllData = !this.localShowAllData;
       this.$emit('data-loaded', this.localShowAllData);
     },
