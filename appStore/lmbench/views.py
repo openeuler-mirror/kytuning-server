@@ -8,424 +8,658 @@
 import math
 import numpy as np
 # Create your views here.
-import os
-import json
-
 from rest_framework import status
 
-from appStore.cpu2006.models import Cpu2006
-from appStore.cpu2017.models import Cpu2017
-from appStore.env.models import Env
-from appStore.fio.models import Fio
-from appStore.iozone.models import Iozone
-from appStore.jvm2008.models import Jvm2008
 from appStore.lmbench.models import Lmbench
-from appStore.project.models import Project
-from appStore.project.serializers import ProjectSerializer
-from appStore.stream.models import Stream
-from appStore.unixbench.models import Unixbench
-from appStore.users.models import UserProfile
+from appStore.lmbench.serializers import LmbenchSerializer
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet, CusUpdateModelViewSet
+from appStore.utils.customer_view import CusModelViewSet
 
 
-class ProjectViewSet(CusModelViewSet):
+class LmbenchViewSet(CusModelViewSet):
     """
-    project数据管理
+    Lmbench数据管理
     """
-    queryset = Project.objects.all().order_by('id')
-    serializer_class = ProjectSerializer
+    queryset = Lmbench.objects.all().order_by('id')
+    serializer_class = LmbenchSerializer
+
+    def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
+        serializer = self.get_serializer(serializer_, many=True)
+        if len(serializer_) <= 1:
+            if len(serializer_) == 0:
+                # 基准数据和对比数据的全部数据
+                datas[0]['column' + str(column_index)] = 'Lmbench#' + str(title_index)
+                datas[1]['column' + str(column_index)] = None
+                datas[2]['column' + str(column_index)] = None
+                # 初始化所有数据为None
+                for i in range(3, 74):
+                    datas[i]['column' + str(column_index)] = None
+                title_index += 1
+                column_index += 1
+
+            else:
+                # 基准数据和对比数据的全部数据
+                datas[0]['column' + str(column_index)] = 'Lmbench#' + str(title_index)
+                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+                datas[3]['column' + str(column_index)] = serializer.data[0]['basic_Mhz']
+                datas[4]['column' + str(column_index)] = serializer.data[0]['basic_tlb_pages']
+                datas[5]['column' + str(column_index)] = serializer.data[0]['basic_cache_line_bytes']
+                datas[6]['column' + str(column_index)] = serializer.data[0]['basic_mem_par']
+                datas[7]['column' + str(column_index)] = serializer.data[0]['basic_scal_load']
+                datas[8]['column' + str(column_index)] = serializer.data[0]['processor_null_call']
+                datas[9]['column' + str(column_index)] = serializer.data[0]['processor_null_I_O']
+                datas[10]['column' + str(column_index)] = serializer.data[0]['processor_stat']
+                datas[11]['column' + str(column_index)] = serializer.data[0]['processor_open_close']
+                datas[12]['column' + str(column_index)] = serializer.data[0]['processor_slct_TCP']
+                datas[13]['column' + str(column_index)] = serializer.data[0]['processor_sig_inst']
+                datas[14]['column' + str(column_index)] = serializer.data[0]['processor_sig_hndl']
+                datas[15]['column' + str(column_index)] = serializer.data[0]['processor_fork_proc']
+                datas[16]['column' + str(column_index)] = serializer.data[0]['processor_exec_proc']
+                datas[17]['column' + str(column_index)] = serializer.data[0]['processor_sh_proc']
+                datas[18]['column' + str(column_index)] = serializer.data[0]['processor_Mhz']
+                datas[19]['column' + str(column_index)] = serializer.data[0]['basic_intgr_bit']
+                datas[20]['column' + str(column_index)] = serializer.data[0]['basic_intgr_add']
+                datas[21]['column' + str(column_index)] = serializer.data[0]['basic_intgr_mul']
+                datas[22]['column' + str(column_index)] = serializer.data[0]['basic_intgr_div']
+                datas[23]['column' + str(column_index)] = serializer.data[0]['basic_intgr_mod']
+                datas[24]['column' + str(column_index)] = serializer.data[0]['basic_int64_bit']
+                datas[25]['column' + str(column_index)] = serializer.data[0]['basic_int64_add']
+                datas[26]['column' + str(column_index)] = serializer.data[0]['basic_int64_mul']
+                datas[27]['column' + str(column_index)] = serializer.data[0]['basic_int64_div']
+                datas[28]['column' + str(column_index)] = serializer.data[0]['basic_int64_mod']
+                datas[29]['column' + str(column_index)] = serializer.data[0]['basic_float_add']
+                datas[30]['column' + str(column_index)] = serializer.data[0]['basic_float_mul']
+                datas[31]['column' + str(column_index)] = serializer.data[0]['basic_float_div']
+                datas[32]['column' + str(column_index)] = serializer.data[0]['basic_float_bogo']
+                datas[33]['column' + str(column_index)] = serializer.data[0]['basic_double_add']
+                datas[34]['column' + str(column_index)] = serializer.data[0]['basic_double_mul']
+                datas[35]['column' + str(column_index)] = serializer.data[0]['basic_double_div']
+                datas[36]['column' + str(column_index)] = serializer.data[0]['basic_double_bogo']
+                datas[37]['column' + str(column_index)] = serializer.data[0]['context_2p_0K']
+                datas[38]['column' + str(column_index)] = serializer.data[0]['context_2p_16K']
+                datas[39]['column' + str(column_index)] = serializer.data[0]['context_2p_64K']
+                datas[40]['column' + str(column_index)] = serializer.data[0]['context_8p_16K']
+                datas[41]['column' + str(column_index)] = serializer.data[0]['context_8p_64K']
+                datas[42]['column' + str(column_index)] = serializer.data[0]['context_16p_16K']
+                datas[43]['column' + str(column_index)] = serializer.data[0]['context_16p_64K']
+                datas[44]['column' + str(column_index)] = serializer.data[0]['local_2p_0K']
+                datas[45]['column' + str(column_index)] = serializer.data[0]['local_Pipe']
+                datas[46]['column' + str(column_index)] = serializer.data[0]['local_AF_UNIX']
+                datas[47]['column' + str(column_index)] = serializer.data[0]['local_UDP']
+                datas[48]['column' + str(column_index)] = serializer.data[0]['local_TCP']
+                datas[49]['column' + str(column_index)] = serializer.data[0]['local_TCP_conn']
+                datas[50]['column' + str(column_index)] = serializer.data[0]['local_RPC_TCP']
+                datas[51]['column' + str(column_index)] = serializer.data[0]['local_RPC_UDP']
+                datas[52]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mmap_Latency']
+                datas[53]['column' + str(column_index)] = serializer.data[0]['local_bigger_Prot_Fault']
+                datas[54]['column' + str(column_index)] = serializer.data[0]['local_bigger_Page_Fault']
+                datas[55]['column' + str(column_index)] = serializer.data[0]['local_bigger_100fd_selct']
+                datas[56]['column' + str(column_index)] = serializer.data[0]['local_bigger_0K_File_create']
+                datas[57]['column' + str(column_index)] = serializer.data[0]['local_bigger_0K_File_delete']
+                datas[58]['column' + str(column_index)] = serializer.data[0]['local_bigger_10K_File_create']
+                datas[59]['column' + str(column_index)] = serializer.data[0]['local_bigger_10K_File_delete']
+                datas[60]['column' + str(column_index)] = serializer.data[0]['local_bigger_Pipe']
+                datas[61]['column' + str(column_index)] = serializer.data[0]['local_bigger_AF_UNIX']
+                datas[62]['column' + str(column_index)] = serializer.data[0]['local_bigger_TCP']
+                datas[63]['column' + str(column_index)] = serializer.data[0]['local_bigger_File_reread']
+                datas[64]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mmap_reread']
+                datas[65]['column' + str(column_index)] = serializer.data[0]['local_bigger_Bcopy_libc']
+                datas[66]['column' + str(column_index)] = serializer.data[0]['local_bigger_Bcopy_hand']
+                datas[67]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mem_read']
+                datas[68]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mem_write']
+                datas[69]['column' + str(column_index)] = serializer.data[0]['memory_Mhz']
+                datas[70]['column' + str(column_index)] = serializer.data[0]['memory_L1']
+                datas[71]['column' + str(column_index)] = serializer.data[0]['memory_L2']
+                datas[72]['column' + str(column_index)] = serializer.data[0]['memory_Main_mem']
+                datas[73]['column' + str(column_index)] = serializer.data[0]['memory_Rand_mem']
+                title_index += 1
+                column_index += 1
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
+            # 基准数据和对比数据的平均数据
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(3, 74):
+                datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
+            column_index += 1
+        else:
+            # 计算平均值
+            basic_Mhz_list = [d.basic_Mhz for d in serializer_ if d.basic_Mhz is not None]
+            basic_tlb_pages_list = [d.basic_tlb_pages for d in serializer_ if d.basic_tlb_pages is not None]
+            basic_cache_line_bytes_list = [d.basic_cache_line_bytes for d in serializer_ if d.basic_cache_line_bytes is not None]
+            basic_mem_par_list = [d.basic_mem_par for d in serializer_ if d.basic_mem_par is not None]
+            basic_scal_load_list = [d.basic_scal_load for d in serializer_ if d.basic_scal_load is not None]
+            processor_null_call_list = [d.processor_null_call for d in serializer_ if d.processor_null_call is not None]
+            processor_null_I_O_list = [d.processor_null_I_O for d in serializer_ if d.processor_null_I_O is not None]
+            processor_stat_list = [d.processor_stat for d in serializer_ if d.processor_stat is not None]
+            processor_open_close_list = [d.processor_open_close for d in serializer_ if d.processor_open_close is not None]
+            processor_slct_TCP_list = [d.processor_slct_TCP for d in serializer_ if d.processor_slct_TCP is not None]
+            processor_sig_inst_list = [d.processor_sig_inst for d in serializer_ if d.processor_sig_inst is not None]
+            processor_sig_hndl_list = [d.processor_sig_hndl for d in serializer_ if d.processor_sig_hndl is not None]
+            processor_fork_proc_list = [d.processor_fork_proc for d in serializer_ if d.processor_fork_proc is not None]
+            processor_exec_proc_list = [d.processor_exec_proc for d in serializer_ if d.processor_exec_proc is not None]
+            processor_sh_proc_list = [d.processor_sh_proc for d in serializer_ if d.processor_sh_proc is not None]
+            processor_Mhz_list = [d.processor_Mhz for d in serializer_ if d.processor_Mhz is not None]
+            basic_intgr_bit_list = [d.basic_intgr_bit for d in serializer_ if d.basic_intgr_bit is not None]
+            basic_intgr_add_list = [d.basic_intgr_add for d in serializer_ if d.basic_intgr_add is not None]
+            basic_intgr_mul_list = [d.basic_intgr_mul for d in serializer_ if d.basic_intgr_mul is not None]
+            basic_intgr_div_list = [d.basic_intgr_div for d in serializer_ if d.basic_intgr_div is not None]
+            basic_intgr_mod_list = [d.basic_intgr_mod for d in serializer_ if d.basic_intgr_mod is not None]
+            basic_int64_bit_list = [d.basic_int64_bit for d in serializer_ if d.basic_int64_bit is not None]
+            basic_int64_add_list = [d.basic_int64_add for d in serializer_ if d.basic_int64_add is not None]
+            basic_int64_mul_list = [d.basic_int64_mul for d in serializer_ if d.basic_int64_mul is not None]
+            basic_int64_div_list = [d.basic_int64_div for d in serializer_ if d.basic_int64_div is not None]
+            basic_int64_mod_list = [d.basic_int64_mod for d in serializer_ if d.basic_int64_mod is not None]
+            basic_float_add_list = [d.basic_float_add for d in serializer_ if d.basic_float_add is not None]
+            basic_float_mul_list = [d.basic_float_mul for d in serializer_ if d.basic_float_mul is not None]
+            basic_float_div_list = [d.basic_float_div for d in serializer_ if d.basic_float_div is not None]
+            basic_float_bogo_list = [d.basic_float_bogo for d in serializer_ if d.basic_float_bogo is not None]
+            basic_double_add_list = [d.basic_double_add for d in serializer_ if d.basic_double_add is not None]
+            basic_double_mul_list = [d.basic_double_mul for d in serializer_ if d.basic_double_mul is not None]
+            basic_double_div_list = [d.basic_double_div for d in serializer_ if d.basic_double_div is not None]
+            basic_double_bogo_list = [d.basic_double_bogo for d in serializer_ if d.basic_double_bogo is not None]
+            context_2p_0K_list = [d.context_2p_0K for d in serializer_ if d.context_2p_0K is not None]
+            context_2p_16K_list = [d.context_2p_16K for d in serializer_ if d.context_2p_16K is not None]
+            context_2p_64K_list = [d.context_2p_64K for d in serializer_ if d.context_2p_64K is not None]
+            context_8p_16K_list = [d.context_8p_16K for d in serializer_ if d.context_8p_16K is not None]
+            context_8p_64K_list = [d.context_8p_64K for d in serializer_ if d.context_8p_64K is not None]
+            context_16p_16K_list = [d.context_16p_16K for d in serializer_ if d.context_16p_16K is not None]
+            context_16p_64K_list = [d.context_16p_64K for d in serializer_ if d.context_16p_64K is not None]
+            local_2p_0K_list = [d.local_2p_0K for d in serializer_ if d.local_2p_0K is not None]
+            local_Pipe_list = [d.local_Pipe for d in serializer_ if d.local_Pipe is not None]
+            local_AF_UNIX_list = [d.local_AF_UNIX for d in serializer_ if d.local_AF_UNIX is not None]
+            local_UDP_list = [d.local_UDP for d in serializer_ if d.local_UDP is not None]
+            local_TCP_list = [d.local_TCP for d in serializer_ if d.local_TCP is not None]
+            local_TCP_conn_list = [d.local_TCP_conn for d in serializer_ if d.local_TCP_conn is not None]
+            local_RPC_TCP_list = [d.local_RPC_TCP for d in serializer_ if d.local_RPC_TCP is not None]
+            local_RPC_UDP_list = [d.local_RPC_UDP for d in serializer_ if d.local_RPC_UDP is not None]
+            local_bigger_Mmap_Latency_list = [d.local_bigger_Mmap_Latency for d in serializer_ if d.local_bigger_Mmap_Latency is not None]
+            local_bigger_Prot_Fault_list = [d.local_bigger_Prot_Fault for d in serializer_ if d.local_bigger_Prot_Fault is not None]
+            local_bigger_Page_Fault_list = [d.local_bigger_Page_Fault for d in serializer_ if d.local_bigger_Page_Fault is not None]
+            local_bigger_100fd_selct_list = [d.local_bigger_100fd_selct for d in serializer_ if d.local_bigger_100fd_selct is not None]
+            local_bigger_0K_File_create_list = [d.local_bigger_0K_File_create for d in serializer_ if d.local_bigger_0K_File_create is not None]
+            local_bigger_0K_File_delete_list = [d.local_bigger_0K_File_delete for d in serializer_ if d.local_bigger_0K_File_delete is not None]
+            local_bigger_10K_File_create_list = [d.local_bigger_10K_File_create for d in serializer_ if d.local_bigger_10K_File_create is not None]
+            local_bigger_10K_File_delete_list = [d.local_bigger_10K_File_delete for d in serializer_ if d.local_bigger_10K_File_delete is not None]
+            local_bigger_Pipe_list = [d.local_bigger_Pipe for d in serializer_ if d.local_bigger_Pipe is not None]
+            local_bigger_AF_UNIX_list = [d.local_bigger_AF_UNIX for d in serializer_ if d.local_bigger_AF_UNIX is not None]
+            local_bigger_TCP_list = [d.local_bigger_TCP for d in serializer_ if d.local_bigger_TCP is not None]
+            local_bigger_File_reread_list = [d.local_bigger_File_reread for d in serializer_ if d.local_bigger_File_reread is not None]
+            local_bigger_Mmap_reread_list = [d.local_bigger_Mmap_reread for d in serializer_ if d.local_bigger_Mmap_reread is not None]
+            local_bigger_Bcopy_libc_list = [d.local_bigger_Bcopy_libc for d in serializer_ if d.local_bigger_Bcopy_libc is not None]
+            local_bigger_Bcopy_hand_list = [d.local_bigger_Bcopy_hand for d in serializer_ if d.local_bigger_Bcopy_hand is not None]
+            local_bigger_Mem_read_list = [d.local_bigger_Mem_read for d in serializer_ if d.local_bigger_Mem_read is not None]
+            local_bigger_Mem_write_list = [d.local_bigger_Mem_write for d in serializer_ if d.local_bigger_Mem_write is not None]
+            memory_Mhz_list = [d.memory_Mhz for d in serializer_ if d.memory_Mhz is not None]
+            memory_L1_list = [d.memory_L1 for d in serializer_ if d.memory_L1 is not None]
+            memory_L2_list = [d.memory_L2 for d in serializer_ if d.memory_L2 is not None]
+            memory_Main_mem_list = [d.memory_Main_mem for d in serializer_ if d.memory_Main_mem is not None]
+            memory_Rand_mem_list = [d.memory_Rand_mem for d in serializer_ if d.memory_Rand_mem is not None]
+            # 计算每个数组的平均值
+            average_basic_Mhz = np.mean(basic_Mhz_list).round(2) if not np.isnan(np.mean(basic_Mhz_list)) else None
+            average_basic_tlb_pages = np.mean(basic_tlb_pages_list).round(2) if not np.isnan(np.mean(basic_tlb_pages_list)) else None
+            average_basic_cache_line_bytes = np.mean(basic_cache_line_bytes_list).round(2) if not np.isnan(np.mean(basic_cache_line_bytes_list)) else None
+            average_basic_mem_par = np.mean(basic_mem_par_list).round(2) if not np.isnan(np.mean(basic_mem_par_list)) else None
+            average_basic_scal_load = np.mean(basic_scal_load_list).round(2) if not np.isnan(np.mean(basic_scal_load_list)) else None
+            average_processor_null_call = np.mean(processor_null_call_list).round(2) if not np.isnan(np.mean(processor_null_call_list)) else None
+            average_processor_null_I_O = np.mean(processor_null_I_O_list).round(2) if not np.isnan(np.mean(processor_null_I_O_list)) else None
+            average_processor_stat = np.mean(processor_stat_list).round(2) if not np.isnan(np.mean(processor_stat_list)) else None
+            average_processor_open_close = np.mean(processor_open_close_list).round(2) if not np.isnan(np.mean(processor_open_close_list)) else None
+            average_processor_slct_TCP = np.mean(processor_slct_TCP_list).round(2) if not np.isnan(np.mean(processor_slct_TCP_list)) else None
+            average_processor_sig_inst = np.mean(processor_sig_inst_list).round(2) if not np.isnan(np.mean(processor_sig_inst_list)) else None
+            average_processor_sig_hndl = np.mean(processor_sig_hndl_list).round(2) if not np.isnan(np.mean(processor_sig_hndl_list)) else None
+            average_processor_fork_proc = np.mean(processor_fork_proc_list).round(2) if not np.isnan(np.mean(processor_fork_proc_list)) else None
+            average_processor_exec_proc = np.mean(processor_exec_proc_list).round(2) if not np.isnan(np.mean(processor_exec_proc_list)) else None
+            average_processor_sh_proc = np.mean(processor_sh_proc_list).round(2) if not np.isnan(np.mean(processor_sh_proc_list)) else None
+            average_processor_Mhz = np.mean(processor_Mhz_list).round(2) if not np.isnan(np.mean(processor_Mhz_list)) else None
+            average_basic_intgr_bit = np.mean(basic_intgr_bit_list).round(2) if not np.isnan(np.mean(basic_intgr_bit_list)) else None
+            average_basic_intgr_add = np.mean(basic_intgr_add_list).round(2) if not np.isnan(np.mean(basic_intgr_add_list)) else None
+            average_basic_intgr_mul = np.mean(basic_intgr_mul_list).round(2) if not np.isnan(np.mean(basic_intgr_mul_list)) else None
+            average_basic_intgr_div = np.mean(basic_intgr_div_list).round(2) if not np.isnan(np.mean(basic_intgr_div_list)) else None
+            average_basic_intgr_mod = np.mean(basic_intgr_mod_list).round(2) if not np.isnan(np.mean(basic_intgr_mod_list)) else None
+            average_basic_int64_bit = np.mean(basic_int64_bit_list).round(2) if not np.isnan(np.mean(basic_int64_bit_list)) else None
+            average_basic_int64_add = np.mean(basic_int64_add_list).round(2) if not np.isnan(np.mean(basic_int64_add_list)) else None
+            average_basic_int64_mul = np.mean(basic_int64_mul_list).round(2) if not np.isnan(np.mean(basic_int64_mul_list)) else None
+            average_basic_int64_div = np.mean(basic_int64_div_list).round(2) if not np.isnan(np.mean(basic_int64_div_list)) else None
+            average_basic_int64_mod = np.mean(basic_int64_mod_list).round(2) if not np.isnan(np.mean(basic_int64_mod_list)) else None
+            average_basic_float_add = np.mean(basic_float_add_list).round(2) if not np.isnan(np.mean(basic_float_add_list)) else None
+            average_basic_float_mul = np.mean(basic_float_mul_list).round(2) if not np.isnan(np.mean(basic_float_mul_list)) else None
+            average_basic_float_div = np.mean(basic_float_div_list).round(2) if not np.isnan(np.mean(basic_float_div_list)) else None
+            average_basic_float_bogo = np.mean(basic_float_bogo_list).round(2) if not np.isnan(np.mean(basic_float_bogo_list)) else None
+            average_basic_double_add = np.mean(basic_double_add_list).round(2) if not np.isnan(np.mean(basic_double_add_list)) else None
+            average_basic_double_mul = np.mean(basic_double_mul_list).round(2) if not np.isnan(np.mean(basic_double_mul_list)) else None
+            average_basic_double_div = np.mean(basic_double_div_list).round(2) if not np.isnan(np.mean(basic_double_div_list)) else None
+            average_basic_double_bogo = np.mean(basic_double_bogo_list).round(2) if not np.isnan(np.mean(basic_double_bogo_list)) else None
+            average_context_2p_0K = np.mean(context_2p_0K_list).round(2) if not np.isnan(np.mean(context_2p_0K_list)) else None
+            average_context_2p_16K = np.mean(context_2p_16K_list).round(2) if not np.isnan(np.mean(context_2p_16K_list)) else None
+            average_context_2p_64K = np.mean(context_2p_64K_list).round(2) if not np.isnan(np.mean(context_2p_64K_list)) else None
+            average_context_8p_16K = np.mean(context_8p_16K_list).round(2) if not np.isnan(np.mean(context_8p_16K_list)) else None
+            average_context_8p_64K = np.mean(context_8p_64K_list).round(2) if not np.isnan(np.mean(context_8p_64K_list)) else None
+            average_context_16p_16K = np.mean(context_16p_16K_list).round(2) if not np.isnan(np.mean(context_16p_16K_list)) else None
+            average_context_16p_64K = np.mean(context_16p_64K_list).round(2) if not np.isnan(np.mean(context_16p_64K_list)) else None
+            average_local_2p_0K = np.mean(local_2p_0K_list).round(2) if not np.isnan(np.mean(local_2p_0K_list)) else None
+            average_local_Pipe = np.mean(local_Pipe_list).round(2) if not np.isnan(np.mean(local_Pipe_list)) else None
+            average_local_AF_UNIX = np.mean(local_AF_UNIX_list).round(2) if not np.isnan(np.mean(local_AF_UNIX_list)) else None
+            average_local_UDP = np.mean(local_UDP_list).round(2) if not np.isnan(np.mean(local_UDP_list)) else None
+            average_local_TCP = np.mean(local_TCP_list).round(2) if not np.isnan(np.mean(local_TCP_list)) else None
+            average_local_TCP_conn = np.mean(local_TCP_conn_list).round(2) if not np.isnan(np.mean(local_TCP_conn_list)) else None
+            average_local_RPC_TCP = np.mean(local_RPC_TCP_list).round(2) if not np.isnan(np.mean(local_RPC_TCP_list)) else None
+            average_local_RPC_UDP = np.mean(local_RPC_UDP_list).round(2) if not np.isnan(np.mean(local_RPC_UDP_list)) else None
+            average_local_bigger_Mmap_Latency = np.mean(local_bigger_Mmap_Latency_list).round(2) if not np.isnan(np.mean(local_bigger_Mmap_Latency_list)) else None
+            average_local_bigger_Prot_Fault = np.mean(local_bigger_Prot_Fault_list).round(2) if not np.isnan(np.mean(local_bigger_Prot_Fault_list)) else None
+            average_local_bigger_Page_Fault = np.mean(local_bigger_Page_Fault_list).round(2) if not np.isnan(np.mean(local_bigger_Page_Fault_list)) else None
+            average_local_bigger_100fd_selct = np.mean(local_bigger_100fd_selct_list).round(2) if not np.isnan(np.mean(local_bigger_100fd_selct_list)) else None
+            average_local_bigger_0K_File_create = np.mean(local_bigger_0K_File_create_list).round(2) if not np.isnan(np.mean(local_bigger_0K_File_create_list)) else None
+            average_local_bigger_0K_File_delete = np.mean(local_bigger_0K_File_delete_list).round(2) if not np.isnan(np.mean(local_bigger_0K_File_delete_list)) else None
+            average_local_bigger_10K_File_create = np.mean(local_bigger_10K_File_create_list).round(2) if not np.isnan(np.mean(local_bigger_10K_File_create_list)) else None
+            average_local_bigger_10K_File_delete = np.mean(local_bigger_10K_File_delete_list).round(2) if not np.isnan(np.mean(local_bigger_10K_File_delete_list)) else None
+            average_local_bigger_Pipe = np.mean(local_bigger_Pipe_list).round(2) if not np.isnan(np.mean(local_bigger_Pipe_list)) else None
+            average_local_bigger_AF_UNIX = np.mean(local_bigger_AF_UNIX_list).round(2) if not np.isnan(np.mean(local_bigger_AF_UNIX_list)) else None
+            average_local_bigger_TCP = np.mean(local_bigger_TCP_list).round(2) if not np.isnan(np.mean(local_bigger_TCP_list)) else None
+            average_local_bigger_File_reread = np.mean(local_bigger_File_reread_list).round(2) if not np.isnan(np.mean(local_bigger_File_reread_list)) else None
+            average_local_bigger_Mmap_reread = np.mean(local_bigger_Mmap_reread_list).round(2) if not np.isnan(np.mean(local_bigger_Mmap_reread_list)) else None
+            average_local_bigger_Bcopy_libc = np.mean(local_bigger_Bcopy_libc_list).round(2) if not np.isnan(np.mean(local_bigger_Bcopy_libc_list)) else None
+            average_local_bigger_Bcopy_hand = np.mean(local_bigger_Bcopy_hand_list).round(2) if not np.isnan(np.mean(local_bigger_Bcopy_hand_list)) else None
+            average_local_bigger_Mem_read = np.mean(local_bigger_Mem_read_list).round(2) if not np.isnan(np.mean(local_bigger_Mem_read_list)) else None
+            average_local_bigger_Mem_write = np.mean(local_bigger_Mem_write_list).round(2) if not np.isnan(np.mean(local_bigger_Mem_write_list)) else None
+            average_memory_Mhz = np.mean(memory_Mhz_list).round(2) if not np.isnan(np.mean(memory_Mhz_list)) else None
+            average_memory_L1 = np.mean(memory_L1_list).round(2) if not np.isnan(np.mean(memory_L1_list)) else None
+            average_memory_L2 = np.mean(memory_L2_list).round(2) if not np.isnan(np.mean(memory_L2_list)) else None
+            average_memory_Main_mem = np.mean(memory_Main_mem_list).round(2) if not np.isnan(np.mean(memory_Main_mem_list)) else None
+            average_memory_Rand_mem = np.mean(memory_Rand_mem_list).round(2) if not np.isnan(np.mean(memory_Rand_mem_list)) else None
+            # 基准数据和对比数据的全部数据
+            for data in serializer_:
+                datas[0]['column' + str(column_index)] = 'Lmbench#' + str(title_index)
+                datas[1]['column' + str(column_index)] = data.execute_cmd
+                datas[2]['column' + str(column_index)] = data.modify_parameters
+                datas[3]['column' + str(column_index)] = data.basic_Mhz
+                datas[4]['column' + str(column_index)] = data.basic_tlb_pages
+                datas[5]['column' + str(column_index)] = data.basic_cache_line_bytes
+                datas[6]['column' + str(column_index)] = data.basic_mem_par
+                datas[7]['column' + str(column_index)] = data.basic_scal_load
+                datas[8]['column' + str(column_index)] = data.processor_null_call
+                datas[9]['column' + str(column_index)] = data.processor_null_I_O
+                datas[10]['column' + str(column_index)] = data.processor_stat
+                datas[11]['column' + str(column_index)] = data.processor_open_close
+                datas[12]['column' + str(column_index)] = data.processor_slct_TCP
+                datas[13]['column' + str(column_index)] = data.processor_sig_inst
+                datas[14]['column' + str(column_index)] = data.processor_sig_hndl
+                datas[15]['column' + str(column_index)] = data.processor_fork_proc
+                datas[16]['column' + str(column_index)] = data.processor_exec_proc
+                datas[17]['column' + str(column_index)] = data.processor_sh_proc
+                datas[18]['column' + str(column_index)] = data.processor_Mhz
+                datas[19]['column' + str(column_index)] = data.basic_intgr_bit
+                datas[20]['column' + str(column_index)] = data.basic_intgr_add
+                datas[21]['column' + str(column_index)] = data.basic_intgr_mul
+                datas[22]['column' + str(column_index)] = data.basic_intgr_div
+                datas[23]['column' + str(column_index)] = data.basic_intgr_mod
+                datas[24]['column' + str(column_index)] = data.basic_int64_bit
+                datas[25]['column' + str(column_index)] = data.basic_int64_add
+                datas[26]['column' + str(column_index)] = data.basic_int64_mul
+                datas[27]['column' + str(column_index)] = data.basic_int64_div
+                datas[28]['column' + str(column_index)] = data.basic_int64_mod
+                datas[29]['column' + str(column_index)] = data.basic_float_add
+                datas[30]['column' + str(column_index)] = data.basic_float_mul
+                datas[31]['column' + str(column_index)] = data.basic_float_div
+                datas[32]['column' + str(column_index)] = data.basic_float_bogo
+                datas[33]['column' + str(column_index)] = data.basic_double_add
+                datas[34]['column' + str(column_index)] = data.basic_double_mul
+                datas[35]['column' + str(column_index)] = data.basic_double_div
+                datas[36]['column' + str(column_index)] = data.basic_double_bogo
+                datas[37]['column' + str(column_index)] = data.context_2p_0K
+                datas[38]['column' + str(column_index)] = data.context_2p_16K
+                datas[39]['column' + str(column_index)] = data.context_2p_64K
+                datas[40]['column' + str(column_index)] = data.context_8p_16K
+                datas[41]['column' + str(column_index)] = data.context_8p_64K
+                datas[42]['column' + str(column_index)] = data.context_16p_16K
+                datas[43]['column' + str(column_index)] = data.context_16p_64K
+                datas[44]['column' + str(column_index)] = data.local_2p_0K
+                datas[45]['column' + str(column_index)] = data.local_Pipe
+                datas[46]['column' + str(column_index)] = data.local_AF_UNIX
+                datas[47]['column' + str(column_index)] = data.local_UDP
+                datas[48]['column' + str(column_index)] = data.local_TCP
+                datas[49]['column' + str(column_index)] = data.local_TCP_conn
+                datas[50]['column' + str(column_index)] = data.local_RPC_TCP
+                datas[51]['column' + str(column_index)] = data.local_RPC_UDP
+                datas[52]['column' + str(column_index)] = data.local_bigger_Mmap_Latency
+                datas[53]['column' + str(column_index)] = data.local_bigger_Prot_Fault
+                datas[54]['column' + str(column_index)] = data.local_bigger_Page_Fault
+                datas[55]['column' + str(column_index)] = data.local_bigger_100fd_selct
+                datas[56]['column' + str(column_index)] = data.local_bigger_0K_File_create
+                datas[57]['column' + str(column_index)] = data.local_bigger_0K_File_delete
+                datas[58]['column' + str(column_index)] = data.local_bigger_10K_File_create
+                datas[59]['column' + str(column_index)] = data.local_bigger_10K_File_delete
+                datas[60]['column' + str(column_index)] = data.local_bigger_Pipe
+                datas[61]['column' + str(column_index)] = data.local_bigger_AF_UNIX
+                datas[62]['column' + str(column_index)] = data.local_bigger_TCP
+                datas[63]['column' + str(column_index)] = data.local_bigger_File_reread
+                datas[64]['column' + str(column_index)] = data.local_bigger_Mmap_reread
+                datas[65]['column' + str(column_index)] = data.local_bigger_Bcopy_libc
+                datas[66]['column' + str(column_index)] = data.local_bigger_Bcopy_hand
+                datas[67]['column' + str(column_index)] = data.local_bigger_Mem_read
+                datas[68]['column' + str(column_index)] = data.local_bigger_Mem_write
+                datas[69]['column' + str(column_index)] = data.memory_Mhz
+                datas[70]['column' + str(column_index)] = data.memory_L1
+                datas[71]['column' + str(column_index)] = data.memory_L2
+                datas[72]['column' + str(column_index)] = data.memory_Main_mem
+                datas[73]['column' + str(column_index)] = data.memory_Rand_mem
+                column_index += 1
+                title_index += 1
+            title = '平均值(基准数据)' if not base_column_index else '平均值'
+            # 基准数据和对比数据的平均数据
+            datas[0]['column' + str(column_index)] = title
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            datas[3]['column' + str(column_index)] = average_basic_Mhz
+            datas[4]['column' + str(column_index)] = average_basic_tlb_pages
+            datas[5]['column' + str(column_index)] = average_basic_cache_line_bytes
+            datas[6]['column' + str(column_index)] = average_basic_mem_par
+            datas[7]['column' + str(column_index)] = average_basic_scal_load
+            datas[8]['column' + str(column_index)] = average_processor_null_call
+            datas[9]['column' + str(column_index)] = average_processor_null_I_O
+            datas[10]['column' + str(column_index)] = average_processor_stat
+            datas[11]['column' + str(column_index)] = average_processor_open_close
+            datas[12]['column' + str(column_index)] = average_processor_slct_TCP
+            datas[13]['column' + str(column_index)] = average_processor_sig_inst
+            datas[14]['column' + str(column_index)] = average_processor_sig_hndl
+            datas[15]['column' + str(column_index)] = average_processor_fork_proc
+            datas[16]['column' + str(column_index)] = average_processor_exec_proc
+            datas[17]['column' + str(column_index)] = average_processor_sh_proc
+            datas[18]['column' + str(column_index)] = average_processor_Mhz
+            datas[19]['column' + str(column_index)] = average_basic_intgr_bit
+            datas[20]['column' + str(column_index)] = average_basic_intgr_add
+            datas[21]['column' + str(column_index)] = average_basic_intgr_mul
+            datas[22]['column' + str(column_index)] = average_basic_intgr_div
+            datas[23]['column' + str(column_index)] = average_basic_intgr_mod
+            datas[24]['column' + str(column_index)] = average_basic_int64_bit
+            datas[25]['column' + str(column_index)] = average_basic_int64_add
+            datas[26]['column' + str(column_index)] = average_basic_int64_mul
+            datas[27]['column' + str(column_index)] = average_basic_int64_div
+            datas[28]['column' + str(column_index)] = average_basic_int64_mod
+            datas[29]['column' + str(column_index)] = average_basic_float_add
+            datas[30]['column' + str(column_index)] = average_basic_float_mul
+            datas[31]['column' + str(column_index)] = average_basic_float_div
+            datas[32]['column' + str(column_index)] = average_basic_float_bogo
+            datas[33]['column' + str(column_index)] = average_basic_double_add
+            datas[34]['column' + str(column_index)] = average_basic_double_mul
+            datas[35]['column' + str(column_index)] = average_basic_double_div
+            datas[36]['column' + str(column_index)] = average_basic_double_bogo
+            datas[37]['column' + str(column_index)] = average_context_2p_0K
+            datas[38]['column' + str(column_index)] = average_context_2p_16K
+            datas[39]['column' + str(column_index)] = average_context_2p_64K
+            datas[40]['column' + str(column_index)] = average_context_8p_16K
+            datas[41]['column' + str(column_index)] = average_context_8p_64K
+            datas[42]['column' + str(column_index)] = average_context_16p_16K
+            datas[43]['column' + str(column_index)] = average_context_16p_64K
+            datas[44]['column' + str(column_index)] = average_local_2p_0K
+            datas[45]['column' + str(column_index)] = average_local_Pipe
+            datas[46]['column' + str(column_index)] = average_local_AF_UNIX
+            datas[47]['column' + str(column_index)] = average_local_UDP
+            datas[48]['column' + str(column_index)] = average_local_TCP
+            datas[49]['column' + str(column_index)] = average_local_TCP_conn
+            datas[50]['column' + str(column_index)] = average_local_RPC_TCP
+            datas[51]['column' + str(column_index)] = average_local_RPC_UDP
+            datas[52]['column' + str(column_index)] = average_local_bigger_Mmap_Latency
+            datas[53]['column' + str(column_index)] = average_local_bigger_Prot_Fault
+            datas[54]['column' + str(column_index)] = average_local_bigger_Page_Fault
+            datas[55]['column' + str(column_index)] = average_local_bigger_100fd_selct
+            datas[56]['column' + str(column_index)] = average_local_bigger_0K_File_create
+            datas[57]['column' + str(column_index)] = average_local_bigger_0K_File_delete
+            datas[58]['column' + str(column_index)] = average_local_bigger_10K_File_create
+            datas[59]['column' + str(column_index)] = average_local_bigger_10K_File_delete
+            datas[60]['column' + str(column_index)] = average_local_bigger_Pipe
+            datas[61]['column' + str(column_index)] = average_local_bigger_AF_UNIX
+            datas[62]['column' + str(column_index)] = average_local_bigger_TCP
+            datas[63]['column' + str(column_index)] = average_local_bigger_File_reread
+            datas[64]['column' + str(column_index)] = average_local_bigger_Mmap_reread
+            datas[65]['column' + str(column_index)] = average_local_bigger_Bcopy_libc
+            datas[66]['column' + str(column_index)] = average_local_bigger_Bcopy_hand
+            datas[67]['column' + str(column_index)] = average_local_bigger_Mem_read
+            datas[68]['column' + str(column_index)] = average_local_bigger_Mem_write
+            datas[69]['column' + str(column_index)] = average_memory_Mhz
+            datas[70]['column' + str(column_index)] = average_memory_L1
+            datas[71]['column' + str(column_index)] = average_memory_L2
+            datas[72]['column' + str(column_index)] = average_memory_Main_mem
+            datas[73]['column' + str(column_index)] = average_memory_Rand_mem
+            column_index += 1
+
+        if not base_column_index:
+            # 记录基准数据
+            base_column_index = column_index - 1
+        else:
+            # 对比数据的对比值
+            datas[0]['column' + str(column_index)] = '对比值'
+            datas[1]['column' + str(column_index)] = ''
+            datas[2]['column' + str(column_index)] = ''
+            for i in range(3, 74):
+                if 59 < i < 69:
+                    datas[i]['column' + str(column_index)] = \
+                        "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
+                            'column' + str(base_column_index)]) / datas[i][
+                                        'column' + str(base_column_index)] * 100) if datas[i]['column' + str(
+                            column_index - 1)] is not None and datas[i]['column' + str(
+                            base_column_index)] is not None else None
+                else:
+                    datas[i]['column' + str(column_index)] = \
+                        "%.2f%%" % ((datas[i]['column' + str(base_column_index)] - datas[i][
+                            'column' + str(column_index - 1)]) / datas[i]['column' + str(base_column_index)] * 100) if \
+                            datas[i]['column' + str(column_index - 1)] is not None and datas[i][
+                                'column' + str(base_column_index)] is not None else None
+            column_index += 1
+        return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
         """
+        返回列表
         :param request:
         :param args:
         :param kwargs:
         :return:
         """
-        project_queryset = Project.objects.all()
-        if not project_queryset:
-            return json_response({}, status.HTTP_204_NO_CONTENT, '未查询到project')
-        serializer = self.get_serializer(project_queryset, many=True)
-        return json_response(serializer.data, status.HTTP_200_OK, 'project数据获取完成')
-
-    def put(self, request, *args, **kwargs):
-        id = request.data.get('id', None)
-        project_name = request.data.get('project_name', None)
-        message = request.data.get('message', None)
-        if not project_name and not id:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id和project_name')
-        user_name = Project.objects.filter(id=id).first().user_name
-        if request.user.is_superuser or request.user.chinese_name == user_name:
-            Project.objects.filter(id=id).update(id=id,project_name=project_name,message=message)
-        else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '该用户不允许修改此数据')
-        queryset = Project.objects.filter(id=id)
-        serializer = self.get_serializer(queryset, many=True)
-        return json_response(serializer.data, status.HTTP_200_OK, '修改project数据完成')
-
-    def get_filter_name(self, request, *args, **kwargs):
-        project_queryset = Project.objects.all()
-        serializer = self.get_serializer(project_queryset, many=True)
-        projectNames_ = set([d['project_name'] for d in serializer.data])
-        userNames_ = list(set([d['user_name'] for d in serializer.data]))
-        osNames_ = list(set([d['os_version'] for d in serializer.data]))
-        cpuNames_ = list(set([d['cpu_module_name'] for d in serializer.data]))
-        projectNames = [{'text': name, 'value': name} for name in projectNames_]
-        userNames = [{'text': name, 'value': name} for name in userNames_]
-        osNames = [{'text': name, 'value': name} for name in osNames_]
-        cpuNames = [{'text': name, 'value': name} for name in cpuNames_]
-        datas = {'projectNames': projectNames, 'userNames': userNames, 'osNames': osNames, 'cpuNames': cpuNames}
-        return json_response(datas, status.HTTP_200_OK, '筛选数据获取完成')
-
-    def merge_data(self, request, *args, **kwargs):
-        env_id = request.data.get('env_id', None)
-        env_ids = request.data.get('env_ids', None)
-        # 1、判断是否属于同一个项目等
-        base_project = Project.objects.filter(env_id=env_id[0]).first()
-        project_names = list(set([d.project_name for d in Project.objects.filter(env_id__in=env_ids)]))
-        user_names = list(set([d.user_name for d in Project.objects.filter(env_id__in=env_ids)]))
-        os_versions = list(set([d.os_version for d in Project.objects.filter(env_id__in=env_ids)]))
-        cpu_module_names = list(set([d.cpu_module_name for d in Project.objects.filter(env_id__in=env_ids)]))
-        all_project_names = all(name == base_project.project_name for name in project_names)
-        all_user_names = all(name == base_project.user_name for name in user_names)
-        all_os_versions = all(name == base_project.os_version for name in os_versions)
-        all_cpu_module_names = all(name == base_project.cpu_module_name for name in cpu_module_names)
-
-        if not all([all_project_names, all_user_names, all_os_versions, all_cpu_module_names]):
-            return json_response({}, status.HTTP_204_NO_CONTENT, '请确保所有的"项目名称"、"上传人员"、"系统版本"、"cpu型号都相同"')
-
-        # 2、修改数据的env_id和mark_name
-        unixbench_number = -1
-        fio_number = -1
-        iozone_number = -1
-        jvm2008_number = -1
-        cpu2006_number = -1
-        cpu2017_number = -1
-        # 多数据测试项目，project的表中在直接替换成这个数据
-        if Unixbench.objects.filter(env_id=env_id[0]):
-            unixbench_mark_name_list = set([d.mark_name for d in Unixbench.objects.filter(env_id=env_id[0])])
-            unixbench_number = max(int(string[-1]) for string in unixbench_mark_name_list)
-
-        if Fio.objects.filter(env_id=env_id[0]):
-            fio_mark_name_list = set([d.mark_name for d in Fio.objects.filter(env_id=env_id[0])])
-            fio_number = max(int(string[-1]) for string in fio_mark_name_list)
-
-        if Iozone.objects.filter(env_id=env_id[0]):
-            iozone_mark_name_list = set([d.mark_name for d in Iozone.objects.filter(env_id=env_id[0])])
-            iozone_number = max(int(string[-1]) for string in iozone_mark_name_list)
-
-        if Jvm2008.objects.filter(env_id=env_id[0]):
-            jvm2008_mark_name_list = set([d.mark_name for d in Jvm2008.objects.filter(env_id=env_id[0])])
-            jvm2008_number = max(int(string[-1]) for string in jvm2008_mark_name_list)
-
-        if Cpu2006.objects.filter(env_id=env_id[0]):
-            cpu2006_mark_name_list = set([d.mark_name for d in Cpu2006.objects.filter(env_id=env_id[0])])
-            cpu2006_number = max(int(string[-1]) for string in cpu2006_mark_name_list)
-
-        if Cpu2017.objects.filter(env_id=env_id[0]):
-            cpu2017_mark_name_list = set([d.mark_name for d in Cpu2017.objects.filter(env_id=env_id[0])])
-            cpu2017_number = max(int(string[-1]) for string in cpu2017_mark_name_list)
-
-        for id in env_ids:
-            if Stream.objects.filter(env_id=id):
-                Stream.objects.filter(env_id=id).update(env_id=env_id[0])
-            if Lmbench.objects.filter(env_id=id):
-                Lmbench.objects.filter(env_id=id).update(env_id=env_id[0])
-            max_unixbench_number = 0
-            if Unixbench.objects.filter(env_id=id):
-                for obj in Unixbench.objects.filter(env_id=id):
-                    new_unixbench_number = unixbench_number + (int(obj.mark_name[-1]) + 1)
-                    max_unixbench_number = max(max_unixbench_number, new_unixbench_number)
-                    new_mark_name = obj.mark_name[:-1] + str(new_unixbench_number)
-                    obj.env_id = env_id[0]
-                    obj.mark_name = new_mark_name
-                    obj.save()
-                unixbench_number = max_unixbench_number
-            max_fio_number = 0
-            if Fio.objects.filter(env_id=id):
-                for obj in Fio.objects.filter(env_id=id):
-                    new_fio_number = fio_number + (int(obj.mark_name[-1]) + 1)
-                    max_fio_number = max(max_fio_number, new_fio_number)
-                    new_mark_name = obj.mark_name[:-1] + str(new_fio_number)
-                    obj.env_id = env_id[0]
-                    obj.mark_name = new_mark_name
-                    obj.save()
-                fio_number = max_fio_number
-            max_iozone_number = 0
-            if Iozone.objects.filter(env_id=id):
-                for obj in Iozone.objects.filter(env_id=id):
-                    new_iozone_number = iozone_number + (int(obj.mark_name[-1]) + 1)
-                    max_iozone_number = max(max_iozone_number, new_iozone_number)
-                    new_mark_name = obj.mark_name[:-1] + str(new_iozone_number)
-                    obj.env_id = env_id[0]
-                    obj.mark_name = new_mark_name
-                    obj.save()
-                iozone_number = max_iozone_number
-            max_jvm2008_number = 0
-            if Jvm2008.objects.filter(env_id=id):
-                for obj in Jvm2008.objects.filter(env_id=id):
-                    new_jvm2008_number = jvm2008_number + (int(obj.mark_name[-1]) + 1)
-                    max_jvm2008_number = max(max_jvm2008_number, new_jvm2008_number)
-                    new_mark_name = obj.mark_name[:-1] + str(new_jvm2008_number)
-                    obj.env_id = env_id[0]
-                    obj.mark_name = new_mark_name
-                    obj.save()
-                jvm2008_number = max_jvm2008_number
-            max_cpu2006_number = 0
-            if Cpu2006.objects.filter(env_id=id):
-                for obj in Cpu2006.objects.filter(env_id=id):
-                    new_cpu2006_number = cpu2006_number + (int(obj.mark_name[-1]) + 1)
-                    max_cpu2006_number = max(max_cpu2006_number, new_cpu2006_number)
-                    new_mark_name = obj.mark_name[:-1] + str(new_cpu2006_number)
-                    obj.env_id = env_id[0]
-                    obj.mark_name = new_mark_name
-                    obj.save()
-                cpu2006_number = max_cpu2006_number
-            max_cpu2017_number = 0
-            if Cpu2017.objects.filter(env_id=id):
-                for obj in Cpu2017.objects.filter(env_id=id):
-                    new_cpu2017_number = cpu2017_number + (int(obj.mark_name[-1]) + 1)
-                    max_cpu2017_number = max(max_cpu2017_number, new_cpu2017_number)
-                    new_mark_name = obj.mark_name[:-1] + str(new_cpu2017_number)
-                    obj.env_id = env_id[0]
-                    obj.mark_name = new_mark_name
-                    obj.save()
-                cpu2017_number = max_cpu2017_number
-
-        # 3、合并all_json_data文件
-        json_file_path = '/var/www/html/all_json_data_file/'
-        # 找到需要合并的全部数据
-        base_env_time = Env.objects.filter(id=env_id[0]).first().time
-        compar_env_times = list(set([d.time for d in Env.objects.filter(id__in=env_ids)]))
-        print('base_env_time = ', base_env_time)
-        print('compar_env_times = ',compar_env_times)
-
-
-        if os.path.exists(json_file_path + base_env_time+'.json'):
-            stream_max_number = -1
-            unixbench_max_number = -1
-            fio_max_number = -1
-            iozone_max_number = -1
-            jvm2008_max_number = -1
-            cpu2006_max_number = -1
-            cpu2017_max_number = -1
-            data_ = None
-            base_lmbench_keys = 'lmbench'
-            with open(json_file_path + base_env_time+'.json', 'r') as f:
-                json_data = f.read()
-                # 将 JSON 字符串解析为 Python 对象
-                base_file_data = json.loads(json_data)
-                # 获取base数据的lmbench最后一位的key
-                if [key for key in base_file_data.keys() if key.startswith('lmbench')]:
-                    base_lmbench_keys = sorted([key for key in base_file_data.keys() if key.startswith('lmbench')])[-1]
-                data_ = base_file_data.copy()
-                stream_keys_number = []
-                unixbench_keys_number = []
-                fio_keys_number = []
-                iozone_keys_number = []
-                jvm2008_keys_number = []
-                cpu2006_keys_number = []
-                cpu2017_keys_number = []
-                for key in base_file_data.keys():
-                    if key.startswith('stream'):
-                        stream_keys_number.append(int(key.split('-')[-1]))
-                    elif key.startswith('Unixbench'):
-                       unixbench_keys_number.append(int(key.split('-')[-1]))
-                    elif key.startswith('fio'):
-                       fio_keys_number.append(int(key.split('-')[-1]))
-                    elif key.startswith('iozone'):
-                       iozone_keys_number.append(int(key.split('-')[-1]))
-                    elif key.startswith('specjvm'):
-                        jvm2008_keys_number.append(int(key.split('-')[-1]))
-                    elif key.startswith('cpu2006'):
-                       cpu2006_keys_number.append(int(key.split('-')[-1]))
-                    elif key.startswith('cpu2017'):
-                       cpu2017_keys_number.append(int(key.split('-')[-1]))
-
-                stream_max_number = max(stream_keys_number) if stream_keys_number else stream_max_number
-                unixbench_max_number = max(unixbench_keys_number) if unixbench_keys_number else unixbench_max_number
-                fio_max_number = max(fio_keys_number) if fio_keys_number else fio_max_number
-                iozone_max_number = max(iozone_keys_number) if iozone_keys_number else iozone_max_number
-                jvm2008_max_number = max(jvm2008_keys_number) if jvm2008_keys_number else jvm2008_max_number
-                cpu2006_max_number = max(cpu2006_keys_number) if cpu2006_keys_number else cpu2006_max_number
-                cpu2017_max_number = max(cpu2017_keys_number) if cpu2017_keys_number else cpu2017_max_number
-
-            for file_name in compar_env_times:
-                if os.path.exists(json_file_path + file_name + '.json'):
-                    with open(json_file_path + file_name + '.json', 'r') as f:
-                        json_data = f.read()
-                        # 将 JSON 字符串解析为 Python 对象
-                        compar_file_data = json.loads(json_data)
-                        # 因为lmbench的数据存储格式不通单独处理lmbench。lmbench的最后一组数据中有全部的数据
-                        lmbench_keys = 'lmbench'
-                        if [key for key in compar_file_data.keys() if key.startswith('lmbench')]:
-                            lmbench_keys = sorted([key for key in compar_file_data.keys() if key.startswith('lmbench')])[-1]
-                        for key,value in compar_file_data.items():
-                            if key.startswith('stream'):
-                                data_['stream-5.9-1-null-0-'+str(int(key.split('-')[-1]) + stream_max_number + 1)] = value
-                            elif key == lmbench_keys:
-                                # 因为lmbench的测试段数据存储是会保存上一条的测试数据，所以特殊处理。
-                                if base_lmbench_keys == 'lmbench':
-                                    data_[lmbench_keys] = value
-                                else:
-                                    data_[base_lmbench_keys]['items'].extend(value['items'])
-                            elif key.startswith('Unixbench'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + unixbench_max_number + 1)] = value
-                            elif key.startswith('fio'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + fio_max_number + 1)] = value
-                            elif key.startswith('iozone'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + iozone_max_number + 1)] = value
-                            elif key.startswith('specjvm'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + jvm2008_max_number + 1)] = value
-                            elif key.startswith('cpu2006'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
-                            elif key.startswith('cpu2017'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
-                        compar_stream_keys = []
-                        compar_unixbench_keys = []
-                        compar_fio_keys = []
-                        compar_iozone_keys = []
-                        compar_jvm2008_keys = []
-                        compar_cpu2006_keys = []
-                        compar_cpu2017_keys = []
-                        for key in compar_file_data.keys():
-                            if key.startswith('stream'):
-                                compar_stream_keys.append(int(key.split('-')[-1]))
-                            elif key.startswith('Unixbench'):
-                                compar_unixbench_keys.append(int(key.split('-')[-1]))
-                            elif key.startswith('fio'):
-                                compar_fio_keys.append(int(key.split('-')[-1]))
-                            elif key.startswith('iozone'):
-                                compar_iozone_keys.append(int(key.split('-')[-1]))
-                            elif key.startswith('specjvm'):
-                                compar_jvm2008_keys.append(int(key.split('-')[-1]))
-                            elif key.startswith('cpu2006'):
-                                compar_cpu2006_keys.append(int(key.split('-')[-1]))
-                            elif key.startswith('cpu2017'):
-                                compar_cpu2017_keys.append(int(key.split('-')[-1]))
-                        stream_max_number = stream_max_number + max(compar_stream_keys) + 1 if compar_stream_keys else stream_max_number
-                        unixbench_max_number = unixbench_max_number + max(compar_unixbench_keys) + 1 if compar_unixbench_keys else unixbench_max_number
-                        fio_max_number = fio_max_number + max(compar_fio_keys) + 1 if compar_fio_keys else fio_max_number
-                        iozone_max_number = iozone_max_number + max(compar_iozone_keys) + 1 if compar_iozone_keys else iozone_max_number
-                        jvm2008_max_number = jvm2008_max_number + max(compar_jvm2008_keys) + 1 if compar_jvm2008_keys else jvm2008_max_number
-                        cpu2006_max_number = cpu2006_max_number + max(compar_cpu2006_keys) + 1 if compar_cpu2006_keys else cpu2006_max_number
-                        cpu2017_max_number = cpu2017_max_number + max(compar_cpu2017_keys) + 1 if compar_cpu2017_keys else cpu2017_max_number
-
-            new_json_file = json_file_path + str(base_env_time)+'.json'
-            os.rename(new_json_file, new_json_file + '-env_' + str(env_id[0]) + '-base-old')
-
-            with open(new_json_file, 'w', encoding='utf-8') as f_new:
-                json.dump(data_, f_new)
-
-            # 5、删除旧的数据
-            for name in compar_env_times:
-                os.rename(json_file_path + str(name)+'.json', json_file_path + str(name)+'.json-env_' + str(env_id[0]) +'-compar-old')
-                print(new_json_file, '数据和', json_file_path + str(name) + '.json' + '数据合并完成')
-
-
-        # 4、删除env_id的env表，删除env_id对应的project表
-        Env.objects.filter(id__in=env_ids).delete()
-        Project.objects.filter(env_id__in=env_ids).delete()
-        # 5、修改project表对应测试项目的值
-        stream_number = len(Stream.objects.filter(env_id=env_id[0]))
-        lmbench_number = len(Lmbench.objects.filter(env_id=env_id[0]))
-        Project.objects.filter(env_id=env_id[0]).update(stream=stream_number, lmbench=lmbench_number,
-                                                        unixbench=unixbench_number + 1, fio=fio_number + 1,
-                                                        iozone=iozone_number + 1, jvm2008=jvm2008_number + 1,
-                                                        cpu2006=cpu2006_number + 1, cpu2017=cpu2017_number + 1)
-
-        return json_response({}, status.HTTP_200_OK, '合并数据成功')
+        env_id = request.GET.get('env_id')
+        comparsionIds = request.GET.get('comparsionIds')
+        comparsionIds = comparsionIds.split(',')
+        base_queryset = Lmbench.objects.filter(env_id=env_id).all()
+        if not base_queryset:
+            return json_response({}, status.HTTP_200_OK, '列表')
+        datas = [
+        {'column1':'Lmbench','column2':''},
+        {'column1': '执行命令','column2':''},
+        {'column1': '修改参数', 'column2':''},
+        {'column1':'Basic system parameters','column2':'Mhz'},
+        {'column1':'Basic system parameters','column2':'tlb pages'},
+        {'column1':'Basic system parameters','column2':'cache line bytes'},
+        {'column1':'Basic system parameters','column2':'mem par'},
+        {'column1':'Basic system parameters','column2':'scal load'},
+        {'column1':'Processor','column2':'Mhz'},
+        {'column1':'Processor','column2':'null call'},
+        {'column1':'Processor','column2':'null I/O'},
+        {'column1':'Processor','column2':'stat'},
+        {'column1':'Processor','column2':'open close'},
+        {'column1':'Processor','column2':'slct TCP'},
+        {'column1':'Processor','column2':'sig inst'},
+        {'column1':'Processor','column2':'sig hndl'},
+        {'column1':'Processor','column2':'fork proc'},
+        {'column1':'Processor','column2':'exec proc'},
+        {'column1':'Processor','column2':'sh proc'},
+        {'column1':'Basic integer operations','column2':'intgr bit'},
+        {'column1':'Basic integer operations','column2':'intgr add'},
+        {'column1':'Basic integer operations','column2':'intgr mul'},
+        {'column1':'Basic integer operations','column2':'intgr div'},
+        {'column1':'Basic integer operations','column2':'intgr mod'},
+        {'column1':'Basic uint64 operations','column2':'int64 bit'},
+        {'column1':'Basic uint64 operations','column2':'int64 add'},
+        {'column1':'Basic uint64 operations','column2':'int64 mul'},
+        {'column1':'Basic uint64 operations','column2':'int64 div'},
+        {'column1':'Basic uint64 operations','column2':'int64 mod'},
+        {'column1':'Basic float operations','column2':'float add'},
+        {'column1':'Basic float operations','column2':'float mul'},
+        {'column1':'Basic float operations','column2':'float div'},
+        {'column1':'Basic float operations','column2':'float bogo'},
+        {'column1':'Basic double operations','column2':'double add'},
+        {'column1':'Basic double operations','column2':'double mul'},
+        {'column1':'Basic double operations','column2':'double div'},
+        {'column1':'Basic double operations','column2':'double bogo'},
+        {'column1':'Context switching','column2':'2p/0K'},
+        {'column1':'Context switching','column2':'2p/16K'},
+        {'column1':'Context switching','column2':'2p/64K'},
+        {'column1':'Context switching','column2':'8p/16K'},
+        {'column1':'Context switching','column2':'8p/64K'},
+        {'column1':'Context switching','column2':'16p/16K'},
+        {'column1':'Context switching','column2':'16p/64K'},
+        {'column1':'*Local* Communication latencies','column2':'2p/0K'},
+        {'column1':'*Local* Communication latencies','column2':'Pipe'},
+        {'column1':'*Local* Communication latencies','column2':'AF UNIX'},
+        {'column1':'*Local* Communication latencies','column2':'UDP'},
+        {'column1':'*Local* Communication latencies','column2':'TCP'},
+        {'column1':'*Local* Communication latencies','column2':'TCP conn'},
+        {'column1':'*Local* Communication latencies','column2':'RPC/TCP'},
+        {'column1':'*Local* Communication latencies','column2':'RPC/UDP'},
+        {'column1':'File & VM system latencies in microseconds','column2':'0K File create'},
+        {'column1':'File & VM system latencies in microseconds','column2':'0K File delete'},
+        {'column1':'File & VM system latencies in microseconds','column2':'10K File create'},
+        {'column1':'File & VM system latencies in microseconds','column2':'10K File delete'},
+        {'column1':'File & VM system latencies in microseconds','column2':'Mmap Latency'},
+        {'column1':'File & VM system latencies in microseconds','column2':'Prot Fault'},
+        {'column1':'File & VM system latencies in microseconds','column2':'Page Fault'},
+        {'column1':'File & VM system latencies in microseconds','column2':'100fd selct'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Pipe'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'AF UNIX'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'TCP'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'File reread'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mmap reread'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Bcopy(libc)'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Bcopy(hand)'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mem read'},
+        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mem write'},
+        {'column1':'Memory latencies in nanoseconds','column2':'Mhz'},
+        {'column1':'Memory latencies in nanoseconds','column2':'L1 $'},
+        {'column1':'Memory latencies in nanoseconds','column2':'L2 $'},
+        {'column1':'Memory latencies in nanoseconds','column2':'Main mem'},
+        {'column1':'Memory latencies in nanoseconds','column2':'Rand mem'},
+        ]
+        title_index = 1
+        column_index = 3
+        base_column_index = ''
+        datas, title_index, column_index, base_column_index = self.get_data(base_queryset, datas, title_index, column_index, base_column_index)
+        if comparsionIds != ['']:
+            # 处理对比数据
+            for comparativeId in comparsionIds:
+                comparsion_queryset = Lmbench.objects.filter(env_id=comparativeId).all()
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index,
+                                                                                    column_index, base_column_index)
+        return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
-        data_project = {}
-        data_project['env_id'] = request.__dict__['data_project']['env_id']
-        data_project['message'] = str(request.__dict__['project_message'])
-        data_project['project_name'] = request.__dict__['data_project']['project_name']
-        data_project['user_name'] = UserProfile.objects.filter(
-            username = request.__dict__['data_project']['user_name']).first().chinese_name
-        data_project['os_version'] = request.__dict__['data_project']['envinfo']['swinfo']['os']['osversion']
-        data_project['cpu_module_name'] = request.__dict__['data_project']['envinfo']['hwinfo']['cpu']['model_name']
-        data_project['ip'] = \
-            request.__dict__['data_project']['envinfo']['nwinfo']['nic'][0]['ip']
-        # 获取所有文件名对应的key，判断每种测试迭代了几次
-        data_project['cpu2006'] = -1
-        data_project['cpu2017'] = -1
-        data_project['fio'] = -1
-        data_project['iozone'] = -1
-        data_project['jvm2008'] = -1
-        data_project['lmbench'] = -1
-        data_project['stream'] = -1
-        data_project['unixbench'] = -1
-        for key in request.__dict__['data_project'].keys():
-            if key.lower().startswith('stream'):
-                data_project['stream'] = max(data_project['stream'], int(key.split('-')[-1]))
-            elif key.lower().startswith('lmbench'):
-                data_project['lmbench'] = max(data_project['lmbench'], int(key.split('-')[-1]))
-            elif key.lower().startswith('unixbench'):
-                data_project['unixbench'] = max(data_project['unixbench'], int(key.split('-')[-1]))
-            elif key.lower().startswith('fio'):
-                data_project['fio'] = max(data_project['fio'], int(key.split('-')[-1]))
-            elif key.lower().startswith('iozone'):
-                data_project['iozone'] = max(data_project['iozone'], int(key.split('-')[-1]))
-            elif key.lower().startswith('specjvm'):
-                data_project['jvm2008'] = max(data_project['jvm2008'], int(key.split('-')[-1]))
-            elif key.lower().startswith('cpu2006'):
-                data_project['cpu2006'] = max(data_project['cpu2006'], int(key.split('-')[-1]))
-            elif key.lower().startswith('cpu2017'):
-                data_project['cpu2017'] = max(data_project['cpu2017'], int(key.split('-')[-1]))
-        data_project['cpu2006'] += 1
-        data_project['cpu2017'] += 1
-        data_project['fio'] += 1
-        data_project['iozone'] += 1
-        data_project['jvm2008'] += 1
-        data_project['lmbench'] += 1
-        data_project['stream'] += 1
-        data_project['unixbench'] += 1
-
-        # 查到serialnumber数据的次数后+1
-        queryset = Project.objects.filter(
-            ip=data_project['ip']).order_by('times').last()
-        if not queryset:
-            data_project['times'] = 1
+        serializer_lmbench_error = []
+        error_message = []
+        if not [key for key in request.__dict__['data_lmbench'].keys() if key.startswith('lmbench')]:
+            return
+        lmbench_keys = sorted([key for key in request.__dict__['data_lmbench'].keys() if key.startswith('lmbench')])[-1]
+        for lmbench_json in request.__dict__['data_lmbench'][lmbench_keys]['items']:
+            # 每一条lmbench数据
+            lmbench = {}
+            lmbench['env_id'] = request.__dict__['data_lmbench']['env_id']
+            lmbench['execute_cmd'] = request.__dict__['data_lmbench'][lmbench_keys].get('execute_cmd')
+            lmbench['modify_parameters'] = str(request.__dict__['data_lmbench'][lmbench_keys].get('modify_parameters'))[1:-2] if request.__dict__['data_lmbench'][lmbench_keys].get('modify_parameters') else None
+            # 处理数据，原始数据每个一级标就是一个json，把所有以及字段放到一个json中
+            new_lmbench = {}
+            for i in lmbench_json:
+                new_lmbench.update(i)
+            for key, value in new_lmbench.items():
+                if key == "Basic system parameters":
+                    lmbench['basic_Mhz'] = value['Mhz']
+                    lmbench['basic_tlb_pages'] = value['tlb pages']
+                    lmbench['basic_cache_line_bytes'] = value['cache line bytes']
+                    lmbench['basic_mem_par'] = value['mem par']
+                    lmbench['basic_scal_load'] = value['scal load']
+                elif key == "Processor":
+                    lmbench['processor_null_call'] = value['Mhz']
+                    lmbench['processor_null_I_O'] = value['null call']
+                    lmbench['processor_stat'] = value['null I/O']
+                    lmbench['processor_open_close'] = value['stat']
+                    lmbench['processor_slct_TCP'] = value['open close']
+                    lmbench['processor_sig_inst'] = value['slct TCP']
+                    lmbench['processor_sig_hndl'] = value['sig inst']
+                    lmbench['processor_fork_proc'] = value['sig hndl']
+                    lmbench['processor_exec_proc'] = value['fork proc']
+                    lmbench['processor_sh_proc'] = value['exec proc']
+                    lmbench['processor_Mhz'] = value['sh proc']
+                elif key == "Basic integer operations":
+                    lmbench['basic_intgr_bit'] = value['intgr bit']
+                    lmbench['basic_intgr_add'] = value['intgr add']
+                    lmbench['basic_intgr_mul'] = value['intgr mul']
+                    lmbench['basic_intgr_div'] = value['intgr div']
+                    lmbench['basic_intgr_mod'] = value['intgr mod']
+                elif key == "Basic uint64 operations":
+                    lmbench['basic_int64_bit'] = value['int64 bit']
+                    lmbench['basic_int64_add'] = value['int64 add']
+                    lmbench['basic_int64_mul'] = value['int64 mul']
+                    lmbench['basic_int64_div'] = value['int64 div']
+                    lmbench['basic_int64_mod'] = value['int64 mod']
+                elif key == "Basic float operations":
+                    lmbench['basic_float_add'] = value['float add']
+                    lmbench['basic_float_mul'] = value['float mul']
+                    lmbench['basic_float_div'] = value['float div']
+                    lmbench['basic_float_bogo'] = value['float bogo']
+                elif key == "Basic double operations":
+                    lmbench['basic_double_add'] = value['double add']
+                    lmbench['basic_double_mul'] = value['double mul']
+                    lmbench['basic_double_div'] = value['double div']
+                    lmbench['basic_double_bogo'] = value['double bogo']
+                elif key == "Context switching":
+                    lmbench['context_2p_0K'] = value['2p/0K']
+                    lmbench['context_2p_16K'] = value['2p/16K']
+                    lmbench['context_2p_64K'] = value['2p/64K']
+                    lmbench['context_8p_16K'] = value['8p/16K']
+                    lmbench['context_8p_64K'] = value['8p/64K']
+                    lmbench['context_16p_16K'] = value['16p/16K']
+                    lmbench['context_16p_64K'] = value['16p/64K']
+                elif key == "*Local* Communication latencies":
+                    lmbench['local_2p_0K'] = value['2p/0K']
+                    lmbench['local_Pipe'] = value['Pipe']
+                    lmbench['local_AF_UNIX'] = value['AF UNIX']
+                    lmbench['local_UDP'] = value['UDP']
+                    lmbench['local_TCP'] = value['TCP']
+                    lmbench['local_TCP_conn'] = value['TCP conn']
+                    lmbench['local_RPC_TCP'] = value['RPC/TCP']
+                    lmbench['local_RPC_UDP'] = value['RPC/UDP']
+                elif key == "File & VM system latencies in microseconds":
+                    lmbench['local_bigger_0K_File_create'] = value['0K File create']
+                    lmbench['local_bigger_0K_File_delete'] = value['0K File delete']
+                    lmbench['local_bigger_10K_File_create'] = value['10K File create']
+                    lmbench['local_bigger_10K_File_delete'] = value['10K File delete']
+                    lmbench['local_bigger_Mmap_Latency'] = value['Mmap Latency']
+                    lmbench['local_bigger_Prot_Fault'] = value['Prot Fault']
+                    lmbench['local_bigger_Page_Fault'] = value['Page Fault']
+                    lmbench['local_bigger_100fd_selct'] = value['100fd selct']
+                elif key == "*Local* Communication bandwidths in MB/s - bigger is better":
+                    lmbench['local_bigger_Pipe'] = value['Pipe']
+                    lmbench['local_bigger_AF_UNIX'] = value['AF UNIX']
+                    lmbench['local_bigger_TCP'] = value['TCP']
+                    lmbench['local_bigger_File_reread'] = value['File reread']
+                    lmbench['local_bigger_Mmap_reread'] = value['Mmap reread']
+                    lmbench['local_bigger_Bcopy_libc'] = value['Bcopy(libc)']
+                    lmbench['local_bigger_Bcopy_hand'] = value['Bcopy(hand)']
+                    lmbench['local_bigger_Mem_read'] = value['Mem read']
+                    lmbench['local_bigger_Mem_write'] = value['Mem write']
+                elif key == "Memory latencies in nanoseconds":
+                    lmbench['memory_Mhz'] = value['Mhz']
+                    lmbench['memory_L1'] = value['L1 $']
+                    lmbench['memory_L2'] = value['L2 $']
+                    lmbench['memory_Main_mem'] = value['Main mem']
+                    lmbench['memory_Rand_mem'] = value['Rand mem']
+            lmbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in
+                       lmbench.items()}
+            serializer_lmbench = LmbenchSerializer(data=lmbench)
+            if serializer_lmbench.is_valid():
+                self.perform_create(serializer_lmbench)
+            else:
+                serializer_lmbench_error.append(serializer_lmbench.errors)
+                error_message.append(get_error_message(serializer_lmbench))
+        if serializer_lmbench_error:
+            print(serializer_lmbench_error, "lmbench")
+            return json_response(serializer_lmbench_error, status.HTTP_400_BAD_REQUEST, error_message)
         else:
-            data_project['times'] = queryset.times + 1
-        serializer_project = ProjectSerializer(data=data_project)
-        if serializer_project.is_valid():
-            self.perform_create(serializer_project)
-        else:
-            print(serializer_project.errors, "project")
-            return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
-                                 get_error_message(serializer_project))
-
-    def delete(self, request):
-        id = request.data.get('id', None)
-        if not id:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id')
-        user_name = Project.objects.filter(id=id).first().user_name
-        if request.user.is_superuser or request.user.chinese_name == user_name:
-            project_data = Project.objects.filter(id=id).first()
-            if not project_data:
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-            if project_data.stream:
-                Stream.objects.filter(id=project_data.env_id).delete()
-            if project_data.unixbench:
-                Unixbench.objects.filter(id=project_data.env_id).delete()
-            if project_data.lmbench:
-                Lmbench.objects.filter(id=project_data.env_id).delete()
-            if project_data.fio:
-                Fio.objects.filter(id=project_data.env_id).delete()
-            if project_data.iozone:
-                Iozone.objects.filter(id=project_data.env_id).delete()
-            if project_data.jvm2008:
-                Jvm2008.objects.filter(id=project_data.env_id).delete()
-            if project_data.cpu2006:
-                Cpu2006.objects.filter(id=project_data.env_id).delete()
-            if project_data.cpu2017:
-                Cpu2017.objects.filter(id=project_data.env_id).delete()
-            Env.objects.filter(id=project_data.env_id).delete()
-            Project.objects.filter(id=id).delete()
-            return json_response({}, status.HTTP_200_OK, '删除成功')
-        else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
-
+            return

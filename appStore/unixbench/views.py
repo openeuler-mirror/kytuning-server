@@ -393,8 +393,8 @@ class UnixbenchViewSet(CusModelViewSet):
                     thread = "多线程"
                 # todo 所有的参数 、 cmd 是在哪里保存的
                 data_unixbench['thread'] = thread
-                data_unixbench['execute_cmd'] = 'xx'
-                data_unixbench['modify_parameters'] = '参数'
+                data_unixbench['execute_cmd'] = unixbench_json.get('execute_cmd')
+                data_unixbench['modify_parameters'] = str(unixbench_json.get('modify_parameters'))[1:-2] if unixbench_json.get('modify_parameters') else None
                 data_unixbench['mark_name'] = k[-3:]
                 data_unixbench['Dhrystone'] = unixbench_json[thread]['Dhrystone 2 using register variables(lps)']
                 data_unixbench['Double_Precision'] = unixbench_json[thread]['Double-Precision Whetstone(MWIPS)']

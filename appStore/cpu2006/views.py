@@ -908,8 +908,8 @@ class Cpu2006ViewSet(CusModelViewSet):
                     data_cpu2006['mark_name'] = k[-3:]
                     if key.split("_")[1] == "fp":
                         for key1 in value:
-                            data_cpu2006['execute_cmd'] = "xx"
-                            data_cpu2006['modify_parameters'] = "xx"
+                            data_cpu2006['execute_cmd'] = cpu2006_json.get('execute_cmd')
+                            data_cpu2006['modify_parameters'] = str(cpu2006_json.get('modify_parameters'))[1:-2] if cpu2006_json.get('modify_parameters') else None
                             data_cpu2006['dtype'] = "fp"
                             data_cpu2006['tuneType'] = key1
                             data_cpu2006['fp_410_bwaves'] = value[key1]['410.bwaves']
@@ -940,8 +940,8 @@ class Cpu2006ViewSet(CusModelViewSet):
                                 error_message.append(get_error_message(serializer_cpu2006))
                     elif key.split("_")[1] == "int":
                         for key1 in value:
-                            data_cpu2006['execute_cmd'] = "xx"
-                            data_cpu2006['modify_parameters'] = "xx"
+                            data_cpu2006['execute_cmd'] = cpu2006_json.get('execute_cmd')
+                            data_cpu2006['modify_parameters'] = str(cpu2006_json.get('modify_parameters'))[1:-2] if cpu2006_json.get('modify_parameters') else None
                             data_cpu2006['dtype'] = "int"
                             data_cpu2006['tuneType'] = key1
                             data_cpu2006['int_400_perlbench'] = value[key1]['400.perlbench']
