@@ -12,6 +12,7 @@ from rest_framework import status
 
 from appStore.jvm2008.models import Jvm2008
 from appStore.jvm2008.serializers import Jvm2008Serializer
+from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
@@ -33,46 +34,48 @@ class Jvm2008ViewSet(CusModelViewSet):
                 datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
                 datas[1]['column' + str(column_index)] = None
                 datas[2]['column' + str(column_index)] = None
+                datas[3]['column' + str(column_index)] = None
                 # 初始化所有数据为None
-                for i in range(3, 27):
+                for i in range(4, 28):
                     datas[i]['column' + str(column_index)] = None
                 column_index += 1
                 title_index += 1
             elif len(groups) == 1:
                 # 基准数据和对比数据的全部数据
                 datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
-                datas[1]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
-                datas[2]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.data[0]['env_id']).first().project_name
+                datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
+                datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
                 # 初始化所有数据为None
-                for i in range(3, 27):
+                for i in range(4, 28):
                     datas[i]['column' + str(column_index)] = None
                 for data in serializer.data:
                     if data['tune_type'] == 'base':
-                        datas[3]['column' + str(column_index)] = data['compiler']
-                        datas[4]['column' + str(column_index)] = data['compress']
-                        datas[5]['column' + str(column_index)] = data['crypto']
-                        datas[6]['column' + str(column_index)] = data['derby']
-                        datas[7]['column' + str(column_index)] = data['mpegaudio']
-                        datas[8]['column' + str(column_index)] = data['scimark_large']
-                        datas[9]['column' + str(column_index)] = data['scimark_small']
-                        datas[10]['column' + str(column_index)] = data['serial']
-                        datas[11]['column' + str(column_index)] = data['startup']
-                        datas[12]['column' + str(column_index)] = data['sunflow']
-                        datas[13]['column' + str(column_index)] = data['xml']
-                        datas[14]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
+                        datas[4]['column' + str(column_index)] = data['compiler']
+                        datas[5]['column' + str(column_index)] = data['compress']
+                        datas[6]['column' + str(column_index)] = data['crypto']
+                        datas[7]['column' + str(column_index)] = data['derby']
+                        datas[8]['column' + str(column_index)] = data['mpegaudio']
+                        datas[9]['column' + str(column_index)] = data['scimark_large']
+                        datas[10]['column' + str(column_index)] = data['scimark_small']
+                        datas[11]['column' + str(column_index)] = data['serial']
+                        datas[12]['column' + str(column_index)] = data['startup']
+                        datas[13]['column' + str(column_index)] = data['sunflow']
+                        datas[14]['column' + str(column_index)] = data['xml']
+                        datas[15]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
                     elif data['tune_type'] == 'peak':
-                        datas[15]['column' + str(column_index)] = data['compiler']
-                        datas[16]['column' + str(column_index)] = data['compress']
-                        datas[17]['column' + str(column_index)] = data['crypto']
-                        datas[18]['column' + str(column_index)] = data['derby']
-                        datas[19]['column' + str(column_index)] = data['mpegaudio']
-                        datas[20]['column' + str(column_index)] = data['scimark_large']
-                        datas[21]['column' + str(column_index)] = data['scimark_small']
-                        datas[22]['column' + str(column_index)] = data['serial']
-                        datas[23]['column' + str(column_index)] = data['startup']
-                        datas[24]['column' + str(column_index)] = data['sunflow']
-                        datas[25]['column' + str(column_index)] = data['xml']
-                        datas[26]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
+                        datas[16]['column' + str(column_index)] = data['compiler']
+                        datas[17]['column' + str(column_index)] = data['compress']
+                        datas[18]['column' + str(column_index)] = data['crypto']
+                        datas[19]['column' + str(column_index)] = data['derby']
+                        datas[20]['column' + str(column_index)] = data['mpegaudio']
+                        datas[21]['column' + str(column_index)] = data['scimark_large']
+                        datas[22]['column' + str(column_index)] = data['scimark_small']
+                        datas[23]['column' + str(column_index)] = data['serial']
+                        datas[24]['column' + str(column_index)] = data['startup']
+                        datas[25]['column' + str(column_index)] = data['sunflow']
+                        datas[26]['column' + str(column_index)] = data['xml']
+                        datas[27]['column' + str(column_index)] = data['Noncompliant_pomposite_result']
                 column_index += 1
                 title_index += 1
             # 基准数据和对比数据的平均数据
@@ -80,7 +83,8 @@ class Jvm2008ViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 27):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 28):
                 datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
         else:
@@ -144,39 +148,40 @@ class Jvm2008ViewSet(CusModelViewSet):
             for mark_name in groups:
                 temp_datas = serializer_.filter(mark_name=mark_name)
                 datas[0]['column' + str(column_index)] = 'Jvm2008#' + str(title_index)
-                datas[1]['column' + str(column_index)] = temp_datas[0].execute_cmd
-                datas[2]['column' + str(column_index)] = temp_datas[0].modify_parameters
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=temp_datas[0].env_id).first().project_name
+                datas[2]['column' + str(column_index)] = temp_datas[0].execute_cmd
+                datas[3]['column' + str(column_index)] = temp_datas[0].modify_parameters
                 # 基准数据和对比数据的全部数据
                 # 初始化所有数据为None
-                for i in range(3, 27):
+                for i in range(4, 28):
                     datas[i]['column' + str(column_index)] = None
                 for data in temp_datas:
                     if data.tune_type == 'base':
-                        datas[3]['column' + str(column_index)] = data.compiler
-                        datas[4]['column' + str(column_index)] = data.compress
-                        datas[5]['column' + str(column_index)] = data.crypto
-                        datas[6]['column' + str(column_index)] = data.derby
-                        datas[7]['column' + str(column_index)] = data.mpegaudio
-                        datas[8]['column' + str(column_index)] = data.scimark_large
-                        datas[9]['column' + str(column_index)] = data.scimark_small
-                        datas[10]['column' + str(column_index)] = data.serial
-                        datas[11]['column' + str(column_index)] = data.startup
-                        datas[12]['column' + str(column_index)] = data.sunflow
-                        datas[13]['column' + str(column_index)] = data.xml
-                        datas[14]['column' + str(column_index)] = data.Noncompliant_pomposite_result
+                        datas[4]['column' + str(column_index)] = data.compiler
+                        datas[5]['column' + str(column_index)] = data.compress
+                        datas[6]['column' + str(column_index)] = data.crypto
+                        datas[7]['column' + str(column_index)] = data.derby
+                        datas[8]['column' + str(column_index)] = data.mpegaudio
+                        datas[9]['column' + str(column_index)] = data.scimark_large
+                        datas[10]['column' + str(column_index)] = data.scimark_small
+                        datas[11]['column' + str(column_index)] = data.serial
+                        datas[12]['column' + str(column_index)] = data.startup
+                        datas[13]['column' + str(column_index)] = data.sunflow
+                        datas[14]['column' + str(column_index)] = data.xml
+                        datas[15]['column' + str(column_index)] = data.Noncompliant_pomposite_result
                     elif data.tune_type == 'peak':
-                        datas[15]['column' + str(column_index)] = data.compiler
-                        datas[16]['column' + str(column_index)] = data.compress
-                        datas[17]['column' + str(column_index)] = data.crypto
-                        datas[18]['column' + str(column_index)] = data.derby
-                        datas[19]['column' + str(column_index)] = data.mpegaudio
-                        datas[20]['column' + str(column_index)] = data.scimark_large
-                        datas[21]['column' + str(column_index)] = data.scimark_small
-                        datas[22]['column' + str(column_index)] = data.serial
-                        datas[23]['column' + str(column_index)] = data.startup
-                        datas[24]['column' + str(column_index)] = data.sunflow
-                        datas[25]['column' + str(column_index)] = data.xml
-                        datas[26]['column' + str(column_index)] = data.Noncompliant_pomposite_result
+                        datas[16]['column' + str(column_index)] = data.compiler
+                        datas[17]['column' + str(column_index)] = data.compress
+                        datas[18]['column' + str(column_index)] = data.crypto
+                        datas[19]['column' + str(column_index)] = data.derby
+                        datas[20]['column' + str(column_index)] = data.mpegaudio
+                        datas[21]['column' + str(column_index)] = data.scimark_large
+                        datas[22]['column' + str(column_index)] = data.scimark_small
+                        datas[23]['column' + str(column_index)] = data.serial
+                        datas[24]['column' + str(column_index)] = data.startup
+                        datas[25]['column' + str(column_index)] = data.sunflow
+                        datas[26]['column' + str(column_index)] = data.xml
+                        datas[27]['column' + str(column_index)] = data.Noncompliant_pomposite_result
                 column_index += 1
                 title_index += 1
             title = '平均值(基准数据)' if not base_column_index else '平均值'
@@ -184,30 +189,31 @@ class Jvm2008ViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            datas[3]['column' + str(column_index)] = average_base_compiler
-            datas[4]['column' + str(column_index)] = average_base_compress
-            datas[5]['column' + str(column_index)] = average_base_crypto
-            datas[6]['column' + str(column_index)] = average_base_derby
-            datas[7]['column' + str(column_index)] = average_base_mpegaudio
-            datas[8]['column' + str(column_index)] = average_base_scimark_large
-            datas[9]['column' + str(column_index)] = average_base_scimark_small
-            datas[10]['column' + str(column_index)] = average_base_serial
-            datas[11]['column' + str(column_index)] = average_base_startup
-            datas[12]['column' + str(column_index)] = average_base_sunflow
-            datas[13]['column' + str(column_index)] = average_base_xml
-            datas[14]['column' + str(column_index)] = average_base_Noncompliant_pomposite_result
-            datas[15]['column' + str(column_index)] = average_peak_compiler
-            datas[16]['column' + str(column_index)] = average_peak_compress
-            datas[17]['column' + str(column_index)] = average_peak_crypto
-            datas[18]['column' + str(column_index)] = average_peak_derby
-            datas[19]['column' + str(column_index)] = average_peak_mpegaudio
-            datas[20]['column' + str(column_index)] = average_peak_scimark_large
-            datas[21]['column' + str(column_index)] = average_peak_scimark_small
-            datas[22]['column' + str(column_index)] = average_peak_serial
-            datas[23]['column' + str(column_index)] = average_peak_startup
-            datas[24]['column' + str(column_index)] = average_peak_sunflow
-            datas[25]['column' + str(column_index)] = average_peak_xml
-            datas[26]['column' + str(column_index)] = average_peak_Noncompliant_pomposite_result
+            datas[3]['column' + str(column_index)] = ''
+            datas[4]['column' + str(column_index)] = average_base_compiler
+            datas[5]['column' + str(column_index)] = average_base_compress
+            datas[6]['column' + str(column_index)] = average_base_crypto
+            datas[7]['column' + str(column_index)] = average_base_derby
+            datas[8]['column' + str(column_index)] = average_base_mpegaudio
+            datas[9]['column' + str(column_index)] = average_base_scimark_large
+            datas[10]['column' + str(column_index)] = average_base_scimark_small
+            datas[11]['column' + str(column_index)] = average_base_serial
+            datas[12]['column' + str(column_index)] = average_base_startup
+            datas[13]['column' + str(column_index)] = average_base_sunflow
+            datas[14]['column' + str(column_index)] = average_base_xml
+            datas[15]['column' + str(column_index)] = average_base_Noncompliant_pomposite_result
+            datas[16]['column' + str(column_index)] = average_peak_compiler
+            datas[17]['column' + str(column_index)] = average_peak_compress
+            datas[18]['column' + str(column_index)] = average_peak_crypto
+            datas[19]['column' + str(column_index)] = average_peak_derby
+            datas[20]['column' + str(column_index)] = average_peak_mpegaudio
+            datas[21]['column' + str(column_index)] = average_peak_scimark_large
+            datas[22]['column' + str(column_index)] = average_peak_scimark_small
+            datas[23]['column' + str(column_index)] = average_peak_serial
+            datas[24]['column' + str(column_index)] = average_peak_startup
+            datas[25]['column' + str(column_index)] = average_peak_sunflow
+            datas[26]['column' + str(column_index)] = average_peak_xml
+            datas[27]['column' + str(column_index)] = average_peak_Noncompliant_pomposite_result
             column_index += 1
 
         if not base_column_index:
@@ -218,7 +224,8 @@ class Jvm2008ViewSet(CusModelViewSet):
             datas[0]['column' + str(column_index)] = '对比值'
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
-            for i in range(3, 27):
+            datas[3]['column' + str(column_index)] = ''
+            for i in range(4, 28):
                 datas[i]['column' + str(column_index)] = \
                     "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
                         'column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if \
@@ -241,6 +248,7 @@ class Jvm2008ViewSet(CusModelViewSet):
         base_queryset = Jvm2008.objects.filter(env_id=env_id).all()
         datas = [
             {'column1': 'Jvm2008', 'column2': ''},
+            {'column1': '项目名称', 'column2': ''},
             {'column1': '执行命令', 'column2': ''},
             {'column1': '修改参数', 'column2': ''},
             {'column1': 'base', 'column2': 'compiler size'},
