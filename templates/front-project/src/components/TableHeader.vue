@@ -15,6 +15,7 @@
         </el-button>
         <el-button type="primary" @click="$router.back()">返回上一步</el-button>
         <el-button type="primary" @click="goToHome">返回首页</el-button>
+        <el-button type="success" @click="goTo('env')">环境信息</el-button>
         <el-button :type="buttonType('stream')" @click="goTo('stream')" :disabled="toDisabled('stream')">stream</el-button>
         <el-button :type="buttonType('lmbench')" @click="goTo('lmbench')" :disabled="toDisabled('lmbench')">lmbench</el-button>
         <el-button :type="buttonType('unixbench')" @click="goTo('unixbench')" :disabled="toDisabled('unixbench')">unixbench</el-button>

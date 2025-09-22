@@ -10,10 +10,18 @@
     <Header :tableDatas="tableDatas" :dataName="dataName" @data-loaded="handleDataLoaded"/>
     <div style="overflow-x: auto;">
       <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;"
-                :show-header="false">
+                :show-header="false"  :row-style="{ height: '50px' }">
         <template v-for="i in numColumns" :key="i">
-          <!--        <el-table-column :prop="`column${i}`" align="center" :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null"></el-table-column>-->
-          <el-table-column :prop="`column${i}`" align="center"></el-table-column>
+          <el-table-column :prop="`column${i}`" align="center"
+                           :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null">
+            <template #default="{row}">
+              <el-tooltip :content="row[`column${i}`]" effect="light">
+                <div style="height: 30px">{{row[`column${i}`] && row[`column${i}`].toString() || '' }}</div>
+
+              </el-tooltip>
+            </template>
+          </el-table-column>
+          <!--          <el-table-column :prop="`column${i}`" align="center"></el-table-column>-->
         </template>
       </el-table>
     </div>
@@ -34,26 +42,31 @@ export default {
   },
   data() {
     return {
-      numColumns: 4,
+      numColumns: 0,
       tableDatas: [],
       dataName: this.$route.name,
+      paramsData: {
+        env_id: this.$route.params.baseId,
+        comparsionIds: this.$route.params.comparsionIds,
+      },
     }
   },
   created() {
-    env({'env_id': this.$route.params.baseId}).then((response) => {
+    env(this.paramsData).then((response) => {
       this.tableDatas = response.data.data.data
+      this.numColumns = Object.keys(this.tableDatas[0]).length
     });
   },
   methods: {
     handleDataLoaded(value) {
-      console.log(value,111)
+      console.log(value, 111)
       // 在这里处理子组件的数据
     },
 
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
       //columnIndex 表示需要合并的列，多列时用 || 隔开
-      if (columnIndex === 0 || columnIndex === 1 ) {
+      if (columnIndex === 0 || columnIndex === 1) {
         const _row = this.filterData(this.tableDatas, columnIndex).one[rowIndex];
         const _col = _row > 0 ? 1 : 0;  // 为0是不执行合并。 为1是从当前单元格开始，执行合并1列
         return {
@@ -78,7 +91,7 @@ export default {
               spanOneArr.push(1);
               concatOne = index;
             }
-          } else if (colIndex === 1){
+          } else if (colIndex === 1) {
             if (item['column2'] === arr[index - 1]['column2']) {
               spanOneArr[concatOne] += 1;
               spanOneArr.push(0);
@@ -101,12 +114,13 @@ export default {
 <style>
 /*对比值的背景色*/
 .green-cell {
-  color:green;
+  color: green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
+
 .red-cell {
-  color:red;
+  color: red;
   background-color: pink;
   /* 其他样式属性 */
 }
