@@ -59,6 +59,9 @@ class IozoneViewSet(CusModelViewSet):
                         'random_read_test': data['random_read_test'],
                         'random_write_test': data['random_write_test'],}
                 average_datas.append(data)
+            # 每一次column_index改变都需初始化所有数据为None
+            for i in range(4, 22):
+                datas[i]['column' + str(column_index)] = None
 
             # 补全column2 = file_size
             if column_index == 2:
@@ -95,6 +98,9 @@ class IozoneViewSet(CusModelViewSet):
             datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.data[0]['env_id']).first().project_name
             datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
             datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
+            # 每一次column_index改变都需初始化所有数据为None
+            for i in range(4, 22):
+                datas[i]['column' + str(column_index)] = None
             for data in average_datas:
                 if data['testcase_name'] == 'double':
                     # 增加double数据
@@ -200,6 +206,9 @@ class IozoneViewSet(CusModelViewSet):
                 datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=temp_mark_datas[0].env_id).first().project_name
                 datas[2]['column' + str(column_index)] = temp_mark_datas[0].execute_cmd
                 datas[3]['column' + str(column_index)] = temp_mark_datas[0].modify_parameters
+                # 每一次column_index改变都需初始化所有数据为None
+                for i in range(4, 22):
+                    datas[i]['column' + str(column_index)] = None
                 for data in temp_mark_datas:
                     if data.testcase_name == 'double':
                         # 增加double数据

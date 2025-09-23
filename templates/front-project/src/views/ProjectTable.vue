@@ -36,14 +36,16 @@
       border
       style="width: 100%"
       :key="itemKey"
+      :header-cell-style="{fontSize:'5px'}"
+      class="tableHead"
   >
-    <el-table-column label="基准数据" width="55">
+    <el-table-column label="基准数据" width="50" >
       <template #default="{ row }">
         <el-checkbox v-model="base[row.env_id]" :label="row" :key="row.id" @change="handleBaseDataChange(row)">{{}}
         </el-checkbox>
       </template>
     </el-table-column>
-    <el-table-column label="对比数据" width="55">
+    <el-table-column label="对比数据" width="50">
       <template #default="{ row }">
         <el-checkbox v-model="compar[row.env_id]" :label="row" :key="row.id" @change="handleComparativeDataChange(row)">
           {{}}
@@ -56,13 +58,13 @@
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="user_name" label="上传人员" width="80" :filters=userNames
+    <el-table-column prop="user_name" label="上传人员" :filters=userNames
                      :filter-method="filterHandler" filter-placement="bottom-end">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.user_name }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="os_version" label="系统版本" width="220"
+    <el-table-column prop="os_version" label="系统版本" width="210"
                      :filters=osNames
                      :filter-method="filterHandler" filter-placement="bottom-end">
       <template #default="scope">
@@ -81,52 +83,52 @@
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.times }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="ip" label="ip">
+    <el-table-column prop="ip" label="ip" width="120">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.ip }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="stream" label="stream" width="80">
+    <el-table-column prop="stream" label="stream" width="70">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.stream }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="lmbench" label="lmbench" width="90">
+    <el-table-column prop="lmbench" label="lmbench" width="80">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.lmbench }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="unixbench" label="unixbench" width="100">
+    <el-table-column prop="unixbench" label="unixbench" width="90">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.unixbench }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="fio" label="fio" width="50">
+    <el-table-column prop="fio" label="fio" width="40">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.fio }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="iozone" label="iozone" width="80">
+    <el-table-column prop="iozone" label="iozone" width="70">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.iozone }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="cpu2006" label="cpu2006" width="90">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2006 }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="cpu2017" label="cpu2017" width="90">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2017 }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="jvm2008" label="jvm2008" width="90">
+    <el-table-column prop="jvm2008" label="jvm2008" width="80">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.jvm2008 }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="test_time" sortable label="录入时间">
+    <el-table-column prop="cpu2006" label="cpu2006" width="80">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2006 }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="cpu2017" label="cpu2017" width="80">
+      <template #default="scope">
+        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2017 }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="test_time" sortable label="录入时间" width="100">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.test_time }}</div>
       </template>
@@ -139,7 +141,7 @@
     <el-table-column label="操作" width="180">
       <template #default="scope">
         <el-button type="primary" @click="edit(scope.row)">修改</el-button>
-                <el-button type="danger" @click="del(scope.row)">删除</el-button>
+        <el-button type="danger" @click="del(scope.row)">删除</el-button>
   </template>
     </el-table-column>
   </el-table>
@@ -445,6 +447,10 @@ export default {
   display: flex;
   justify-content: center;
   /*background-color: #f2f2f2;*/
+}
+.tableHead {
+  /*font-size: 15px;*/
+  /*color: red;*/
 }
 </style>
 
