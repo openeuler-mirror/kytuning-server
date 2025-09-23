@@ -11,7 +11,7 @@ import { ElMessage } from 'element-plus'
 
 const service = axios.create({
     baseURL: '/api/', // baseURL会自动加在请求地址上
-    timeout: 3000
+    timeout: 50000
 })
 
 // 添加请求拦截器
@@ -29,7 +29,9 @@ service.interceptors.response.use((response) => {
     // 对响应数据做些什么
     let { code, message } = response.data
     if(code !== 200) {
-        ElMessage({message: message || 'error', type: 'warning'})
+        if (response.config.url === '/download_excel/'){
+            if (response.status === 200){ElMessage({message: message || '表格制作完成，正在导出。', type: 'success'})}}
+        else {ElMessage({message: message || 'error', type: 'warning'})}
     }
     return response
 }, (error) => {

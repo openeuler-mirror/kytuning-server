@@ -9,7 +9,7 @@
   <div class="footer">
     <el-card>
       <el-row class="mb-4">
-        <el-button type="primary" @click="exportTableData">导出表格数据</el-button>
+        <el-button type="primary" @click="exportTableData" :disabled=excelDisabled>导出表格数据</el-button>
         <el-button type="primary" @click="toggleDataVisibility">
           {{ showAllData ? '隐藏数据' : '显示全部数据' }}
         </el-button>
@@ -33,7 +33,6 @@
 <script>
 import {get_project} from "@/api/api.js";
 import { download_excel } from "@/api/api.js";
- // import * as XLSX from 'xlsx';
 
 export default {
   data() {
@@ -46,6 +45,7 @@ export default {
         env_id: this.$route.params.baseId,
         comparsionIds: this.$route.params.comparsionIds,
       },
+      excelDisabled:false,
     }
   },
   props: {
@@ -102,18 +102,20 @@ export default {
       this.localShowAllData = !this.localShowAllData;
       this.$emit('data-loaded', this.localShowAllData);
     },
+    // 从后端获取数据
     exportTableData() {
-      console.log(this.paramsData)
+      this.excelDisabled = true
       download_excel(this.paramsData).then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]))
-          const link = document.createElement('a')
-          link.href = url
-          link.setAttribute('download', 'kytuning-result.xlsx')
-          document.body.appendChild(link)
-          link.click()
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'kytuning-result.xlsx')
+        document.body.appendChild(link)
+        link.click()
       }).catch(error => {
         console.log(error)
       })
+      this.excelDisabled = false
     },
   }
 }

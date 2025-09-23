@@ -50,7 +50,7 @@ class StreamViewSet(CusModelViewSet):
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
-            datas[1]['column' + str(column_index)] = ''
+            datas[1]['column' + str(column_index)] = datas[1]['column' + str(column_index - 1)]
             datas[2]['column' + str(column_index)] = ''
             for i in range(4, 14):
                 datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
@@ -101,7 +101,7 @@ class StreamViewSet(CusModelViewSet):
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             # 基准数据和对比数据的平均数据
             datas[0]['column' + str(column_index)] = title
-            datas[1]['column' + str(column_index)] = ''
+            datas[1]['column' + str(column_index)] = datas[1]['column' + str(column_index - 1)]
             datas[2]['column' + str(column_index)] = ''
             datas[3]['column' + str(column_index)] = ''
             datas[4]['column' + str(column_index)] = average_single_array_size
