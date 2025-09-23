@@ -63,8 +63,8 @@ class EnvViewSet(CusModelViewSet):
 
         for value in eval(data_['hwinfo_nicinfo']):
             nicinfo = [{'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'logicalname','column4': value['logicalname']},
-                    {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'product', 'column4': value['product']},
-                    {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'speed', 'column4': value['speed']},]
+                       {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'product', 'column4': value['product']},
+                       {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'speed', 'column4': value['speed']},]
             disk_and_nicinfo_datas.extend(nicinfo)
 
         # 处理多组nic数据
@@ -79,60 +79,60 @@ class EnvViewSet(CusModelViewSet):
             ]
             nic_datas.extend(nic)
         datas = [{'column1': '项目名称','column2': '','column3': '','column4': Project.objects.filter(env_id=data_['id']).first().project_name},
-            {'column1': 'hwinfo','column2': 'machineinfo','column3': 'manufacturer','column4': data_['hwinfo_machineinfo_manufacturer']},
-            {'column1': 'hwinfo', 'column2': 'machineinfo', 'column3': 'product','column4': data_['hwinfo_machineinfo_product']},
-            {'column1': 'hwinfo','column2': 'machineinfo','column3': 'serialnumber','column4': data_['hwinfo_machineinfo_serialnumber']},
-            {'column1': 'hwinfo', 'column2': 'bios', 'column3': 'vendor', 'column4': data_['hwinfo_bios_vendor']},
-            {'column1': 'hwinfo', 'column2': 'bios', 'column3': 'version', 'column4': data_['hwinfo_bios_version']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Vendor ID', 'column4': data_['hwinfo_cpu_Vendor_ID']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU family', 'column4': data_['hwinfo_cpu_CPU_family']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'model_name', 'column4': data_['hwinfo_cpu_model_name']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU MHz', 'column4': data_['hwinfo_cpu_CPU_MHz']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU(s)', 'column4': data_['hwinfo_cpu_CPUs']},
-            {'column1': 'hwinfo','column2': 'cpu','column3': 'Thread(s) per core','column4': data_['hwinfo_cpu_Threads_per_core']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU Arch', 'column4': data_['hwinfo_cpu_CPU_Arch']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU op-mode', 'column4': data_['hwinfo_cpu_CPU_op_mode']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Byte Order', 'column4': data_['hwinfo_cpu_Byte_Order']},
-            {'column1': 'hwinfo','column2': 'cpu','column3': 'On-line CPU(s) list','column4': data_['hwinfo_cpu_On_line_CPUs_list']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Virtualization', 'column4': data_['hwinfo_cpu_Virtualization']},
-            {'column1': 'hwinfo','column2': 'cpu','column3': 'Virtualization type','column4': data_['hwinfo_cpu_Virtualization_type']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L1d cache:', 'column4': data_['hwinfo_cpu_L1d_cache']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L1i cache', 'column4': data_['hwinfo_cpu_L1i_cache']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L2 cache', 'column4': data_['hwinfo_cpu_L2_cache']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L3 cache', 'column4': data_['hwinfo_cpu_L3_cache']},
-            {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Flags', 'column4': data_['hwinfo_memory_Flags']},
-            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'vendor', 'column4': data_['hwinfo_memory_vendor']},
-            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_type', 'column4': data_['hwinfo_memory_mem_type']},
-            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'total_size', 'column4': data_['hwinfo_memory_total_size']},
-            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_used', 'column4': data_['hwinfo_memory_mem_used']},
-            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_count', 'column4': data_['hwinfo_memory_mem_count']},
-            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_free', 'column4': data_['hwinfo_memory_mem_free']},
-            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_freq', 'column4': data_['hwinfo_memory_mem_freq']},
-            {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'swap', 'column4': data_['hwinfo_memory_swap']},
-            {'column1': 'swinfo', 'column2': 'os', 'column3': 'curr UTC time', 'column4': data_['swinfo_os_curr_UTC_time']},
-            {'column1': 'swinfo', 'column2': 'os', 'column3': 'os_id', 'column4': data_['swinfo_os_os_id']},
-            {'column1': 'swinfo', 'column2': 'os', 'column3': 'os_arch', 'column4': data_['swinfo_os_os_arch']},
-            {'column1': 'swinfo', 'column2': 'os', 'column3': 'osversion', 'column4': data_['swinfo_os_osversion']},
-            {'column1': 'swinfo', 'column2': 'os', 'column3': 'kernel', 'column4': data_['swinfo_os_kernel']},
-            {'column1': 'swinfo', 'column2': 'os', 'column3': 'grub', 'column4': data_['swinfo_os_grub']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysconf', 'column4': data_['swinfo_runtime_sysconf']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysctl', 'column4': data_['swinfo_runtime_sysctl']},
-            {'column1': 'swinfo','column2': 'runtime','column3': 'systemctlinfo','column4': data_['swinfo_runtime_systemctlinfo']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'driverinfo', 'column4': data_['swinfo_runtime_driverinfo']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'rpmlist', 'column4': data_['swinfo_runtime_rpmlist']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'ipclist', 'column4': data_['swinfo_runtime_ipclist']},
-            {'column1': 'swinfo','column2': 'runtime','column3': 'selinux_status','column4': data_['swinfo_runtime_selinux_status']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'power_status','column4': data_['swinfo_runtime_power_status']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'cpu_sched', 'column4': data_['swinfo_runtime_cpu_sched']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'loadavg', 'column4': data_['swinfo_runtime_loadavg']},
-            {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'uptime', 'column4': data_['swinfo_runtime_uptime']},
-            {'column1': 'swinfo','column2': 'software_ver','column3': 'gccversion','column4': data_['swinfo_software_ver_gccversion']},
-            {'column1': 'swinfo','column2': 'software_ver','column3': 'glibcversion','column4': data_['swinfo_software_ver_glibcversion']},
-            {'column1': 'swinfo','column2': 'software_ver','column3': 'javaversion','column4': data_['swinfo_software_ver_javaversion']},
-            {'column1': 'swinfo','column2': 'software_ver','column3': 'g++version','column4': data_['swinfo_software_ver_g_version']},
-            {'column1': 'swinfo','column2': 'software_ver','column3': 'gfortranversion','column4': data_['swinfo_software_ver_gfortranversion']},
-            {'column1': 'swinfo','column2': 'software_ver','column3': 'pythonversion','column4': data_['swinfo_software_ver_pythonversion']},
-           ]
+                 {'column1': 'hwinfo','column2': 'machineinfo','column3': 'manufacturer','column4': data_['hwinfo_machineinfo_manufacturer']},
+                 {'column1': 'hwinfo', 'column2': 'machineinfo', 'column3': 'product','column4': data_['hwinfo_machineinfo_product']},
+                 {'column1': 'hwinfo','column2': 'machineinfo','column3': 'serialnumber','column4': data_['hwinfo_machineinfo_serialnumber']},
+                 {'column1': 'hwinfo', 'column2': 'bios', 'column3': 'vendor', 'column4': data_['hwinfo_bios_vendor']},
+                 {'column1': 'hwinfo', 'column2': 'bios', 'column3': 'version', 'column4': data_['hwinfo_bios_version']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Vendor ID', 'column4': data_['hwinfo_cpu_Vendor_ID']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU family', 'column4': data_['hwinfo_cpu_CPU_family']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'model_name', 'column4': data_['hwinfo_cpu_model_name']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU MHz', 'column4': data_['hwinfo_cpu_CPU_MHz']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU(s)', 'column4': data_['hwinfo_cpu_CPUs']},
+                 {'column1': 'hwinfo','column2': 'cpu','column3': 'Thread(s) per core','column4': data_['hwinfo_cpu_Threads_per_core']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU Arch', 'column4': data_['hwinfo_cpu_CPU_Arch']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'CPU op-mode', 'column4': data_['hwinfo_cpu_CPU_op_mode']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Byte Order', 'column4': data_['hwinfo_cpu_Byte_Order']},
+                 {'column1': 'hwinfo','column2': 'cpu','column3': 'On-line CPU(s) list','column4': data_['hwinfo_cpu_On_line_CPUs_list']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Virtualization', 'column4': data_['hwinfo_cpu_Virtualization']},
+                 {'column1': 'hwinfo','column2': 'cpu','column3': 'Virtualization type','column4': data_['hwinfo_cpu_Virtualization_type']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L1d cache:', 'column4': data_['hwinfo_cpu_L1d_cache']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L1i cache', 'column4': data_['hwinfo_cpu_L1i_cache']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L2 cache', 'column4': data_['hwinfo_cpu_L2_cache']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'L3 cache', 'column4': data_['hwinfo_cpu_L3_cache']},
+                 {'column1': 'hwinfo', 'column2': 'cpu', 'column3': 'Flags', 'column4': data_['hwinfo_memory_Flags']},
+                 {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'vendor', 'column4': data_['hwinfo_memory_vendor']},
+                 {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_type', 'column4': data_['hwinfo_memory_mem_type']},
+                 {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'total_size', 'column4': data_['hwinfo_memory_total_size']},
+                 {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_used', 'column4': data_['hwinfo_memory_mem_used']},
+                 {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_count', 'column4': data_['hwinfo_memory_mem_count']},
+                 {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_free', 'column4': data_['hwinfo_memory_mem_free']},
+                 {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'mem_freq', 'column4': data_['hwinfo_memory_mem_freq']},
+                 {'column1': 'hwinfo', 'column2': 'memory', 'column3': 'swap', 'column4': data_['hwinfo_memory_swap']},
+                 {'column1': 'swinfo', 'column2': 'os', 'column3': 'curr UTC time', 'column4': data_['swinfo_os_curr_UTC_time']},
+                 {'column1': 'swinfo', 'column2': 'os', 'column3': 'os_id', 'column4': data_['swinfo_os_os_id']},
+                 {'column1': 'swinfo', 'column2': 'os', 'column3': 'os_arch', 'column4': data_['swinfo_os_os_arch']},
+                 {'column1': 'swinfo', 'column2': 'os', 'column3': 'osversion', 'column4': data_['swinfo_os_osversion']},
+                 {'column1': 'swinfo', 'column2': 'os', 'column3': 'kernel', 'column4': data_['swinfo_os_kernel']},
+                 {'column1': 'swinfo', 'column2': 'os', 'column3': 'grub', 'column4': data_['swinfo_os_grub']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysconf', 'column4': data_['swinfo_runtime_sysconf']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysctl', 'column4': data_['swinfo_runtime_sysctl']},
+                 {'column1': 'swinfo','column2': 'runtime','column3': 'systemctlinfo','column4': data_['swinfo_runtime_systemctlinfo']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'driverinfo', 'column4': data_['swinfo_runtime_driverinfo']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'rpmlist', 'column4': data_['swinfo_runtime_rpmlist']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'ipclist', 'column4': data_['swinfo_runtime_ipclist']},
+                 {'column1': 'swinfo','column2': 'runtime','column3': 'selinux_status','column4': data_['swinfo_runtime_selinux_status']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'power_status','column4': data_['swinfo_runtime_power_status']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'cpu_sched', 'column4': data_['swinfo_runtime_cpu_sched']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'loadavg', 'column4': data_['swinfo_runtime_loadavg']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'uptime', 'column4': data_['swinfo_runtime_uptime']},
+                 {'column1': 'swinfo','column2': 'software_ver','column3': 'gccversion','column4': data_['swinfo_software_ver_gccversion']},
+                 {'column1': 'swinfo','column2': 'software_ver','column3': 'glibcversion','column4': data_['swinfo_software_ver_glibcversion']},
+                 {'column1': 'swinfo','column2': 'software_ver','column3': 'javaversion','column4': data_['swinfo_software_ver_javaversion']},
+                 {'column1': 'swinfo','column2': 'software_ver','column3': 'g++version','column4': data_['swinfo_software_ver_g_version']},
+                 {'column1': 'swinfo','column2': 'software_ver','column3': 'gfortranversion','column4': data_['swinfo_software_ver_gfortranversion']},
+                 {'column1': 'swinfo','column2': 'software_ver','column3': 'pythonversion','column4': data_['swinfo_software_ver_pythonversion']},
+                 ]
         datas[31:31] = disk_and_nicinfo_datas
         datas.extend(nic_datas)
         start_number = 5
@@ -303,10 +303,10 @@ class EnvViewSet(CusModelViewSet):
         serializer_env = self.get_serializer(data=data_env)
         request.data['env_id'] = '1'
         if serializer_env.is_valid():
-            self.perform_create(serializer_env)
-            request.data['env_id'] = serializer_env.data['id']
             # wqz
             # request.data['env_id'] = 1
+            self.perform_create(serializer_env)
+            request.data['env_id'] = serializer_env.data['id']
         if serializer_env.errors:
             return json_response(serializer_env.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_env))
         if not request.data['env_id']:
