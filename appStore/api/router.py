@@ -41,6 +41,6 @@ urlpatterns = [
     url(r'', include(router.urls)),
     url('^get_filter_name/', ProjectViewSet.as_view({'get': 'get_filter_name'}), name='get_filter_name'),
     url('^merge_data/', ProjectViewSet.as_view({'post': 'merge_data'}), name='merge_data'),
-    url('^stream_data/', StreamViewSet.as_view({'get': 'get_stream_data'}), name='stream_data'),
+    url('^download_excel/', ProjectViewSet.as_view({'get': 'download_excel'}), name='download_excel'),
     url('^change_password/', UserProfileViewSet.as_view({'put': 'change_password'}), name='change_password'),
 ]

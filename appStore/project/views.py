@@ -10,10 +10,9 @@ import os
 import json
 import logging
 
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
-
+from django.http import HttpResponse, Http404, FileResponse
 from rest_framework import status
-
+from rest_framework.test import APIRequestFactory
 from appStore.cpu2006.models import Cpu2006
 from appStore.cpu2017.models import Cpu2017
 from appStore.env.models import Env
@@ -27,8 +26,12 @@ from appStore.stream.models import Stream
 from appStore.unixbench.models import Unixbench
 from appStore.users.models import UserProfile
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet, CusUpdateModelViewSet
+from appStore.utils.customer_view import CusModelViewSet
 
+from appStore.utils.common import stream_excel
+from djangoProject import settings
+
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 class ProjectViewSet(CusModelViewSet):
     """
@@ -358,7 +361,10 @@ class ProjectViewSet(CusModelViewSet):
     def create(self, request, *args, **kwargs):
         data_project = {}
         data_project['env_id'] = request.__dict__['data_project']['env_id']
-        data_project['message'] = str(request.__dict__['project_message'])
+        if request.__dict__['project_message']:
+            data_project['message'] = str(request.__dict__['project_message'])
+        else:
+            data_project['message'] = None
         data_project['project_name'] = request.__dict__['data_project']['project_name']
         data_project['user_name'] = UserProfile.objects.filter(
             username = request.__dict__['data_project']['user_name']).first().chinese_name
@@ -446,4 +452,94 @@ class ProjectViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
+
+    def simulate_request(self, view_class, request_params):
+        """
+        模拟请求
+        :param view_class:
+        :param request_params:
+        :return:
+        """
+        # 创建一个工厂对象
+        factory = APIRequestFactory()
+        # 创建一个视图的实例
+        view = view_class()
+        # 设置视图的属性
+        view.request = factory.get('/path/to/view/', request_params)
+        view.format_kwarg = None
+        view.args = ()
+        view.kwargs = {}
+        # 调用视图的方法，得到响应对象
+        response = view.list(view.request, *view.args, **view.kwargs)
+
+        # 返回响应内容
+        return response.content
+
+    def download_excel(self, request, *args, **kwargs):
+        """
+        下载excel表格
+        """
+        # 再去获取全部的数据
+        env_id = request.GET.get('env_id')
+        comparsionIds = request.GET.get('comparsionIds')
+
+        """env数据"""
+        # 因为listhan函数中有self.get_serializer(serializer_, many=True)，如果用到的话会报错。所以不能像create方法那样使用
+        from appStore.env.views import EnvViewSet
+        env_data = self.simulate_request(EnvViewSet, {'env_id': env_id, 'comparsionIds': ""})
+        env_data = json.loads(env_data)
+
+
+        """stream数据"""
+        from appStore.stream.views import StreamViewSet
+        stream_data = self.simulate_request(StreamViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        stream_data = json.loads(stream_data)
+        print(stream_data)
+        stream_excel(stream_data)
+
+        # 打开文件
+        file_path = os.path.join(settings.BASE_DIR, 'mydata.xlsx')
+        print(file_path)
+        if os.path.exists(file_path):
+            print(11111)
+            return FileResponse(open(file_path, 'rb'), as_attachment=True)
+        return Http404
+
+
+        """lmbench数据"""
+        from appStore.lmbench.views import LmbenchViewSet
+        lmbench_data = self.simulate_request(LmbenchViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        lmbench_data = json.loads(lmbench_data)
+
+        """unixbench数据"""
+        from appStore.unixbench.views import UnixbenchViewSet
+        unixbench_data = self.simulate_request(UnixbenchViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        unixbench_data = json.loads(unixbench_data)
+
+        """fio数据"""
+        from appStore.fio.views import FioViewSet
+        fio_data = self.simulate_request(FioViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        fio_data = json.loads(fio_data)
+
+        """iozone数据"""
+        from appStore.iozone.views import IozoneViewSet
+        iozone_data = self.simulate_request(IozoneViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        iozone_data = json.loads(iozone_data)
+
+        """jvm2008数据"""
+        from appStore.jvm2008.views import Jvm2008ViewSet
+        jvm2008_data = self.simulate_request(Jvm2008ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+
+        """speccpu2006数据"""
+        from appStore.cpu2006.views import Cpu2006ViewSet
+        cpu2006_data = self.simulate_request(Cpu2006ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        cpu2006_data = json.loads(cpu2006_data)
+
+        """speccpu2017数据"""
+        from appStore.cpu2017.views import Cpu2017ViewSet
+        cpu2017_data = self.simulate_request(Cpu2017ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        cpu2017_data = json.loads(cpu2017_data)
+
+
+        return json_response({}, status.HTTP_200_OK, '表格数据获取完成')
 

@@ -31,7 +31,10 @@
 
 
 <script>
-import { get_project } from "@/api/api.js";
+import {get_project} from "@/api/api.js";
+import { download_excel } from "@/api/api.js";
+ // import * as XLSX from 'xlsx';
+
 export default {
   data() {
     return {
@@ -39,6 +42,10 @@ export default {
       allProjectDatas:[],
       isDataLoaded:false,
       typeClass:'',
+      paramsData: {
+        env_id: this.$route.params.baseId,
+        comparsionIds: this.$route.params.comparsionIds,
+      },
     }
   },
   props: {
@@ -47,7 +54,6 @@ export default {
     showAllData: null
   },
   created() {
-    // todo 增加project获取具体id的数据，获取全部的，会导致速度过慢
     get_project({baseId: this.$route.params.baseId,comparsionIds: this.$route.params.comparsionIds}).then((response) => {
       this.allProjectDatas = response.data.data
       this.isDataLoaded = true;
@@ -96,23 +102,18 @@ export default {
       this.localShowAllData = !this.localShowAllData;
       this.$emit('data-loaded', this.localShowAllData);
     },
-    // 导出表格数据为 CSV 格式
     exportTableData() {
-      const data = [this.tableDatas];
-
-      // 生成 CSV 格式的数据字符串
-      const csvData = data.map(rows => {
-        return rows.map(row => {
-          return Object.values(row).map(value => `"${value}"`).join(",");
-        }).join("\n");
-      }).join("\n");
-
-      // 创建并下载 CSV 文件
-      const blob = new Blob(["\uFEFF" + csvData], {type: "text/csv;charset=utf-8;"});
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = this.dataName + '_table';
-      link.click();
+      console.log(this.paramsData)
+      download_excel(this.paramsData).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', 'kytuning-result.xlsx')
+          document.body.appendChild(link)
+          link.click()
+      }).catch(error => {
+        console.log(error)
+      })
     },
   }
 }
