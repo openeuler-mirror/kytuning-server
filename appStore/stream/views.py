@@ -85,7 +85,7 @@ class StreamViewSet(CusModelViewSet):
             # 基准数据和对比数据的全部数据
             for data in serializer:
                 datas[0]['column' + str(column_index)] = 'Stream#' + str(title_index)
-                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.first().env_id).first().project_name
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=data.env_id).first().project_name
                 datas[2]['column' + str(column_index)] = data.execute_cmd
                 datas[3]['column' + str(column_index)] = data.modify_parameters
                 datas[4]['column' + str(column_index)] = data.single_array_size

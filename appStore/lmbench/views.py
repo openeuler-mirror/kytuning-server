@@ -42,7 +42,7 @@ class LmbenchViewSet(CusModelViewSet):
             else:
                 # 基准数据和对比数据的全部数据
                 datas[0]['column' + str(column_index)] = 'Lmbench#' + str(title_index)
-                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.first().env_id).first().project_name
+                datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.data[0]['env_id']).first().project_name
                 datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
                 datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
                 datas[4]['column' + str(column_index)] = serializer.data[0]['basic_Mhz']
