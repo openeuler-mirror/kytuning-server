@@ -28,7 +28,8 @@ from appStore.users.models import UserProfile
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
-from appStore.utils.common import stream_excel
+from appStore.utils.export_excel import stream_excel, cpu2017_excel, cpu2006_excel, jvm2008_excel, iozone_excel, \
+    fio_excel, unixbench_excel, lmbench_excel, env_excel
 from djangoProject import settings
 
 log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
@@ -488,58 +489,74 @@ class ProjectViewSet(CusModelViewSet):
         from appStore.env.views import EnvViewSet
         env_data = self.simulate_request(EnvViewSet, {'env_id': env_id, 'comparsionIds': ""})
         env_data = json.loads(env_data)
-
+        env_excel(env_data)
 
         """stream数据"""
         from appStore.stream.views import StreamViewSet
         stream_data = self.simulate_request(StreamViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
         stream_data = json.loads(stream_data)
-        print(stream_data)
         stream_excel(stream_data)
-
-        # 打开文件
-        file_path = os.path.join(settings.BASE_DIR, 'mydata.xlsx')
-        print(file_path)
-        if os.path.exists(file_path):
-            print(11111)
-            return FileResponse(open(file_path, 'rb'), as_attachment=True)
-        return Http404
-
 
         """lmbench数据"""
         from appStore.lmbench.views import LmbenchViewSet
         lmbench_data = self.simulate_request(LmbenchViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
         lmbench_data = json.loads(lmbench_data)
+        lmbench_excel(lmbench_data)
 
         """unixbench数据"""
         from appStore.unixbench.views import UnixbenchViewSet
         unixbench_data = self.simulate_request(UnixbenchViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
         unixbench_data = json.loads(unixbench_data)
+        unixbench_excel(unixbench_data)
 
         """fio数据"""
         from appStore.fio.views import FioViewSet
         fio_data = self.simulate_request(FioViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
         fio_data = json.loads(fio_data)
+        fio_excel(fio_data)
 
         """iozone数据"""
         from appStore.iozone.views import IozoneViewSet
         iozone_data = self.simulate_request(IozoneViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
         iozone_data = json.loads(iozone_data)
+        iozone_excel(iozone_data)
 
         """jvm2008数据"""
         from appStore.jvm2008.views import Jvm2008ViewSet
         jvm2008_data = self.simulate_request(Jvm2008ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        jvm2008_data  = json.loads(jvm2008_data)
+        jvm2008_excel(jvm2008_data)
 
         """speccpu2006数据"""
         from appStore.cpu2006.views import Cpu2006ViewSet
         cpu2006_data = self.simulate_request(Cpu2006ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
         cpu2006_data = json.loads(cpu2006_data)
 
+        cpu2006_data_base = {'data': cpu2006_data["data"][:66]}
+        cpu2006_data_peak = {'data': cpu2006_data["data"][:4] + cpu2006_data["data"][66:]}
+        sheetname = "Speccpu2006(base)"
+        cpu2006_excel(sheetname, cpu2006_data_base)
+        sheetname = "Speccpu2006(peak)"
+        cpu2006_excel(sheetname, cpu2006_data_peak)
+
+
         """speccpu2017数据"""
         from appStore.cpu2017.views import Cpu2017ViewSet
         cpu2017_data = self.simulate_request(Cpu2017ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
         cpu2017_data = json.loads(cpu2017_data)
 
+        cpu2017_data_base = {'data': cpu2017_data["data"][:54]}
+        cpu2017_data_peak = {'data': cpu2017_data["data"][:4] + cpu2017_data["data"][54:]}
+        sheetname = "Speccpu2017(base)"
+        cpu2017_excel(sheetname, cpu2017_data_base)
+        sheetname = "Speccpu2017(peak)"
+        cpu2017_excel(sheetname, cpu2017_data_peak)
 
-        return json_response({}, status.HTTP_200_OK, '表格数据获取完成')
+        # todo 是否需要实现多线程记录数据，目前测试可以，如果有很多组数据的化可能会获取失败。
+        # 打开文件
+        file_path = os.path.join(settings.BASE_DIR, 'mydata.xlsx')
+        print(file_path)
+        if os.path.exists(file_path):
+            return FileResponse(open(file_path, 'rb'), as_attachment=True,status=200)
+        return json_response({}, status.HTTP_400_BAD_REQUEST, '表格数据获取失败')
 
