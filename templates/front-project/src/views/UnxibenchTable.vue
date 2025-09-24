@@ -8,7 +8,7 @@
 <template>
   <div>
     <div id="fixed-top">
-      <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     </div>
     <div style="overflow-x: auto;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
@@ -31,14 +31,14 @@
 
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
-import Header from "@/components/common/TableHeader.vue";
+import TableHeader from "@/components/common/TableHeader.vue";
 import { unixbench } from "@/api/api.js";
 
 export default {
   components: {
     ElTable,
     ElTableColumn,
-    Header
+    TableHeader
   },
   data() {
     return {

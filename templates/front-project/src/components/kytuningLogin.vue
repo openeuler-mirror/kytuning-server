@@ -31,7 +31,7 @@
 
 
 <script>
-import background from '@/assets/background.jpg';
+import background from '@/assets/login.jpg';
 import { ElMessage } from 'element-plus';
 import { setToken,removeToken } from '@/utils/setToken.js'
 import { login } from '@/api/api.js'
@@ -60,7 +60,7 @@ export default {
           setToken('username', res.data.username)
           setToken('token', 'Bearer ' + res.data.token)
           this.$message({message: '登录成功', type: 'success'})
-          this.$router.push('/project')
+          this.$router.push('/kytuningHome')
         }
       }).catch(error => {
     // 捕获错误
