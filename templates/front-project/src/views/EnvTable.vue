@@ -8,7 +8,7 @@
 <template>
   <div>
     <div id="fixed-top">
-      <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     </div>
     <div style="overflow-x: auto;">
       <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;"
@@ -34,13 +34,13 @@
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
 import {env} from "@/api/api";
-import Header from "@/components/common/TableHeader";
+import TableHeader from "@/components/common/TableHeader";
 
 export default {
   components: {
     ElTable,
     ElTableColumn,
-    Header,
+    TableHeader,
   },
   data() {
     return {

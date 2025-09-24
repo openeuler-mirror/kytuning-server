@@ -18,6 +18,16 @@ export function login(data) {
 }
 
 
+
+// 测试管理列表
+export function test_case(params) {
+    return service({
+        method: 'get',
+        url: '/test_case/',
+        params
+    })
+}
+
 // project
 export function get_project(params) {
     return service({
@@ -67,6 +77,15 @@ export function stream(params) {
     return service({
         method: 'get',
         url: '/stream/',
+        params
+    })
+}
+
+// stream
+export function streamNew(params) {
+    return service({
+        method: 'get',
+        url: '/streamNew/',
         params
     })
 }
