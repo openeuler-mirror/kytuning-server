@@ -33,6 +33,7 @@
 <script>
 import {get_project} from "@/api/api.js";
 import { download_excel } from "@/api/api.js";
+import { ElMessage } from 'element-plus'
 
 export default {
   data() {
@@ -113,9 +114,12 @@ export default {
         document.body.appendChild(link)
         link.click()
       }).catch(error => {
+        if (error.code === "ERR_BAD_REQUEST"){ElMessage({message: "下载失败", type: 'warning'})}
         console.log(error)
-      })
-      this.excelDisabled = false
+      }).finally(() => {
+        // excelDisabled 将被设置为 true，然后立即被设置为 false,禁用的时间非常短，不足以被用户察觉到。
+        this.excelDisabled = false;
+      });
     },
   }
 }
