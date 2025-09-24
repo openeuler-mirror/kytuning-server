@@ -7,7 +7,9 @@
 -->
 <template>
   <div>
-    <Header :tableDatas="tableDatas" :dataName="dataName" @data-loaded="handleDataLoaded"/>
+    <div id="fixed-top">
+      <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+    </div>
     <div style="overflow-x: auto;">
       <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;"
                 :show-header="false"  :row-style="{ height: '50px' }">
@@ -32,7 +34,7 @@
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
 import {env} from "@/api/api";
-import Header from "@/components/common/envHeader";
+import Header from "@/components/common/TableHeader";
 
 export default {
   components: {
@@ -111,7 +113,7 @@ export default {
 ;
 </script>
 
-<style>
+<style scoped>
 /*对比值的背景色*/
 .green-cell {
   color: green;
@@ -123,5 +125,15 @@ export default {
   color: red;
   background-color: pink;
   /* 其他样式属性 */
+}
+#fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+.el-table {
+  margin-top: 68px;
 }
 </style>

@@ -7,9 +7,12 @@
 -->
 <template>
   <div>
-    <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+    <div id="fixed-top">
+      <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+    </div>
     <div style="overflow-x: auto;">
-      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" highlight-current-row>
+      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
+                :show-header="false" highlight-current-row>
         <template v-for="(value, key, index) in tableDatas[0]" :key="key">
           <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index === 0 ? '210' : ''" align="center">
             <template v-slot="{ row }">
@@ -27,7 +30,7 @@
 
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
-import Header from "@/components/TableHeader.vue";
+import Header from "@/components/common/TableHeader.vue";
 import { iozone } from "@/api/api.js";
 
 export default {
@@ -147,7 +150,7 @@ export default {
 ;
 </script>
 
-<style>
+<style scoped>
 /*对比值的背景色*/
 .green-cell {
   color:green;
@@ -158,5 +161,15 @@ export default {
   color:red;
   background-color: pink;
   /* 其他样式属性 */
+}
+#fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+.el-table {
+  margin-top: 68px;
 }
 </style>

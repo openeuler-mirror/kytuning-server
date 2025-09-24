@@ -26,12 +26,6 @@ const routes = [
         props: true,
     },
     {
-        name: 'unixbench',
-        path: '/unixbench/:baseId/:comparsionIds?',
-        component: () => import('@/views/UnxibenchTable'),
-        props: true,
-    },
-    {
         name: 'stream',
         path: '/stream/:baseId/:comparsionIds?',
         component: () => import('@/views/StreamTable'),
@@ -40,6 +34,12 @@ const routes = [
         name: 'lmbench',
         path: '/lmbench/:baseId/:comparsionIds?',
         component: () => import('@/views/LmbenchTable'),
+    },
+    {
+        name: 'unixbench',
+        path: '/unixbench/:baseId/:comparsionIds?',
+        component: () => import('@/views/UnxibenchTable'),
+        props: true,
     },
     {
         name: 'fio',
