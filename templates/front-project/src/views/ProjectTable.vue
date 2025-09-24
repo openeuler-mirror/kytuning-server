@@ -39,7 +39,7 @@
       :header-cell-style="{fontSize:'5px'}"
       class="tableHead"
   >
-    <el-table-column label="基准数据" width="50" >
+    <el-table-column label="基准数据" width="50">
       <template #default="{ row }">
         <el-checkbox v-model="base[row.env_id]" :label="row" :key="row.id" @change="handleBaseDataChange(row)">{{}}
         </el-checkbox>
@@ -296,15 +296,21 @@ export default {
       this.dialogFormVisible = false
     },
     del(row) {
-      project('delete', {id: row.id}).then(response => {
-            if (response.data.code === 200) {
-              ElMessage({message: response.data.message, type: 'success'})
-              //更新页面数据，绑定key，每次key改变后就会刷新数据
-              this.itemKey = Math.random()
-              this.refreshData();
-              this.dialogFormVisible = false
-            }
-          })
+      this.$confirm(`确认删除此行数据吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        project('delete', {id: row.id}).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            //更新页面数据，绑定key，每次key改变后就会刷新数据
+            this.itemKey = Math.random()
+            this.refreshData();
+            this.dialogFormVisible = false
+          }
+        })
+      })
     },
 
     //更新数据后刷新页面数据

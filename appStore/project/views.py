@@ -55,7 +55,7 @@ class ProjectViewSet(CusModelViewSet):
         if baseId:
             project_queryset = Project.objects.filter(env_id__in=(baseId.split(',')))
         else:
-            project_queryset = Project.objects.all()
+            project_queryset = Project.objects.all().order_by("-id")
         if not project_queryset:
             return json_response({}, status.HTTP_204_NO_CONTENT, '未查询到project')
         serializer = self.get_serializer(project_queryset, many=True)

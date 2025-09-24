@@ -7,7 +7,9 @@
 -->
 <template>
   <div>
-    <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+    <div id="fixed-top">
+      <Header :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+    </div>
     <div style="overflow-x: auto;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
                 :show-header="false" :row-class-name="tableRowClassName" highlight-current-row>
@@ -29,7 +31,7 @@
 
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
-import Header from "@/components/TableHeader.vue";
+import Header from "@/components/common/TableHeader.vue";
 import { unixbench } from "@/api/api.js";
 
 export default {
@@ -156,7 +158,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 /*@import url("//unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css");*/
 /*表格大小，调整为一页显示全部*/
 .el-table__body .cell {
@@ -180,5 +182,15 @@ export default {
   color:red;
   background-color: pink;
   /* 其他样式属性 */
+}
+#fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+.el-table {
+  margin-top: 68px;
 }
 </style>
