@@ -41,7 +41,7 @@ class Cpu2017ViewSet(CusModelViewSet):
             datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
             datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
             # 初始化所有数据为None
-            for i in range(6, 104):
+            for i in range(4, 104):
                 datas[i]['column' + str(column_index)] = None
             for data in serializer.data:
                 # 判断数据的TuneType确定是base还是peak
@@ -389,7 +389,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                 datas[3]['column' + str(column_index)] = temp_datas[0].modify_parameters
                 # 基准数据和对比数据的全部数据
                 # 初始化所有数据为None
-                for i in range(6, 104):
+                for i in range(4, 104):
                     datas[i]['column' + str(column_index)] = None
                 for data in temp_datas:
                     if data.tuneType == 'base':
