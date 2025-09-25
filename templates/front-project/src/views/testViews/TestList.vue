@@ -9,100 +9,100 @@
   <div id="fixed-top">
     <AllHeader/>
     <el-container class="content">
-      <Menu />
+      <Menu/>
       <el-container>
         <el-main>
           <div class="cont">
-              <el-table
-      ref="multipleTable"
-      :data="showData"
-      tooltip-effect="dark"
-      border
-      style="width: 100%"
-      :key="itemKey"
-      :header-cell-style="{fontSize:'5px'}"
-      class="tableHead"
-  >
-    <el-table-column prop="project_name" label="项目名称" column-key="project_name">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="user_name" label="测试人员" >
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.user_name }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="ip" label="ip" width="125">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.ip }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="stream" label="stream" width="70">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.stream }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="lmbench" label="lmbench" width="80">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.lmbench }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="unixbench" label="unixbench" width="90">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.unixbench }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="fio" label="fio" width="50">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.fio }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="iozone" label="iozone" width="70">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.iozone }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="jvm2008" label="jvm2008" width="80">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.jvm2008 }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="cpu2006" label="cpu2006" width="80">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2006 }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="cpu2017" label="cpu2017" width="80">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2017 }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column prop="message" label="运行结果">
-      <template #default="scope">
-        <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.message }}</div>
-      </template>
-    </el-table-column>
-    <el-table-column label="操作" width="180">
-      <template #default="scope">
-        <el-button type="primary" @click="edit(scope.row)">查看详细日志</el-button>
-        <el-button type="danger" @click="del(scope.row)">删除</el-button>
-  </template>
-    </el-table-column>
-  </el-table>
-  <br>
-  <div class="parent-container">
-    <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[5, 10, 20, 30, 50, total]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-    >
-    </el-pagination>
-  </div>
+            <el-table
+                ref="multipleTable"
+                :data="showData"
+                tooltip-effect="dark"
+                border
+                style="width: 100%"
+                :key="itemKey"
+                :header-cell-style="{fontSize:'5px'}"
+                class="tableHead"
+            >
+              <el-table-column prop="project_name" label="项目名称" column-key="project_name">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="user_name" label="测试人员">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.user_name }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="ip" label="ip" width="125">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.ip }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="stream" label="stream" width="70">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.stream }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="lmbench" label="lmbench" width="80">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.lmbench }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="unixbench" label="unixbench" width="90">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.unixbench }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="fio" label="fio" width="50">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.fio }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="iozone" label="iozone" width="70">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.iozone }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="jvm2008" label="jvm2008" width="80">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.jvm2008 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="cpu2006" label="cpu2006" width="80">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2006 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="cpu2017" label="cpu2017" width="80">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2017 }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="test_result" label="运行结果">
+                <template #default="scope">
+                  <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.test_result }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="180">
+                <template #default="scope">
+                  <el-button type="primary" @click="down(scope.row)">日志</el-button>
+                  <el-button type="danger" @click="del(scope.row)">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <br>
+            <div class="parent-container">
+              <el-pagination
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                  :current-page="currentPage"
+                  :page-sizes="[5, 10, 20, 30, 50, total]"
+                  :page-size="pageSize"
+                  layout="total, sizes, prev, pager, next, jumper"
+                  :total="total"
+              >
+              </el-pagination>
+            </div>
           </div>
         </el-main>
       </el-container>
@@ -110,15 +110,14 @@
   </div>
 
 
-
 </template>
 
 
 <script scoped>
-
+import {ElMessage} from 'element-plus';
 import AllHeader from "@/components/common/AllHeader";
 import Menu from "@/components/common/AllMenu";
-import {test_case} from "@/api/api";
+import {test_case, down_message} from "@/api/api";
 
 export default {
   name: 'kytuningHome',
@@ -133,7 +132,7 @@ export default {
       currentPage: 1, //当前页数
       pageSize: 10, // 每页显示条数
       total: 0, // 总条数
-      itemKey: 0, //跟新数据后生成随机数从而刷新页面数据
+      itemKey: 0, //更新数据后生成随机数从而刷新页面数据
     };
   },
   computed: {
@@ -146,12 +145,11 @@ export default {
   },
   created() {
     this.itemKey = Math.random()
-    test_case().then((response) => {
+    test_case('get', {}).then((response) => {
       this.tableDatas = response.data.data;
       console.log(this.tableDatas)
       this.total = this.tableDatas.length;
       this.numColumns = Object.keys(this.tableDatas[0]).length;
-
     });
   },
   methods: {
@@ -166,33 +164,84 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
     },
+    down(row) {
+      down_message({id: row.id}).then((response) => {
+        console.log(response,111)
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'log.tar')
+        document.body.appendChild(link)
+        link.click()
+      }).catch(error => {
+        if (error.code === "ERR_BAD_REQUEST"){ElMessage({message: "下载失败没有找到对应日志", type: 'warning'})}
+        console.log(error)
+      }).finally(() => {
+        // excelDisabled 将被设置为 true，然后立即被设置为 false,禁用的时间非常短，不足以被用户察觉到。
+        this.excelDisabled = false;
+      });
+    },
+    del(row) {
+      this.$confirm(`确认删除此行数据吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        test_case('delete', {id: row.id}).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            //更新页面数据，绑定key，每次key改变后就会刷新数据
+            this.itemKey = Math.random()
+            this.refreshData();
+            this.dialogFormVisible = false
+          }
+        })
+      })
+    },
+
+    //更新数据后刷新页面数据
+    refreshData() {
+      test_case('get', {}).then((response) => {
+        this.tableDatas = response.data.data;
+        console.log(this.tableDatas)
+        this.total = this.tableDatas.length;
+        this.numColumns = Object.keys(this.tableDatas[0]).length;
+      }).catch(error => {
+        console.error(error);
+      });
+    },
   }
 };
 </script>
 
 
 <style scoped>
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple-dark {
-    background: #99a9bf;
-  }
-  .bg-purple {
-    background: #d3dce6;
-  }
-  .bg-purple-light {
-    background: #e5e9f2;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 36px;
-    font-size: 50px;
-    color: red;
-  }
-  .row-bg {
-    padding: 10px 0;
-    background-color: #f9fafc;
-  }
+.el-col {
+  border-radius: 4px;
+}
+
+.bg-purple-dark {
+  background: #99a9bf;
+}
+
+.bg-purple {
+  background: #d3dce6;
+}
+
+.bg-purple-light {
+  background: #e5e9f2;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+  font-size: 50px;
+  color: red;
+}
+
+.row-bg {
+  padding: 10px 0;
+  background-color: #f9fafc;
+}
 </style>
 
