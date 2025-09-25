@@ -10,61 +10,112 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
     {
-        name: 'Home',
+        name: 'Login',
         path: '/',
+        hidden: true,
         component: () => import('@/components/kytuningLogin'),
     },
     {
+        name: 'kytuningHome',
+        path: '/kytuningHome',
+        hidden: true,
+        component: () => import('@/components/kytuningHome'),
+    },
+    {
+        name: '设备管理',
+        path: '/test1',
+        component: () => import('@/views/testViews/TestList'),
+        children: []
+    },
+    {
+        name: '测试管理',
+        path: '/test',
+        component: () => import('@/views/testViews/TestList'),
+        children: [
+            {
+                path: '/test/list',
+                name: '测试列表',
+                component: () => import('@/views/testViews/TestList')
+            },
+            {
+                path: '/test/config',
+                name: '测试配置',
+                component: () => import('@/views/testViews/TestConfig')
+            },
+        ]
+    },
+    {
+        name: '数据管理',
         path: '/project',
-        name: 'project',
-        component: () => import('@/views/ProjectTable'),
+        component: () => import('@/views/dataViews/ProjectTable'),
+        children: [
+            {
+                path: '/data/linshishuju',
+                name: '临时数据',
+                component: () => import('@/views/dataViews/ProjectTable')
+            },
+            {
+                path: '/project',
+                name: '项目数据',
+                component: () => import('@/views/dataViews/ProjectTable')
+            },
+        ]
     },
     {
         name: 'env',
         path: '/env/:baseId/:comparsionIds?',
-        component: () => import('@/views/EnvTable'),
+        hidden: true,
+        component: () => import('@/views/dataViews/EnvTable'),
         props: true,
     },
     {
         name: 'stream',
         path: '/stream/:baseId/:comparsionIds?',
-        component: () => import('@/views/StreamTable'),
+        hidden: true,
+        component: () => import('@/views/dataViews/StreamTable'),
     },
     {
         name: 'lmbench',
         path: '/lmbench/:baseId/:comparsionIds?',
-        component: () => import('@/views/LmbenchTable'),
+        hidden: true,
+        component: () => import('@/views/dataViews/LmbenchTable'),
     },
     {
         name: 'unixbench',
         path: '/unixbench/:baseId/:comparsionIds?',
-        component: () => import('@/views/UnxibenchTable'),
+        hidden: true,
+        component: () => import('@/views/dataViews/UnxibenchTable'),
         props: true,
     },
     {
         name: 'fio',
         path: '/fio/:baseId/:comparsionIds?',
-        component: () => import('@/views/FioTable'),
+        hidden: true,
+        component: () => import('@/views/dataViews/FioTable'),
     },
     {
         name: 'iozone',
         path: '/iozone/:baseId/:comparsionIds?',
-        component: () => import('@/views/IozoneTable'),
+        hidden: true,
+        component: () => import('@/views/dataViews/IozoneTable'),
     },
     {
         name: 'jvm2008',
         path: '/jvm2008/:baseId/:comparsionIds?',
-        component: () => import('@/views/Jvm2008Table'),
+        hidden: true,
+        component: () => import('@/views/dataViews/Jvm2008Table'),
     },
     {
         name: 'cpu2006',
         path: '/cpu2006/:baseId/:comparsionIds?',
-        component: () => import('@/views/Cpu2006Table'),
+        hidden: true,
+        component: () => import('@/views/dataViews/Cpu2006Table'),
     },
     {
         name: 'cpu2017',
         path: '/cpu2017/:baseId/:comparsionIds?',
-        component: () => import('@/views/Cpu2017Table'),
+        hidden: true,
+        component: () => import('@/views/dataViews/Cpu2017Table'),
     },
 ]
 export default createRouter({

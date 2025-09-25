@@ -12,17 +12,10 @@
 @author: Wqz
 @time: 11/6/19 4:33 PM
 """
+import subprocess
 from django.core.paginator import Paginator, EmptyPage
-from django.forms import model_to_dict
 from django.http import JsonResponse
 from rest_framework import pagination, status
-from rest_framework.permissions import BasePermission
-
-
-def return_time(test_time):
-    time = test_time.split('-')[0] + '-' + test_time.split('-')[1] + '-' + test_time.split('-')[2] + ' ' + \
-               test_time.split('-')[3] + ':' + test_time.split('-')[4] + ':' + test_time.split('-')[5]
-    return time
 
 
 def json_response(data=None, code=None, message=None):
@@ -40,7 +33,6 @@ def json_response(data=None, code=None, message=None):
     }
     return JsonResponse(res)
 
-
 def list_response(result, code, message):
     """
     :param result:
@@ -56,29 +48,6 @@ def list_response(result, code, message):
     if message:
         res['message'] = message
     return JsonResponse(res)
-
-
-def model_to_dict_myself(queryset, **kwargs):
-    """
-        返回model_to_dict转换的字段
-        """
-    if not queryset:
-        return {}
-    data = []
-    if 'exclude' in kwargs.keys():
-        for query in queryset:
-            dict = model_to_dict(query, exclude=kwargs['exclude'])
-            data.append(dict)
-    elif 'fields' in kwargs.keys():
-        for query in queryset:
-            dict = model_to_dict(query, fields=kwargs['fields'])
-            data.append(dict)
-    else:
-        for query in queryset:
-            dict = model_to_dict(query)
-            data.append(dict)
-    return data
-
 
 def jwt_response_payload_handler(token, user=None, request=None):
     """
@@ -102,7 +71,6 @@ def get_error_message(serializer):
     for _, error in serializer.errors.items():
         return error[0]
 
-
 class LimsPageSet(pagination.PageNumberPagination):
     """
     分页设置
@@ -112,22 +80,6 @@ class LimsPageSet(pagination.PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 1000
     page_query_param = 'page'
-
-
-# class ZbmPermission(BasePermission):
-#     """
-#     管理员和超级管理员可以对系统进行各种
-#     权限操作，普通用户只能对信息进行查看
-#     """
-#     def has_permission(self, request, view):
-#         try:
-#             user_type = request.user.user_type_choices
-#             if user_type == 2 or request.user.is_superuser or request.method == 'GET':
-#                 return True
-#             return False
-#         except:
-#             pass
-
 
 def get_page(data, objs):
     """
@@ -148,3 +100,23 @@ def get_page(data, objs):
     except EmptyPage:
         list = paginator.page(1)  # 当输入的page是不存在的时候就会报错
     return list
+
+# 定义远程服务器的IP地址、用户名和密码
+remote_host = 'IP地址'
+remote_username = '用户名'
+remote_password = '密码'
+def test_case(remote_host,remote_username,remote_password):
+    # 使用scp命令将安装包发送到远程服务器
+    scp_command = f'sshpass -p {remote_password} scp -o StrictHostKeyChecking=no -r /root/run_kytuning-ffdev/ {remote_username}@{remote_host}:/root/run_kytuning-ffdev'
+    return_result = subprocess.run(scp_command, shell=True)
+    if return_result.returncode == 5:
+        return_result.stderr = "请确认测试机器的账号密码是否正确"
+        return return_result
+    elif return_result.returncode:
+        return_result.stderr = "scp 命令出错"
+        return return_result
+
+    # 在远程服务器上运行脚本
+    ssh_command = f'sshpass -p {remote_password} ssh {remote_username}@{remote_host} "cd /root/run_kytuning-ffdev/;sh /root/run_kytuning-ffdev/run.sh"'
+    return_result = subprocess.run(ssh_command, stderr=subprocess.PIPE, encoding='utf-8', shell=True)
+    return return_result

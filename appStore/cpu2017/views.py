@@ -14,7 +14,7 @@ from rest_framework import status
 from appStore.cpu2017.models import Cpu2017
 from appStore.cpu2017.serializers import Cpu2017Serializer
 from appStore.project.models import Project
-from appStore.utils.common import LimsPageSet, json_response, get_error_message, return_time
+from appStore.utils.common import LimsPageSet, json_response, get_error_message
 from appStore.utils.customer_view import CusModelViewSet
 
 
