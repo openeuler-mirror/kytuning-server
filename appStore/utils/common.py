@@ -12,10 +12,15 @@
 @author: Wqz
 @time: 11/6/19 4:33 PM
 """
+import glob
+import os
+import tarfile
 import subprocess
 from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse
 from rest_framework import pagination, status
+
+from appStore.utils.constants import RESULT_LOG_FILE
 
 
 def json_response(data=None, code=None, message=None):
@@ -101,22 +106,61 @@ def get_page(data, objs):
         list = paginator.page(1)  # 当输入的page是不存在的时候就会报错
     return list
 
-# 定义远程服务器的IP地址、用户名和密码
-remote_host = 'IP地址'
-remote_username = '用户名'
-remote_password = '密码'
-def test_case(remote_host,remote_username,remote_password):
-    # 使用scp命令将安装包发送到远程服务器
-    scp_command = f'sshpass -p {remote_password} scp -o StrictHostKeyChecking=no -r /root/run_kytuning-ffdev/ {remote_username}@{remote_host}:/root/run_kytuning-ffdev'
-    return_result = subprocess.run(scp_command, shell=True)
-    if return_result.returncode == 5:
-        return_result.stderr = "请确认测试机器的账号密码是否正确"
-        return return_result
-    elif return_result.returncode:
-        return_result.stderr = "scp 命令出错"
+
+def test_case(test_ip, test_username, test_password, test_case_names, user_config_path, result_log_name):
+    """
+
+    :param test_ip: 测试机器的ip
+    :param test_username: 测试机器的用户名
+    :param test_password: 测试机器的密码
+    :param result_log_name: 存放日志文件路径
+    :param test_case_names: 需要哪几项
+    :param run_kytuning_temp: run_kytuning存放的临时文件
+    :return:
+    """
+    # 下载run_kytuning代码
+    wget_command = f'sshpass -p {test_password} ssh {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip http://localhost:9000/tools/run_kytuning-ffdev.zip;unzip /root/run_kytuning-ffdev.zip -d /root/;rm -rf /root/run_kytuning-ffdev/conf/user.cfg;rm -rf /root/run_kytuning-ffdev/yaml-base/"'
+    wget_result = subprocess.run(wget_command, shell=True)
+    if wget_result.returncode:
+        wget_result.stderr = "测试端下载run_kytuning代码出错,请检查账号、密码是否正确，网络是否可用"
+        return wget_result
+
+    # # 复制配置文件conf文件和yaml文件
+    scp_command = f'sshpass -p {test_password} scp -o StrictHostKeyChecking=no -r {user_config_path}/conf {user_config_path}/yaml-base {test_username}@{test_ip}:/root/run_kytuning-ffdev/'
+    scp_result = subprocess.run(scp_command, shell=True)
+
+    if scp_result.returncode:
+        scp_result.stderr = "复制配置文件出错"
+        return scp_result
+
+    # 保存性能测试的打印日志
+    with open(result_log_name + '_outp.log', 'w') as f:
+        # 在远程服务器上运行run.sh脚本
+        ssh_command = f'sshpass -p {test_password} ssh {test_username}@{test_ip} "cd /root/run_kytuning-ffdev/;sh /root/run_kytuning-ffdev/run.sh"'
+        return_result = subprocess.run(ssh_command, stdout=f, stderr=f, encoding='utf-8', shell=True)
+
+
+    # 保存kytuning的日志，先获取此次测试测试了哪几项，在获取对应的kytuning.log文件
+    for test_case_name in test_case_names:
+        klog_command = f'sshpass -p {test_password} scp -o StrictHostKeyChecking=no -r {test_username}@{test_ip}:/root/kytuning/run/{test_case_name}/kytuning.log {result_log_name}_{test_case_name}_kytuning.log'
+        klog_result = subprocess.run(klog_command, shell=True)
+
+    # 打包日志文件，方便户下载
+    tar_file_path = result_log_name + '.tar'
+    # 获取以指定前缀的所有文件路径
+    file_paths = glob.glob(result_log_name + '*')
+
+    # 打包文件
+    with tarfile.open(tar_file_path, "w") as tar:
+        for file_path in file_paths:
+            tar.add(file_path, arcname=file_path.replace(RESULT_LOG_FILE, ''))
+
+    # 删除旧文件
+    for file_path in file_paths:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+    if return_result.returncode:
+        return_result.stderr = "sh run.sh 命令出错，请查看详细日志"
         return return_result
 
-    # 在远程服务器上运行脚本
-    ssh_command = f'sshpass -p {remote_password} ssh {remote_username}@{remote_host} "cd /root/run_kytuning-ffdev/;sh /root/run_kytuning-ffdev/run.sh"'
-    return_result = subprocess.run(ssh_command, stderr=subprocess.PIPE, encoding='utf-8', shell=True)
-    return return_result
+    return klog_result

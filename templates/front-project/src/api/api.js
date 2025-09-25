@@ -20,15 +20,24 @@ export function login(data) {
 
 
 // 测试管理列表
-export function test_case(params) {
+export function test_case(type,data) {
+    return service({
+        method: type,
+        url: '/test_case/',
+        data
+    })
+}
+//测试日志导出
+export function down_message(params) {
     return service({
         method: 'get',
-        url: '/test_case/',
+        url: '/down_message/',
+        responseType: 'blob',
         params
     })
 }
 
-// project
+// 获取指定的project组
 export function get_project(params) {
     return service({
         method: 'get',
