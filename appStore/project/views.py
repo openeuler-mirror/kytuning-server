@@ -10,7 +10,7 @@ import os
 import json
 import logging
 
-from django.http import Http404, FileResponse
+from django.http import FileResponse, HttpResponse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 from djangoProject import settings
@@ -560,8 +560,7 @@ class ProjectViewSet(CusModelViewSet):
         # todo 是否需要实现多线程记录数据，目前测试可以，如果有很多组数据的化可能会获取失败。
         # 打开文件
         file_path = os.path.join(settings.BASE_DIR, 'tem_excel/%s.xlsx'%(request.user))
-        print(file_path)
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), as_attachment=True,status=200)
-        raise Http404
+        return HttpResponse('文件不存在', status=404)
 
