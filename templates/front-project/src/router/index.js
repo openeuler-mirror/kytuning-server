@@ -30,7 +30,7 @@ const routes = [
     {
         name: '测试管理',
         path: '/test',
-        component: () => import('@/views/testViews/TestList'),
+        redirect: '/test/list',
         children: [
             {
                 path: '/test/list',
