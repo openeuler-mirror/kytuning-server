@@ -5,12 +5,7 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Feb 23 10:00:37 2024 +0800
 """
-# 是否记录对应数据，默认为
-CPU2006_BOOL = False
-CPU2017_BOOL = False
-FIO_BOOL = False
-IOZONE_BOOL = False
-JVM2008_BOOL = False
-LMBENCH_BOOL = False
-STREAM_BOOL = False
-UNIXBENCH_BOOL = False
+# 服务端记录测试端的测试日志路径
+RESULT_LOG_FILE = '/var/www/html/result_log_file/'
+#用户配置文件路径
+RUN_KYTUNING_CONFIG_TEMP = '/var/www/html/run_kytuning_config_temp/'

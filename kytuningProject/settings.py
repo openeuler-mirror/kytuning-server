@@ -81,8 +81,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'djangoProject.urls'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOWED_ORIGINS = [
-    'http://172.29.220.200:8080',  # 允许从这个地址发出跨域请求
-    'http://172.29.220.94:8080',  # 允许从这个地址发出跨域请求
+    'http://localhost:8080',  # 允许从这个地址发出跨域请求
     # ...
 ]
 
