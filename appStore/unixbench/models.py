@@ -6,11 +6,10 @@
  * Date: Mon Mar 4 09:58:41 2024 +0800
 """
 from django.db import models
-import django.utils.timezone as timezone
 
 # Create your models here.
 class Unixbench(models.Model):
-    """cpu_2006表"""
+    """unixbench表"""
     ThreadType = (
         ("单线程", "单线程"),
         ("多线程", "多线程"),
