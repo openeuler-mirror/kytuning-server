@@ -61,6 +61,9 @@ INSTALLED_APPS = [
     'appStore.jvm2008.apps.Jvm2008Config',
     'appStore.cpu2006.apps.Cpu2006Config',
     'appStore.cpu2017.apps.Cpu2017Config',
+    'appStore.testCase.apps.TestcaseConfig',
+    'appStore.testMachine.apps.TestmachineConfig',
+    'appStore.userConfig.apps.UserconfigConfig',
 ]
 AUTH_USER_MODEL = 'users.UserProfile'
 MIDDLEWARE = [

@@ -12,6 +12,7 @@
       <el-button @click="getComparativeData()" type="primary" plain>数据对比</el-button>
       <el-button @click="mergeData()" type="danger" plain>合并数据</el-button>
       <el-button @click="restData()" type="info" plain>取消选择</el-button>
+      <el-button @click="goHome" type="warning" plain>返回首页</el-button>
     </el-row>
     <div>数据类型: {{ selected }}</div>
     <select v-model="selectedType">
@@ -26,12 +27,13 @@
       <option value="cpu2006">cpu2006</option>
       <option value="cpu2017">cpu2017</option>
     </select>
+
   </div>
   <br>
 
   <el-table
       ref="multipleTable"
-      :data="compData"
+      :data="showData"
       tooltip-effect="dark"
       border
       style="width: 100%"
@@ -83,7 +85,7 @@
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.times }}</div>
       </template>
     </el-table-column>
-    <el-table-column prop="ip" label="ip" width="120">
+    <el-table-column prop="ip" label="ip" width="125">
       <template #default="scope">
         <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.ip }}</div>
       </template>
@@ -231,7 +233,7 @@ export default {
   },
 
   computed: {
-    compData() {
+    showData() {
       return this.allProjectDatas.slice(
           (this.currentPage - 1) * this.pageSize,
           this.currentPage * this.pageSize
@@ -239,6 +241,7 @@ export default {
     },
   },
   methods: {
+    goHome(){this.$nextTick(() => {this.$router.push('/test')})},
     handleRowClick(row) {
       // const id = row.id
       const env_id = row.env_id
