@@ -1,3 +1,10 @@
+<!--
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Tue Mar 12 09:59:13 2024 +0800
+-->
 <template>
   <div id="fixed-top">
     <AllHeader/>
@@ -110,7 +117,7 @@ import Menu from "@/components/common/AllMenu";
 import {ref} from 'vue'
 import yamlData from '@/utils/yaml.js';
 import { ElMessage } from 'element-plus'
-import {do_test_case,save_config} from "@/api/api";
+import {do_test_case,user_config} from "@/api/api";
 
 export default {
   name: 'doTest',
@@ -172,56 +179,63 @@ export default {
     },
     select(){},
     save() {
-      this.check()
-      const formData = {
-        project_name:this.projectName,
-        test_ip: this.testIP,
-        test_password:this.testPassword,
-        user_password:this.userPassword,
-        stream:this.iterations.stream,
-        lmbench:this.iterations.lmbench,
-        unixbench:this.iterations.unixbench,
-        fio:this.iterations.fio,
-        iozone:this.iterations.iozone,
-        jvm2008:this.iterations.jvm2008,
-        cpu2006:this.iterations.cpu2006,
-        cpu2017:this.iterations.cpu2017,
+      console.log(this.check())
+      if (this.check()) {
+        const formData = {
+          project_name: this.projectName,
+          test_ip: this.testIP,
+          test_password: this.testPassword,
+          user_password: this.userPassword,
+          stream: this.iterations.stream,
+          lmbench: this.iterations.lmbench,
+          unixbench: this.iterations.unixbench,
+          fio: this.iterations.fio,
+          iozone: this.iterations.iozone,
+          jvm2008: this.iterations.jvm2008,
+          cpu2006: this.iterations.cpu2006,
+          cpu2017: this.iterations.cpu2017,
+          yaml: yamlData
+        }
+        user_config('post',formData).then(response => {
+          console.log(response)
+        })
       }
-      save_config(formData).then(response => {
-        console.log(response)
-      })
     },
     doTest() {
-      this.check()
-      const formData = {
-        project_name: this.projectName,
-        test_ip: this.testIP,
-        test_password: this.testPassword,
-        user_password: this.userPassword,
-        stream: this.iterations.stream,
-        lmbench: this.iterations.lmbench,
-        unixbench: this.iterations.unixbench,
-        fio: this.iterations.fio,
-        iozone: this.iterations.iozone,
-        jvm2008: this.iterations.jvm2008,
-        cpu2006: this.iterations.cpu2006,
-        cpu2017: this.iterations.cpu2017,
-        yaml:yamlData
+      if (this.check()) {
+        const formData = {
+          project_name: this.projectName,
+          test_ip: this.testIP,
+          test_password: this.testPassword,
+          user_password: this.userPassword,
+          stream: this.iterations.stream,
+          lmbench: this.iterations.lmbench,
+          unixbench: this.iterations.unixbench,
+          fio: this.iterations.fio,
+          iozone: this.iterations.iozone,
+          jvm2008: this.iterations.jvm2008,
+          cpu2006: this.iterations.cpu2006,
+          cpu2017: this.iterations.cpu2017,
+          yaml: yamlData
+        }
+        do_test_case(formData).then(response => {
+          console.log(response);
+        });
+        ElMessage({message: '发起测试完成，正在跳转只测试列表页面', type: 'success'});
+        // 添加3秒的延迟
+        // setTimeout(() => {this.$router.push({path: '/test/list/'});}, 3000);
       }
-
-
-      console.log(formData,222)
-      do_test_case(formData).then(response => {
-        console.log(response);
-      });
-      ElMessage({message: '发起测试完成，正在跳转只测试列表页面', type: 'success'});
-      // 添加3秒的延迟
-      // setTimeout(() => {this.$router.push({path: '/test/list/'});}, 3000);
     },
 
     check() {
-      if (!this.projectName) {ElMessage({message: "项目名称不能为空", type: 'error'})}
-      if (!this.userPassword) {ElMessage({message: "kytuning用户密码不能为空", type: 'error'})}
+      if (!this.projectName) {
+        ElMessage({message: "项目名称不能为空", type: 'error'});
+        return false;
+      }
+      if (!this.userPassword) {
+        ElMessage({message: "kytuning用户密码不能为空", type: 'error'});
+        return false;
+      }
       const iterations = {
         stream: this.iterations.stream !== '' ? parseInt(this.iterations.stream) : 0,
         lmbench: this.iterations.lmbench !== '' ? parseInt(this.iterations.lmbench) : 0,
@@ -232,11 +246,17 @@ export default {
         cpu2006: this.iterations.cpu2006 !== '' ? parseInt(this.iterations.cpu2006) : 0,
         cpu2017: this.iterations.cpu2017 !== '' ? parseInt(this.iterations.cpu2017) : 0,
       };
+      let result = true
       for (const key in iterations) {
-        if (isNaN(iterations[key])) {ElMessage({message: `${key} 不是整数类型`, type: 'error'})}
+        if (isNaN(iterations[key])) {
+          ElMessage({message: `${key} 不是整数类型`, type: 'error'});
+          result = false
+          break;
+        }
       }
       //处理可迭代次数
       this.iterations = iterations
+      return result;
     },
    testlink() {},
   }

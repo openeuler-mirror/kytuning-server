@@ -39,21 +39,21 @@ class TestCaseViewSet(CusModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '测试完成')
 
-    def do_test_case1(self, request, *args, **kwargs):
+    def do_test_case(self, request, *args, **kwargs):
         # 创建对应数据库
         data_test_case = {}
         data_test_case['user_name'] = request.user.chinese_name
-        data_test_case['ip'] = request.POST.get('test_ip')
-        test_password = request.POST.get('test_password')
-        data_test_case['project_name'] = request.POST.get('project_name')
-        data_test_case['stream'] = request.POST.get('stream')
-        data_test_case['lmbench'] = request.POST.get('lmbench')
-        data_test_case['unixbench'] = request.POST.get('unixbench')
-        data_test_case['fio'] = request.POST.get('fio')
-        data_test_case['iozone'] = request.POST.get('iozone')
-        data_test_case['jvm2008'] = request.POST.get('jvm2008')
-        data_test_case['cpu2006'] = request.POST.get('cpu2006')
-        data_test_case['cpu2017'] = request.POST.get('cpu2017')
+        data_test_case['ip'] = request.data.get('test_ip')
+        test_password = request.data.get('test_password')
+        data_test_case['project_name'] = request.data.get('project_name')
+        data_test_case['stream'] = request.data.get('stream')
+        data_test_case['lmbench'] = request.data.get('lmbench')
+        data_test_case['unixbench'] = request.data.get('unixbench')
+        data_test_case['fio'] = request.data.get('fio')
+        data_test_case['iozone'] = request.data.get('iozone')
+        data_test_case['jvm2008'] = request.data.get('jvm2008')
+        data_test_case['cpu2006'] = request.data.get('cpu2006')
+        data_test_case['cpu2017'] = request.data.get('cpu2017')
         data_test_case['test_result'] = '运行中'
         data_test_case['result_log_name'] = RESULT_LOG_FILE + str(request.user) + '_' + str(time.time())
 
@@ -74,7 +74,6 @@ class TestCaseViewSet(CusModelViewSet):
             test_case_names.append('cpu2006')
         if int(data_test_case['cpu2017']):
             test_case_names.append('cpu2017')
-        # todo 密码怎么解决，从数据库中获取在解密？
 
         if not os.path.exists(RESULT_LOG_FILE):
             os.makedirs(RESULT_LOG_FILE)
@@ -94,74 +93,53 @@ class TestCaseViewSet(CusModelViewSet):
             configfile.write('project_name={}\n'.format(data_test_case['project_name']))
             configfile.write('upload=true\n')
             configfile.write('username={}\n'.format(str(request.user)))
-            configfile.write('password={}\n'.format(request.POST.get('password')))
+            configfile.write('password={}\n'.format(request.data.get('user_password')))
 
         # 将配置数据写入YAML文件
         # 第一代的版本就先只支持迭代次数
         if int(data_test_case['stream']):
-            # 这个是获取用户的全部配置直接写入的方式
-            # with open(user_config + '/yaml-base/stream-base.yaml', 'w') as f:
-            #     yaml.dump(stream_base_yaml, f)
-            # 读取YAML文件中的数据
-            with open('./yaml-base/stream-base.yaml', 'r') as f:
-                config = yaml.full_load(f)
-            # 根据需要修改配置数据
-            config['maxiterations'] = int(data_test_case['stream'])
-            # 将修改后的数据写回YAML文件
-            with open(user_config_path + '/yaml-base/stream-base.yaml', 'w') as f:
-                yaml.dump(config, f, default_flow_style=False)
+            stream_yaml = request.data.get('yaml')['stream'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['stream'])))
+            with open(user_config_path + '/yaml-base/stream-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(stream_yaml)
         if int(data_test_case['lmbench']):
-            with open('./yaml-base/lmbench-base.yaml', 'r') as f:
-                config = yaml.full_load(f)
-            config['maxiterations'] = int(data_test_case['lmbench'])
-            with open(user_config_path + '/yaml-base/lmbench-base.yaml', 'w') as f:
-                yaml.dump(config, f, default_flow_style=False)
+            lmbench_yaml = request.data.get('yaml')['lmbench'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['lmbench'])))
+            with open(user_config_path + '/yaml-base/lmbench-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(lmbench_yaml)
         if int(data_test_case['unixbench']):
-            with open('./yaml-base/unixbench-base.yaml', 'r') as f:
-                config = yaml.full_load(f)
-            config['maxiterations'] = int(data_test_case['unixbench'])
-            with open(user_config_path + '/yaml-base/unixbench-base.yaml', 'w') as f:
-                yaml.dump(config, f)
+            unixbench_yaml = request.data.get('yaml')['unixbench'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['unixbench'])))
+            with open(user_config_path + '/yaml-base/unixbench-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(unixbench_yaml)
         if int(data_test_case['fio']):
-            with open('./yaml-base/fio-base.yaml', 'r') as f:
-                config = yaml.full_load(f)
-            config['maxiterations'] = int(data_test_case['fio'])
-            with open(user_config_path + '/yaml-base/fio-base.yaml', 'w') as f:
-                yaml.dump(config, f)
+            fio_yaml = request.data.get('yaml')['fio'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['fio'])))
+            with open(user_config_path + '/yaml-base/fio-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(fio_yaml)
         if int(data_test_case['iozone']):
-            with open('./yaml-base/iozone-base.yaml', 'r') as f:
-                config = yaml.full_load(f)
-            config['maxiterations'] = int(data_test_case['iozone'])
-            with open(user_config_path + '/yaml-base/iozone-base.yaml', 'w') as f:
-                yaml.dump(config, f)
+            iozone_yaml = request.data.get('yaml')['iozone'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['iozone'])))
+            with open(user_config_path + '/yaml-base/iozone-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(iozone_yaml)
         if int(data_test_case['jvm2008']):
-            # 读取YAML文件中的数据
-            with open('./yaml-base/jvm2008-base.yaml', 'r') as f:
-                config = yaml.full_load(f)
-            # 根据需要修改配置数据
-            config['maxiterations'] = int(data_test_case['jvm2008'])
-            # 将修改后的数据写回YAML文件
-            with open(user_config_path + '/yaml-base/jvm2008-base.yaml', 'w') as f:
-                yaml.dump(config, f)
+            jvm2008_yaml = request.data.get('yaml')['jvm2008'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['jvm2008'])))
+            with open(user_config_path + '/yaml-base/jvm2008-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(jvm2008_yaml)
         if int(data_test_case['cpu2006']):
-            # todo cpu2006-loongarch64-base.yaml这个怎么处理
-            # 读取YAML文件中的数据
-            with open('./yaml-base/cpu2006-base.yaml', 'r') as f:
-                config = yaml.full_load(f)
-            # 根据需要修改配置数据
-            config['maxiterations'] = int(data_test_case['cpu2006'])
-            # 将修改后的数据写回YAML文件
-            with open(user_config_path + '/yaml-base/cpu2006-base.yaml', 'w') as f:
-                yaml.dump(config, f)
+            cpu2006_yaml = request.data.get('yaml')['cpu2006'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['cpu2006'])))
+            with open(user_config_path + '/yaml-base/cpu2006-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(cpu2006_yaml)
+            cpu2006_loongarch64_yaml = request.data.get('yaml')['cpu2006_loongarch64'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['cpu2006_loongarch64'])))
+            with open(user_config_path + '/yaml-base/cpu2006-loongarch64-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(cpu2006_loongarch64_yaml)
         if int(data_test_case['cpu2017']):
-            # 读取YAML文件中的数据
-            with open('./yaml-base/cpu2017-base.yaml', 'r') as f:
-                config = yaml.full_load(f)
-            # 根据需要修改配置数据
-            config['maxiterations'] = int(data_test_case['cpu2017'])
-            # 将修改后的数据写回YAML文件
-            with open(user_config_path + '/yaml-base/cpu2017-base.yaml', 'w') as f:
-                yaml.dump(config, f)
+            cpu2017_yaml = request.data.get('yaml')['cpu2017'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['cpu2017'])))
+            with open(user_config_path + '/yaml-base/cpu2017-base.yaml', 'w', encoding='UTF-8') as fp:
+                fp.write(cpu2017_yaml)
         # return json_response({}, status.HTTP_400_BAD_REQUEST,{})
         # 创建请求测试数据
         serializer_test_case = TestCaseSerializer(data=data_test_case)
