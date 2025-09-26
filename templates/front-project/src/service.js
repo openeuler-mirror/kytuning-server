@@ -31,6 +31,8 @@ service.interceptors.response.use((response) => {
     if(code !== 200) {
         if (response.config.url === '/download_excel/'){
             if (response.status === 200){ElMessage({message: message || '表格制作完成，正在导出。', type: 'success'})}}
+        else if (response.config.url === '/down_message/'){
+            if (response.status === 200){ElMessage({message: message || '下载日志完成。', type: 'success'})}}
         else {ElMessage({message: message || 'error', type: 'warning'})}
     }
     return response
