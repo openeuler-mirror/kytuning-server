@@ -46,11 +46,11 @@ export function do_test_case(data) {
     })
 }
 
-//发起测试
-export function save_config(data) {
+//用户配置文件接口
+export function user_config(type, data) {
     return service({
-        method: 'post',
-        url: '/save_config/',
+        method: type,
+        url: '/user_config/',
         data
     })
 }

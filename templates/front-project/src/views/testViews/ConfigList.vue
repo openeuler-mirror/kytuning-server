@@ -13,43 +13,24 @@
       <el-container>
         <el-main>
           <div class="cont">
-            <el-table
-                ref="multipleTable"
-                :data="showData"
-                tooltip-effect="dark"
-                border
-                style="width: 100%"
-                :key="itemKey"
-                :header-cell-style="{fontSize:'5px'}"
-                class="tableHead"
-            >
-              <el-table-column prop="project_name" label="项目名称">
-              </el-table-column>
-              <el-table-column prop="user_name" label="测试人员">
-              </el-table-column>
-              <el-table-column prop="ip" label="ip" width="125">
-              </el-table-column>
-              <el-table-column prop="stream" label="stream" width="70">
-              </el-table-column>
-              <el-table-column prop="lmbench" label="lmbench" width="80">
-              </el-table-column>
-              <el-table-column prop="unixbench" label="unixbench" width="90">
-              </el-table-column>
-              <el-table-column prop="fio" label="fio" width="50">
-              </el-table-column>
-              <el-table-column prop="iozone" label="iozone" width="70">
-              </el-table-column>
-              <el-table-column prop="jvm2008" label="jvm2008" width="80">
-              </el-table-column>
-              <el-table-column prop="cpu2006" label="cpu2006" width="80">
-              </el-table-column>
-              <el-table-column prop="cpu2017" label="cpu2017" width="80">
-              </el-table-column>
-              <el-table-column prop="test_result" label="运行结果">
-              </el-table-column>
+            <el-table ref="configData" :data="showData" tooltip-effect="dark" border style="width: 100%"
+                :key="itemKey" :header-cell-style="{fontSize:'5px'}" class="tableHead">
+
+               <el-table-column prop="project_name" label="测试项目名称"/>
+               <el-table-column prop="user_name" label="测试人员"/>
+               <el-table-column prop="test_ip" label="测试机器IP"/>
+               <el-table-column prop="stream_number" label="stream"/>
+               <el-table-column prop="lmbench_number" label="lmbench"/>
+               <el-table-column prop="unixbench_number" label="unixbench"/>
+               <el-table-column prop="fio_number" label="fio"/>
+               <el-table-column prop="iozone_number" label="iozone"/>
+               <el-table-column prop="jvm2008_number" label="jvm2008"/>
+               <el-table-column prop="cpu2006_number" label="cpu2006"/>
+               <el-table-column prop="cpu2017_number" label="cpu2017"/>
+               <el-table-column prop="message" label="描述"/>
               <el-table-column label="操作" width="180">
                 <template #default="scope">
-                  <el-button type="primary" @click="down(scope.row)">日志</el-button>
+                  <el-button type="primary" @click="modify(scope.row)">修改</el-button>
                   <el-button type="danger" @click="del(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
@@ -81,7 +62,7 @@
 import {ElMessage} from 'element-plus';
 import AllHeader from "@/components/common/AllHeader";
 import Menu from "@/components/common/AllMenu";
-import {test_case, down_message} from "@/api/api";
+import {down_message,user_config} from "@/api/api";
 
 export default {
   name: 'testList',
@@ -91,8 +72,8 @@ export default {
   },
   data() {
     return {
+      configData: [],
       numColumns: 1,
-      tableDatas: [],
       currentPage: 1, //当前页数
       pageSize: 10, // 每页显示条数
       total: 0, // 总条数
@@ -101,7 +82,7 @@ export default {
   },
   computed: {
     showData() {
-      return this.tableDatas.slice(
+      return this.configData.slice(
           (this.currentPage - 1) * this.pageSize,
           this.currentPage * this.pageSize
       );
@@ -109,11 +90,10 @@ export default {
   },
   created() {
     this.itemKey = Math.random()
-    test_case('get', {}).then((response) => {
-      this.tableDatas = response.data.data;
-      console.log(this.tableDatas)
-      this.total = this.tableDatas.length;
-      this.numColumns = Object.keys(this.tableDatas[0]).length;
+    user_config('get', {}).then((response) => {
+      this.configData = response.data.data;
+      this.total = this.configData.length;
+      this.numColumns = Object.keys(this.configData[0]).length;
     });
   },
   methods: {
@@ -125,7 +105,7 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
     },
-    down(row) {
+    modify(row) {
       down_message({id: row.id}).then((response) => {
         console.log(response,111)
         const url = window.URL.createObjectURL(new Blob([response.data]))
@@ -148,7 +128,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        test_case('delete', {id: row.id}).then(response => {
+        console.log(row.id,111)
+        user_config('delete', {id: row.id}).then(response => {
           if (response.data.code === 200) {
             ElMessage({message: response.data.message, type: 'success'})
             //更新页面数据，绑定key，每次key改变后就会刷新数据
@@ -162,11 +143,10 @@ export default {
 
     //更新数据后刷新页面数据
     refreshData() {
-      test_case('get', {}).then((response) => {
-        this.tableDatas = response.data.data;
-        console.log(this.tableDatas)
-        this.total = this.tableDatas.length;
-        this.numColumns = Object.keys(this.tableDatas[0]).length;
+      user_config('get', {}).then((response) => {
+        this.configData = response.data.data;
+        this.total = this.configData.length;
+        this.numColumns = Object.keys(this.configData[0]).length;
       }).catch(error => {
         console.error(error);
       });
