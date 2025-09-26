@@ -18,7 +18,6 @@ export function login(data) {
 }
 
 
-
 // 测试管理列表
 export function test_case(type,data) {
     return service({
@@ -27,6 +26,7 @@ export function test_case(type,data) {
         data
     })
 }
+
 //测试日志导出
 export function down_message(params) {
     return service({
@@ -34,6 +34,24 @@ export function down_message(params) {
         url: '/down_message/',
         responseType: 'blob',
         params
+    })
+}
+
+//发起测试
+export function do_test_case(data) {
+    return service({
+        method: 'post',
+        url: '/do_test_case/',
+        data
+    })
+}
+
+//发起测试
+export function save_config(data) {
+    return service({
+        method: 'post',
+        url: '/save_config/',
+        data
     })
 }
 

@@ -160,10 +160,7 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="closeInfo('form')">取 消</el-button>
-          <el-button type="primary" @click="sure('form')"
-          >确 定
-          </el-button
-          >
+          <el-button type="primary" @click="sure('form')">确 定</el-button>
         </span>
       </template>
     </el-dialog>

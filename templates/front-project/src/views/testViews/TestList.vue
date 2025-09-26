@@ -120,7 +120,7 @@ import Menu from "@/components/common/AllMenu";
 import {test_case, down_message} from "@/api/api";
 
 export default {
-  name: 'kytuningHome',
+  name: 'testList',
   components: {
     AllHeader,
     Menu

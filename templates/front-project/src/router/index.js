@@ -38,9 +38,14 @@ const routes = [
                 component: () => import('@/views/testViews/TestList')
             },
             {
+                path: '/test/do_test/',
+                name: '发起测试',
+                component: () => import('@/views/testViews/DoTest')
+            },
+            {
                 path: '/test/config',
-                name: '测试配置',
-                component: () => import('@/views/testViews/TestConfig')
+                name: '配置管理',
+                component: () => import('@/views/testViews/DoTest')
             },
         ]
     },
