@@ -19,6 +19,7 @@ from appStore.project.views import ProjectViewSet
 from appStore.stream.views import StreamViewSet
 from appStore.testCase.views import TestCaseViewSet
 from appStore.unixbench.views import UnixbenchViewSet
+from appStore.userConfig.views import UserConfigViewSet
 from appStore.users.views import UserProfileViewSet
 
 router = routers.DefaultRouter()
@@ -36,7 +37,8 @@ router.register(r'project', ProjectViewSet, basename='project')
 router.register(r'stream', StreamViewSet, basename='stream')
 router.register(r'unixbench', UnixbenchViewSet, basename='unixbench')
 router.register(r'users', UserProfileViewSet, basename='users')
-router.register(r'test_case', TestCaseViewSet, basename='testcase')
+router.register(r'test_case', TestCaseViewSet, basename='test_case')
+router.register(r'user_config', UserConfigViewSet, basename='user_config')
 
 urlpatterns = [
     url(r'', include(router.urls)),
