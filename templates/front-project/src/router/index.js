@@ -45,7 +45,7 @@ const routes = [
             {
                 path: '/test/config',
                 name: '配置管理',
-                component: () => import('@/views/testViews/DoTest')
+                component: () => import('@/views/testViews/ConfigList')
             },
         ]
     },
