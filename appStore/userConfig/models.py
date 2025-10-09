@@ -25,7 +25,7 @@ class UserConfig(models.Model):
     cpu2017_number = models.CharField(max_length=100, verbose_name='cpu2017测试迭代次数')
     stream_config = models.TextField(verbose_name='stream测试配置文件')
     lmbench_config = models.TextField(verbose_name='lmbench测试配置文件')
-    unixbbench_config = models.TextField(verbose_name='unixbbench测试配置文件')
+    unixbench_config = models.TextField(verbose_name='unixbbench测试配置文件')
     fio_config = models.TextField(verbose_name='fio测试配置文件')
     iozone_config = models.TextField(verbose_name='iozone测试配置文件')
     jvm2008_config = models.TextField(verbose_name='jvm2008测试配置文件')
@@ -33,6 +33,7 @@ class UserConfig(models.Model):
     cpu2006_loongarch64_config = models.TextField(verbose_name='cpu2006_loongarch64测试配置文件')
     cpu2017_config = models.TextField(verbose_name='cpu2017测试配置文件')
     message = models.CharField(max_length=200,verbose_name='描述信息', null=True, blank=True)
+    is_send_config = models.BooleanField(default=False,verbose_name="是否是发起测试而保存的数据")
 
     class Meta:
         db_table = 'userConfig'
