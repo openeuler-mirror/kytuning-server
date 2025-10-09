@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'appStore.testCase.apps.TestcaseConfig',
     'appStore.testMachine.apps.TestmachineConfig',
     'appStore.userConfig.apps.UserconfigConfig',
+    'appStore.errorList.apps.ErrorListConfig',
 ]
 AUTH_USER_MODEL = 'users.UserProfile'
 MIDDLEWARE = [
