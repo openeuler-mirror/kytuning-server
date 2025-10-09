@@ -8,17 +8,18 @@
 <template>
   <div>
     <div id="fixed-top">
-      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"
+                   @data-loaded="handleDataLoaded"/>
     </div>
     <div style="overflow-x: auto;">
       <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;"
-                :show-header="false"  :row-style="{ height: '50px' }">
+                :show-header="false" :row-style="{ height: '50px' }">
         <template v-for="i in numColumns" :key="i">
           <el-table-column :prop="`column${i}`" align="center"
                            :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null">
             <template #default="{row}">
               <el-tooltip :content="row[`column${i}`]" effect="light">
-                <div style="height: 30px">{{row[`column${i}`] && row[`column${i}`].toString() || '' }}</div>
+                <div style="height: 30px">{{ row[`column${i}`] && row[`column${i}`].toString() || '' }}</div>
 
               </el-tooltip>
             </template>
@@ -54,12 +55,15 @@ export default {
     }
   },
   created() {
-    env(this.paramsData).then((response) => {
-      this.tableDatas = response.data.data.data
-      this.numColumns = Object.keys(this.tableDatas[0]).length
-    });
+    this.getData()
   },
   methods: {
+    getData() {
+      env(this.paramsData).then((response) => {
+        this.tableDatas = response.data.data.data
+        this.numColumns = Object.keys(this.tableDatas[0]).length
+      });
+    },
     handleDataLoaded(value) {
       console.log(value, 111)
       // 在这里处理子组件的数据
@@ -126,6 +130,7 @@ export default {
   background-color: pink;
   /* 其他样式属性 */
 }
+
 #fixed-top {
   position: fixed;
   top: 0;
@@ -133,6 +138,7 @@ export default {
   width: 100%;
   z-index: 9999;
 }
+
 .el-table {
   margin-top: 68px;
 }
