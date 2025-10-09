@@ -11,7 +11,7 @@ from appStore.userConfig.models import UserConfig
 
 class UserConfigSerializer(serializers.ModelSerializer):
     """
-    stream数据序列化
+    userConfig数据序列化
     """
 
     class Meta:

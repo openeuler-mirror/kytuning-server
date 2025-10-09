@@ -11,8 +11,7 @@ import shutil
 import subprocess
 import time
 
-import yaml
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, HttpRequest
 
 from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
@@ -96,7 +95,6 @@ class TestCaseViewSet(CusModelViewSet):
             configfile.write('password={}\n'.format(request.data.get('user_password')))
 
         # 将配置数据写入YAML文件
-        # 第一代的版本就先只支持迭代次数
         if int(data_test_case['stream']):
             stream_yaml = request.data.get('yaml')['stream'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['stream'])))
             with open(user_config_path + '/yaml-base/stream-base.yaml', 'w', encoding='UTF-8') as fp:
@@ -132,7 +130,7 @@ class TestCaseViewSet(CusModelViewSet):
             with open(user_config_path + '/yaml-base/cpu2006-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_yaml)
             cpu2006_loongarch64_yaml = request.data.get('yaml')['cpu2006_loongarch64'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['cpu2006_loongarch64'])))
+                int(data_test_case['cpu2006'])))
             with open(user_config_path + '/yaml-base/cpu2006-loongarch64-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_loongarch64_yaml)
         if int(data_test_case['cpu2017']):
@@ -148,6 +146,16 @@ class TestCaseViewSet(CusModelViewSet):
             test_case_id = serializer_test_case.data['id']
         else:
             return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_test_case))
+
+        """保存至配置管理数据库"""
+        from appStore.userConfig.views import UserConfigViewSet
+        request_user_config = HttpRequest()
+        request_user_config.method = 'POST'
+        request.data['is_send_config'] = True
+        request_user_config = request
+        UserConfigViewSet = UserConfigViewSet()
+        UserConfigViewSet.create(request=request_user_config, *args, **kwargs)
+
         # 运行测试
         return_result = test_case(data_test_case['ip'], 'root', test_password, test_case_names,  user_config_path, data_test_case['result_log_name'])
         if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
@@ -157,7 +165,7 @@ class TestCaseViewSet(CusModelViewSet):
             TestCase.objects.filter(id=test_case_id).update(test_result='测试完成')
             return json_response('', status.HTTP_200_OK, '测试完成')
 
-    def delete(self, request):
+    def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
         if not id or not TestCase.objects.filter(id=id):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
@@ -166,17 +174,22 @@ class TestCaseViewSet(CusModelViewSet):
             test_case_data = TestCase.objects.filter(id=id).first()
             if not test_case_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+            # todo 判断这个日志文件是否需要被删除 验证是否正确
+            if not TestCase.objects.get(id=id).is_error:
+                subprocess.run("rm -rf " + str(TestCase.objects.filter(id=id).first().result_log_name) + '.tar',
+                               shell=True)
             # 删除数据
             TestCase.objects.filter(id=id).delete()
             # 删除日志文件
-            subprocess.run("rm -rf " + str(TestCase.objects.filter(id=id).first().result_log_name) + '.tar', shell=True)
+
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
 
     def down_message(self, request, *args, **kwargs):
-        test_case_id = request.GET.get('id')
-        result_log_name = TestCase.objects.filter(id=test_case_id).first().result_log_name
+        # test_case_id = request.GET.get('id')
+        # result_log_name = TestCase.objects.filter(id=test_case_id).first().result_log_name
+        result_log_name = request.GET.get('result_log_name')
         # 检查文件是否存在
         log_file_path = result_log_name+'.tar'
         if not os.path.exists(log_file_path):
