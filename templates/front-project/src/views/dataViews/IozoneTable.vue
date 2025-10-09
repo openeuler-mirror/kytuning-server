@@ -53,16 +53,7 @@ export default {
     };
   },
   created() {
-    iozone(this.paramsData).then((response) => {
-      this.tableDatas = response.data.data;
-      this.numColumns = Object.keys(this.tableDatas[0]).length;
-      this.showAllData = false; // 默认显示平均数据
-      const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
-        const value = this.tableDatas[0][key];
-        return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
-      });
-      this.keysToHide = keysToHide;
-    });
+    this.getData()
   },
   computed: {
     displayTableData() {
@@ -84,6 +75,18 @@ export default {
     }
   },
   methods: {
+    getData(){
+      iozone(this.paramsData).then((response) => {
+      this.tableDatas = response.data.data;
+      this.numColumns = Object.keys(this.tableDatas[0]).length;
+      this.showAllData = false; // 默认显示平均数据
+      const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
+        const value = this.tableDatas[0][key];
+        return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
+      });
+      this.keysToHide = keysToHide;
+    });
+    },
     handleDataLoaded(value) {
       this.showAllData = value;
       // 在这里处理子组件的数据

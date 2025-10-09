@@ -13,40 +13,19 @@
       <el-container>
         <el-main>
           <div class="cont">
-            <el-table
-                ref="multipleTable"
-                :data="showData"
-                tooltip-effect="dark"
-                border
-                style="width: 100%"
-                :key="itemKey"
-                :header-cell-style="{fontSize:'5px'}"
-                class="tableHead"
-            >
-              <el-table-column prop="project_name" label="项目名称">
-              </el-table-column>
-              <el-table-column prop="user_name" label="测试人员">
-              </el-table-column>
-              <el-table-column prop="ip" label="ip" width="125">
-              </el-table-column>
-              <el-table-column prop="stream" label="stream" width="70">
-              </el-table-column>
-              <el-table-column prop="lmbench" label="lmbench" width="80">
-              </el-table-column>
-              <el-table-column prop="unixbench" label="unixbench" width="90">
-              </el-table-column>
-              <el-table-column prop="fio" label="fio" width="50">
-              </el-table-column>
-              <el-table-column prop="iozone" label="iozone" width="70">
-              </el-table-column>
-              <el-table-column prop="jvm2008" label="jvm2008" width="80">
-              </el-table-column>
-              <el-table-column prop="cpu2006" label="cpu2006" width="80">
-              </el-table-column>
-              <el-table-column prop="cpu2017" label="cpu2017" width="80">
-              </el-table-column>
-              <el-table-column prop="test_result" label="运行结果">
-              </el-table-column>
+            <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" :header-cell-style="{fontSize:'5px'}" class="tableHead">
+              <el-table-column prop="project_name" label="项目名称"></el-table-column>
+              <el-table-column prop="user_name" label="测试人员"></el-table-column>
+              <el-table-column prop="ip" label="ip" width="125"></el-table-column>
+              <el-table-column prop="stream" label="stream" width="70"></el-table-column>
+              <el-table-column prop="lmbench" label="lmbench" width="80"></el-table-column>
+              <el-table-column prop="unixbench" label="unixbench" width="90"></el-table-column>
+              <el-table-column prop="fio" label="fio" width="50"></el-table-column>
+              <el-table-column prop="iozone" label="iozone" width="70"></el-table-column>
+              <el-table-column prop="jvm2008" label="jvm2008" width="80"></el-table-column>
+              <el-table-column prop="cpu2006" label="cpu2006" width="80"></el-table-column>
+              <el-table-column prop="cpu2017" label="cpu2017" width="80"></el-table-column>
+              <el-table-column prop="test_result" label="运行结果"></el-table-column>
               <el-table-column label="操作" width="180">
                 <template #default="scope">
                   <el-button type="primary" @click="down(scope.row)">日志</el-button>
@@ -82,6 +61,7 @@ import {ElMessage} from 'element-plus';
 import AllHeader from "@/components/common/AllHeader";
 import Menu from "@/components/common/AllMenu";
 import {test_case, down_message} from "@/api/api";
+import utils from '@/utils/utils';
 
 export default {
   name: 'testList',
@@ -89,14 +69,10 @@ export default {
     AllHeader,
     Menu
   },
+  mixins: [utils],
   data() {
     return {
-      numColumns: 1,
       tableDatas: [],
-      currentPage: 1, //当前页数
-      pageSize: 10, // 每页显示条数
-      total: 0, // 总条数
-      itemKey: 0, //更新数据后生成随机数从而刷新页面数据
     };
   },
   computed: {
@@ -108,26 +84,17 @@ export default {
     },
   },
   created() {
-    this.itemKey = Math.random()
-    test_case('get', {}).then((response) => {
-      this.tableDatas = response.data.data;
-      console.log(this.tableDatas)
-      this.total = this.tableDatas.length;
-      this.numColumns = Object.keys(this.tableDatas[0]).length;
-    });
+    this.getData()
   },
   methods: {
-    // 分页
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.currentPage = 1;
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
+    getData(){
+      test_case('get', {}).then((response) => {
+      this.tableDatas = response.data.data;
+      this.total = this.tableDatas.length;
+    });
     },
     down(row) {
-      down_message({id: row.id}).then((response) => {
-        console.log(response,111)
+      down_message({result_log_name: row.result_log_name}).then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
         link.href = url
@@ -152,24 +119,11 @@ export default {
           if (response.data.code === 200) {
             ElMessage({message: response.data.message, type: 'success'})
             //更新页面数据，绑定key，每次key改变后就会刷新数据
-            this.itemKey = Math.random()
-            this.refreshData();
             this.dialogFormVisible = false
+            this.getData()
           }
         })
       })
-    },
-
-    //更新数据后刷新页面数据
-    refreshData() {
-      test_case('get', {}).then((response) => {
-        this.tableDatas = response.data.data;
-        console.log(this.tableDatas)
-        this.total = this.tableDatas.length;
-        this.numColumns = Object.keys(this.tableDatas[0]).length;
-      }).catch(error => {
-        console.error(error);
-      });
     },
   }
 };
@@ -177,32 +131,10 @@ export default {
 
 
 <style scoped>
-.el-col {
-  border-radius: 4px;
-}
-
-.bg-purple-dark {
-  background: #99a9bf;
-}
-
-.bg-purple {
-  background: #d3dce6;
-}
-
-.bg-purple-light {
-  background: #e5e9f2;
-}
-
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-  font-size: 50px;
-  color: red;
-}
-
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
+.parent-container {
+  display: flex;
+  justify-content: center;
+  /*background-color: #f2f2f2;*/
 }
 </style>
 

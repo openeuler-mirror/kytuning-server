@@ -8,7 +8,8 @@
 <template>
   <div>
     <div id="fixed-top">
-      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
+      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"
+                   @data-loaded="handleDataLoaded"/>
     </div>
     <div style="overflow-x: auto;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
@@ -32,9 +33,12 @@
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
 import TableHeader from "@/components/common/TableHeader.vue";
-import { cpu2006 } from "@/api/api.js";
+import {cpu2006} from "@/api/api.js";
+import utils from '@/utils/utils';
 
 export default {
+  name: 'cpu2006Table',
+  mixins: [utils],
   components: {
     ElTable,
     ElTableColumn,
@@ -42,7 +46,6 @@ export default {
   },
   data() {
     return {
-      numColumns: 1,
       tableDatas: [],
       keysToHide: [],
       showAllData: false,
@@ -54,16 +57,7 @@ export default {
     };
   },
   created() {
-    cpu2006(this.paramsData).then((response) => {
-      this.tableDatas = response.data.data;
-      this.numColumns = Object.keys(this.tableDatas[0]).length;
-      this.showAllData = false; // 默认显示平均数据
-      const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
-        const value = this.tableDatas[0][key];
-        return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
-      });
-      this.keysToHide = keysToHide;
-    });
+    this.getData()
   },
   computed: {
     displayTableData() {
@@ -85,16 +79,27 @@ export default {
     }
   },
   methods: {
-    handleDataLoaded(value) {
-      this.showAllData = value;
-      // 在这里处理子组件的数据
+    getData() {
+      cpu2006(this.paramsData).then((response) => {
+        this.tableDatas = response.data.data;
+        this.showAllData = false; // 默认显示平均数据
+        const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
+          const value = this.tableDatas[0][key];
+          return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
+        });
+        this.keysToHide = keysToHide;
+      });
     },
+    // handleDataLoaded(value) {
+    //   this.showAllData = value;
+    //   // 在这里处理子组件的数据
+    // },
     getCellClassName(row, key) {
       let value = row[key];
       if (typeof value === 'string' && value.endsWith('%')) {
         // 去除百分比符号 "%"
         value = value.replace('%', '');
-         // 将百分比转换为小数
+        // 将百分比转换为小数
         value = parseFloat(value);
         if (value >= 5) {
           return 'green-cell';
@@ -170,15 +175,17 @@ export default {
 
 <style scoped>
 .green-cell {
-  color:green;
+  color: green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
+
 .red-cell {
-  color:red;
+  color: red;
   background-color: pink;
   /* 其他样式属性 */
 }
+
 #fixed-top {
   position: fixed;
   top: 0;
@@ -186,6 +193,7 @@ export default {
   width: 100%;
   z-index: 9999;
 }
+
 .el-table {
   margin-top: 68px;
 }

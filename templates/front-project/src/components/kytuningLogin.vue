@@ -60,7 +60,7 @@ export default {
           setToken('username', res.data.username)
           setToken('token', 'Bearer ' + res.data.token)
           this.$message({message: '登录成功', type: 'success'})
-          this.$router.push('/kytuningHome')
+          this.$router.push('/test/list')
         }
       }).catch(error => {
     // 捕获错误

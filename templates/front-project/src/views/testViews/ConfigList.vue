@@ -14,20 +14,19 @@
         <el-main>
           <div class="cont">
             <el-table ref="configData" :data="showData" tooltip-effect="dark" border style="width: 100%"
-                :key="itemKey" :header-cell-style="{fontSize:'5px'}" class="tableHead">
-
-               <el-table-column prop="project_name" label="测试项目名称"/>
-               <el-table-column prop="user_name" label="测试人员"/>
-               <el-table-column prop="test_ip" label="测试机器IP"/>
-               <el-table-column prop="stream_number" label="stream"/>
-               <el-table-column prop="lmbench_number" label="lmbench"/>
-               <el-table-column prop="unixbench_number" label="unixbench"/>
-               <el-table-column prop="fio_number" label="fio"/>
-               <el-table-column prop="iozone_number" label="iozone"/>
-               <el-table-column prop="jvm2008_number" label="jvm2008"/>
-               <el-table-column prop="cpu2006_number" label="cpu2006"/>
-               <el-table-column prop="cpu2017_number" label="cpu2017"/>
-               <el-table-column prop="message" label="描述"/>
+                      :key="itemKey" :header-cell-style="{fontSize:'5px'}" class="tableHead">
+              <el-table-column prop="project_name" label="测试项目名称"/>
+              <el-table-column prop="user_name" label="测试人员"/>
+              <el-table-column prop="test_ip" label="测试机器IP"/>
+              <el-table-column prop="stream_number" label="stream"/>
+              <el-table-column prop="lmbench_number" label="lmbench"/>
+              <el-table-column prop="unixbench_number" label="unixbench"/>
+              <el-table-column prop="fio_number" label="fio"/>
+              <el-table-column prop="iozone_number" label="iozone"/>
+              <el-table-column prop="jvm2008_number" label="jvm2008"/>
+              <el-table-column prop="cpu2006_number" label="cpu2006"/>
+              <el-table-column prop="cpu2017_number" label="cpu2017"/>
+              <el-table-column prop="message" label="描述"/>
               <el-table-column label="操作" width="180">
                 <template #default="scope">
                   <el-button type="primary" @click="modify(scope.row)">修改</el-button>
@@ -53,8 +52,6 @@
       </el-container>
     </el-container>
   </div>
-
-
 </template>
 
 
@@ -62,10 +59,12 @@
 import {ElMessage} from 'element-plus';
 import AllHeader from "@/components/common/AllHeader";
 import Menu from "@/components/common/AllMenu";
-import {down_message,user_config} from "@/api/api";
+import {user_config} from "@/api/api";
+import utils from '@/utils/utils';
 
 export default {
-  name: 'testList',
+  name: 'configList',
+  mixins: [utils],
   components: {
     AllHeader,
     Menu
@@ -73,11 +72,7 @@ export default {
   data() {
     return {
       configData: [],
-      numColumns: 1,
-      currentPage: 1, //当前页数
-      pageSize: 10, // 每页显示条数
-      total: 0, // 总条数
-      itemKey: 0, //更新数据后生成随机数从而刷新页面数据
+      userConfig: {},
     };
   },
   computed: {
@@ -89,38 +84,17 @@ export default {
     },
   },
   created() {
-    this.itemKey = Math.random()
-    user_config('get', {}).then((response) => {
-      this.configData = response.data.data;
-      this.total = this.configData.length;
-      this.numColumns = Object.keys(this.configData[0]).length;
-    });
+    this.getData()
   },
   methods: {
-    // 分页
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.currentPage = 1;
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
+    getData(){
+      user_config('get', {}).then((response) => {
+      this.configData = response.data.data;
+      this.total = this.configData.length;
+    });
     },
     modify(row) {
-      down_message({id: row.id}).then((response) => {
-        console.log(response,111)
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'log.tar')
-        document.body.appendChild(link)
-        link.click()
-      }).catch(error => {
-        if (error.code === "ERR_BAD_REQUEST"){ElMessage({message: "下载失败没有找到对应日志", type: 'warning'})}
-        console.log(error)
-      }).finally(() => {
-        // excelDisabled 将被设置为 true，然后立即被设置为 false,禁用的时间非常短，不足以被用户察觉到。
-        this.excelDisabled = false;
-      });
+      this.$router.push({path: '/test/do_test/', "query": {configID:row.id }})
     },
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
@@ -128,28 +102,13 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log(row.id,111)
         user_config('delete', {id: row.id}).then(response => {
           if (response.data.code === 200) {
             ElMessage({message: response.data.message, type: 'success'})
-            //更新页面数据，绑定key，每次key改变后就会刷新数据
-            this.itemKey = Math.random()
-            this.refreshData();
-            this.dialogFormVisible = false
+            this.getData()
           }
         })
       })
-    },
-
-    //更新数据后刷新页面数据
-    refreshData() {
-      user_config('get', {}).then((response) => {
-        this.configData = response.data.data;
-        this.total = this.configData.length;
-        this.numColumns = Object.keys(this.configData[0]).length;
-      }).catch(error => {
-        console.error(error);
-      });
     },
   }
 };
@@ -157,32 +116,10 @@ export default {
 
 
 <style scoped>
-.el-col {
-  border-radius: 4px;
-}
-
-.bg-purple-dark {
-  background: #99a9bf;
-}
-
-.bg-purple {
-  background: #d3dce6;
-}
-
-.bg-purple-light {
-  background: #e5e9f2;
-}
-
-.grid-content {
-  border-radius: 4px;
-  min-height: 36px;
-  font-size: 50px;
-  color: red;
-}
-
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
+.parent-container {
+  display: flex;
+  justify-content: center;
+  /*background-color: #f2f2f2;*/
 }
 </style>
 

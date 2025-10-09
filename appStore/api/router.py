@@ -11,6 +11,7 @@ from rest_framework import routers
 from appStore.cpu2006.views import Cpu2006ViewSet
 from appStore.cpu2017.views import Cpu2017ViewSet
 from appStore.env.views import EnvViewSet
+from appStore.errorList.views import ErrorListViewSet
 from appStore.fio.views import FioViewSet
 from appStore.iozone.views import IozoneViewSet
 from appStore.jvm2008.views import Jvm2008ViewSet
@@ -39,6 +40,7 @@ router.register(r'unixbench', UnixbenchViewSet, basename='unixbench')
 router.register(r'users', UserProfileViewSet, basename='users')
 router.register(r'test_case', TestCaseViewSet, basename='test_case')
 router.register(r'user_config', UserConfigViewSet, basename='user_config')
+router.register(r'error_list', ErrorListViewSet, basename='error_list')
 
 urlpatterns = [
     url(r'', include(router.urls)),

@@ -6,34 +6,42 @@
  * Date: Fri Mar 8 09:35:30 2024 +0800
 -->
 <template>
-  <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
   <div>
+    <div id="fixed-top">
+      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"
+                   @data-loaded="handleDataLoaded"/>
+    </div>
     <div style="overflow-x: auto; display: flex; flex: 1;">
-      <LeftTable></LeftTable>
-      <StreamTable></StreamTable>
-      <StreamTable></StreamTable>
+      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
+                :show-header="false" highlight-current-row>
+        <template v-for="(value, key, index) in tableDatas[0]" :key="key">
+          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 2 ? '100' : ''"
+                           align="center">
+            <template v-slot="{ row }">
+              <div :class="getCellClassName(row, key)">
+                {{ row[key] }}
+              </div>
+            </template>
+          </el-table-column>
+        </template>
+      </el-table>
     </div>
   </div>
 </template>
 
 <script>
+import {ElTable, ElTableColumn} from 'element-plus';
 import TableHeader from "@/components/common/TableHeader.vue";
-// import LeftTable from "@/components/common/LeftTable.vue";
-// import RightTable from "@/components/common/RightTable.vue";
-import StreamTable from "@/views/dataViews/StreamTable-Bak.vue";
-import { streamNew } from "@/api/api.js";
+import {stream} from "@/api/api.js";
 
 export default {
-  name: 'MyPage',
   components: {
-    TableHeader,
-    // LeftTable,
-    // RightTable,
-    StreamTable
+    ElTable,
+    ElTableColumn,
+    TableHeader
   },
   data() {
     return {
-      numColumns: 1,
       tableDatas: [],
       keysToHide: [],
       showAllData: false,
@@ -45,16 +53,7 @@ export default {
     };
   },
   created() {
-    streamNew(this.paramsData).then((response) => {
-      this.tableDatas = response.data.data;
-      this.numColumns = Object.keys(this.tableDatas[0]).length;
-      this.showAllData = false; // 默认显示全部数据
-      const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
-        const value = this.tableDatas[0][key];
-        return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
-      });
-      this.keysToHide = keysToHide;
-    });
+    this.getData()
   },
   computed: {
     displayTableData() {
@@ -76,6 +75,17 @@ export default {
     }
   },
   methods: {
+    getData() {
+      stream(this.paramsData).then((response) => {
+        this.tableDatas = response.data.data;
+        this.showAllData = false; // 默认显示全部数据
+        const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
+          const value = this.tableDatas[0][key];
+          return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
+        });
+        this.keysToHide = keysToHide;
+      });
+    },
     handleDataLoaded(value) {
       this.showAllData = value;
       // 在这里处理子组件的数据
@@ -85,7 +95,7 @@ export default {
       if (typeof value === 'string' && value.endsWith('%')) {
         // 去除百分比符号 "%"
         value = value.replace('%', '');
-         // 将百分比转换为小数
+        // 将百分比转换为小数
         value = parseFloat(value);
         if (value >= 5) {
           return 'green-cell';
@@ -136,13 +146,26 @@ export default {
 
 <style scoped>
 .green-cell {
-  color:green;
+  color: green;
   background-color: greenyellow;
   /* 其他样式属性 */
 }
+
 .red-cell {
-  color:red;
+  color: red;
   background-color: pink;
   /* 其他样式属性 */
+}
+
+#fixed-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.el-table {
+  margin-top: 68px;
 }
 </style>
