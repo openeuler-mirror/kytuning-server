@@ -16,12 +16,6 @@ const routes = [
         component: () => import('@/components/kytuningLogin'),
     },
     {
-        name: 'kytuningHome',
-        path: '/kytuningHome',
-        hidden: true,
-        component: () => import('@/components/kytuningHome'),
-    },
-    {
         name: '设备管理',
         path: '/test1',
         component: () => import('@/views/testViews/TestList'),
@@ -38,9 +32,11 @@ const routes = [
                 component: () => import('@/views/testViews/TestList')
             },
             {
-                path: '/test/do_test/',
+                // path: '/test/do_test/:userConfig?',
+                path: '/test/do_test/:configID?',
                 name: '发起测试',
-                component: () => import('@/views/testViews/DoTest')
+                component: () => import('@/views/testViews/DoTest'),
+                // props:true  // 如果props设置为true，$route.params将被设置为组件属性记对象
             },
             {
                 path: '/test/config',
@@ -51,18 +47,30 @@ const routes = [
     },
     {
         name: '数据管理',
-        path: '/project',
-        component: () => import('@/views/dataViews/ProjectTable'),
+        path: '/storeData',
+        // component: () => import('@/views/dataViews/ProjectTable'),
         children: [
             {
-                path: '/data/linshishuju',
+                path: '/data/tempData',
                 name: '临时数据',
-                component: () => import('@/views/dataViews/ProjectTable')
+                component: () => import('@/views/dataViews/TempTable')
             },
             {
-                path: '/project',
+                path: '/storeData',
                 name: '项目数据',
-                component: () => import('@/views/dataViews/ProjectTable')
+                component: () => import('@/views/dataViews/StoreTable')
+            },
+        ]
+    },
+    {
+        name: '错误管理',
+        path: '/error',
+        redirect: '/error/list',
+        children: [
+            {
+                path: '/error/list',
+                name: '错误列表',
+                component: () => import('@/views/errorViews/ErrorList')
             },
         ]
     },
@@ -71,7 +79,6 @@ const routes = [
         path: '/env/:baseId/:comparsionIds?',
         hidden: true,
         component: () => import('@/views/dataViews/EnvTable'),
-        props: true,
     },
     {
         name: 'stream',
@@ -90,7 +97,6 @@ const routes = [
         path: '/unixbench/:baseId/:comparsionIds?',
         hidden: true,
         component: () => import('@/views/dataViews/UnxibenchTable'),
-        props: true,
     },
     {
         name: 'fio',
