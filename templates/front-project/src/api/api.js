@@ -18,7 +18,7 @@ export function login(data) {
 }
 
 
-// 测试管理列表
+// 测试管理列表，因为这个get请求不需要参数所以可以
 export function test_case(type,data) {
     return service({
         method: type,
@@ -46,31 +46,32 @@ export function do_test_case(data) {
     })
 }
 
-//用户配置文件接口
-export function user_config(type, data) {
-    return service({
-        method: type,
-        url: '/user_config/',
-        data
-    })
+//配置管理
+export function user_config(type, paramsOrData) {
+  const commonConfig = {
+    method: type,
+    url: '/user_config/',
+  };
+  if (type === 'get') {
+    commonConfig.params = paramsOrData;
+  } else {
+    commonConfig.data = paramsOrData;
+  }
+  return service(commonConfig);
 }
 
-// 获取指定的project组
-export function get_project(params) {
-    return service({
-        method: 'get',
-        url: '/project/',
-        params
-    })
-}
-
-// project
-export function project(type, data) {
-    return service({
-        method: type,
-        url: '/project/',
-        data
-    })
+//配置管理
+export function project(type, paramsOrData) {
+  const commonConfig = {
+    method: type,
+    url: '/project/',
+  };
+  if (type === 'get') {
+    commonConfig.params = paramsOrData;
+  } else {
+    commonConfig.data = paramsOrData;
+  }
+  return service(commonConfig);
 }
 
 // project 合并数据接口
@@ -190,3 +191,16 @@ export function download_excel(params) {
     })
 }
 
+//错误数据管理
+export function error_list(type, paramsOrData) {
+  const commonConfig = {
+    method: type,
+    url: '/error_list/',
+  };
+  if (type === 'get') {
+    commonConfig.params = paramsOrData;
+  } else {
+    commonConfig.data = paramsOrData;
+  }
+  return service(commonConfig);
+}
