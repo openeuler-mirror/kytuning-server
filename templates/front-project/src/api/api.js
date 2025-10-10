@@ -100,23 +100,30 @@ export function env(params) {
     })
 }
 
-// stream
-export function stream(params) {
+//修改stream数据
+export function get_modify_stream(params) {
     return service({
         method: 'get',
-        url: '/stream/',
-        params
+        url: '/get_modify_stream/',
+        params,
     })
 }
 
-// stream
-export function streamNew(params) {
-    return service({
-        method: 'get',
-        url: '/streamNew/',
-        params
-    })
+
+//修改stream数据
+export function stream(type, paramsOrData) {
+  const commonConfig = {
+    method: type,
+    url: '/stream/',
+  };
+  if (type === 'get') {
+    commonConfig.params = paramsOrData;
+  } else {
+    commonConfig.data = paramsOrData;
+  }
+  return service(commonConfig);
 }
+
 
 // lmbench
 export function lmbench(params) {

@@ -62,7 +62,7 @@ export default {
   computed: {},
   methods: {
     getData() {
-      stream(this.paramsData).then((response) => {
+      stream('get', this.paramsData).then((response) => {
         this.tableDatas = response.data.data;
         this.showAllData = false; // 默认显示全部数据
         const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {

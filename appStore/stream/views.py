@@ -166,6 +166,21 @@ class StreamViewSet(viewsets.ModelViewSet):
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
+    def get_modify_stream(self, request, *args, **kwargs):
+        """
+        返回列表
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        env_id = request.GET.get('env_id')
+        queryset = Stream.objects.filter(env_id=env_id).all()
+        if not queryset:
+            return json_response({}, status.HTTP_200_OK, '列表')
+        serializer = self.get_serializer(queryset, many=True)
+        return json_response(serializer.data, status.HTTP_200_OK, '列表')
+
     def create(self, request, *args, **kwargs):
         serializer_stream_errors = []
         error_message = []
@@ -206,8 +221,9 @@ class StreamViewSet(viewsets.ModelViewSet):
         id = request.data.get('id')
         if not id or not Stream.objects.filter(id=id):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
-        user_name = Stream.objects.filter(id=id).first().user_name
-        if request.user.is_superuser or request.user.username == user_name:
+        env_id = Stream.objects.filter(id=id).first().env_id
+        user_name = Project.objects.filter(env_id=env_id).first().user_name
+        if request.user.is_superuser or request.user.chinese_name == user_name:
             stream_data = Stream.objects.get(id=id)
             if not stream_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')

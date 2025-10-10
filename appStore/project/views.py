@@ -370,8 +370,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             data_project['message'] = None
         data_project['project_name'] = request.__dict__['data_project']['project_name']
-        data_project['user_name'] = UserProfile.objects.filter(
-            username = request.__dict__['data_project']['user_name']).first().chinese_name
+        data_project['user_name'] = request.__dict__['data_project']['chinese_name']
         data_project['os_version'] = request.__dict__['data_project']['envinfo']['swinfo']['os']['osversion']
         data_project['cpu_module_name'] = request.__dict__['data_project']['envinfo']['hwinfo']['cpu']['model_name']
         data_project['ip'] = \
