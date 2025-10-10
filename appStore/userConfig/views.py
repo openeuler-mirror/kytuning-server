@@ -10,7 +10,6 @@ from appStore.userConfig.serializers import UserConfigSerializer
 from appStore.utils.common import json_response
 from appStore.utils.customer_view import CusModelViewSet
 # Create your views here.
-
 class UserConfigViewSet(CusModelViewSet):
     """
     用户配置数据管理
