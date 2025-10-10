@@ -19,7 +19,7 @@ from django.urls import NoReverseMatch
 from django.utils.decorators import classonlymethod
 from django.views.decorators.csrf import csrf_exempt
 
-from rest_framework import generics, views
+from rest_framework import generics
 from rest_framework.reverse import reverse
 
 from appStore.utils.customer_mixin import CusRetrieveModelMixin, CusListModelMixin, CusCreateModelMixin, \
@@ -184,11 +184,7 @@ class ViewSetMixin(object):
         return action_urls
 
 
-class ViewSet(ViewSetMixin, views.APIView):
-    """
-    The base ViewSet class does not provide any actions by default.
-    """
-    pass
+
 
 
 class GenericViewSet(ViewSetMixin, generics.GenericAPIView):
@@ -200,21 +196,6 @@ class GenericViewSet(ViewSetMixin, generics.GenericAPIView):
     pass
 
 
-class CusReadOnlyModelViewSet(CusRetrieveModelMixin,
-                              CusListModelMixin,
-                              GenericViewSet):
-    """
-    只读 列表和详情
-    """
-    pass
-
-
-class CusReadOnlyListModelViewSet(CusListModelMixin,
-                                  GenericViewSet):
-    """
-    只读列表
-    """
-    pass
 
 
 class CusModelViewSet(CusCreateModelMixin,
@@ -229,28 +210,3 @@ class CusModelViewSet(CusCreateModelMixin,
     pass
 
 
-class CusUpdateModelViewSet(CusUpdateModelMixin,
-                            GenericViewSet):
-    """
-    只允许更新
-    """
-    pass
-
-
-class CusCreateModelViewSet(CusCreateModelMixin,
-                            GenericViewSet):
-    """
-    只允许创建
-    """
-    pass
-
-
-class CusNotDeViewSet(CusCreateModelMixin,
-                      CusRetrieveModelMixin,
-                      CusUpdateModelMixin,
-                      CusListModelMixin,
-                      GenericViewSet):
-    """
-    不允许删除
-    """
-    pass

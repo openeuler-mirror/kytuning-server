@@ -13,7 +13,7 @@
       <el-container>
         <el-main>
           <div class="cont">
-            <el-table ref="configData" :data="showData" tooltip-effect="dark" border style="width: 100%"
+            <el-table ref="allDatas" :data="showData" tooltip-effect="dark" border style="width: 100%"
                       :key="itemKey" :header-cell-style="{fontSize:'5px'}" class="tableHead">
               <el-table-column prop="config_name" label="配置文件名称"/>
               <el-table-column prop="message" label="描述"/>
@@ -60,17 +60,9 @@ export default {
   },
   data() {
     return {
-      configData: [],
+      allDatas: [],
       userConfig: {},
     };
-  },
-  computed: {
-    showData() {
-      return this.configData.slice(
-          (this.currentPage - 1) * this.pageSize,
-          this.currentPage * this.pageSize
-      );
-    },
   },
   created() {
     this.getData()
@@ -78,8 +70,8 @@ export default {
   methods: {
     getData(){
       user_config('get', {}).then((response) => {
-      this.configData = response.data.data;
-      this.total = this.configData.length;
+      this.allDatas = response.data.data;
+      this.total = this.allDatas.length;
     });
     },
     del(row) {

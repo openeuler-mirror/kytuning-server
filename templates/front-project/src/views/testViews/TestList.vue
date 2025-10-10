@@ -28,7 +28,7 @@
               <el-table-column prop="test_result" label="运行结果"></el-table-column>
               <el-table-column label="操作" width="180">
                 <template #default="scope">
-                  <el-button type="primary" @click="down(scope.row)">日志</el-button>
+                  <el-button type="primary" @click="downLog(scope.row)">日志</el-button>
                   <el-button type="danger" @click="del(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
@@ -60,7 +60,7 @@
 import {ElMessage} from 'element-plus';
 import AllHeader from "@/components/common/AllHeader";
 import Menu from "@/components/common/AllMenu";
-import {test_case, down_message} from "@/api/api";
+import {test_case} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
@@ -72,16 +72,8 @@ export default {
   mixins: [utils],
   data() {
     return {
-      tableDatas: [],
+      allDatas: [],
     };
-  },
-  computed: {
-    showData() {
-      return this.tableDatas.slice(
-          (this.currentPage - 1) * this.pageSize,
-          this.currentPage * this.pageSize
-      );
-    },
   },
   created() {
     this.getData()
@@ -89,25 +81,9 @@ export default {
   methods: {
     getData(){
       test_case('get', {}).then((response) => {
-      this.tableDatas = response.data.data;
-      this.total = this.tableDatas.length;
+      this.allDatas = response.data.data;
+      this.total = this.allDatas.length;
     });
-    },
-    down(row) {
-      down_message({result_log_name: row.result_log_name}).then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', 'log.tar')
-        document.body.appendChild(link)
-        link.click()
-      }).catch(error => {
-        if (error.code === "ERR_BAD_REQUEST"){ElMessage({message: "下载失败没有找到对应日志", type: 'warning'})}
-        console.log(error)
-      }).finally(() => {
-        // excelDisabled 将被设置为 true，然后立即被设置为 false,禁用的时间非常短，不足以被用户察觉到。
-        this.excelDisabled = false;
-      });
     },
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
