@@ -13,7 +13,7 @@ import logging
 from django.http import FileResponse, HttpResponse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
-from djangoProject import settings
+from appStore.utils.constants import EXCEL_TEMP
 from appStore.cpu2006.models import Cpu2006
 from appStore.cpu2017.models import Cpu2017
 from appStore.env.models import Env
@@ -50,14 +50,17 @@ class ProjectViewSet(CusModelViewSet):
         """
         baseId = request.GET.get('baseId',None)
         comparsionIds = request.GET.get('comparsionIds',None)
+        storeData = request.GET.get('storeData')
         if comparsionIds:
             baseId = baseId + ',' + comparsionIds
         if baseId:
             project_queryset = Project.objects.filter(env_id__in=(baseId.split(',')))
         else:
             project_queryset = Project.objects.all().order_by("-id")
+            if storeData:
+                project_queryset = project_queryset.filter(store_data=True)
         if not project_queryset:
-            return json_response({}, status.HTTP_204_NO_CONTENT, '未查询到project')
+            return json_response({}, status.HTTP_200_OK, '未查询到project数据')
         serializer = self.get_serializer(project_queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, 'project数据获取完成')
 
@@ -65,11 +68,12 @@ class ProjectViewSet(CusModelViewSet):
         id = request.data.get('id', None)
         project_name = request.data.get('project_name', None)
         message = request.data.get('message', None)
+        store_data = request.data.get('store_data', None)
         if not project_name and not id:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id和project_name')
         user_name = Project.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
-            Project.objects.filter(id=id).update(id=id,project_name=project_name,message=message)
+            Project.objects.filter(id=id).update(id=id,project_name=project_name,message=message,store_data=store_data)
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '该用户不允许修改此数据')
         queryset = Project.objects.filter(id=id)
@@ -93,7 +97,7 @@ class ProjectViewSet(CusModelViewSet):
     def merge_data(self, request, *args, **kwargs):
         env_id = request.data.get('env_id', None)
         env_ids = request.data.get('env_ids', None)
-        user_name = Project.objects.filter(id=env_id[0]).first().user_name
+        user_name = Project.objects.filter(env_id=env_id[0]).first().user_name
         if not (request.user.is_superuser or request.user.chinese_name == user_name):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '只能合并自己管理的数据')
 
@@ -423,7 +427,7 @@ class ProjectViewSet(CusModelViewSet):
             return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
                                  get_error_message(serializer_project))
 
-    def delete(self, request):
+    def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
         if not id:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id')
@@ -559,7 +563,7 @@ class ProjectViewSet(CusModelViewSet):
 
         # todo 是否需要实现多线程记录数据，目前测试可以，如果有很多组数据的化可能会获取失败。
         # 打开文件
-        file_path = os.path.join(settings.BASE_DIR, 'tem_excel/%s.xlsx'%(request.user))
+        file_path = os.path.join(EXCEL_TEMP, '%s.xlsx'%(request.user))
         if os.path.exists(file_path):
             return FileResponse(open(file_path, 'rb'), as_attachment=True,status=200)
         return HttpResponse('文件不存在', status=404)
