@@ -19,7 +19,6 @@ import subprocess
 from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse
 from rest_framework import pagination, status
-
 from appStore.utils.constants import RESULT_LOG_FILE
 
 
@@ -38,6 +37,7 @@ def json_response(data=None, code=None, message=None):
     }
     return JsonResponse(res)
 
+
 def list_response(result, code, message):
     """
     :param result:
@@ -54,6 +54,7 @@ def list_response(result, code, message):
         res['message'] = message
     return JsonResponse(res)
 
+
 def jwt_response_payload_handler(token, user=None, request=None):
     """
     自定义jwt认证成功返回数据
@@ -67,6 +68,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'code': 200,
     }
 
+
 def get_error_message(serializer):
     """
     返回错误信息
@@ -75,6 +77,7 @@ def get_error_message(serializer):
     """
     for _, error in serializer.errors.items():
         return error[0]
+
 
 class LimsPageSet(pagination.PageNumberPagination):
     """
@@ -85,6 +88,7 @@ class LimsPageSet(pagination.PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 1000
     page_query_param = 'page'
+
 
 def get_page(data, objs):
     """

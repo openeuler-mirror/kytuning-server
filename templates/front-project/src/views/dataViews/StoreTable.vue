@@ -139,7 +139,7 @@
     </el-container>
   </div>
   <div>
-    <el-dialog :title="'修改project信息'" v-model="dialogFormVisible" width="500px">
+    <el-dialog :title="'修改project信息'" v-model="dialogPutProject" width="500px">
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item label="项目名称" width="80px" prop="project_name">
           <el-input v-model="form.project_name" autocomplete="off"></el-input>
@@ -156,23 +156,23 @@
       </template>
     </el-dialog>
 
-    <el-drawer v-model="visible" :show-close="false">
+    <el-drawer v-model="boolCompar" :show-close="false">
       <template #header="{  titleId, titleClass }">
         <h4 :id="titleId" :class="titleClass">数据对比</h4>
         <el-button type="danger" @click="reset">重置</el-button>
-        </template>
+      </template>
 
-        <el-table :data="compars" tooltip-effect="dark" border height="500" style="width: 100%" class="tableHead">
-          <el-table-column label="项目名称" prop="project_name" show-overflow-tooltip/>
-          <!--        </el-table-column>-->
-          <el-table-column label="第几次测试" prop="times"/>
-          <el-table-column label="描述" prop="message"/>
-          <el-table-column label="操作">
-            <template #default="scope">
-              <el-button type="danger" @click="delCompar(scope.row)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+      <el-table :data="compars" tooltip-effect="dark" border height="500" style="width: 100%" class="tableHead">
+        <el-table-column label="项目名称" prop="project_name" show-overflow-tooltip/>
+        <!--        </el-table-column>-->
+        <el-table-column label="第几次测试" prop="times"/>
+        <el-table-column label="描述" prop="message"/>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button type="danger" @click="delCompar(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
     </el-drawer>
   </div>
@@ -196,8 +196,8 @@ export default {
   mixins: [utils],
   data() {
     return {
-      visible: false,
-      allProjectDatas: [], // 从后端获取的全部数据
+      boolCompar: false,
+      allDatas: [], // 从后端获取的全部数据
       compars: [],
 
       projectNames: [],//筛选项目名称
@@ -205,7 +205,7 @@ export default {
       osNames: [],//筛选os版本
       cpuNames: [],//筛选cpu型号
 
-      dialogFormVisible: false,
+      dialogPutProject: false,
       //用户修改后的数据
       form: {
         id: 0,
@@ -217,14 +217,6 @@ export default {
       },
     }
   },
-  computed: {
-    showData() {
-      return this.allProjectDatas.slice(
-          (this.currentPage - 1) * this.pageSize,
-          this.currentPage * this.pageSize
-      );
-    },
-  },
   created() {
     this.getData()
   },
@@ -232,9 +224,9 @@ export default {
     //获取页面数据
     getData() {
       // get_project({baseId: '', comparsionIds: '',storeData:true}).then((response) => {
-      project('get',{baseId: '', comparsionIds: '',storeData:true}).then((response) => {
-        this.allProjectDatas = response.data.data
-        this.total = this.allProjectDatas.length;
+      project('get', {baseId: '', comparsionIds: '', storeData: true}).then((response) => {
+        this.allDatas = response.data.data
+        this.total = this.allDatas.length;
       });
       getFilterName().then((response) => {
         this.projectNames = response.data.data.projectNames
@@ -243,70 +235,7 @@ export default {
         this.cpuNames = response.data.data.cpuNames
       });
     },
-    //查询
-    filterHandler(value, row, column) {
-      const property = column['property'];
-      return row[property] === value;
-    },
-    searchComparData() {
-      this.visible = true
-    },
-    delCompar(row) {
-      this.compars = this.compars.filter(item => item.id !== row.id);
-    },
-    reset(){
-      this.compars = []
-    },
-
-    //修改
-    edit(row) {
-      this.form = {...row}
-      this.dialogFormVisible = true
-    },
-    //确定修改
-    sure(form) {
-      this.$refs[form].validate(valid => {
-        if (valid) {
-          // // 发送数据
-          project('put', this.form).then(response => {
-            if (response.data.code === 200) {
-              ElMessage({message: response.data.message, type: 'success'})
-              //更新页面数据，绑定key，每次key改变后就会刷新数据
-              this.dialogFormVisible = false
-              this.getData()
-            }
-          });
-        }
-      })
-    },
-    //取消修改
-    closeInfo() {
-      this.dialogFormVisible = false
-    },
-    //删除
-    del(row) {
-      if (!row.store_data) {
-        this.$confirm(`确认删除此行数据吗？`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          project('delete', {id: row.id}).then(response => {
-            if (response.data.code === 200) {
-              ElMessage({message: response.data.message, type: 'success'})
-              this.dialogFormVisible = false
-              this.getData()
-            }
-          })
-        })
-      } else {
-        ElMessage.error({message: '不可以在临时数据表中删除已入库的数据', duration: 1000});
-      }
-    },
-    addCompar(row) {
-      this.compars.push(row)
-    },
-    //获取对比数据
+    //数据对比
     getComparativeData() {
       if (this.compars.length === 0) {
         ElMessage.error({message: '请选择一条基准数据和至少一条对比数据', duration: 1000});
@@ -322,6 +251,18 @@ export default {
         "params": {baseId: comparsionIds[0], comparsionIds: comparsionIds.slice(1).join(', ')}
       });
     },
+    //查看对比数据
+    searchComparData() {
+      this.boolCompar = true
+    },
+    //删除对比数据
+    delCompar(row) {
+      this.compars = this.compars.filter(item => item.id !== row.id);
+    },
+    //重置对比数据
+    reset() {
+      this.compars = []
+    },
     //合并数据
     mergeData() {
       if (this.compars.length < 2) {
@@ -333,9 +274,77 @@ export default {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})
           this.getData()
-          this.dialogFormVisible = false
+          this.dialogPutProject = false
         }
       })
+    },
+    //增加对比数据
+    addCompar(row) {
+      this.compars.push(row)
+    },
+    //修改project数据
+    edit(row) {
+      this.form = {...row}
+      this.dialogPutProject = true
+    },
+    //确定修改
+    sure(form) {
+      this.$refs[form].validate(valid => {
+        if (valid) {
+          project('put', this.form).then(response => {
+            if (response.data.code === 200) {
+              ElMessage({message: response.data.message, type: 'success'})
+              this.dialogPutProject = false
+              this.getData()
+            }
+          });
+        }
+      })
+    },
+    //取消修改
+    closeInfo() {
+      this.dialogPutProject = false
+    },
+    //删除
+    del(row) {
+      if (!row.store_data) {
+        this.$confirm(`确认删除此行数据吗？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          project('delete', {id: row.id}).then(response => {
+            if (response.data.code === 200) {
+              ElMessage({message: response.data.message, type: 'success'})
+              this.dialogPutProject = false
+              this.getData()
+            }
+          })
+        })
+      } else {
+        ElMessage.error({message: '不可以在临时数据表中删除已入库的数据', duration: 1000});
+      }
+    },
+    //查询
+    filterHandler(value, row, column) {
+      const property = column['property'];
+      return row[property] === value;
+    },
+    //选择框只能单选
+    handleSelection(val) {
+      this.testData = val[0];
+      if (val.length > 1) {
+        this.$refs.testTable.clearSelection();
+        this.$refs.testTable.toggleRowSelection(val.pop());
+      }
+    },
+    //数据页面时点击后跳转至对应数据详情页面
+    handleRowClick(row) {
+      const List1 = [row.stream, row.lmbench, row.unixbench, row.fio, row.iozone, row.jvm2008, row.cpu2006, row.cpu2017]
+      const List2 = ['stream', 'lmbench', 'unixbench', 'fio', 'iozone', 'jvm2008', 'cpu2006', 'cpu2017']
+      const firstNonZeroIndex = List1.findIndex(num => num !== 0);
+      this.selectedType = List2[firstNonZeroIndex]
+      this.$router.push({name: this.selectedType, "params": {baseId: row.env_id, comparsionIds: ''}});
     },
   }
 }

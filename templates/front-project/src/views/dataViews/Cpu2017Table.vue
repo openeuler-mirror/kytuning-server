@@ -32,13 +32,17 @@
 import {ElTable, ElTableColumn} from 'element-plus';
 import TableHeader from "@/components/common/TableHeader.vue";
 import { cpu2017 } from "@/api/api.js";
+import utils from "@/utils/utils";
+import '@/assets/css/global.css';
 
 export default {
+  name:'cpu2017Table',
   components: {
     ElTable,
     ElTableColumn,
     TableHeader
   },
+  mixins: [utils],
   data() {
     return {
       tableDatas: [],
@@ -54,25 +58,6 @@ export default {
   created() {
     this.getData()
   },
-  computed: {
-    displayTableData() {
-      if (this.showAllData) {
-        return this.tableDatas;
-      } else {
-        let count = 1;
-        const modifiedTableData = JSON.parse(JSON.stringify(this.tableDatas)); // 深拷贝原始数据
-        modifiedTableData.forEach(row => {
-          Object.entries(row).forEach(([key, value]) => {
-            if (typeof value === 'string' && key.startsWith('column') && value.startsWith('平均值')) {
-              row[key] = value + this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#" + `${count}`; // 将"平均值"替换为"this.dataName#"
-              count++;
-            }
-          });
-        });
-        return modifiedTableData;
-      }
-    }
-  },
   methods: {
     getData(){
       cpu2017(this.paramsData).then((response) => {
@@ -84,32 +69,6 @@ export default {
       });
       this.keysToHide = keysToHide;
     });
-    },
-    handleDataLoaded(value) {
-      this.showAllData = value;
-      // 在这里处理子组件的数据
-    },
-    getCellClassName(row, key) {
-      let value = row[key];
-      if (typeof value === 'string' && value.endsWith('%')) {
-        // 去除百分比符号 "%"
-        value = value.replace('%', '');
-         // 将百分比转换为小数
-        value = parseFloat(value);
-        if (value >= 5) {
-          return 'green-cell';
-        } else if (value < -5) {
-          return 'red-cell';
-        }
-      }
-      return '';
-    },
-    titleObjectSpanMethod({columnIndex}) {
-      if (columnIndex === 0) {
-        return [1, 5];
-      } else if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3 || columnIndex === 4) {
-        return [0, 0];
-      }
     },
 
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
@@ -176,11 +135,7 @@ export default {
 ;
 </script>
 <style scoped>
-.green-cell {
-  color:green;
-  background-color: greenyellow;
-  /* 其他样式属性 */
-}
+
 .red-cell {
   color:red;
   background-color: pink;

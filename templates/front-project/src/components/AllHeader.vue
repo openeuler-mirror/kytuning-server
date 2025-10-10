@@ -15,36 +15,39 @@
   </div>
 </template>
 <script>
-import { getToken } from '@/utils/setToken.js'
+import {getToken} from '@/utils/setToken.js'
+
 export default {
-    data() {
-        return {
-            name: ''
-        }
-    },
-    created() {
-        this.name = getToken('username')
+  name: 'AllHeader',
+  data() {
+    return {
+      name: ''
     }
+  },
+  created() {
+    this.name = getToken('username')
+  }
 }
 </script>
 <style lang="less" scoped>
 .header {
-    .el-header {
+  .el-header {
+    background: #2578b5;
+    color: #fff;
+    line-height: 60px;
+    display: flex;
+    justify-content: space-between;
+
+    .title {
+      width: 200px;
+      font-size: 24px;
+
+      .name {
         background: #2578b5;
         color: #fff;
-        line-height: 60px;
-        display: flex;
-        justify-content: space-between;
-        .title {
-            width: 200px;
-            font-size: 24px;
-
-          .name {
-            background: #2578b5;
-            color: #fff;
-            font-size: 24px;
-          }
-        }
+        font-size: 24px;
+      }
     }
+  }
 }
 </style>

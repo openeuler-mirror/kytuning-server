@@ -8,8 +8,7 @@
 <template>
   <div>
     <div id="fixed-top">
-      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"
-                   @data-loaded="handleDataLoaded"/>
+      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"/>
     </div>
     <div style="overflow-x: auto;">
       <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;"
@@ -37,6 +36,7 @@ import {env} from "@/api/api";
 import TableHeader from "@/components/common/TableHeader";
 
 export default {
+  name: 'envTable',
   components: {
     ElTable,
     ElTableColumn,
@@ -62,10 +62,6 @@ export default {
         this.tableDatas = response.data.data.data
         this.numColumns = Object.keys(this.tableDatas[0]).length
       });
-    },
-    handleDataLoaded(value) {
-      console.log(value, 111)
-      // 在这里处理子组件的数据
     },
 
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
@@ -117,12 +113,7 @@ export default {
 </script>
 
 <style scoped>
-/*对比值的背景色*/
-.green-cell {
-  color: green;
-  background-color: greenyellow;
-  /* 其他样式属性 */
-}
+
 
 .red-cell {
   color: red;
