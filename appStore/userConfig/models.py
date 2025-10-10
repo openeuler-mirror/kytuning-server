@@ -10,6 +10,7 @@ from django.db import models
 # Create your models here.
 class UserConfig(models.Model):
     """用户配置表"""
+    config_name = models.CharField(max_length=50, verbose_name='配置文件名称')
     user_name = models.CharField(max_length=50, verbose_name='用户名称')
     user_password = models.CharField(max_length=50, verbose_name='用户密码')
     project_name = models.CharField(max_length=50, verbose_name='测试项目名称')

@@ -35,6 +35,7 @@ class UserConfigViewSet(CusModelViewSet):
         user_config_data = {}
         user_config_data['user_name'] = request.user.username
         user_config_data['user_password'] = request.data.get('user_password')
+        user_config_data['config_name'] = request.data.get('config_name')
         user_config_data['project_name'] = request.data.get('project_name')
         user_config_data['test_ip'] = request.data.get('test_ip')
         user_config_data['test_password'] = request.data.get('test_password')
@@ -75,6 +76,7 @@ class UserConfigViewSet(CusModelViewSet):
             config_data = UserConfig.objects.get(id=id)  #get=filter.first()
             if not config_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+            config_data.config_name = request.data.get('config_name')
             config_data.user_password = request.data.get('user_password')
             config_data.project_name = request.data.get('project_name')
             config_data.test_ip = request.data.get('test_ip')

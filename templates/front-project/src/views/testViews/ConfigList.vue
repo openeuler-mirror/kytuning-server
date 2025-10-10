@@ -15,21 +15,10 @@
           <div class="cont">
             <el-table ref="configData" :data="showData" tooltip-effect="dark" border style="width: 100%"
                       :key="itemKey" :header-cell-style="{fontSize:'5px'}" class="tableHead">
-              <el-table-column prop="project_name" label="测试项目名称"/>
-              <el-table-column prop="user_name" label="测试人员"/>
-              <el-table-column prop="test_ip" label="测试机器IP"/>
-              <el-table-column prop="stream_number" label="stream"/>
-              <el-table-column prop="lmbench_number" label="lmbench"/>
-              <el-table-column prop="unixbench_number" label="unixbench"/>
-              <el-table-column prop="fio_number" label="fio"/>
-              <el-table-column prop="iozone_number" label="iozone"/>
-              <el-table-column prop="jvm2008_number" label="jvm2008"/>
-              <el-table-column prop="cpu2006_number" label="cpu2006"/>
-              <el-table-column prop="cpu2017_number" label="cpu2017"/>
+              <el-table-column prop="config_name" label="配置文件名称"/>
               <el-table-column prop="message" label="描述"/>
-              <el-table-column label="操作" width="180">
+              <el-table-column label="操作" width="90">
                 <template #default="scope">
-                  <el-button type="primary" @click="modify(scope.row)">修改</el-button>
                   <el-button type="danger" @click="del(scope.row)">删除</el-button>
                 </template>
               </el-table-column>
@@ -92,9 +81,6 @@ export default {
       this.configData = response.data.data;
       this.total = this.configData.length;
     });
-    },
-    modify(row) {
-      this.$router.push({path: '/test/do_test/', "query": {configID:row.id }})
     },
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
