@@ -6,18 +6,16 @@
  * Date: Thu Feb 29 16:18:43 2024 +0800
 """
 import numpy as np
-
 # Create your views here.
-from rest_framework import status
+from rest_framework import status, viewsets
 
 from appStore.jvm2008.models import Jvm2008
 from appStore.jvm2008.serializers import Jvm2008Serializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
 
-class Jvm2008ViewSet(CusModelViewSet):
+class Jvm2008ViewSet(viewsets.ModelViewSet):
     """
     stream数据管理
     """

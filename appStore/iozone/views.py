@@ -8,16 +8,15 @@
 import numpy as np
 
 # Create your views here.
-from rest_framework import status
+from rest_framework import status, viewsets
 
 from appStore.iozone.models import Iozone
 from appStore.iozone.serializers import IozoneSerializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
 
-class IozoneViewSet(CusModelViewSet):
+class IozoneViewSet(viewsets.ModelViewSet):
     """
     iozone数据管理
     """

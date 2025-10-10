@@ -6,16 +6,14 @@
  * Date: Thu Feb 29 16:18:43 2024 +0800
 """
 # Create your views here.
-from rest_framework import status
-
+from rest_framework import status, viewsets
 from appStore.fio.models import Fio
 from appStore.fio.serializers import FioSerializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
 
-class FioViewSet(CusModelViewSet):
+class FioViewSet(viewsets.ModelViewSet):
     """
     fio数据管理
     """
@@ -57,7 +55,6 @@ class FioViewSet(CusModelViewSet):
                     datas[i]['column' + str(column_index)] = None
                 column_index += 1
                 title_index += 1
-
             else:
                 # 基准数据和对比数据的全部数据
                 for data in serializer.data:

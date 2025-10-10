@@ -7,16 +7,15 @@
 """
 # Create your views here.
 import numpy as np
-from rest_framework import status
+from rest_framework import status, viewsets
 
 from appStore.project.models import Project
 from appStore.unixbench.models import Unixbench
 from appStore.unixbench.serializers import UnixbenchSerializer
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
 
-class UnixbenchViewSet(CusModelViewSet):
+class UnixbenchViewSet(viewsets.ModelViewSet):
     """
     Unixbench数据管理
     """

@@ -17,13 +17,12 @@ from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
 from appStore.utils.common import test_case, json_response, get_error_message
 from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP
-from appStore.utils.customer_view import CusModelViewSet
-from rest_framework import status
+from rest_framework import status, viewsets
 
 
 # Create your views here.
 
-class TestCaseViewSet(CusModelViewSet):
+class TestCaseViewSet(viewsets.ModelViewSet):
     """
     测试用例数据管理
     """

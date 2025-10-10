@@ -77,7 +77,7 @@
   </div>
   <div>
     <el-dialog :title="'新增error数据'" v-model="dialogErrorPost" width="500px">
-      <el-form :model="errorData" :rules="rules" ref="errorData">
+      <el-form :model="errorData" ref="errorForm" :rules="rules">
         <el-form-item label="错误类型" prop="errType">
           <el-select v-model="errorData.errType" class="m-2" placeholder="请选择错误类型">
             <el-option v-for="item in errTypes" :key="item" :label="item" :value="item" placeholder="请输入错误类型"/>
@@ -184,11 +184,12 @@ export default {
         solution: '',
       },
       rules: {
-        errType: [{required: true, message: '请选择错误类型'}],
-        testType: [{required: true, message: '请选择测试类型'}],
-        errorDescription: [{required: true, message: '请输入错误描述'}],
-        errorExport: [{required: true, message: '请输入错误日志节选'}],
-        solution: [{required: true, message: '请输入解决方案'}],
+        errType: [{required: true, message: '请选择错误类型', trigger: 'change'}],
+        testType: [{required: true, message: '请选择测试类型', trigger: 'change'}],
+        errorDescription: [{required: true, message: '请输入错误描述', trigger: 'blur'}],
+        errorExport: [{required: true, message: '请输入错误日志节选', trigger: 'blur'}],
+        errorLogPath: [{required: true, message: '请选中错误数据', trigger: 'blur'}],
+        solution: [{required: true, message: '请输入解决方案', trigger: 'blur'}],
       },
       dialogErrorPost: false,
       dialogErrorPut: false,
@@ -230,6 +231,8 @@ export default {
     },
     //新增的取消
     closeInfo() {
+      // 重置表单的验证状态
+      this.$refs.errorForm.resetFields();
       this.dialogErrorPost = false
       this.dialogErrorPut = false
     },
@@ -245,8 +248,6 @@ export default {
     selectTestSure() {
       this.errorData.errorLogPath = this.testData.result_log_name
       this.dialogTest = false
-      console.log(this.testData)
-      console.log(this.errorData)
     },
     //选择框只能单选
     handleSelection(val) {
@@ -260,25 +261,34 @@ export default {
     closeTest() {
       this.dialogTest = false
     },
-    //确定新增数据
+
     addSure() {
-      this.dialogErrorPost = false;
-      const errData = {
-        error_type: this.errorData.errType,
-        test_type: this.errorData.testType,
-        error_description: this.errorData.errorDescription,
-        error_log_excerpt: this.errorData.errorExport,
-        error_log_path: this.errorData.errorLogPath,
-        solution: this.errorData.solution,
-      }
-      error_list('post', errData).then(response => {
-        if (response.data.code === 200) {
-          ElMessage({message: response.data.message, type: 'success'})
-          this.getData()
+      //errorForm这个是上面form表单中的ref对应的标记
+      console.log(this.$refs.errorForm,111)
+      this.$refs.errorForm.validate((valid) => {
+        if (valid) {
+          this.dialogErrorPost = false;
+          const errData = {
+            error_type: this.errorData.errType,
+            test_type: this.errorData.testType,
+            error_description: this.errorData.errorDescription,
+            error_log_excerpt: this.errorData.errorExport,
+            error_log_path: this.errorData.errorLogPath,
+            solution: this.errorData.solution,
+          };
+          error_list('post', errData).then((response) => {
+            if (response.data.code === 200) {
+              ElMessage({message: response.data.message, type: 'success'});
+              this.getData();
+            }
+          });
+        } else {
+          ElMessage({message: '请填写正确信息', type: 'success'})
+          return false;
         }
-      })
+      });
     },
-    //重置筛选
+
     reset() {
       this.errorData = {
         errType: '',
@@ -337,7 +347,8 @@ export default {
       })
     },
   }
-};
+}
+;
 </script>
 
 

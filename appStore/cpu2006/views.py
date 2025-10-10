@@ -7,16 +7,14 @@
 """
 import numpy as np
 # Create your views here.
-from rest_framework import status
-
+from rest_framework import status, viewsets
 from appStore.cpu2006.models import Cpu2006
 from appStore.cpu2006.serializers import Cpu2006Serializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
 
-class Cpu2006ViewSet(CusModelViewSet):
+class Cpu2006ViewSet(viewsets.ModelViewSet):
     """
     Cpu2006数据管理
     """

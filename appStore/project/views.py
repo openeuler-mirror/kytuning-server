@@ -11,7 +11,7 @@ import json
 import logging
 
 from django.http import FileResponse, HttpResponse
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.test import APIRequestFactory
 from appStore.utils.constants import EXCEL_TEMP
 from appStore.cpu2006.models import Cpu2006
@@ -27,14 +27,13 @@ from appStore.stream.models import Stream
 from appStore.unixbench.models import Unixbench
 from appStore.users.models import UserProfile
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
 from appStore.utils.export_excel import stream_excel, cpu2017_excel, cpu2006_excel, jvm2008_excel, iozone_excel, \
     fio_excel, unixbench_excel, lmbench_excel, env_excel
 
 log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
-class ProjectViewSet(CusModelViewSet):
+class ProjectViewSet(viewsets.ModelViewSet):
     """
     project数据管理
     """

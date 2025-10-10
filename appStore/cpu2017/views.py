@@ -9,16 +9,14 @@ import math
 import numpy as np
 
 # Create your views here.
-from rest_framework import status
-
+from rest_framework import status, viewsets
 from appStore.cpu2017.models import Cpu2017
 from appStore.cpu2017.serializers import Cpu2017Serializer
 from appStore.project.models import Project
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
 
-class Cpu2017ViewSet(CusModelViewSet):
+class Cpu2017ViewSet(viewsets.ModelViewSet):
     """
     Cpu2017数据管理
     """
@@ -161,6 +159,7 @@ class Cpu2017ViewSet(CusModelViewSet):
                             datas[103]['column' + str(column_index)] = data['fp_PECrate2017_fp']
             column_index += 1
             title_index += 1
+
             # 基准数据和对比数据的平均数据
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             datas[0]['column' + str(column_index)] = title
