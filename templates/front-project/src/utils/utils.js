@@ -14,6 +14,7 @@ export default {
       itemKey: 0, //更新数据后生成随机数从而刷新页面数据
     };
   },
+
   methods: {
     //分页
     handleSizeChange(val) {
@@ -36,6 +37,14 @@ export default {
         this.$refs.testTable.clearSelection();
         this.$refs.testTable.toggleRowSelection(val.pop());
       }
+    },
+    //数据页面时点击后跳转至对应数据详情页面
+    handleRowClick(row) {
+      const List1 = [row.stream, row.lmbench, row.unixbench, row.fio, row.iozone, row.jvm2008, row.cpu2006, row.cpu2017]
+      const List2 = ['stream', 'lmbench', 'unixbench', 'fio', 'iozone', 'jvm2008', 'cpu2006', 'cpu2017']
+      const firstNonZeroIndex = List1.findIndex(num => num !== 0);
+      this.selectedType = List2[firstNonZeroIndex]
+      this.$router.push({name: this.selectedType, "params": {baseId: row.env_id, comparsionIds: ''}});
     },
   },
 };

@@ -12,6 +12,9 @@
       <Menu/>
       <div class="form-container">
         <el-form :label-position="labelPosition" label-width="300px" :model="iterations">
+          <el-form-item label="配置文件名称：">
+            <el-input v-model="configName"/>
+          </el-form-item>
           <el-form-item label="项目名称：">
             <el-input v-model="projectName"/>
           </el-form-item>
@@ -56,7 +59,8 @@
               cpu2006_loongarch64
             </el-button>
             <el-button type="success" class="test-button" @click="showYaml('cpu2017')">cpu2017</el-button>
-            <el-button type="success" class="test-button" @click="doBase">一键摸底</el-button>
+            <el-button type="primary" class="test-button" @click="doBase">一键摸底</el-button>
+            <el-button type="primary" class="test-button" @click="lastTest">还原上次测试</el-button>
           </el-form-item>
 
           <el-form-item label="测试机器IP：">
@@ -80,7 +84,7 @@
             <!--              <el-button type="primary" class="button-style" @click="testlink">测试连接</el-button>-->
             <!--            </el-form-item>-->
           </el-form-item>
-          <el-form-item label="备注：">
+          <el-form-item label="描述：">
             <el-input v-model="message"/>
           </el-form-item>
         </el-form>
@@ -109,8 +113,7 @@
       <el-table ref="configTable" :data="configDatas" @selection-change="handleSelection"
                 tooltip-effect="dark" border style="width: 100%" class="tableHead">
         <el-table-column type="selection" width="55"/>
-        <el-table-column prop="project_name" label="测试项目名称"/>
-        <el-table-column prop="test_ip" label="测试机器IP"/>
+        <el-table-column prop="config_name" label="配置文件名称"/>
         <el-table-column prop="message" label="描述"/>
       </el-table>
 
@@ -141,6 +144,7 @@ export default {
   data() {
     return {
       labelPosition: ref('right'),
+      configName: '',
       projectName: '',
       userPassword: '',
       yamlData: baseYamlData,
@@ -164,6 +168,7 @@ export default {
       yamlType: '',
 
       configDialog: false,
+      configNameDialog: false,
       configID: 0,
       configData: '',
       configDatas: [],
@@ -177,9 +182,40 @@ export default {
       if (this.$route.query.configID) {
         this.configID = this.$route.query.configID
       }
-      user_config('get', {configID: this.configID}).then(response => {
+
+      this.machineOptions = [
+        {label: '172.29.220.100', value: '172.29.220.100'},
+        {label: '172.29.220.101', value: '172.29.220.101'},
+      ]
+    },
+    showYaml(yamlType) {
+      this.yamlDialog = true
+      this.yamlType = yamlType
+    },
+    closeInfo() {
+      this.yamlDialog = false
+      this.configDialog = false
+    },
+    changeYaml(yamlData) {
+      this.yamlData = yamlData
+      this.yamlDialog = false;
+    },
+    doBase() {
+      this.iterations.stream = 50
+      this.iterations.lmbench = 3
+      this.iterations.unixbench = 3
+      this.iterations.fio = 3
+      this.iterations.iozone = 0
+      this.iterations.jvm2008 = 1
+      this.iterations.cpu2006 = 1
+      this.iterations.cpu2017 = 0
+      this.yamlData = baseYamlData
+    },
+    lastTest(){
+      user_config('get', {configID: 0}).then(response => {
         const config = response.data.data[0]
         this.configID = config.id
+        this.configName = config.config_name
         this.projectName = config.project_name
         this.userPassword = config.user_password
         this.iterations.stream = config.stream_number
@@ -205,40 +241,10 @@ export default {
         this.testPassword = config.test_password
         this.message = config.message
       })
-
-      this.machineOptions =[
-      {label: 'localhost1', value: 'localhost1'},
-      {label: 'localhost2', value: 'localhost2'},
-    ]
-    },
-    showYaml(yamlType) {
-      this.yamlDialog = true
-      this.yamlType = yamlType
-    },
-    closeInfo() {
-      this.yamlDialog = false
-      this.configDialog = false
-    },
-    changeYaml(yamlData) {
-      this.yamlData = yamlData
-      this.yamlDialog = false;
-    },
-    doBase() {
-      this.iterations.stream = 50
-      this.iterations.lmbench = 3
-      this.iterations.unixbench = 3
-      this.iterations.fio = 3
-      this.iterations.iozone = 0
-      this.iterations.jvm2008 = 1
-      this.iterations.cpu2006 = 1
-      this.iterations.cpu2017 = 0
-      this.yamlData = baseYamlData
     },
 
     select() {
-      user_config('get').then(response => {
-        this.configDatas = response.data.data
-      })
+      user_config('get').then(response => {this.configDatas = response.data.data})
       this.configDialog = true
     },
 
@@ -280,6 +286,7 @@ export default {
         if (this.configID) {
           const formData = {
             id: this.configID,
+            config_name: this.configName,
             project_name: this.projectName,
             test_ip: this.testIP,
             test_password: this.testPassword,
@@ -296,14 +303,17 @@ export default {
             message: this.message
           }
           user_config('put', formData).then(response => {
-            console.log(response)
+            ElMessage({message: response.data.message, type: 'success'})
           })
         }
       }
     },
+
     add() {
       if (this.check()) {
+        this.configNameDialog = true
         const formData = {
+          config_name: this.configName,
           project_name: this.projectName,
           test_ip: this.testIP,
           test_password: this.testPassword,
@@ -320,13 +330,14 @@ export default {
           message: this.message
         }
         user_config('post', formData).then(response => {
-          console.log(response)
+          ElMessage({message: response.data.message, type: 'success'})
         })
       }
     },
     sendTest() {
       if (this.check()) {
         const formData = {
+          config_name: this.configName,
           project_name: this.projectName,
           test_ip: this.testIP,
           test_password: this.testPassword,
@@ -343,7 +354,7 @@ export default {
           message: this.message
         }
         do_test_case(formData).then(response => {
-          console.log(response.data.code);
+          console.log(response.data)
           this.projectName = ''
           this.testIP = ''
           this.testPassword = ''
@@ -359,7 +370,7 @@ export default {
           this.yamlData = ''
           this.message = ''
         });
-        ElMessage({message: '发起测试完成，正在跳转只测试列表页面', type: 'success'});
+        ElMessage({message: '发起测试完成', type: 'success'});
       }
     },
     check() {
