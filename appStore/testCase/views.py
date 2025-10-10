@@ -90,8 +90,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
             configfile.write('project_name={}\n'.format(data_test_case['project_name']))
             configfile.write('upload=true\n')
-            configfile.write('username={}\n'.format(str(request.user)))
-            configfile.write('password={}\n'.format(request.data.get('user_password')))
+            configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
 
         # 将配置数据写入YAML文件
         if int(data_test_case['stream']):
