@@ -174,8 +174,8 @@ class StreamViewSet(CusModelViewSet):
             if k.lower().startswith('stream'):
                 data_stream = {}
                 data_stream['env_id'] = request.__dict__['data_stream']['env_id']
-                data_stream['single_thread'] = '单线程'
-                data_stream['multi_threading'] = '多线程'
+                # data_stream['single_thread'] = '单线程'
+                # data_stream['multi_threading'] = '多线程'
                 data_stream['execute_cmd'] = stream_json.get('execute_cmd')
                 data_stream['modify_parameters'] = stream_json.get('modify_parameters')
                 data_stream['single_array_size'] = stream_json['单线程']['Array size']
@@ -202,3 +202,29 @@ class StreamViewSet(CusModelViewSet):
             return json_response(serializer_stream_errors, status.HTTP_400_BAD_REQUEST, error_message)
         else:
             return
+
+    def put(self, request, *args, **kwargs):
+        id = request.data.get('id')
+        if not id or not Stream.objects.filter(id=id):
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+        user_name = Stream.objects.filter(id=id).first().user_name
+        if request.user.is_superuser or request.user.username == user_name:
+            stream_data = Stream.objects.get(id=id)
+            if not stream_data:
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+            stream_data.single_array_size = request.data.get('single_array_size')
+            stream_data.single_copy = request.data.get('single_copy')
+            stream_data.single_scale = request.data.get('single_scale')
+            stream_data.single_add = request.data.get('single_add')
+            stream_data.single_triad = request.data.get('single_triad')
+            stream_data.multi_array_size = request.data.get('multi_array_size')
+            stream_data.multi_copy = request.data.get('multi_copy')
+            stream_data.multi_scale = request.data.get('multi_scale')
+            stream_data.multi_add = request.data.get('multi_add')
+            stream_data.multi_triad = request.data.get('multi_triad')
+            stream_data.save()
+            return json_response({}, status.HTTP_200_OK, '修改成功')
+        else:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许修改该数据')
+
+

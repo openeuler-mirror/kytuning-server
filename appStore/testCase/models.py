@@ -1,3 +1,10 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Fri Mar 1 10:02:58 2024 +0800
+"""
 from django.db import models
 
 
@@ -20,7 +27,8 @@ class TestCase(models.Model):
     cpu2017 = models.IntegerField(default=0, verbose_name='几组cpu2017数据')
     user_name = models.CharField(max_length=255, verbose_name='测试人员', )
     test_result = models.CharField(max_length=255, verbose_name='测试结果反馈', null=True, blank=True)  # 如果有多项也是拼接
-    result_log_name = models.CharField(max_length=255, verbose_name='日志文件名称的base部分')
+    result_log_name = models.CharField(max_length=255, verbose_name='日志文件路径的base部分')
+    is_error = models.BooleanField(default=False,verbose_name="是否是错误列表所需要的")
 
     class Meta:
         db_table = 'testCase'
