@@ -26,7 +26,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="错误描述：">
-                <el-input v-model="errorData.errorDescription" placeholder="请输入关键词"/>
+                <el-input class="custom-input" v-model="errorData.errorDescription" placeholder="请输入关键词"/>
               </el-form-item>
               <el-form-item label="日志节选：">
                 <el-input v-model="errorData.errorExport" placeholder="请输入关键词"/>
@@ -364,6 +364,10 @@ export default {
   display: flex;
   justify-content: center;
   /*background-color: #f2f2f2;*/
+}
+::v-deep .el-input__inner {
+  /* Override padding or other styles here */
+  padding-right: 0;
 }
 </style>
 

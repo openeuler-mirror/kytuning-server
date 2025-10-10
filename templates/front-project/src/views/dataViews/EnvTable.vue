@@ -20,7 +20,6 @@
             <template #default="{row}">
               <el-tooltip :content="row[`column${i}`]" effect="light">
                 <div style="height: 30px">{{ row[`column${i}`] && row[`column${i}`].toString() || '' }}</div>
-
               </el-tooltip>
             </template>
           </el-table-column>

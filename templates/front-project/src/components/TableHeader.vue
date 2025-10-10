@@ -14,7 +14,6 @@
           {{ showAllData ? '隐藏数据' : '显示全部数据' }}
         </el-button>
         <el-button type="primary" @click="$router.back()">返回上一步</el-button>
-        <el-button type="primary" @click="goToHome">返回数据首页</el-button>
         <el-button type="primary" @click="modify">修改数据</el-button>
         <el-button type="success" @click="goTo('env')">环境信息</el-button>
         <el-button :type="buttonType('stream')" @click="goTo('stream')" :disabled="toDisabled('stream')">stream
@@ -200,11 +199,6 @@ export default {
         return comparData && comparData[name] === 0;
       });
       return foundZero ? 'warning' : 'success';
-    },
-    goToHome() {
-      this.$nextTick(() => {
-        this.$router.push({path: '/storeData'})
-      })
     },
     goTo(name) {
       this.$router.push({
