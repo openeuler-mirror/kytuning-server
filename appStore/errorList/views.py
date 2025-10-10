@@ -9,14 +9,11 @@ from appStore.errorList.models import KytuningError
 from appStore.errorList.serializers import ErroirListSerializer
 from appStore.utils.common import LimsPageSet, json_response
 
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import status
-
+from rest_framework import status, viewsets
 
 # Create your views here.
 
-# class ErrorListViewSet(CusModelViewSet):
-class ErrorListViewSet(ModelViewSet):
+class ErrorListViewSet(viewsets.ModelViewSet):
     """
     错误收集数据管理
     """

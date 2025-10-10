@@ -7,16 +7,15 @@
 """
 import numpy as np
 # Create your views here.
-from rest_framework import status
+from rest_framework import status, viewsets
 
 from appStore.project.models import Project
 from appStore.stream.models import Stream
 from appStore.stream.serializers import StreamSerializer
 from appStore.utils.common import json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
 
-class StreamViewSet(CusModelViewSet):
+class StreamViewSet(viewsets.ModelViewSet):
     """
     stream数据管理
     """

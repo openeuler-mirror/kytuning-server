@@ -5,12 +5,15 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Mar 1 10:10:52 2024 +0800
 """
+from rest_framework import status, viewsets
 from appStore.userConfig.models import UserConfig
 from appStore.userConfig.serializers import UserConfigSerializer
 from appStore.utils.common import json_response
-from appStore.utils.customer_view import CusModelViewSet
+
+
 # Create your views here.
-class UserConfigViewSet(CusModelViewSet):
+
+class UserConfigViewSet(viewsets.ModelViewSet):
     """
     用户配置数据管理
     """
@@ -26,7 +29,7 @@ class UserConfigViewSet(CusModelViewSet):
             if id == '0':  # 获取最后一条数据
                 queryset = [queryset.first()]
             else:
-                queryset=queryset.filter(id=id)
+                queryset = queryset.filter(id=id)
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '测试完成')
 
@@ -64,7 +67,7 @@ class UserConfigViewSet(CusModelViewSet):
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
-        return json_response({}, status.HTTP_400_BAD_REQUEST,config_serializer.errors)
+        return json_response({}, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
     def put(self, request, *args, **kwargs):
         id = request.data.get('id')
@@ -72,7 +75,7 @@ class UserConfigViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
         user_name = UserConfig.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.username == user_name:
-            config_data = UserConfig.objects.get(id=id)  #get=filter.first()
+            config_data = UserConfig.objects.get(id=id)  # get=filter.first()
             if not config_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
             config_data.config_name = request.data.get('config_name')
@@ -116,5 +119,3 @@ class UserConfigViewSet(CusModelViewSet):
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
-
-

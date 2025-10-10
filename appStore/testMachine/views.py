@@ -7,10 +7,11 @@
 """
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
-from appStore.utils.customer_view import CusModelViewSet
+from rest_framework import status, viewsets
+
 # Create your views here.
 
-class TestMachineViewSet(CusModelViewSet):
+class TestMachineViewSet(viewsets.ModelViewSet):
     """
     测试机器数据管理
     """

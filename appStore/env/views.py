@@ -8,19 +8,16 @@
 import os
 import json
 from base64 import b64decode
-
 from django.http import HttpRequest
 
 # Create your views here.
-from rest_framework import status
-
+from rest_framework import status, viewsets
 from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
-from appStore.utils.customer_view import CusModelViewSet
 
-class EnvViewSet(CusModelViewSet):
+class EnvViewSet(viewsets.ModelViewSet):
     """
     env数据管理
     """
