@@ -160,7 +160,6 @@ export default {
 </script>
 
 <style scoped>
-/*@import url("//unpkg.com/element-ui@2.15.13/lib/theme-chalk/index.css");*/
 /*表格大小，调整为一页显示全部*/
 .el-table__body .cell {
   height: 15px;
