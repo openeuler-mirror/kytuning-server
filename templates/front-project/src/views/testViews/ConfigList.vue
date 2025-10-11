@@ -7,57 +7,43 @@
 -->
 <template>
   <div id="fixed-top">
-    <AllHeader/>
-    <el-container class="content">
-      <Menu/>
-      <el-container>
-        <el-main>
-          <div class="cont">
-            <el-table ref="allDatas" :data="showData" tooltip-effect="dark" border style="width: 100%"
-                      :key="itemKey" :header-cell-style="{fontSize:'5px'}" class="tableHead">
-              <el-table-column prop="config_name" label="配置文件名称"/>
-              <el-table-column prop="message" label="描述"/>
-              <el-table-column label="操作" width="90">
-                <template #default="scope">
-                  <el-button type="danger" @click="del(scope.row)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <br>
-            <div class="parent-container">
-              <el-pagination
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                  :current-page="currentPage"
-                  :page-sizes="[5, 10, 20, 30, 50]"
-                  :page-size="pageSize"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  :total="total"
-              >
-              </el-pagination>
-            </div>
-          </div>
-        </el-main>
-      </el-container>
-    </el-container>
+    <div class="cont">
+      <el-table ref="allDatas" :data="showData" tooltip-effect="dark" border style="width: 100%"
+                :key="itemKey" :header-cell-style="{fontSize:'5px'}" class="tableHead">
+        <el-table-column prop="config_name" label="配置文件名称"/>
+        <el-table-column prop="message" label="描述"/>
+        <el-table-column label="操作" width="90">
+          <template #default="scope">
+            <el-button type="danger" @click="del(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <br>
+      <div class="parent-container">
+        <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[5, 10, 20, 30, 50]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+        >
+        </el-pagination>
+      </div>
+    </div>
   </div>
 </template>
 
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import AllHeader from "@/components/common/AllHeader";
-import Menu from "@/components/common/AllMenu";
 import {user_config} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
   name: 'configList',
   mixins: [utils],
-  components: {
-    AllHeader,
-    Menu
-  },
   data() {
     return {
       allDatas: [],
@@ -68,11 +54,11 @@ export default {
     this.getData()
   },
   methods: {
-    getData(){
+    getData() {
       user_config('get', {}).then((response) => {
-      this.allDatas = response.data.data;
-      this.total = this.allDatas.length;
-    });
+        this.allDatas = response.data.data;
+        this.total = this.allDatas.length;
+      });
     },
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {

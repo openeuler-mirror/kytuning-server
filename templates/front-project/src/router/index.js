@@ -10,21 +10,23 @@ import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
     {
-        name: 'Login',
         path: '/',
+        name: 'Login',
         hidden: true,
         component: () => import('@/components/kytuningLogin'),
     },
     {
-        name: '设备管理',
         path: '/test1',
-        component: () => import('@/views/testViews/TestList'),
-        children: []
+        name: '设备管理',
+        iconClass: 'fa fa-users',
+        redirect: '/home/student',
+        component: () => import('@/components/KytuningHome'),
     },
     {
+        path: '/test/list',
         name: '测试管理',
-        path: '/test',
-        redirect: '/test/list',
+        iconClass: 'fa fa-users',
+        component: () => import('@/components/KytuningHome'),
         children: [
             {
                 path: '/test/list',
@@ -46,12 +48,14 @@ const routes = [
         ]
     },
     {
-        name: '数据管理',
         path: '/storeData',
-        // component: () => import('@/views/dataViews/ProjectTable'),
+        name: '数据管理',
+        iconClass: 'fa fa-users',
+        redirect: '/home/student',
+        component: () => import('@/components/KytuningHome'),
         children: [
             {
-                path: '/data/tempData',
+                path: '/tempData',
                 name: '临时数据',
                 component: () => import('@/views/dataViews/TempTable')
             },
@@ -63,9 +67,10 @@ const routes = [
         ]
     },
     {
+        path: '/error/list',
         name: '错误管理',
-        path: '/error',
-        redirect: '/error/list',
+        iconClass: 'fa fa-users',
+        component: () => import('@/components/KytuningHome'),
         children: [
             {
                 path: '/error/list',
@@ -127,7 +132,7 @@ const routes = [
         path: '/cpu2017/:baseId/:comparsionIds?',
         hidden: true,
         component: () => import('@/views/dataViews/Cpu2017Table'),
-    },
+    }
 ]
 export default createRouter({
     history: createWebHistory(),

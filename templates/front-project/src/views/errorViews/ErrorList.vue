@@ -7,73 +7,65 @@
 -->
 <template>
   <div id="fixed-top">
-    <AllHeader/>
-    <el-container class="content">
-      <Menu/>
-      <el-container>
-        <el-main>
-          <!-- 搜索 -->
-          <div style="display: flex; justify-content: space-between; width: 85%;padding-top: 20px;">
-            <div style="display: flex; justify-content: space-between; width: 86%;margin-left: 7%;">
-              <el-form-item label="错误类型：">
-                <el-select v-model="errorData.errType" class="m-2" placeholder="请选择错误类型">
-                  <el-option v-for="item in errTypes" :key="item" :label="item" :value="item" placeholder="请输入错误类型"/>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="测试类型：">
-                <el-select v-model="errorData.testType" class="m-2" placeholder="请选择测试类型">
-                  <el-option v-for="item in testTypes" :key="item" :label="item" :value="item" placeholder="请选择测试类型"/>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="错误描述：">
-                <el-input v-model="errorData.errorDescription" placeholder="请输入关键词"/>
-              </el-form-item>
-              <el-form-item label="日志节选：">
-                <el-input v-model="errorData.errorExport" placeholder="请输入关键词"/>
-              </el-form-item>
-            </div>
-            <el-button type="primary" style=" margin-left: 20px; " @click="search">搜索</el-button>
-            <el-button type="success" style=" margin-left: 50px;" @click="add">新增</el-button>
-            <el-button type="warning" style=" margin-left: 50px;" @click="reset">重置</el-button>
-          </div>
-          <div class="cont">
-            <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
-                      tooltip-effect="dark" border style="width: 100%" class="tableHead">
-              <el-table-column prop="error_type" label="错误类型"></el-table-column>
-              <el-table-column prop="user_name" label="操作人员"></el-table-column>
-              <el-table-column prop="test_type" label="测试类型"></el-table-column>
-              <el-table-column prop="error_description" label="错误描述"></el-table-column>
-              <el-table-column prop="error_log_excerpt" label="错误日志节选"></el-table-column>
-              <el-table-column prop="solution" label="解决方案"></el-table-column>
-              <el-table-column label="详细日志" width="180">
-                <template #default="scope">
-                  <el-button type="primary" @click="downLog(scope.row)">日志</el-button>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="180">
-                <template #default="scope">
-                  <el-button type="primary" @click="modify(scope.row)">修改</el-button>
-                  <el-button type="danger" @click="del(scope.row)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <br>
-            <div class="parent-container">
-              <el-pagination
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                  :current-page="currentPage"
-                  :page-sizes="[5, 10, 20, 30, 50]"
-                  :page-size="pageSize"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  :total="total"
-              >
-              </el-pagination>
-            </div>
-          </div>
-        </el-main>
-      </el-container>
-    </el-container>
+    <!-- 搜索 -->
+    <div style="display: flex; justify-content: space-between; width: 85%;padding-top: 20px;">
+      <div style="display: flex; justify-content: space-between; width: 86%;margin-left: 7%;">
+        <el-form-item label="错误类型：">
+          <el-select v-model="errorData.errType" class="m-2" placeholder="请选择错误类型">
+            <el-option v-for="item in errTypes" :key="item" :label="item" :value="item" placeholder="请输入错误类型"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="测试类型：">
+          <el-select v-model="errorData.testType" class="m-2" placeholder="请选择测试类型">
+            <el-option v-for="item in testTypes" :key="item" :label="item" :value="item" placeholder="请选择测试类型"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="错误描述：">
+          <el-input v-model="errorData.errorDescription" placeholder="请输入关键词"/>
+        </el-form-item>
+        <el-form-item label="日志节选：">
+          <el-input v-model="errorData.errorExport" placeholder="请输入关键词"/>
+        </el-form-item>
+      </div>
+      <el-button type="primary" style=" margin-left: 20px; " @click="search">搜索</el-button>
+      <el-button type="success" style=" margin-left: 50px;" @click="add">新增</el-button>
+      <el-button type="warning" style=" margin-left: 50px;" @click="reset">重置</el-button>
+    </div>
+    <div class="cont">
+      <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
+                tooltip-effect="dark" border style="width: 100%" class="tableHead">
+        <el-table-column prop="error_type" label="错误类型"></el-table-column>
+        <el-table-column prop="user_name" label="操作人员"></el-table-column>
+        <el-table-column prop="test_type" label="测试类型"></el-table-column>
+        <el-table-column prop="error_description" label="错误描述"></el-table-column>
+        <el-table-column prop="error_log_excerpt" label="错误日志节选"></el-table-column>
+        <el-table-column prop="solution" label="解决方案"></el-table-column>
+        <el-table-column label="详细日志" width="180">
+          <template #default="scope">
+            <el-button type="primary" @click="downLog(scope.row)">日志</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="180">
+          <template #default="scope">
+            <el-button type="primary" @click="modify(scope.row)">修改</el-button>
+            <el-button type="danger" @click="del(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <br>
+      <div class="parent-container">
+        <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[5, 10, 20, 30, 50]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+        >
+        </el-pagination>
+      </div>
+    </div>
   </div>
   <div>
     <el-dialog :title="'新增error数据'" v-model="dialogErrorPost" width="500px">
@@ -157,18 +149,18 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import AllHeader from "@/components/common/AllHeader";
-import Menu from "@/components/common/AllMenu";
+// import AllHeader from "@/components/common/AllHeader";
+// import Menu from "@/components/common/AllMenu";
 import {error_list, test_case} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
   name: 'errorList',
   mixins: [utils],
-  components: {
-    AllHeader,
-    Menu,
-  },
+  // components: {
+  //   AllHeader,
+  //   Menu,
+  // },
   data() {
     return {
       allDatas: [],
@@ -264,7 +256,7 @@ export default {
 
     addSure() {
       //errorForm这个是上面form表单中的ref对应的标记
-      console.log(this.$refs.errorForm,111)
+      console.log(this.$refs.errorForm, 111)
       this.$refs.errorForm.validate((valid) => {
         if (valid) {
           this.dialogErrorPost = false;

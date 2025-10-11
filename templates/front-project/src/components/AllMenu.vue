@@ -44,7 +44,6 @@ const handleClick = (path) => {router.push(path)}
 
 <style lang="less">
 .menu {
-  height: 100%;
   .el-aside {
     height: 100%;
     .el-menu {
