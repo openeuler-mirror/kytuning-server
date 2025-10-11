@@ -56,7 +56,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             project_queryset = Project.objects.filter(env_id__in=(baseId.split(',')))
         else:
             project_queryset = Project.objects.all().order_by("-id")
-            if storeData:
+            if storeData == 'true':
                 project_queryset = project_queryset.filter(store_data=True)
         if not project_queryset:
             return json_response({}, status.HTTP_200_OK, '未查询到project数据')

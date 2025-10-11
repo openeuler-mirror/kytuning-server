@@ -14,9 +14,11 @@
 """
 import os
 import openpyxl
-from openpyxl.styles import Font, PatternFill, Border, Side
+from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
-from openpyxl.styles import Alignment
+
+from appStore.utils.constants import EXCEL_TEMP
+
 
 class Config():
     def __init__(self):
@@ -84,8 +86,8 @@ def set_cell_style(worksheet, row, column,color, font):
     cell.font = font
 
 def create_base_export(user_name,sheetname,data):
-    if os.path.exists('./tem_excel/%s.xlsx'%(user_name)):
-        workbook = openpyxl.open('./tem_excel/%s.xlsx'%(user_name))
+    if os.path.exists(EXCEL_TEMP + '%s.xlsx'%(user_name)):
+        workbook = openpyxl.open(EXCEL_TEMP + '%s.xlsx'%(user_name))
     else:
         workbook = openpyxl.Workbook()
     # 获取默认的工作表对象
@@ -196,10 +198,10 @@ def set_base_export_style(worksheet,config,sheetname):
     return worksheet
 
 def env_excel(user_name,data):
-    ### todo 增加一个锁判断 #############
-    if os.path.exists('./tem_excel/%s.xlsx'%(user_name)):
-        os.remove('./tem_excel/%s.xlsx'%(user_name))
-    ################################################
+    if not os.path.exists(EXCEL_TEMP):
+        os.makedirs(EXCEL_TEMP)
+    if os.path.exists(EXCEL_TEMP + '%s.xlsx'%(user_name)):
+        os.remove(EXCEL_TEMP + '%s.xlsx'%(user_name))
     config = Config()
     workbook = openpyxl.Workbook()
     # 获取默认的工作表对象
@@ -300,7 +302,7 @@ def env_excel(user_name,data):
 
     worksheet.cell(row=1, column=1).value = "性能测试环境统计表"
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def stream_excel(user_name,data):
     sheetname = "Stream"
@@ -326,7 +328,7 @@ def stream_excel(user_name,data):
     worksheet.merge_cells(start_row=5, start_column=1, end_row=9, end_column=1)
     worksheet.merge_cells(start_row=10, start_column=1, end_row=14, end_column=1)
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def lmbench_excel(user_name,data):
     sheetname = "Lmbench"
@@ -361,7 +363,7 @@ def lmbench_excel(user_name,data):
     worksheet.merge_cells(start_row=62, start_column=1, end_row=70, end_column=1)
     worksheet.merge_cells(start_row=71, start_column=1, end_row=75, end_column=1)
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def unixbench_excel(user_name,data):
     sheetname = "Unixbench"
@@ -392,7 +394,7 @@ def unixbench_excel(user_name,data):
         row.alignment = config.alignment_left
 
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def fio_excel(user_name,data):
     sheetname = "Fio"
@@ -421,7 +423,7 @@ def fio_excel(user_name,data):
         worksheet.merge_cells(start_row=5+4*i, start_column=1, end_row=8+4*i, end_column=1)
 
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def iozone_excel(user_name,data):
     sheetname = "Iozone"
@@ -446,7 +448,7 @@ def iozone_excel(user_name,data):
     # 合并列
 
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def jvm2008_excel(user_name,data):
     sheetname = "Specjvm2008"
@@ -473,7 +475,7 @@ def jvm2008_excel(user_name,data):
     worksheet.merge_cells(start_row=17, start_column=1, end_row=28, end_column=1)
 
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def cpu2006_excel(user_name,sheetname, data):
     config = Config()
@@ -515,7 +517,7 @@ def cpu2006_excel(user_name,sheetname, data):
     worksheet.merge_cells(start_row=36, start_column=3, end_row=48, end_column=3)
     worksheet.merge_cells(start_row=49, start_column=3, end_row=66, end_column=3)
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def cpu2017_excel(user_name,sheetname, data):
     config = Config()
@@ -564,5 +566,4 @@ def cpu2017_excel(user_name,sheetname, data):
     # 第四列
     worksheet.merge_cells(start_row=5, start_column=4, end_row=54, end_column=4)
     # 保存工作簿到文件
-    workbook.save('./tem_excel/%s.xlsx'%(user_name))
-
+    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))

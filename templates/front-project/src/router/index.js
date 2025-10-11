@@ -49,18 +49,17 @@ const routes = [
         path: '/storeData',
         name: '数据管理',
         iconClass: 'fa fa-users',
-        redirect: '/home/student',
         component: () => import('@/components/KytuningHome'),
         children: [
             {
                 path: '/tempData',
                 name: '临时数据',
-                component: () => import('@/views/dataViews/TempTable')
+                component: () => import('@/views/dataViews/TempTable'),
             },
             {
                 path: '/storeData',
                 name: '项目数据',
-                component: () => import('@/views/dataViews/StoreTable')
+                component: () => import('@/views/dataViews/TempTable'),
             },
         ]
     },
