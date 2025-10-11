@@ -161,7 +161,6 @@ export default {
       configID: 0,
       configData: '',
       configDatas: [],
-      // machineOptions: [{label: '172.29.220.100', value: '172.29.220.100'}, {label: '172.29.220.101',value: '172.29.220.101'}],
       rules: {
         configName: [{required: true, message: 'configName不能为空', trigger: 'blur'}],
         projectName: [{required: true, message: 'projectName不能为空', trigger: 'blur'}],
