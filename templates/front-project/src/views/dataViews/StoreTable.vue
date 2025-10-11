@@ -6,7 +6,7 @@
  * Date: Tue Mar 12 09:57:55 2024 +0800
 -->
 <template>
-  <div id="fixed-top">
+  <div>
     <div id="tatle-div">
       <el-row class="mb-4">
         <el-button @click="getComparativeData()" type="primary" plain>数据对比</el-button>
@@ -16,8 +16,8 @@
     </div>
     <br>
 
-    <el-table :data="showData" tooltip-effect="dark"
-              border style="width: 100%" :header-cell-style="{fontSize:'5px'}" class="tableHead">
+    <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" class="tableHead"
+               :header-cell-style="{fontSize:'5px'}">
       <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150"
                        :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">

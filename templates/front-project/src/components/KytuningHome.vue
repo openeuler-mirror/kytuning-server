@@ -36,9 +36,10 @@ export default {
 </script>
 
 <style lang="less">
-.home {
+#home {
   width: 100%;
   height: 100%;
+  overflow:scroll;
   .content {
     position: absolute;
     width: 100%;

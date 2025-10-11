@@ -33,7 +33,6 @@ const routes = [
                 component: () => import('@/views/testViews/TestList')
             },
             {
-                // path: '/test/do_test/:configID?',
                 path: '/test/do_test',
                 name: '发起测试',
                 component: () => import('@/views/testViews/DoTest'),
