@@ -6,9 +6,7 @@
  * Date: Thu Mar 7 14:23:35 2024 +0800
 -->
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+    <router-view></router-view>
 </template>
 
 <script>
@@ -19,5 +17,10 @@ export default {
 </script>
 
 <style>
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow:hidden;
+}
 </style>
 

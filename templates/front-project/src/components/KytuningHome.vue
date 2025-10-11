@@ -6,57 +6,47 @@
  * Date: Tue Mar 12 09:59:13 2024 +0800
 -->
 <template>
-  <div class="login-container" :style="{ backgroundImage: `url(${background})` }">
-    <el-button class="button" size="large" >首页</el-button>
-    <el-button class="button" size="large" >设备管理</el-button>
-    <el-button size="large" @click="goTest">测试管理</el-button>
-    <el-button size="large" @click="projectData">数据管理</el-button>
+  <div class="home">
+    <AllHeader />
+    <el-container class="content">
+      <Menu />
+      <el-container>
+        <el-main>
+          <div class="cont">
+            <router-view></router-view>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
+<script scoped>
+import AllHeader from "@/components/common/AllHeader";
 
-<script>
-import background from '@/assets/login.jpg';
-
+import Menu from "@/components/common/AllMenu";
+import utils from "@/utils/utils";
 export default {
-
-  name: 'kytuningHome',
-  computed: {
-    background() {
-      return background;
-    },
-  },
-  methods: {
-    projectData() {
-      this.$router.push('/project')
-    },
-    goTest(){
-      this.$router.push('/test')
-    },
-  }
-};
+  name: 'errorList',
+  mixins: [utils],
+  components: {
+    AllHeader,
+    Menu,
+  }}
 </script>
 
-
-<style scoped>
-button {
-  width: 250px;
-  height: 50px;
-  font-size: 40px;
-}
-
-.login-container {
-  position: absolute;
-  top: 0;
-  left: 0;
+<style lang="less">
+.home {
   width: 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .content {
+    position: absolute;
+    width: 100%;
+    top: 68px;
+    bottom: 0;
+    .cont {
+      margin: 20px 0;
+    }
+  }
 }
-
 </style>
-

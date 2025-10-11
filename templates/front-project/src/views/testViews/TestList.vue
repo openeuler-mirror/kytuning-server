@@ -7,49 +7,42 @@
 -->
 <template>
   <div id="fixed-top">
-    <AllHeader/>
-    <el-container class="content">
-      <Menu/>
-      <el-container>
-        <el-main>
-          <div class="cont">
-            <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" :header-cell-style="{fontSize:'5px'}" class="tableHead">
-              <el-table-column prop="project_name" label="项目名称"></el-table-column>
-              <el-table-column prop="user_name" label="测试人员"></el-table-column>
-              <el-table-column prop="ip" label="ip" width="125"></el-table-column>
-              <el-table-column prop="stream" label="stream" width="70"></el-table-column>
-              <el-table-column prop="lmbench" label="lmbench" width="80"></el-table-column>
-              <el-table-column prop="unixbench" label="unixbench" width="90"></el-table-column>
-              <el-table-column prop="fio" label="fio" width="50"></el-table-column>
-              <el-table-column prop="iozone" label="iozone" width="70"></el-table-column>
-              <el-table-column prop="jvm2008" label="jvm2008" width="80"></el-table-column>
-              <el-table-column prop="cpu2006" label="cpu2006" width="80"></el-table-column>
-              <el-table-column prop="cpu2017" label="cpu2017" width="80"></el-table-column>
-              <el-table-column prop="test_result" label="运行结果"></el-table-column>
-              <el-table-column label="操作" width="180">
-                <template #default="scope">
-                  <el-button type="primary" @click="downLog(scope.row)">日志</el-button>
-                  <el-button type="danger" @click="del(scope.row)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <br>
-            <div class="parent-container">
-              <el-pagination
-                  @size-change="handleSizeChange"
-                  @current-change="handleCurrentChange"
-                  :current-page="currentPage"
-                  :page-sizes="[5, 10, 20, 30, 50]"
-                  :page-size="pageSize"
-                  layout="total, sizes, prev, pager, next, jumper"
-                  :total="total"
-              >
-              </el-pagination>
-            </div>
-          </div>
-        </el-main>
-      </el-container>
-    </el-container>
+    <div class="cont">
+      <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" :header-cell-style="{fontSize:'5px'}"
+                class="tableHead">
+        <el-table-column prop="project_name" label="项目名称"></el-table-column>
+        <el-table-column prop="user_name" label="测试人员"></el-table-column>
+        <el-table-column prop="ip" label="ip" width="125"></el-table-column>
+        <el-table-column prop="stream" label="stream" width="70"></el-table-column>
+        <el-table-column prop="lmbench" label="lmbench" width="80"></el-table-column>
+        <el-table-column prop="unixbench" label="unixbench" width="90"></el-table-column>
+        <el-table-column prop="fio" label="fio" width="50"></el-table-column>
+        <el-table-column prop="iozone" label="iozone" width="70"></el-table-column>
+        <el-table-column prop="jvm2008" label="jvm2008" width="80"></el-table-column>
+        <el-table-column prop="cpu2006" label="cpu2006" width="80"></el-table-column>
+        <el-table-column prop="cpu2017" label="cpu2017" width="80"></el-table-column>
+        <el-table-column prop="test_result" label="运行结果"></el-table-column>
+        <el-table-column label="操作" width="180">
+          <template #default="scope">
+            <el-button type="primary" @click="downLog(scope.row)">日志</el-button>
+            <el-button type="danger" @click="del(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <br>
+      <div class="parent-container">
+        <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[5, 10, 20, 30, 50]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+        >
+        </el-pagination>
+      </div>
+    </div>
   </div>
 
 
@@ -58,17 +51,11 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import AllHeader from "@/components/common/AllHeader";
-import Menu from "@/components/common/AllMenu";
 import {test_case} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
   name: 'testList',
-  components: {
-    AllHeader,
-    Menu
-  },
   mixins: [utils],
   data() {
     return {
@@ -79,11 +66,11 @@ export default {
     this.getData()
   },
   methods: {
-    getData(){
+    getData() {
       test_case('get', {}).then((response) => {
-      this.allDatas = response.data.data;
-      this.total = this.allDatas.length;
-    });
+        this.allDatas = response.data.data;
+        this.total = this.allDatas.length;
+      });
     },
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
@@ -95,7 +82,6 @@ export default {
           if (response.data.code === 200) {
             ElMessage({message: response.data.message, type: 'success'})
             //更新页面数据，绑定key，每次key改变后就会刷新数据
-            this.dialogFormVisible = false
             this.getData()
           }
         })
