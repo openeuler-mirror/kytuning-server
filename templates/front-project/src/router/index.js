@@ -19,7 +19,6 @@ const routes = [
         path: '/test1',
         name: '设备管理',
         iconClass: 'fa fa-users',
-        redirect: '/home/student',
         component: () => import('@/components/KytuningHome'),
     },
     {
