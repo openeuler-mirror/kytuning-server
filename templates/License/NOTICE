@@ -1,0 +1,56 @@
+--------THIRD-PARTY SOFTWARE NOTICES---------
+
+%% Django NOTICE
+===========================================
+The  BSD-3-Clause   License
+===========================================
+END OF Django NOTICE
+
+%% PyMySQL NOTICE
+===========================================
+The  MIT  License
+===========================================
+END OF PyMySQL NOTICE
+
+%% django-cors-headers NOTICE
+===========================================
+The  MIT  License
+===========================================
+END OF django-cors-headers NOTICE
+
+%% djangorestframework NOTICE
+===========================================
+The  MIT  License
+===========================================
+END OF djangorestframework NOTICE
+
+%% djangorestframework-jwt NOTICE
+===========================================
+The  MIT  License
+===========================================
+END OF djangorestframework-jwt NOTICE
+
+%% numpy NOTICE
+===========================================
+The  BSD-3-Clause  License
+===========================================
+END OF numpy NOTICE
+
+%% django-filter NOTICE
+===========================================
+The  BSD  License
+===========================================
+END OF django-filter NOTICE
+
+%% uWSGI NOTICE
+===========================================
+The  GPL2  License
+===========================================
+END OF uWSGI NOTICE
+
+%% openpyxl NOTICE
+===========================================
+The  MIT  License
+===========================================
+END OF openpyxl NOTICE
+
