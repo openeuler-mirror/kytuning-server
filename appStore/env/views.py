@@ -404,6 +404,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         from appStore.project.views import ProjectViewSet
         request_project = HttpRequest()
         request_project.method = 'POST'
+        request.data['chinese_name']=request.user.chinese_name
         request_project.data_project = request.data
         request_project.project_message = project_message
         ProjectViewSet = ProjectViewSet()

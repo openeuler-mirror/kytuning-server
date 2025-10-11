@@ -32,8 +32,8 @@ const routes = [
                 component: () => import('@/views/testViews/TestList')
             },
             {
-                // path: '/test/do_test/:userConfig?',
-                path: '/test/do_test/:configID?',
+                // path: '/test/do_test/:configID?',
+                path: '/test/do_test',
                 name: '发起测试',
                 component: () => import('@/views/testViews/DoTest'),
                 // props:true  // 如果props设置为true，$route.params将被设置为组件属性记对象

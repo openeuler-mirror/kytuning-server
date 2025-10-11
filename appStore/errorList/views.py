@@ -43,7 +43,7 @@ class ErrorListViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         error_data = {}
         error_data['error_type'] = request.data.get('error_type')
-        error_data['user_name'] = request.user.username
+        error_data['user_name'] = request.user.chinese_name
         error_data['test_type'] = request.data.get('test_type')
         error_data['error_description'] = request.data.get('error_description')
         error_data['error_log_excerpt'] = request.data.get('error_log_excerpt')
@@ -60,7 +60,7 @@ class ErrorListViewSet(viewsets.ModelViewSet):
         if not id or not KytuningError.objects.filter(id=id):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
         user_name = KytuningError.objects.filter(id=id).first().user_name
-        if request.user.is_superuser or request.user.username == user_name:
+        if request.user.is_superuser or request.user.chinese_name == user_name:
             error_data = KytuningError.objects.get(id=id)
             if not error_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
@@ -80,7 +80,7 @@ class ErrorListViewSet(viewsets.ModelViewSet):
         if not id or not KytuningError.objects.filter(id=id):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
         user_name = KytuningError.objects.filter(id=id).first().user_name
-        if request.user.is_superuser or request.user.username == user_name:
+        if request.user.is_superuser or request.user.chinese_name == user_name:
             test_case_data = KytuningError.objects.filter(id=id).first()
             if not test_case_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')

@@ -21,7 +21,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
     serializer_class = UserConfigSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = UserConfig.objects.filter(user_name=request.user.username).all().order_by('-id')
+        queryset = UserConfig.objects.filter(user_name=request.user.chinese_name).all().order_by('-id')
         id = request.GET.get('configID')
         if not queryset:
             return json_response({}, status.HTTP_200_OK, '列表')
@@ -35,8 +35,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user_config_data = {}
-        user_config_data['user_name'] = request.user.username
-        user_config_data['user_password'] = request.data.get('user_password')
+        user_config_data['user_name'] = request.user.chinese_name
         user_config_data['config_name'] = request.data.get('config_name')
         user_config_data['project_name'] = request.data.get('project_name')
         user_config_data['test_ip'] = request.data.get('test_ip')
@@ -74,12 +73,11 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         if not id or not UserConfig.objects.filter(id=id):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
         user_name = UserConfig.objects.filter(id=id).first().user_name
-        if request.user.is_superuser or request.user.username == user_name:
+        if request.user.is_superuser or request.user.chinese_name == user_name:
             config_data = UserConfig.objects.get(id=id)  # get=filter.first()
             if not config_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
             config_data.config_name = request.data.get('config_name')
-            config_data.user_password = request.data.get('user_password')
             config_data.project_name = request.data.get('project_name')
             config_data.test_ip = request.data.get('test_ip')
             config_data.test_password = request.data.get('test_password')
@@ -111,7 +109,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         if not id or not UserConfig.objects.filter(id=id):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
         user_name = UserConfig.objects.filter(id=id).first().user_name
-        if request.user.is_superuser or request.user.username == user_name:
+        if request.user.is_superuser or request.user.chinese_name == user_name:
             test_case_data = UserConfig.objects.filter(id=id).first()
             if not test_case_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
