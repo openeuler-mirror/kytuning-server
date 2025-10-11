@@ -16,6 +16,8 @@ import base64
 import json
 import math
 import time
+
+import numpy
 import pandas as pd
 
 user_data = {
@@ -90,12 +92,30 @@ def env_excel_to_json(file_path, sheet_name,disk_number,nic_number):
                 swinfo_os_osversion = column_data[new_number + 3]
                 swinfo_os_kernel = column_data[new_number + 4]
                 swinfo_os_grub = column_data[new_number + 5]
-                swinfo_runtime_sysconf = str(base64.b64encode(column_data[new_number + 6].encode("ascii")))[2:-1]
-                swinfo_runtime_sysctl = str(base64.b64encode(column_data[new_number + 7].encode("ascii")))[2:-1]
-                swinfo_runtime_systemctlinfo = str(base64.b64encode(column_data[new_number + 8].encode("ascii")))[2:-1]
-                swinfo_runtime_driverinfo = str(base64.b64encode(column_data[new_number + 9].encode("ascii")))[2:-1]
-                swinfo_runtime_rpmlist = str(base64.b64encode(column_data[new_number + 10].encode("ascii")))[2:-1]
-                swinfo_runtime_ipclist = str(base64.b64encode(column_data[new_number + 11].encode("ascii")))[2:-1]
+                if column_data[new_number + 6] == numpy.nan:
+                    swinfo_runtime_sysconf = str(base64.b64encode(column_data[new_number + 6].encode("ascii")))[2:-1]
+                else:
+                    swinfo_runtime_sysconf = ''
+                if column_data[new_number + 7] == numpy.nan:
+                    swinfo_runtime_sysctl = str(base64.b64encode(column_data[new_number + 7].encode("ascii")))[2:-1]
+                else:
+                    swinfo_runtime_sysctl = ''
+                if column_data[new_number + 8] == numpy.nan:
+                    swinfo_runtime_systemctlinfo = str(base64.b64encode(column_data[new_number + 8].encode("ascii")))[2:-1]
+                else:
+                    swinfo_runtime_systemctlinfo = ''
+                if column_data[new_number + 9]== numpy.nan:
+                    swinfo_runtime_driverinfo = str(base64.b64encode(column_data[new_number + 9].encode("ascii")))[2:-1]
+                else:
+                    swinfo_runtime_driverinfo = ''
+                if column_data[new_number + 10]== numpy.nan:
+                    swinfo_runtime_rpmlist = str(base64.b64encode(column_data[new_number + 10].encode("ascii")))[2:-1]
+                else:
+                    swinfo_runtime_rpmlist = ''
+                if column_data[new_number + 11]== numpy.nan:
+                    swinfo_runtime_ipclist = str(base64.b64encode(column_data[new_number + 11].encode("ascii")))[2:-1]
+                else:
+                    swinfo_runtime_ipclist = ''
             except:
                 print("请确认磁盘和网卡数量")
 

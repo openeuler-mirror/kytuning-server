@@ -29,7 +29,6 @@
   </div>
 </template>
 
-
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
 import TableHeader from "@/components/common/TableHeader.vue";
