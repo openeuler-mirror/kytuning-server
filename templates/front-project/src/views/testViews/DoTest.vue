@@ -7,91 +7,88 @@
 -->
 <template>
   <div id="fixed-top">
-    <div class="form-container">
-      <el-form :label-position="labelPosition" label-width="300px" :model="formData" ref="dataForm" :rules="rules">
-        <el-form-item label="配置文件名称：">
-          <el-input v-model="formData.configName"/>
-        </el-form-item>
-        <el-form-item label="项目名称：">
-          <el-input v-model="formData.projectName"/>
-        </el-form-item>
-        <el-form-item label="kytuning的用户密码：">
-          <el-input v-model="formData.userPassword" placeholder="因为数据库加密了，无法解密，所以只能用户输入一次密码"/>
-        </el-form-item>
-        <el-form-item label="测试项的迭代次数：">
-          <el-form-item label="stream迭代次数：">
-            <el-input v-model="formData.iterations.stream"/>
+      <div class="form-container">
+        <el-form :label-position="labelPosition" label-width="300px" :model="formData" ref="dataForm" :rules="rules">
+          <el-form-item label="配置文件名称：">
+            <el-input v-model="formData.configName"/>
           </el-form-item>
-          <el-form-item label="lmbench迭代次数：">
-            <el-input v-model="formData.iterations.lmbench"/>
+          <el-form-item label="项目名称：">
+            <el-input v-model="formData.projectName"/>
           </el-form-item>
-          <el-form-item label="unixbench迭代次数：">
-            <el-input v-model="formData.iterations.unixbench"/>
+          <el-form-item label="测试项的迭代次数：">
+            <el-form-item label="stream迭代次数：">
+              <el-input v-model="formData.iterations.stream"/>
+            </el-form-item>
+            <el-form-item label="lmbench迭代次数：">
+              <el-input v-model="formData.iterations.lmbench"/>
+            </el-form-item>
+            <el-form-item label="unixbench迭代次数：">
+              <el-input v-model="formData.iterations.unixbench"/>
+            </el-form-item>
+            <el-form-item label="fio迭代次数：">
+              <el-input v-model="formData.iterations.fio"/>
+            </el-form-item>
+            <el-form-item label="iozone迭代次数：">
+              <el-input v-model="formData.iterations.iozone"/>
+            </el-form-item>
+            <el-form-item label="jvm2008迭代次数：">
+              <el-input v-model="formData.iterations.jvm2008"/>
+            </el-form-item>
+            <el-form-item label="cpu2006迭代次数：">
+              <el-input v-model="formData.iterations.cpu2006"/>
+            </el-form-item>
+            <el-form-item label="cpu2017迭代次数：">
+              <el-input v-model="formData.iterations.cpu2017"/>
+            </el-form-item>
           </el-form-item>
-          <el-form-item label="fio迭代次数：">
-            <el-input v-model="formData.iterations.fio"/>
+          <el-form-item label="编辑yaml配置文件：">
+            <el-button type="success" class="test-button" @click="showYaml('stream')">stream</el-button>
+            <el-button type="success" class="test-button" @click="showYaml('lmbench')">lmbench</el-button>
+            <el-button type="success" class="test-button" @click="showYaml('unixbench')">unixbench</el-button>
+            <el-button type="success" class="test-button" @click="showYaml('fio')">fio</el-button>
+            <el-button type="success" class="test-button" @click="showYaml('iozone')">iozone</el-button>
+            <el-button type="success" class="test-button" @click="showYaml('jvm2008')">jvm2008</el-button>
+            <el-button type="success" class="test-button" @click="showYaml('cpu2006')">cpu2006</el-button>
+            <el-button type="success" class="loongarch-button" @click="showYaml('cpu2006_loongarch64')">
+              cpu2006_loongarch64
+            </el-button>
+            <el-button type="success" class="test-button" @click="showYaml('cpu2017')">cpu2017</el-button>
+            <el-button type="primary" class="test-button" @click="doBase">一键摸底</el-button>
+            <el-button type="primary" class="test-button" @click="lastTest">还原上次测试</el-button>
           </el-form-item>
-          <el-form-item label="iozone迭代次数：">
-            <el-input v-model="formData.iterations.iozone"/>
-          </el-form-item>
-          <el-form-item label="jvm2008迭代次数：">
-            <el-input v-model="formData.iterations.jvm2008"/>
-          </el-form-item>
-          <el-form-item label="cpu2006迭代次数：">
-            <el-input v-model="formData.iterations.cpu2006"/>
-          </el-form-item>
-          <el-form-item label="cpu2017迭代次数：">
-            <el-input v-model="formData.iterations.cpu2017"/>
-          </el-form-item>
-        </el-form-item>
-        <el-form-item label="编辑yaml配置文件：">
-          <el-button type="success" class="test-button" @click="showYaml('stream')">stream</el-button>
-          <el-button type="success" class="test-button" @click="showYaml('lmbench')">lmbench</el-button>
-          <el-button type="success" class="test-button" @click="showYaml('unixbench')">unixbench</el-button>
-          <el-button type="success" class="test-button" @click="showYaml('fio')">fio</el-button>
-          <el-button type="success" class="test-button" @click="showYaml('iozone')">iozone</el-button>
-          <el-button type="success" class="test-button" @click="showYaml('jvm2008')">jvm2008</el-button>
-          <el-button type="success" class="test-button" @click="showYaml('cpu2006')">cpu2006</el-button>
-          <el-button type="success" class="loongarch-button" @click="showYaml('cpu2006_loongarch64')">
-            cpu2006_loongarch64
-          </el-button>
-          <el-button type="success" class="test-button" @click="showYaml('cpu2017')">cpu2017</el-button>
-          <el-button type="primary" class="test-button" @click="doBase">一键摸底</el-button>
-          <el-button type="primary" class="test-button" @click="lastTest">还原上次测试</el-button>
-        </el-form-item>
 
-        <el-form-item label="测试机器IP：">
-          <el-input v-model="formData.testIP"/>
-          <!--            <el-select v-model="testIP" placeholder="请选择测试机器IP">-->
-          <!--              <el-option v-for="option in machineOptions" :key="option.value" :label="option.label"-->
-          <!--                         :value="option.value"/>-->
-          <!--            </el-select>-->
-          <el-form-item>
+          <el-form-item label="测试机器IP：">
+            <el-input v-model="formData.testIP"/>
+            <!--            <el-select v-model="testIP" placeholder="请选择测试机器IP">-->
+            <!--              <el-option v-for="option in machineOptions" :key="option.value" :label="option.label"-->
+            <!--                         :value="option.value"/>-->
+            <!--            </el-select>-->
+            <el-form-item>
+              <!--              <el-button type="primary" class="button-style" @click="testlink">测试连接</el-button>-->
+            </el-form-item>
+          </el-form-item>
+
+          <el-form-item label="测试机器密码：">
+            <el-input v-model="formData.testPassword" placeholder="因为还没有做设备管理，所以先让用户手动输入密码"/>
+            <!--            <el-select v-model="testIP" placeholder="请选择测试机器IP">-->
+            <!--              <el-option v-for="option in machineOptions" :key="option.value" :label="option.label"-->
+            <!--                         :value="option.value"/>-->
+            <!--            </el-select>-->
+            <!--            <el-form-item>-->
             <!--              <el-button type="primary" class="button-style" @click="testlink">测试连接</el-button>-->
+            <!--            </el-form-item>-->
           </el-form-item>
-        </el-form-item>
-
-        <el-form-item label="测试机器密码：">
-          <el-input v-model="formData.testPassword" placeholder="因为还没有做设备管理，所以先让用户手动输入密码"/>
-          <!--            <el-select v-model="testIP" placeholder="请选择测试机器IP">-->
-          <!--              <el-option v-for="option in machineOptions" :key="option.value" :label="option.label"-->
-          <!--                         :value="option.value"/>-->
-          <!--            </el-select>-->
-          <!--            <el-form-item>-->
-          <!--              <el-button type="primary" class="button-style" @click="testlink">测试连接</el-button>-->
-          <!--            </el-form-item>-->
-        </el-form-item>
-        <el-form-item label="描述：">
-          <el-input v-model="formData.message"/>
-        </el-form-item>
-      </el-form>
-      <div class="button-container">
-        <el-button type="warning" class="button-style" plain @click="select">选择配置</el-button>
-        <el-button type="primary" class="button-style" plain @click="update">更新配置</el-button>
-        <el-button type="primary" class="button-style" plain @click="add">新增配置</el-button>
-        <el-button type="success" class="button-style" plain @click="sendTest">发起测试</el-button>
+          <el-form-item label="描述：">
+            <el-input v-model="formData.message"/>
+          </el-form-item>
+        </el-form>
+        <div class="button-container">
+          <el-button type="warning" class="button-style" plain @click="select">选择配置</el-button>
+          <el-button type="primary" class="button-style" plain @click="update">更新配置</el-button>
+          <el-button type="primary" class="button-style" plain @click="add">新增配置</el-button>
+          <el-button type="success" class="button-style" plain @click="sendTest">发起测试</el-button>
+        </div>
       </div>
-    </div>
   </div>
   <div>
     <el-dialog :title="'修改' + yamlType +'信息'" v-model="yamlDialog" width="800px">
@@ -133,11 +130,10 @@ export default {
   name: 'doTest',
   data() {
     return {
-      labelPosition: ref('center'),
+      labelPosition: ref('right'),
       formData: {
         configName: '',
         projectName: '',
-        userPassword: '',
         yamlData: baseYamlData,
         testIP: '',
         testPassword: '',
@@ -164,7 +160,6 @@ export default {
       rules: {
         configName: [{required: true, message: 'configName不能为空', trigger: 'blur'}],
         projectName: [{required: true, message: 'projectName不能为空', trigger: 'blur'}],
-        userPassword: [{required: true, message: 'userPassword不能为空', trigger: 'blur'}],
         yamlData: [{required: true, message: 'yamlData不能为空', trigger: 'blur'}],
       },
     };
@@ -209,7 +204,6 @@ export default {
         this.configID = config.id
         this.formData.configName = config.config_name
         this.formData.projectName = config.project_name
-        this.formData.userPassword = config.user_password
         this.formData.iterations.stream = config.stream_number
         this.formData.iterations.lmbench = config.lmbench_number
         this.formData.iterations.unixbench = config.unixbench_number
@@ -254,7 +248,6 @@ export default {
       this.configID = this.configData.id
       this.formData.configName = this.configData.config_name
       this.formData.projectName = this.configData.project_name
-      this.formData.userPassword = this.configData.user_password
       this.formData.iterations.stream = this.configData.stream_number
       this.formData.iterations.lmbench = this.configData.lmbench_number
       this.formData.iterations.unixbench = this.configData.unixbench_number
@@ -286,7 +279,6 @@ export default {
             project_name: this.formData.projectName,
             test_ip: this.formData.testIP,
             test_password: this.formData.testPassword,
-            user_password: this.formData.userPassword,
             stream: this.formData.iterations.stream,
             lmbench: this.formData.iterations.lmbench,
             unixbench: this.formData.iterations.unixbench,
@@ -312,7 +304,6 @@ export default {
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
           test_password: this.formData.testPassword,
-          user_password: this.formData.userPassword,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
           unixbench: this.formData.iterations.unixbench,
@@ -337,7 +328,6 @@ export default {
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
           test_password: this.formData.testPassword,
-          user_password: this.formData.userPassword,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
           unixbench: this.formData.iterations.unixbench,
@@ -355,7 +345,6 @@ export default {
           this.formData.projectName = ''
           this.formData.testIP = ''
           this.formData.testPassword = ''
-          this.formData.userPassword = ''
           this.formData.iterations.stream = ''
           this.formData.iterations.lmbench = ''
           this.formData.iterations.unixbench = ''
@@ -374,10 +363,6 @@ export default {
     check() {
       if (!this.formData.projectName) {
         ElMessage({message: "项目名称不能为空", type: 'error'});
-        return false;
-      }
-      if (!this.formData.userPassword) {
-        ElMessage({message: "kytuning用户密码不能为空", type: 'error'});
         return false;
       }
       const iterations = {

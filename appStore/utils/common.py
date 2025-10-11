@@ -123,14 +123,14 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
     :return:
     """
     # 下载run_kytuning代码
-    wget_command = f'sshpass -p {test_password} ssh {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip http://localhost:9000/tools/run_kytuning-ffdev.zip;unzip /root/run_kytuning-ffdev.zip -d /root/;rm -rf /root/run_kytuning-ffdev/conf/user.cfg;rm -rf /root/run_kytuning-ffdev/yaml-base/"'
+    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip http://localhost:9000/tools/run_kytuning-ffdev.zip;unzip /root/run_kytuning-ffdev.zip -d /root/;rm -rf /root/run_kytuning-ffdev/conf/user.cfg;rm -rf /root/run_kytuning-ffdev/yaml-base/"'
     wget_result = subprocess.run(wget_command, shell=True)
     if wget_result.returncode:
         wget_result.stderr = "测试端下载run_kytuning代码出错,请检查账号、密码是否正确，网络是否可用"
         return wget_result
 
     # # 复制配置文件conf文件和yaml文件
-    scp_command = f'sshpass -p {test_password} scp -o StrictHostKeyChecking=no -r {user_config_path}/conf {user_config_path}/yaml-base {test_username}@{test_ip}:/root/run_kytuning-ffdev/'
+    scp_command = f'sshpass -p {test_password} scp -r {user_config_path}/conf {user_config_path}/yaml-base {test_username}@{test_ip}:/root/run_kytuning-ffdev/'
     scp_result = subprocess.run(scp_command, shell=True)
 
     if scp_result.returncode:

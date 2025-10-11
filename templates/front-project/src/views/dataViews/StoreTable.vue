@@ -18,7 +18,7 @@
 
     <el-table :data="showData" tooltip-effect="dark"
               border style="width: 100%" :header-cell-style="{fontSize:'5px'}" class="tableHead">
-      <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name"
+      <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150"
                        :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
@@ -30,29 +30,29 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.user_name }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="os_version" label="系统版本" width="250" :filters=osNames
+      <el-table-column prop="os_version" label="系统版本" width="245" :filters=osNames
                        :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.os_version }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="cpu_module_name" label="cpu型号" width="200" :filters=cpuNames
+      <el-table-column prop="cpu_module_name" label="cpu型号" width="195" :filters=cpuNames
                        :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu_module_name }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="times" label="第几次" width="70">
+      <el-table-column prop="times" label="第几次" width="65">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.times }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="ip" label="ip" width="125">
+      <el-table-column prop="ip" label="ip" width="130">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.ip }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="store_data" label="是否入库" width="70">
+      <el-table-column prop="store_data" label="是否入库" width="75">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.store_data }}</div>
         </template>
@@ -72,7 +72,7 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.unixbench }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="fio" label="fio" width="40">
+      <el-table-column prop="fio" label="fio" width="45">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.fio }}</div>
         </template>
@@ -97,7 +97,7 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2017 }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="test_time" sortable label="录入时间" width="100">
+      <el-table-column prop="test_time" sortable label="录入时间" width="105">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.test_time }}</div>
         </template>
@@ -107,8 +107,9 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.message }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" width="240">
+      <el-table-column label="操作" fixed="right" width="190">
         <template #default="scope">
+          <el-button type="success" @click="addStore(scope.row)" class="operate-button">入库</el-button>
           <el-button type="primary" @click="addCompar(scope.row)" class="operate-button">对比</el-button>
           <el-button type="warning" @click="edit(scope.row)" class="operate-button">修改</el-button>
           <el-button type="danger" @click="del(scope.row)" class="operate-button">删除</el-button>

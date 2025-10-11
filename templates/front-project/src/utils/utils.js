@@ -20,6 +20,11 @@ export default {
     computed: {
         //分页展示当前页面
         showData() {
+            // 检查是否有数据，如果没有则返回空数组
+            if (!Array.isArray(this.allDatas) || this.allDatas.length === 0) {
+                return [];
+            }
+            // 使用切片操作分页展示数据
             return this.allDatas.slice(
                 (this.currentPage - 1) * this.pageSize,
                 this.currentPage * this.pageSize
