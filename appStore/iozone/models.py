@@ -6,7 +6,6 @@
  * Date: Thu Feb 29 16:18:43 2024 +0800
 """
 from django.db import models
-import django.utils.timezone as timezone
 
 
 # Create your models here.

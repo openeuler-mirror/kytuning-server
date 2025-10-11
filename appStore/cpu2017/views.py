@@ -791,9 +791,9 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
                             data_cpu2017['fp_549_fotonik3d_r'] = value[key1]['549.fotonik3d_r']
                             data_cpu2017['fp_554_roms_r'] = value[key1]['554.roms_r']
                             data_cpu2017['fp_PECrate2017_fp'] = value[key1]['SPECrate2017_fp']
-                            serializer_cpu2017 = Cpu2017Serializer(data=data_cpu2017)
                             data_cpu2017 = {key: value if not isinstance(value, str) or value != '' else None for
                                             key, value in data_cpu2017.items()}
+                            serializer_cpu2017 = Cpu2017Serializer(data=data_cpu2017)
                             if serializer_cpu2017.is_valid():
                                 self.perform_create(serializer_cpu2017)
                             else:
