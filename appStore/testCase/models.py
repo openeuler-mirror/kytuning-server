@@ -26,7 +26,7 @@ class TestCase(models.Model):
     cpu2006 = models.IntegerField(default=0, verbose_name='几组cpu2006数据')
     cpu2017 = models.IntegerField(default=0, verbose_name='几组cpu2017数据')
     user_name = models.CharField(max_length=255, verbose_name='测试人员')
-    test_result = models.CharField(max_length=500, verbose_name='测试结果反馈', null=True, blank=True)  # 如果有多项也是拼接
+    test_result = models.TextField(verbose_name='测试结果反馈', null=True, blank=True)  # 如果有多项也是拼接
     result_log_name = models.CharField(max_length=255, verbose_name='日志文件路径的base部分')
     is_error = models.BooleanField(default=False,verbose_name="是否是错误列表所需要的")
 

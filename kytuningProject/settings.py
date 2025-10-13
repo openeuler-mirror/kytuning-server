@@ -22,6 +22,8 @@ import datetime
 import logging
 from pathlib import Path
 
+from appStore.utils.constants import LOGGING_DIR
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -233,9 +235,9 @@ JWT_AUTH = {
 #      日志           #
 ######################
 # LOGGING_DIR 日志文件存放目录
-LOGGING_DIR = "/opt/kytuning/logs"  # 日志存放路径
+
 if not os.path.exists(LOGGING_DIR):
-    os.mkdir(LOGGING_DIR)
+    os.makedirs(LOGGING_DIR, exist_ok=True)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
