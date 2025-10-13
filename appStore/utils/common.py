@@ -134,14 +134,14 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
         return wget_result
 
     # 下载run_kytuning代码
-    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %s"'%(TOOLS_URL)
+    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"'%(TOOLS_URL)
     wget_result = subprocess.run(wget_command, shell=True)
     if wget_result.returncode:
         wget_result.stderr = "测试端下载run_kytuning代码出错,请检查账号、密码是否正确，网络是否可用\n请在其它机器中测试：\"" + wget_command
         return wget_result
 
     # 解压
-    unzip_command = f'sshpass -p {test_password} ssh {test_username}@{test_ip} "unzip /root/run_kytuning-ffdev.zip -d /root/;rm -rf /root/run_kytuning-ffdev/conf/user.cfg;rm -rf /root/run_kytuning-ffdev/yaml-base/"'
+    unzip_command = f'sshpass -p {test_password} ssh {test_username}@{test_ip} "unzip /root/run_kytuning-ffdev.zip -d /root/;rm -rf /root/run_kytuning-ffdev/conf/kytuning.cfg;rm -rf /root/run_kytuning-ffdev/yaml-base/"'
     unzip_result = subprocess.run(unzip_command, shell=True)
     if unzip_result.returncode:
         unzip_result.stderr = "unzip解压失败，请查看是否有unzip命令，以及run_kytuning-ffdev.zip是否下载成功"

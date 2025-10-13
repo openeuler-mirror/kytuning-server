@@ -89,18 +89,18 @@ class LmbenchViewSet(viewsets.ModelViewSet):
                 datas[46]['column' + str(column_index)] = serializer.data[0]['local_Pipe']
                 datas[47]['column' + str(column_index)] = serializer.data[0]['local_AF_UNIX']
                 datas[48]['column' + str(column_index)] = serializer.data[0]['local_UDP']
-                datas[49]['column' + str(column_index)] = serializer.data[0]['local_TCP']
-                datas[50]['column' + str(column_index)] = serializer.data[0]['local_TCP_conn']
+                datas[49]['column' + str(column_index)] = serializer.data[0]['local_RPC_UDP']
+                datas[50]['column' + str(column_index)] = serializer.data[0]['local_TCP']
                 datas[51]['column' + str(column_index)] = serializer.data[0]['local_RPC_TCP']
-                datas[52]['column' + str(column_index)] = serializer.data[0]['local_RPC_UDP']
-                datas[53]['column' + str(column_index)] = serializer.data[0]['local_bigger_Mmap_Latency']
-                datas[54]['column' + str(column_index)] = serializer.data[0]['local_bigger_Prot_Fault']
-                datas[55]['column' + str(column_index)] = serializer.data[0]['local_bigger_Page_Fault']
-                datas[56]['column' + str(column_index)] = serializer.data[0]['local_bigger_100fd_selct']
-                datas[57]['column' + str(column_index)] = serializer.data[0]['local_bigger_0K_File_create']
-                datas[58]['column' + str(column_index)] = serializer.data[0]['local_bigger_0K_File_delete']
-                datas[59]['column' + str(column_index)] = serializer.data[0]['local_bigger_10K_File_create']
-                datas[60]['column' + str(column_index)] = serializer.data[0]['local_bigger_10K_File_delete']
+                datas[52]['column' + str(column_index)] = serializer.data[0]['local_TCP_conn']
+                datas[53]['column' + str(column_index)] = serializer.data[0]['file_and_system_0K_File_create']
+                datas[54]['column' + str(column_index)] = serializer.data[0]['file_and_system_0K_File_delete']
+                datas[55]['column' + str(column_index)] = serializer.data[0]['file_and_system_10K_File_create']
+                datas[56]['column' + str(column_index)] = serializer.data[0]['file_and_system_10K_File_delete']
+                datas[57]['column' + str(column_index)] = serializer.data[0]['file_and_system_Mmap_Latency']
+                datas[58]['column' + str(column_index)] = serializer.data[0]['file_and_system_Prot_Fault']
+                datas[59]['column' + str(column_index)] = serializer.data[0]['file_and_system_Page_Fault']
+                datas[60]['column' + str(column_index)] = serializer.data[0]['file_and_system_100fd_selct']
                 datas[61]['column' + str(column_index)] = serializer.data[0]['local_bigger_Pipe']
                 datas[62]['column' + str(column_index)] = serializer.data[0]['local_bigger_AF_UNIX']
                 datas[63]['column' + str(column_index)] = serializer.data[0]['local_bigger_TCP']
@@ -177,14 +177,14 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             local_TCP_conn_list = [d.local_TCP_conn for d in serializer_ if d.local_TCP_conn is not None]
             local_RPC_TCP_list = [d.local_RPC_TCP for d in serializer_ if d.local_RPC_TCP is not None]
             local_RPC_UDP_list = [d.local_RPC_UDP for d in serializer_ if d.local_RPC_UDP is not None]
-            local_bigger_Mmap_Latency_list = [d.local_bigger_Mmap_Latency for d in serializer_ if d.local_bigger_Mmap_Latency is not None]
-            local_bigger_Prot_Fault_list = [d.local_bigger_Prot_Fault for d in serializer_ if d.local_bigger_Prot_Fault is not None]
-            local_bigger_Page_Fault_list = [d.local_bigger_Page_Fault for d in serializer_ if d.local_bigger_Page_Fault is not None]
-            local_bigger_100fd_selct_list = [d.local_bigger_100fd_selct for d in serializer_ if d.local_bigger_100fd_selct is not None]
-            local_bigger_0K_File_create_list = [d.local_bigger_0K_File_create for d in serializer_ if d.local_bigger_0K_File_create is not None]
-            local_bigger_0K_File_delete_list = [d.local_bigger_0K_File_delete for d in serializer_ if d.local_bigger_0K_File_delete is not None]
-            local_bigger_10K_File_create_list = [d.local_bigger_10K_File_create for d in serializer_ if d.local_bigger_10K_File_create is not None]
-            local_bigger_10K_File_delete_list = [d.local_bigger_10K_File_delete for d in serializer_ if d.local_bigger_10K_File_delete is not None]
+            file_and_system_Mmap_Latency_list = [d.file_and_system_Mmap_Latency for d in serializer_ if d.file_and_system_Mmap_Latency is not None]
+            file_and_system_Prot_Fault_list = [d.file_and_system_Prot_Fault for d in serializer_ if d.file_and_system_Prot_Fault is not None]
+            file_and_system_Page_Fault_list = [d.file_and_system_Page_Fault for d in serializer_ if d.file_and_system_Page_Fault is not None]
+            file_and_system_100fd_selct_list = [d.file_and_system_100fd_selct for d in serializer_ if d.file_and_system_100fd_selct is not None]
+            file_and_system_0K_File_create_list = [d.file_and_system_0K_File_create for d in serializer_ if d.file_and_system_0K_File_create is not None]
+            file_and_system_0K_File_delete_list = [d.file_and_system_0K_File_delete for d in serializer_ if d.file_and_system_0K_File_delete is not None]
+            file_and_system_10K_File_create_list = [d.file_and_system_10K_File_create for d in serializer_ if d.file_and_system_10K_File_create is not None]
+            file_and_system_10K_File_delete_list = [d.file_and_system_10K_File_delete for d in serializer_ if d.file_and_system_10K_File_delete is not None]
             local_bigger_Pipe_list = [d.local_bigger_Pipe for d in serializer_ if d.local_bigger_Pipe is not None]
             local_bigger_AF_UNIX_list = [d.local_bigger_AF_UNIX for d in serializer_ if d.local_bigger_AF_UNIX is not None]
             local_bigger_TCP_list = [d.local_bigger_TCP for d in serializer_ if d.local_bigger_TCP is not None]
@@ -249,14 +249,14 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             average_local_TCP_conn = np.mean(local_TCP_conn_list).round(2) if not np.isnan(np.mean(local_TCP_conn_list)) else None
             average_local_RPC_TCP = np.mean(local_RPC_TCP_list).round(2) if not np.isnan(np.mean(local_RPC_TCP_list)) else None
             average_local_RPC_UDP = np.mean(local_RPC_UDP_list).round(2) if not np.isnan(np.mean(local_RPC_UDP_list)) else None
-            average_local_bigger_Mmap_Latency = np.mean(local_bigger_Mmap_Latency_list).round(2) if not np.isnan(np.mean(local_bigger_Mmap_Latency_list)) else None
-            average_local_bigger_Prot_Fault = np.mean(local_bigger_Prot_Fault_list).round(2) if not np.isnan(np.mean(local_bigger_Prot_Fault_list)) else None
-            average_local_bigger_Page_Fault = np.mean(local_bigger_Page_Fault_list).round(2) if not np.isnan(np.mean(local_bigger_Page_Fault_list)) else None
-            average_local_bigger_100fd_selct = np.mean(local_bigger_100fd_selct_list).round(2) if not np.isnan(np.mean(local_bigger_100fd_selct_list)) else None
-            average_local_bigger_0K_File_create = np.mean(local_bigger_0K_File_create_list).round(2) if not np.isnan(np.mean(local_bigger_0K_File_create_list)) else None
-            average_local_bigger_0K_File_delete = np.mean(local_bigger_0K_File_delete_list).round(2) if not np.isnan(np.mean(local_bigger_0K_File_delete_list)) else None
-            average_local_bigger_10K_File_create = np.mean(local_bigger_10K_File_create_list).round(2) if not np.isnan(np.mean(local_bigger_10K_File_create_list)) else None
-            average_local_bigger_10K_File_delete = np.mean(local_bigger_10K_File_delete_list).round(2) if not np.isnan(np.mean(local_bigger_10K_File_delete_list)) else None
+            average_file_and_system_Mmap_Latency = np.mean(file_and_system_Mmap_Latency_list).round(2) if not np.isnan(np.mean(file_and_system_Mmap_Latency_list)) else None
+            average_file_and_system_Prot_Fault = np.mean(file_and_system_Prot_Fault_list).round(2) if not np.isnan(np.mean(file_and_system_Prot_Fault_list)) else None
+            average_file_and_system_Page_Fault = np.mean(file_and_system_Page_Fault_list).round(2) if not np.isnan(np.mean(file_and_system_Page_Fault_list)) else None
+            average_file_and_system_100fd_selct = np.mean(file_and_system_100fd_selct_list).round(2) if not np.isnan(np.mean(file_and_system_100fd_selct_list)) else None
+            average_file_and_system_0K_File_create = np.mean(file_and_system_0K_File_create_list).round(2) if not np.isnan(np.mean(file_and_system_0K_File_create_list)) else None
+            average_file_and_system_0K_File_delete = np.mean(file_and_system_0K_File_delete_list).round(2) if not np.isnan(np.mean(file_and_system_0K_File_delete_list)) else None
+            average_file_and_system_10K_File_create = np.mean(file_and_system_10K_File_create_list).round(2) if not np.isnan(np.mean(file_and_system_10K_File_create_list)) else None
+            average_file_and_system_10K_File_delete = np.mean(file_and_system_10K_File_delete_list).round(2) if not np.isnan(np.mean(file_and_system_10K_File_delete_list)) else None
             average_local_bigger_Pipe = np.mean(local_bigger_Pipe_list).round(2) if not np.isnan(np.mean(local_bigger_Pipe_list)) else None
             average_local_bigger_AF_UNIX = np.mean(local_bigger_AF_UNIX_list).round(2) if not np.isnan(np.mean(local_bigger_AF_UNIX_list)) else None
             average_local_bigger_TCP = np.mean(local_bigger_TCP_list).round(2) if not np.isnan(np.mean(local_bigger_TCP_list)) else None
@@ -326,14 +326,14 @@ class LmbenchViewSet(viewsets.ModelViewSet):
                 datas[50]['column' + str(column_index)] = data.local_TCP_conn
                 datas[51]['column' + str(column_index)] = data.local_RPC_TCP
                 datas[52]['column' + str(column_index)] = data.local_RPC_UDP
-                datas[53]['column' + str(column_index)] = data.local_bigger_Mmap_Latency
-                datas[54]['column' + str(column_index)] = data.local_bigger_Prot_Fault
-                datas[55]['column' + str(column_index)] = data.local_bigger_Page_Fault
-                datas[56]['column' + str(column_index)] = data.local_bigger_100fd_selct
-                datas[57]['column' + str(column_index)] = data.local_bigger_0K_File_create
-                datas[58]['column' + str(column_index)] = data.local_bigger_0K_File_delete
-                datas[59]['column' + str(column_index)] = data.local_bigger_10K_File_create
-                datas[60]['column' + str(column_index)] = data.local_bigger_10K_File_delete
+                datas[53]['column' + str(column_index)] = data.file_and_system_Mmap_Latency
+                datas[54]['column' + str(column_index)] = data.file_and_system_Prot_Fault
+                datas[55]['column' + str(column_index)] = data.file_and_system_Page_Fault
+                datas[56]['column' + str(column_index)] = data.file_and_system_100fd_selct
+                datas[57]['column' + str(column_index)] = data.file_and_system_0K_File_create
+                datas[58]['column' + str(column_index)] = data.file_and_system_0K_File_delete
+                datas[59]['column' + str(column_index)] = data.file_and_system_10K_File_create
+                datas[60]['column' + str(column_index)] = data.file_and_system_10K_File_delete
                 datas[61]['column' + str(column_index)] = data.local_bigger_Pipe
                 datas[62]['column' + str(column_index)] = data.local_bigger_AF_UNIX
                 datas[63]['column' + str(column_index)] = data.local_bigger_TCP
@@ -405,14 +405,14 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             datas[50]['column' + str(column_index)] = average_local_TCP_conn
             datas[51]['column' + str(column_index)] = average_local_RPC_TCP
             datas[52]['column' + str(column_index)] = average_local_RPC_UDP
-            datas[53]['column' + str(column_index)] = average_local_bigger_Mmap_Latency
-            datas[54]['column' + str(column_index)] = average_local_bigger_Prot_Fault
-            datas[55]['column' + str(column_index)] = average_local_bigger_Page_Fault
-            datas[56]['column' + str(column_index)] = average_local_bigger_100fd_selct
-            datas[57]['column' + str(column_index)] = average_local_bigger_0K_File_create
-            datas[58]['column' + str(column_index)] = average_local_bigger_0K_File_delete
-            datas[59]['column' + str(column_index)] = average_local_bigger_10K_File_create
-            datas[60]['column' + str(column_index)] = average_local_bigger_10K_File_delete
+            datas[57]['column' + str(column_index)] = average_file_and_system_0K_File_create
+            datas[58]['column' + str(column_index)] = average_file_and_system_0K_File_delete
+            datas[59]['column' + str(column_index)] = average_file_and_system_10K_File_create
+            datas[60]['column' + str(column_index)] = average_file_and_system_10K_File_delete
+            datas[53]['column' + str(column_index)] = average_file_and_system_Mmap_Latency
+            datas[54]['column' + str(column_index)] = average_file_and_system_Prot_Fault
+            datas[55]['column' + str(column_index)] = average_file_and_system_Page_Fault
+            datas[56]['column' + str(column_index)] = average_file_and_system_100fd_selct
             datas[61]['column' + str(column_index)] = average_local_bigger_Pipe
             datas[62]['column' + str(column_index)] = average_local_bigger_AF_UNIX
             datas[63]['column' + str(column_index)] = average_local_bigger_TCP
@@ -519,10 +519,10 @@ class LmbenchViewSet(viewsets.ModelViewSet):
         {'column1':'*Local* Communication latencies','column2':'Pipe'},
         {'column1':'*Local* Communication latencies','column2':'AF UNIX'},
         {'column1':'*Local* Communication latencies','column2':'UDP'},
+        {'column1': '*Local* Communication latencies', 'column2': 'RPC/UDP'},
         {'column1':'*Local* Communication latencies','column2':'TCP'},
-        {'column1':'*Local* Communication latencies','column2':'TCP conn'},
         {'column1':'*Local* Communication latencies','column2':'RPC/TCP'},
-        {'column1':'*Local* Communication latencies','column2':'RPC/UDP'},
+        {'column1': '*Local* Communication latencies', 'column2': 'TCP conn'},
         {'column1':'File & VM system latencies in microseconds','column2':'0K File create'},
         {'column1':'File & VM system latencies in microseconds','column2':'0K File delete'},
         {'column1':'File & VM system latencies in microseconds','column2':'10K File create'},
@@ -633,14 +633,14 @@ class LmbenchViewSet(viewsets.ModelViewSet):
                     lmbench['local_RPC_TCP'] = value['RPC/TCP']
                     lmbench['local_RPC_UDP'] = value['RPC/UDP']
                 elif key == "File & VM system latencies in microseconds":
-                    lmbench['local_bigger_0K_File_create'] = value['0K File create']
-                    lmbench['local_bigger_0K_File_delete'] = value['0K File delete']
-                    lmbench['local_bigger_10K_File_create'] = value['10K File create']
-                    lmbench['local_bigger_10K_File_delete'] = value['10K File delete']
-                    lmbench['local_bigger_Mmap_Latency'] = value['Mmap Latency']
-                    lmbench['local_bigger_Prot_Fault'] = value['Prot Fault']
-                    lmbench['local_bigger_Page_Fault'] = value['Page Fault']
-                    lmbench['local_bigger_100fd_selct'] = value['100fd selct']
+                    lmbench['file_and_system_0K_File_create'] = value['0K File create']
+                    lmbench['file_and_system_0K_File_delete'] = value['0K File delete']
+                    lmbench['file_and_system_10K_File_create'] = value['10K File create']
+                    lmbench['file_and_system_10K_File_delete'] = value['10K File delete']
+                    lmbench['file_and_system_Mmap_Latency'] = value['Mmap Latency']
+                    lmbench['file_and_system_Prot_Fault'] = value['Prot Fault']
+                    lmbench['file_and_system_Page_Fault'] = value['Page Fault']
+                    lmbench['file_and_system_100fd_selct'] = value['100fd selct']
                 elif key == "*Local* Communication bandwidths in MB/s - bigger is better":
                     lmbench['local_bigger_Pipe'] = value['Pipe']
                     lmbench['local_bigger_AF_UNIX'] = value['AF UNIX']

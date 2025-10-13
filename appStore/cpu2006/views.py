@@ -73,7 +73,7 @@ class Cpu2006ViewSet(viewsets.ModelViewSet):
                             datas[31]['column' + str(column_index)] = data['fp_470_lbm']
                             datas[32]['column' + str(column_index)] = data['fp_481_wrf']
                             datas[33]['column' + str(column_index)] = data['fp_482_sphinx3']
-                            datas[24]['column' + str(column_index)] = data['fp_SPECfp_2006']
+                            datas[34]['column' + str(column_index)] = data['fp_SPECfp_2006']
                     elif data['thread'] == '多线程':
                         if data['dtype'] == 'int':
                             datas[35]['column' + str(column_index)] = data['int_400_perlbench']

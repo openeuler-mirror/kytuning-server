@@ -16,7 +16,7 @@ from django.http import HttpResponse, FileResponse, HttpRequest
 from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
 from appStore.utils.common import test_case, json_response, get_error_message
-from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP
+from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL
 from rest_framework import status, viewsets
 
 
@@ -85,10 +85,12 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             os.makedirs(os.path.join(user_config_path, "conf"))
             os.makedirs(os.path.join(user_config_path, "yaml-base"))
 
-        # 修改 conf/user.cfg文件
-        with open(user_config_path + '/conf/user.cfg', 'w') as configfile:
+        # 修改 conf/kytuning.cfg文件
+        with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
+            configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
             configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
             configfile.write('project_name={}\n'.format(data_test_case['project_name']))
+            configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
             configfile.write('upload=true\n')
             configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
 

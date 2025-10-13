@@ -19,3 +19,4 @@ EXCEL_TEMP = '/opt/kytuning/excel_temp/'
 
 # 测试项目对应的tools包网址
 TOOLS_URL = 'http://localhost:9000/tools/run_kytuning-ffdev-94.zip'
+kytuning_web_url='https://localhost'
