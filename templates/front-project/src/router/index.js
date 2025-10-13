@@ -16,10 +16,17 @@ const routes = [
         component: () => import('@/components/kytuningLogin'),
     },
     {
-        path: '/test1',
+        path: '/machine/list',
         name: '设备管理',
         iconClass: 'fa fa-users',
         component: () => import('@/components/KytuningHome'),
+        children: [
+            {
+                name: '设备中心',
+                path: '/machine/list',
+                component: () => import('@/views/machineViews/MachineList'),
+                children: []
+            },]
     },
     {
         path: '/test/list',
@@ -38,11 +45,11 @@ const routes = [
                 component: () => import('@/views/testViews/DoTest'),
                 // props:true  // 如果props设置为true，$route.params将被设置为组件属性记对象
             },
-            {
-                path: '/test/do_test_yaml',
-                name: '发起测试-yaml',
-                component: () => import('@/views/testViews/DoTest-yaml'),
-            },
+            // {
+            //     path: '/test/do_test_yaml',
+            //     name: '发起测试-yaml',
+            //     component: () => import('@/views/testViews/DoTest-yaml'),
+            // },
             {
                 path: '/test/config',
                 name: '配置管理',

@@ -60,7 +60,7 @@ export default {
           setToken('username', res.data.username)
           setToken('token', 'Bearer ' + res.data.token)
           this.$message({message: '登录成功', type: 'success'})
-          this.$router.push('/test/list')
+          this.$router.push('/tempData')
         }
       }).catch(error => {
     // 捕获错误
