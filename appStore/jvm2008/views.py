@@ -293,7 +293,7 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
         for k, jvm2008_json in request.__dict__['data_jvm2008'].items():
             if k.lower().startswith('specjvm'):
                 data_jvm2008 = {}
-                tune_type = k.split('-')[-3]
+                tune_type = k.split('-')[2]
                 data_jvm2008['env_id'] = request.__dict__['data_jvm2008']['env_id']
                 data_jvm2008['tune_type'] = tune_type
                 data_jvm2008['execute_cmd'] = jvm2008_json.get('execute_cmd')

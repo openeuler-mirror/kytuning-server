@@ -394,9 +394,9 @@ class UnixbenchViewSet(viewsets.ModelViewSet):
             if k.lower().startswith('unixbench'):
                 data_unixbench['env_id'] = request.__dict__['data_unixbench']['env_id']
                 thread = ""
-                if k.split('-')[-3] == 'single':
+                if k.split('-')[2] == 'single':
                     thread = "单线程"
-                elif k.split('-')[-3] == 'multi':
+                elif k.split('-')[2] == 'multi':
                     thread = "多线程"
                 data_unixbench['thread'] = thread
                 data_unixbench['execute_cmd'] = unixbench_json.get('execute_cmd')

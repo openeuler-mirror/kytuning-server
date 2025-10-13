@@ -39,6 +39,11 @@ const routes = [
                 // props:true  // 如果props设置为true，$route.params将被设置为组件属性记对象
             },
             {
+                path: '/test/do_test_yaml',
+                name: '发起测试-yaml',
+                component: () => import('@/views/testViews/DoTest-yaml'),
+            },
+            {
                 path: '/test/config',
                 name: '配置管理',
                 component: () => import('@/views/testViews/ConfigList')
@@ -54,12 +59,12 @@ const routes = [
             {
                 path: '/tempData',
                 name: '临时数据',
-                component: () => import('@/views/dataViews/TempTable'),
+                component: () => import('@/views/dataViews/StoreTable.vue'),
             },
             {
                 path: '/storeData',
                 name: '项目数据',
-                component: () => import('@/views/dataViews/TempTable'),
+                component: () => import('@/views/dataViews/StoreTable.vue'),
             },
         ]
     },

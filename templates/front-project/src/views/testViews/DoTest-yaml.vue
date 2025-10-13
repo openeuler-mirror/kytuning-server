@@ -81,90 +81,7 @@
           <el-form-item label="描述：">
             <el-input v-model="formData.message"/>
           </el-form-item>
-
-          <el-form-item label="lmbench-yaml配置文件：">
-            <el-form-item label="project">
-              <el-input v-model="formData.iterations.stream"/>
-            </el-form-item>
-            <el-form-item label="test_type">
-              <el-input v-model="formData.iterations.lmbench"/>
-            </el-form-item>
-            <el-form-item label="log_file">
-              <el-input v-model="formData.iterations.unixbench"/>
-            </el-form-item>
-            <el-form-item label="log_level">
-              <el-input v-model="formData.iterations.fio"/>
-            </el-form-item>
-            <el-form-item label="tool_tgz">
-              <el-input v-model="formData.iterations.iozone"/>
-            </el-form-item>
-            <el-form-item label="tool_dir">
-              <el-input v-model="formData.iterations.jvm2008"/>
-            </el-form-item>
-            <el-form-item label="tool_decompression">
-              <el-input v-model="formData.iterations.cpu2006"/>
-            </el-form-item>
-            <el-form-item label="maxiterations">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="rpm_list">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="configs-name">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="configs-desc">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="configs-get">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="configs-set">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="configs-value">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-clean">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-build">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-run">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-schemeflag">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-configs-name">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-configs-desc">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-configs-get">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-configs-set">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-configs-type">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-configs-values">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-            <el-form-item label="testcase-configs-items">
-              <el-input v-model="formData.iterations.cpu2017"/>
-            </el-form-item>
-
-
-
-
-          </el-form-item>
         </el-form>
-
         <div class="button-container">
           <el-button type="warning" class="button-style" plain @click="select">选择配置</el-button>
           <el-button type="primary" class="button-style" plain @click="update">更新配置</el-button>
@@ -174,16 +91,71 @@
       </div>
   </div>
   <div>
-    <el-dialog :title="'修改' + yamlType +'信息'" v-model="yamlDialog" width="800px">
-      <el-input v-model="formData.yamlData[yamlType]" :autosize="{ minRows: 4, maxRows: 25 }" type="textarea"
-                placeholder="Please input"/>
+    <el-dialog :title="'修改' + yamlType +'信息'" v-model="streamYamlDialog" width="800px">
+      <div class="yaml-form-container">
+        <el-form :label-position="yamllabelPosition" label-width="300px" :model="formData" ref="dataForm" :rules="rules">
+          <el-form-item label="project：">
+            <el-input v-model="streamFormData.project"/>
+          </el-form-item>
+          <el-form-item label="test_type：">
+            <el-input v-model="streamFormData.test_type"/>
+          </el-form-item>
+          <el-form-item label="log_level：">
+            <el-input v-model="streamFormData.log_level"/>
+          </el-form-item>
+          <el-form-item label="tool_tgz：">
+            <el-input v-model="streamFormData.tool_tgz"/>
+          </el-form-item>
+          <el-form-item label="tool_dir：">
+            <el-input v-model="streamFormData.tool_dir"/>
+          </el-form-item>
+          <el-form-item label="tool_decompression：">
+            <el-input v-model="streamFormData.tool_decompression" autosize="{ minRows: 4, maxRows: 25 }" type="textarea"/>
+          </el-form-item>
+          <el-form-item label="maxiterations：">
+            <el-input v-model="streamFormData.maxiterations" placeholder="迭代次数"/>
+          </el-form-item>
+          <el-form-item label="rpm_list：">
+            <el-input v-model="streamFormData.rpm_list" placeholder="如果有多组，用逗号隔开"/>
+          </el-form-item>
+          <el-form-item label="configs：">
+            <el-input v-model="streamConfigs" autosize="{ minRows: 4, maxRows: 25 }" type="textarea"/>
+          </el-form-item>
+          <el-form-item label="新建configs模板：">
+            <el-button @click="addbaseConfigs">新建默认模板</el-button>
+          </el-form-item>
+
+            <span style="font-weight: bold;">testcase：</span>
+            <el-form-item label="clean：" style="padding-left: 20px;">
+              <el-input v-model="streamFormData.testcase.clean" autosize="{ minRows: 4, maxRows: 25 }" type="textarea"/>
+            </el-form-item>
+            <el-form-item label="build：" style="padding-left: 20px;">
+              <el-input v-model="streamFormData.testcase.build" autosize="{ minRows: 4, maxRows: 25 }" type="textarea"/>
+
+            </el-form-item>
+            <el-form-item label="run：" style="padding-left: 20px;">
+                <el-input v-model="streamTestcaserun" autosize="{ minRows: 4, maxRows: 25 }" type="textarea"/>
+            </el-form-item>
+            <el-form-item label="schemeflag：" style="padding-left: 20px;">
+              <el-input v-model="streamFormData.testcase.schemeflag"/>
+            </el-form-item>
+            <el-form-item label="configs：" style="padding-left: 20px;">
+              <el-input v-model="streamTestcaseConfigs" autosize="{ minRows: 4, maxRows: 25 }" type="textarea"/>
+            </el-form-item>
+          <el-form-item label="新建testcase-configs模板："  style="padding-left: 20px;">
+            <el-button @click="addTestCaseConfigs"  style="padding-left: 20px;">新建默认模板</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="closeInfo">取 消</el-button>
-          <el-button type="primary" @click="putYaml(formData.yamlData)">确 定</el-button>
+          <el-button type="primary" @click="putYaml(streamTestcaseConfigs)">确 定</el-button>
         </span>
       </template>
     </el-dialog>
+
 
     <el-dialog :title="'选择个人配置'" v-model="configDialog" width="800px">
       <el-table ref="configTable" :data="configDatas" @selection-change="handleSelection"
@@ -206,14 +178,18 @@
 <script>
 import {ref} from 'vue'
 import baseYamlData from '@/utils/yaml.js';
+import configYaml from '@/utils/config-yaml.js';
 import {ElMessage} from 'element-plus'
 import {do_test_case, user_config} from "@/api/api";
+import yaml from 'js-yaml';
+
 
 export default {
   name: 'doTest',
   data() {
     return {
       labelPosition: ref('right'),
+      yamllabelPosition: ref('left'),
       formData: {
         configName: '',
         projectName: '',
@@ -235,38 +211,98 @@ export default {
       },
 
       yamlDialog: false,
+      streamYamlDialog: false,
       configDialog: false,
       yamlType: '',
       configID: 0,
       configData: '',
       configDatas: [],
+      // machineOptions: [{label: '192.168.30.100', value: '92.168.30.100'},],
       rules: {
         configName: [{required: true, message: 'configName不能为空', trigger: 'blur'}],
         projectName: [{required: true, message: 'projectName不能为空', trigger: 'blur'}],
         yamlData: [{required: true, message: 'yamlData不能为空', trigger: 'blur'}],
       },
+
+      baseConfigs:'- name: "vm.swappiness"\n' +
+          '  desc: "the vm.swapiness"\n' +
+          '  get : "sysctl -a | grep vm.swappiness | awk \'{print $3}\'"\n' +
+          '  set : "sysctl -w vm.swappiness={value}"\n' +
+          '  value: 20\n',
+
+      streamFormData:baseYamlData.stream,
+      // 因为v-module不能绑定对象，标记一下三组值。
+      streamConfigs:'',
+      streamTestcaserun:'',
+      streamTestcaseConfigs:'',
     };
   },
   created() {
     this.getData()
   },
+  mounted() {
+    try {
+      //初始化三组值
+      this.streamConfigs = yaml.dump(this.streamFormData.configs);
+      // this.streamTestcaserun = this.streamFormData.testcase.run;
+      this.streamTestcaserun = yaml.dump(this.streamFormData.testcase.run);
+      this.streamTestcaseConfigs = yaml.dump(this.streamFormData.testcase.configs);
+      console.log(baseYamlData)
+      console.log(typeof this.streamFormData.testcase.run)
+      console.log(this.streamFormData.testcase.run)
+      console.log(this.streamTestcaserun)
+      console.log(this.streamFormData,1111)
+      console.log(typeof this.streamFormData,222)
+      console.log(typeof yaml.dump(this.streamFormData),333)
+
+
+
+
+
+
+    } catch (error) {
+      console.error('解析YAML数据时出错：', error);
+    }
+  },
+
   methods: {
     getData() {
     },
     //展示yaml文件
     showYaml(yamlType) {
-      this.yamlDialog = true
+      this.streamYamlDialog = true
       this.yamlType = yamlType
     },
     //关闭对话框
     closeInfo() {
-      this.yamlDialog = false
+      this.streamYamlDialog = false
       this.configDialog = false
     },
     //修改yaml文件
-    putYaml(yamlData) {
-      this.formData.yamlData = yamlData
-      this.yamlDialog = false;
+    putYaml() {
+      //替换三组值
+      this.streamFormData['configs'] = this.streamConfigs
+      this.streamFormData['testcase']['configs'] = this.streamTestcaseConfigs
+      this.streamFormData['testcase']['run'] = this.streamTestcaserun
+      console.log(this.formData.yamlData['stream'])
+      this.formData.yamlData['stream'] = this.streamFormData
+      // console.log(this.formData.yamlData['stream'])
+
+
+      // const yamlText =  yaml.dump(this.streamFormData)
+      //
+      // const blob = new Blob([yamlText], { type: 'text/yaml' });
+      // const url = window.URL.createObjectURL(blob);
+      //
+      // const a = document.createElement('a');
+      // a.href = url;
+      // a.download = 'data.yaml'; // 设置文件名
+      // document.body.appendChild(a);
+      // a.click();
+      // window.URL.revokeObjectURL(url);
+
+
+      this.streamYamlDialog = false;
     },
     //一键摸底
     doBase() {
@@ -422,6 +458,7 @@ export default {
           yaml: this.formData.yamlData,
           message: this.formData.message
         }
+        console.log(formData,888)
         do_test_case(formData).then(response => {
           console.log(response.data.code)
           this.formData.configName = ''
@@ -470,7 +507,12 @@ export default {
       this.formData.iterations = iterations
       return result;
     },
-    testlink() {
+    testlink() {},
+    addbaseConfigs(){
+      this.streamConfigs=this.baseConfigs
+    },
+    addTestCaseConfigs(){
+      this.streamTestcaseConfigs = configYaml['stream'];
     },
   }
 };
@@ -482,6 +524,13 @@ export default {
   /*flex-direction: column;*/
   /*align-items: center;*/
   margin-top: 50px;
+}
+
+.yaml-form-container {
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  /*align-items: center;*/
+  margin-top: 10px;
 }
 
 .test-button {
@@ -503,5 +552,9 @@ export default {
 .button-style {
   margin-top: 10px;
   margin-right: 50px; /* 添加水平间距 */
+}
+#red-text {
+  color: red;
+  /* 可以添加其他样式属性，以满足您的需求 */
 }
 </style>
