@@ -1,11 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Thu Feb 29 16:18:43 2024 +0800
-"""
-import math
 import numpy as np
 # Create your views here.
 from rest_framework import status, viewsets
@@ -322,18 +314,18 @@ class LmbenchViewSet(viewsets.ModelViewSet):
                 datas[46]['column' + str(column_index)] = data.local_Pipe
                 datas[47]['column' + str(column_index)] = data.local_AF_UNIX
                 datas[48]['column' + str(column_index)] = data.local_UDP
-                datas[49]['column' + str(column_index)] = data.local_TCP
-                datas[50]['column' + str(column_index)] = data.local_TCP_conn
+                datas[49]['column' + str(column_index)] = data.local_RPC_UDP
+                datas[50]['column' + str(column_index)] = data.local_TCP
                 datas[51]['column' + str(column_index)] = data.local_RPC_TCP
-                datas[52]['column' + str(column_index)] = data.local_RPC_UDP
-                datas[53]['column' + str(column_index)] = data.file_and_system_Mmap_Latency
-                datas[54]['column' + str(column_index)] = data.file_and_system_Prot_Fault
-                datas[55]['column' + str(column_index)] = data.file_and_system_Page_Fault
-                datas[56]['column' + str(column_index)] = data.file_and_system_100fd_selct
-                datas[57]['column' + str(column_index)] = data.file_and_system_0K_File_create
-                datas[58]['column' + str(column_index)] = data.file_and_system_0K_File_delete
-                datas[59]['column' + str(column_index)] = data.file_and_system_10K_File_create
-                datas[60]['column' + str(column_index)] = data.file_and_system_10K_File_delete
+                datas[52]['column' + str(column_index)] = data.local_TCP_conn
+                datas[53]['column' + str(column_index)] = data.file_and_system_0K_File_create
+                datas[54]['column' + str(column_index)] = data.file_and_system_0K_File_delete
+                datas[55]['column' + str(column_index)] = data.file_and_system_10K_File_create
+                datas[56]['column' + str(column_index)] = data.file_and_system_10K_File_delete
+                datas[57]['column' + str(column_index)] = data.file_and_system_Mmap_Latency
+                datas[58]['column' + str(column_index)] = data.file_and_system_Prot_Fault
+                datas[59]['column' + str(column_index)] = data.file_and_system_Page_Fault
+                datas[60]['column' + str(column_index)] = data.file_and_system_100fd_selct
                 datas[61]['column' + str(column_index)] = data.local_bigger_Pipe
                 datas[62]['column' + str(column_index)] = data.local_bigger_AF_UNIX
                 datas[63]['column' + str(column_index)] = data.local_bigger_TCP
