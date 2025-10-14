@@ -42,6 +42,21 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
+    def put(self, request, *args, **kwargs):
+        machine_id = request.data.get('id')
+        machine_data = TestMachine.objects.get(id=machine_id)
+        if not machine_id or not machine_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        machine_data.test_user = request.user.chinese_name
+        machine_data.machine_name = request.data.get('machine_name')
+        machine_data.arch_name = request.data.get('arch_name')
+        machine_data.cpu_module_name = request.data.get('cpu_module_name')
+        machine_data.BMC_IP = request.data.get('BMC_IP')
+        machine_data.BMC_user_name = request.data.get('BMC_user_name')
+        machine_data.BMC_password = request.data.get('BMC_password')
+        machine_data.save()
+        return json_response({}, status.HTTP_200_OK, '修改成功')
+
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
