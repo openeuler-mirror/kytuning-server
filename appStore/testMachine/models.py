@@ -12,13 +12,15 @@ from django.db import models
 class TestMachine(models.Model):
     """测试机器表"""
     machine_name = models.CharField(max_length=50, verbose_name='设备名称')
-    arch_name = models.CharField(max_length=50, verbose_name='架构')
     cpu_module_name = models.CharField(max_length=100, verbose_name='cpu型号')
-    ip = models.CharField(max_length=50, verbose_name='IP')
-    os_version = models.CharField(max_length=50, verbose_name='操作系统版本')
-    test_user = models.CharField(max_length=255, verbose_name='当前操作系统负责人', )
-    use_time = models.DateTimeField(verbose_name='接手时间', auto_now=True)
-
+    arch_name = models.CharField(max_length=50, verbose_name='架构')
+    BMC_IP = models.CharField(max_length=50, verbose_name='BMC_IP')
+    BMC_user_name = models.CharField(max_length=50, verbose_name='BMC用户名')
+    BMC_password = models.CharField(max_length=50, verbose_name='BMC密码')
+    create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    os_version = models.CharField(max_length=50, verbose_name='操作系统版本', null=True, blank=True)
+    test_user = models.CharField(max_length=255, verbose_name='当前操作系统负责人', null=True, blank=True)
+    update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
     class Meta:
         db_table = 'testMachine'
