@@ -47,6 +47,7 @@ router.register(r'machine_list', TestMachineViewSet, basename='machine_list')
 urlpatterns = [
     url(r'', include(router.urls)),
     url('^apply_use_machine/', TestMachineViewSet.as_view({'post': 'apply_use_machine'}), name='apply_use_machine'),
+    url('^modify_server/', TestMachineViewSet.as_view({'post': 'modify_server'}), name='modify_server'),
     url('^get_filter_name/', ProjectViewSet.as_view({'get': 'get_filter_name'}), name='get_filter_name'),
     url('^merge_data/', ProjectViewSet.as_view({'post': 'merge_data'}), name='merge_data'),
     url('^download_excel/', ProjectViewSet.as_view({'get': 'download_excel'}), name='download_excel'),

@@ -66,6 +66,22 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '申请成功')
 
+    def modify_server(self, request, *args, **kwargs):
+        machine_id = request.data.get('id')
+        machine_data = TestMachine.objects.get(id=machine_id)
+        if not machine_id or not machine_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        machine_data.server_IP = request.data.get('server_IP')
+        machine_data.server_user_name = request.data.get('server_user_name')
+        machine_data.server_password = request.data.get('server_password')
+        machine_data.os_version = request.data.get('os_version')
+        # todo link 使用impi命令获取当前状态
+        # machine_data.link_status =
+        # TODO 通过后端逻辑获取
+        # machine_data.task_status =
+        machine_data.save()
+        return json_response({}, status.HTTP_200_OK, '修改成功')
+
 
 
     def delete(self, request, *args, **kwargs):
