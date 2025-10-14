@@ -211,3 +211,17 @@ export function error_list(type, paramsOrData) {
   }
   return service(commonConfig);
 }
+
+//错误数据管理
+export function machine_list(type, paramsOrData) {
+  const commonConfig = {
+    method: type,
+    url: '/machine_list/',
+  };
+  if (type === 'get') {
+    commonConfig.params = paramsOrData;
+  } else {
+    commonConfig.data = paramsOrData;
+  }
+  return service(commonConfig);
+}
