@@ -3,7 +3,7 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Mar 11 16:52:35 2024 +0800
+ * Date: Tue Mar 12 09:59:13 2024 +0800
 -->
 <template>
   <div id="fixed-top">
@@ -16,8 +16,6 @@
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
         <el-table-column prop="arch_name" label="架构"></el-table-column>
         <el-table-column prop="BMC_IP" label="BMC_IP"></el-table-column>
-        <el-table-column prop="BMC_user_name" label="BMC_user_name"></el-table-column>
-        <el-table-column prop="BMC_password" label="BMC_password"></el-table-column>
         <el-table-column prop="create_time" label="创建时间"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
@@ -29,7 +27,7 @@
     </div>
   </div>
   <div>
-    <el-dialog :title="'新增设备数据'" v-model="dialogAddMachine" width="500px">
+    <el-dialog :title="dialogTitle"  v-model="dialogAddMachine" width="500px">
       <el-form :model="machineData" ref="machineForm" :rules="rules">
         <el-form-item label="设备名称" prop="machine_name">
           <el-input v-model="machineData.machine_name" autocomplete="off"></el-input>
@@ -54,7 +52,7 @@
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
-        <el-button type="primary" @click="addSure('form')">确 定</el-button>
+        <el-button type="primary" @click="dialogTitle === '新增设备' ? addSure('form') : modifySure('form')">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -88,6 +86,7 @@ export default {
       testData: '',
       testDatas: [],
       modifyID: 0,
+      dialogTitle:'新增设备',
     };
   },
   created() {
@@ -117,7 +116,7 @@ export default {
       this.$refs.machineForm.validate((valid) => {
         if (valid) {
           this.dialogAddMachine = false;
-          const machineData = {
+          const machineData_ = {
             machine_name: this.machineData.machine_name,
             cpu_module_name: this.machineData.cpu_module_name,
             arch_name: this.machineData.arch_name,
@@ -125,10 +124,11 @@ export default {
             BMC_user_name: this.machineData.BMC_user_name,
             BMC_password: this.machineData.BMC_password,
           };
-          machine_list('post', machineData).then((response) => {
+          machine_list('post', machineData_).then((response) => {
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'});
               this.getData();
+              this.reset()
             }
           });
         } else {
@@ -150,6 +150,40 @@ export default {
       this.getData()
     },
 
+    //修改数据
+    modify(row) {
+      this.dialogTitle='修改设备信息'
+      this.dialogAddMachine = true
+      this.modifyID = row.id
+      this.machineData = {
+        machine_name: row.machine_name,
+        cpu_module_name: row.cpu_module_name,
+        arch_name: row.arch_name,
+        BMC_IP: row.BMC_IP,
+        BMC_user_name: row.BMC_user_name,
+        BMC_password: row.BMC_password,
+      }
+    },
+    //确定修改数据
+    modifySure() {
+      this.dialogAddMachine = false;
+      const machineData_ = {
+        id: this.modifyID,
+        machine_name: this.machineData.machine_name,
+        cpu_module_name: this.machineData.cpu_module_name,
+        arch_name: this.machineData.arch_name,
+        BMC_IP: this.machineData.BMC_IP,
+        BMC_user_name: this.machineData.BMC_user_name,
+        BMC_password: this.machineData.BMC_password,
+      }
+
+      machine_list('put', machineData_).then(response => {
+        if (response.data.code === 200) {
+          ElMessage({message: response.data.message, type: 'success'})
+          this.getData()
+        }
+      })
+    },
 
     //删除数据
     del(row) {
