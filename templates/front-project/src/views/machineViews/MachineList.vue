@@ -13,15 +13,15 @@
       <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
                 tooltip-effect="dark" border style="width: 100%" class="tableHead">
         <el-table-column prop="machine_name" label="设备名称"></el-table-column>
-        <el-table-column prop="arch_name" label="架构"></el-table-column>
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
-        <el-table-column prop="ip" label="IP"></el-table-column>
-        <el-table-column prop="os_version" label="操作系统"></el-table-column>
-        <el-table-column prop="test_user" label="当前负责人"></el-table-column>
-        <el-table-column prop="use_time" label="接手时间"></el-table-column>
+        <el-table-column prop="arch_name" label="架构"></el-table-column>
+        <el-table-column prop="BMC_IP" label="BMC_IP"></el-table-column>
+        <el-table-column prop="BMC_user_name" label="BMC_user_name"></el-table-column>
+        <el-table-column prop="BMC_password" label="BMC_password"></el-table-column>
+        <el-table-column prop="create_time" label="创建时间"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
-            <el-button type="primary" @click="modify(scope.row)">重构</el-button>
+            <el-button type="primary" @click="modify(scope.row)">修改</el-button>
             <el-button type="danger" @click="del(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -31,22 +31,25 @@
   <div>
     <el-dialog :title="'新增设备数据'" v-model="dialogAddMachine" width="500px">
       <el-form :model="machineData" ref="machineForm" :rules="rules">
-        <el-form-item label="设备名称" prop="errorDescription">
+        <el-form-item label="设备名称" prop="machine_name">
           <el-input v-model="machineData.machine_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="CPU型号" prop="cpu_module_name">
+          <el-input v-model="machineData.cpu_module_name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="架构" prop="arch_name">
           <el-select v-model="machineData.arch_name" class="m-2" placeholder="请选择架构类型">
             <el-option v-for="item in archTypes" :key="item" :label="item" :value="item" placeholder="请选择架构类型"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="CPU型号" prop="cpu_module_name">
-          <el-input v-model="machineData.cpu_module_name" autocomplete="off"></el-input>
+        <el-form-item label="BMC_IP" prop="BMC_IP">
+          <el-input v-model="machineData.BMC_IP" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="IP" prop="ip">
-          <el-input v-model="machineData.ip" autocomplete="off"></el-input>
+        <el-form-item label="BMC_user_name" prop="BMC_user_name">
+          <el-input v-model="machineData.BMC_user_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="操作系统" prop="os_version">
-          <el-input v-model="machineData.os_version" autocomplete="off"></el-input>
+        <el-form-item label="BMC_password" prop="BMC_password">
+          <el-input v-model="machineData.BMC_password" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -71,10 +74,11 @@ export default {
       allDatas: [],
       machineData: {
         'machine_name': '',
-        'arch_name': '',
         'cpu_module_name': '',
-        'ip': '',
-        'os_version': '',
+        'arch_name': '',
+        'BMC_IP': '',
+        'BMC_user_name':'',
+        'BMC_password':'',
       },
       archTypes: ['x86', 'arm','mips','loongarch'],
       rules: {
@@ -116,10 +120,11 @@ export default {
           this.dialogAddMachine = false;
           const machineData = {
             machine_name: this.machineData.machine_name,
-            arch_name: this.machineData.arch_name,
             cpu_module_name: this.machineData.cpu_module_name,
-            ip: this.machineData.ip,
-            os_version: this.machineData.os_version,
+            arch_name: this.machineData.arch_name,
+            BMC_IP: this.machineData.BMC_IP,
+            BMC_user_name: this.machineData.BMC_user_name,
+            BMC_password: this.machineData.BMC_password,
           };
           console.log(machineData,1111)
           machine_list('post', machineData).then((response) => {
@@ -135,64 +140,6 @@ export default {
       });
     },
 
-    reset() {
-      this.machineData = {
-        errType: '',
-        testType: '',
-        errorDescription: '',
-        errorExport: '',
-        errorLogPath: '',
-        solution: '',
-      }
-      this.getData()
-    },
-
-    //修改数据
-    modify(row) {
-      this.dialogErrorPut = true
-      this.modifyID = row.id
-      this.machineData = {
-        errType: row.error_type,
-        testType: row.test_type,
-        errorDescription: row.error_description,
-        errorExport: row.error_log_excerpt,
-        solution: row.solution,
-      }
-    },
-    //确定修改数据
-    modifySure() {
-      this.dialogErrorPut = false;
-      const machineData = {
-        id: this.modifyID,
-        error_type: this.machineData.errType,
-        test_type: this.machineData.testType,
-        error_description: this.machineData.errorDescription,
-        error_log_excerpt: this.machineData.errorExport,
-        error_log_path: this.machineData.errorLogPath,
-        solution: this.machineData.solution,
-      }
-      machine_list('put', machineData).then(response => {
-        if (response.data.code === 200) {
-          ElMessage({message: response.data.message, type: 'success'})
-          this.getData()
-        }
-      })
-    },
-    //删除数据
-    del(row) {
-      this.$confirm(`确认删除此行数据吗？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        machine_list('delete', {id: row.id}).then(response => {
-          if (response.data.code === 200) {
-            ElMessage({message: response.data.message, type: 'success'})
-            this.getData()
-          }
-        })
-      })
-    },
   }
 }
 ;

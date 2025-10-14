@@ -14,7 +14,8 @@ class TestMachineSerializer(serializers.ModelSerializer):
     """
     testMachine数据序列化
     """
-    use_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
 
     class Meta:
         model = TestMachine

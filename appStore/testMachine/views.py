@@ -33,8 +33,9 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data['machine_name'] = request.data.get('machine_name')
         machine_data['arch_name'] = request.data.get('arch_name')
         machine_data['cpu_module_name'] = request.data.get('cpu_module_name')
-        machine_data['ip'] = request.data.get('ip')
-        machine_data['os_version'] = request.data.get('os_version')
+        machine_data['BMC_IP'] = request.data.get('BMC_IP')
+        machine_data['BMC_user_name'] = request.data.get('BMC_user_name')
+        machine_data['BMC_password'] = request.data.get('BMC_password')
         config_serializer = TestMachineSerializer(data=machine_data)
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
