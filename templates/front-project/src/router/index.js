@@ -22,11 +22,19 @@ const routes = [
         component: () => import('@/components/KytuningHome'),
         children: [
             {
-                name: '设备中心',
+                name: '注册设备',
                 path: '/machine/list',
                 component: () => import('@/views/machineViews/MachineList'),
                 children: []
-            },]
+            },
+            {
+                name: '设备中心',
+                path: '/server/list',
+                component: () => import('@/views/machineViews/ServerList.vue'),
+                children: []
+            },
+
+        ]
     },
     {
         path: '/test/list',
