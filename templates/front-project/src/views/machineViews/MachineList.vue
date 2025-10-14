@@ -11,7 +11,7 @@
     <el-button type="success" @click="add" style="float: right;">新增</el-button>
     <div class="cont">
       <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
-                tooltip-effect="dark" border style="width: 100%" class="tableHead">
+                tooltip-effect="dark" border style="width: 100%">
         <el-table-column prop="machine_name" label="设备名称"></el-table-column>
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
         <el-table-column prop="arch_name" label="架构"></el-table-column>
@@ -79,12 +79,7 @@ export default {
         'BMC_password':'',
       },
       archTypes: ['x86', 'arm','mips','loongarch'],
-      rules: {
-        errType: [{required: true, message: '请选择错误类型', trigger: 'change'}],
-      },
       dialogAddMachine: false,
-      testData: '',
-      testDatas: [],
       modifyID: 0,
       dialogTitle:'新增设备',
     };
@@ -207,10 +202,5 @@ export default {
 
 
 <style scoped>
-.parent-container {
-  display: flex;
-  justify-content: center;
-  /*background-color: #f2f2f2;*/
-}
 </style>
 
