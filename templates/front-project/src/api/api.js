@@ -212,7 +212,7 @@ export function error_list(type, paramsOrData) {
   return service(commonConfig);
 }
 
-//错误数据管理
+//设备管理
 export function machine_list(type, paramsOrData) {
   const commonConfig = {
     method: type,
@@ -224,4 +224,13 @@ export function machine_list(type, paramsOrData) {
     commonConfig.data = paramsOrData;
   }
   return service(commonConfig);
+}
+
+//申请使用设备
+export function apply_use_machine(data) {
+    return service({
+        method: 'post',
+        url: '/apply_use_machine/',
+        data
+    })
 }

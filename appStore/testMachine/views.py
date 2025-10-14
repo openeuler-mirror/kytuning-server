@@ -29,7 +29,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         machine_data = {}
-        machine_data['test_user'] = request.user.chinese_name
+        machine_data['owner'] = request.user.chinese_name
         machine_data['machine_name'] = request.data.get('machine_name')
         machine_data['arch_name'] = request.data.get('arch_name')
         machine_data['cpu_module_name'] = request.data.get('cpu_module_name')
@@ -47,7 +47,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-        machine_data.test_user = request.user.chinese_name
+        machine_data.owner = request.user.chinese_name
         machine_data.machine_name = request.data.get('machine_name')
         machine_data.arch_name = request.data.get('arch_name')
         machine_data.cpu_module_name = request.data.get('cpu_module_name')
@@ -56,6 +56,16 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.BMC_password = request.data.get('BMC_password')
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '修改成功')
+
+    def apply_use_machine(self, request, *args, **kwargs):
+        machine_id = request.data.get('id')
+        machine_data = TestMachine.objects.get(id=machine_id)
+        if not machine_id or not machine_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        machine_data.queue_user = request.user.chinese_name
+        machine_data.save()
+        return json_response({}, status.HTTP_200_OK, '申请成功')
+
 
 
     def delete(self, request, *args, **kwargs):
