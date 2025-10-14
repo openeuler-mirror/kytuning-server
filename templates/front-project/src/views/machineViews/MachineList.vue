@@ -114,7 +114,6 @@ export default {
 
     addSure() {
       //machineForm这个是上面form表单中的ref对应的标记
-      console.log(this.$refs.machineForm, 111)
       this.$refs.machineForm.validate((valid) => {
         if (valid) {
           this.dialogAddMachine = false;
@@ -126,7 +125,6 @@ export default {
             BMC_user_name: this.machineData.BMC_user_name,
             BMC_password: this.machineData.BMC_password,
           };
-          console.log(machineData,1111)
           machine_list('post', machineData).then((response) => {
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'});
