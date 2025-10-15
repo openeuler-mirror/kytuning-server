@@ -17,7 +17,16 @@
         <el-table-column prop="owner" label="当前负责人"></el-table-column>
         <el-table-column prop="server_IP" label="server_IP"></el-table-column>
         <el-table-column prop="os_version" label="系统版本"></el-table-column>
-        <el-table-column prop="link_status" label="链接状态"></el-table-column>
+        <el-table-column prop="link_status" label="连接状态">
+          <template #default="scope">
+            <el-button
+                v-if="scope.row.link_status"
+                :type="scope.row.link_status === '在线' ? 'success' : 'danger'"
+            >
+              {{ scope.row.link_status }}
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column prop="task_status" label="任务状态"></el-table-column>
         <el-table-column prop="queue_user" label="排队人员"></el-table-column>
         <el-table-column prop="update_time" label="更新时间"></el-table-column>
@@ -67,11 +76,11 @@ export default {
     return {
       allDatas: [],
       modifyID: 0,
-      machineData:{
-        'server_IP':'',
-        'server_user_name':'',
-        'server_password':'',
-        'os_version':'',
+      machineData: {
+        'server_IP': '',
+        'server_user_name': '',
+        'server_password': '',
+        'os_version': '',
       },
       dialogModify: false,
     };
@@ -100,7 +109,7 @@ export default {
     modify(row) {
       this.dialogModify = true;
       this.modifyID = row.id
-      this.machineData={
+      this.machineData = {
         'server_IP': row.server_IP,
         'server_user_name': row.server_user_name,
         'server_password': row.server_password,
@@ -119,11 +128,11 @@ export default {
         os_version: this.machineData.os_version,
       }
       modify_server(machineData_).then(response => {
-              if (response.data.code === 200) {
-                ElMessage({message: response.data.message, type: 'success'})
-                this.getData()
-              }
-            })
+        if (response.data.code === 200) {
+          ElMessage({message: response.data.message, type: 'success'})
+          this.getData()
+        }
+      })
     }
   }
 };
