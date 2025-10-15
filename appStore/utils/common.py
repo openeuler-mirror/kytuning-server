@@ -161,7 +161,6 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
         ssh_command = f'sshpass -p {test_password} ssh {test_username}@{test_ip} "cd /root/run_kytuning-ffdev/;sh /root/run_kytuning-ffdev/run.sh"'
         return_result = subprocess.run(ssh_command, stdout=f, stderr=f, encoding='utf-8', shell=True)
 
-
     # 保存kytuning的日志，先获取此次测试测试了哪几项，在获取对应的kytuning.log文件
     for test_case_name in test_case_names:
         klog_command = f'sshpass -p {test_password} scp -o StrictHostKeyChecking=no -r {test_username}@{test_ip}:/root/kytuning/run/{test_case_name}/kytuning.log {result_log_name}_{test_case_name}_kytuning.log'
@@ -186,3 +185,27 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
         return return_result
 
     return klog_result
+
+
+def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_name, server_password):
+
+    # 判断离线状态 f是可以使用变量
+    ipmi_cmd = f"ipmitool -H {BMC_IP} -I lanplus -U {BMC_user_name} -P \'{BMC_password}\' chassis power status"
+    result = subprocess.run(ipmi_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.stdout.strip() == 'Chassis Power is off':
+        return '离线'
+
+    # 判断网络无法链接状态
+    result = subprocess.run(["ping", "-c", "1", "-w", "1", server_IP], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    output = result.stdout
+    if not "1 packets transmitted, 1 received" in output:
+        return '网络未连接'
+
+    ssh_cmd = f'sshpass -p {server_password} ssh -o StrictHostKeyChecking=no {server_user_name}@{server_IP}'
+    result = subprocess.run(ssh_cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    # 获取返回状态 0 代表成功
+    if result.returncode:
+        return '用户名或密码错误'
+
+    return '在线'

@@ -9,7 +9,7 @@ from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
 from rest_framework import status, viewsets
 
-from appStore.utils.common import json_response
+from appStore.utils.common import json_response, get_link_status
 
 
 # Create your views here.
@@ -75,14 +75,13 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
         machine_data.os_version = request.data.get('os_version')
-        # todo link 使用impi命令获取当前状态
-        # machine_data.link_status =
+        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
+                                                   machine_data.BMC_password, machine_data.server_IP,
+                                                   machine_data.server_user_name, machine_data.server_password)
         # TODO 通过后端逻辑获取
         # machine_data.task_status =
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '修改成功')
-
-
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)

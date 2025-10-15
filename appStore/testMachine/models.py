@@ -14,6 +14,8 @@ class TestMachine(models.Model):
     Link_Status_Type = (
         ("在线", "在线"),
         ("离线", "离线"),
+        ("网络未连接", "网络未连接"),
+        ("用户名或密码错误", "用户名或密码错误"),
     )
     Task_Status_Type = (
         ("空闲", "空闲"),
