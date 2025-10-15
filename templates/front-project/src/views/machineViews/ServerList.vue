@@ -13,6 +13,7 @@
                 tooltip-effect="dark" border style="width: 100%">
         <el-table-column prop="machine_name" label="设备名称"></el-table-column>
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
+        <el-table-column prop="BMC_IP" label="BMC_IP"></el-table-column>
         <el-table-column prop="owner" label="当前负责人"></el-table-column>
         <el-table-column prop="server_IP" label="server_IP"></el-table-column>
         <el-table-column prop="os_version" label="系统版本"></el-table-column>
@@ -29,12 +30,34 @@
       </el-table>
     </div>
   </div>
+  <div>
+    <el-dialog :title="'编辑'" v-model="dialogModify" width="500px">
+      <el-form :model="machineData" ref="machineForm" :rules="rules">
+        <el-form-item label="服务器IP" prop="server_IP">
+          <el-input v-model="machineData.server_IP" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="服务器用户名" prop="server_user_name">
+          <el-input v-model="machineData.server_user_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="服务器密码" prop="server_password">
+          <el-input v-model="machineData.server_password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="操作系统版本" prop="os_version">
+          <el-input v-model="machineData.os_version" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="closeInfo('form')">取 消</el-button>
+        <el-button type="primary" @click="applyUseSure('form')">确 定</el-button>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {apply_use_machine, machine_list} from "@/api/api";
+import {machine_list, apply_use_machine, modify_server} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
@@ -44,6 +67,13 @@ export default {
     return {
       allDatas: [],
       modifyID: 0,
+      machineData:{
+        'server_IP':'',
+        'server_user_name':'',
+        'server_password':'',
+        'os_version':'',
+      },
+      dialogModify: false,
     };
   },
   created() {
@@ -59,16 +89,44 @@ export default {
 
     //申请使用
     applyUse(row) {
-      apply_use_machine({id:row.id}).then(response => {
+      apply_use_machine({id: row.id}).then(response => {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})
           this.getData()
         }
       })
     },
+
+    modify(row) {
+      this.dialogModify = true;
+      this.modifyID = row.id
+      this.machineData={
+        'server_IP': row.server_IP,
+        'server_user_name': row.server_user_name,
+        'server_password': row.server_password,
+        'os_version': row.os_version,
+      }
+    },
+
+    //确定修改数据
+    applyUseSure() {
+      this.dialogModify = false;
+      const machineData_ = {
+        id: this.modifyID,
+        server_IP: this.machineData.server_IP,
+        server_user_name: this.machineData.server_user_name,
+        server_password: this.machineData.server_password,
+        os_version: this.machineData.os_version,
+      }
+      modify_server(machineData_).then(response => {
+              if (response.data.code === 200) {
+                ElMessage({message: response.data.message, type: 'success'})
+                this.getData()
+              }
+            })
+    }
   }
-}
-;
+};
 </script>
 
 

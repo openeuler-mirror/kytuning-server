@@ -234,3 +234,13 @@ export function apply_use_machine(data) {
         data
     })
 }
+
+//修改服务器系统信息
+export function modify_server(data) {
+    return service({
+        method: 'post',
+        url: '/modify_server/',
+        data
+    })
+}
+
