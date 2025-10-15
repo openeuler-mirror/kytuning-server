@@ -8,11 +8,13 @@
 import numpy as np
 # Create your views here.
 from rest_framework import status, viewsets
-
 from appStore.lmbench.models import Lmbench
 from appStore.lmbench.serializers import LmbenchSerializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
+
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 
 class LmbenchViewSet(viewsets.ModelViewSet):
@@ -662,6 +664,8 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             if serializer_lmbench.is_valid():
                 self.perform_create(serializer_lmbench)
             else:
+                log.info('lmbench数据存储错误 ：%s，', serializer_lmbench.errors)
+                log.info('lmbench存储数据为 ：%s，', lmbench)
                 serializer_lmbench_error.append(serializer_lmbench.errors)
                 error_message.append(get_error_message(serializer_lmbench))
         if serializer_lmbench_error:

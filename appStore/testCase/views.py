@@ -10,17 +10,16 @@ import os
 import shutil
 import subprocess
 import time
-
+# Create your views here.
 from django.http import HttpResponse, FileResponse, HttpRequest
-
 from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
 from appStore.utils.common import test_case, json_response, get_error_message
 from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL
 from rest_framework import status, viewsets
 
-
-# Create your views here.
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 class TestCaseViewSet(viewsets.ModelViewSet):
     """
@@ -145,6 +144,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             self.perform_create(serializer_test_case)
             test_case_id = serializer_test_case.data['id']
         else:
+            log.info('testCase数据存储错误 ：%s，', serializer_test_case.errors)
+            log.info('testCase存储数据为 ：%s，', data_test_case)
             return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_test_case))
 
         """保存至配置管理数据库"""

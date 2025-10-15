@@ -15,6 +15,9 @@ from appStore.iozone.serializers import IozoneSerializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+
 
 class IozoneViewSet(viewsets.ModelViewSet):
     """
@@ -361,6 +364,8 @@ class IozoneViewSet(viewsets.ModelViewSet):
                 if serializer_iozone.is_valid():
                     self.perform_create(serializer_iozone)
                 else:
+                    log.info('iozone数据存储错误 ：%s，', serializer_iozone.errors)
+                    log.info('iozone存储数据为 ：%s，', data_iozone)
                     return json_response(serializer_iozone.errors, status.HTTP_400_BAD_REQUEST,
                                          get_error_message(serializer_iozone))
         if serializer_iozone_errors:

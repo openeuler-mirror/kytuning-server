@@ -8,12 +8,13 @@
 import numpy as np
 # Create your views here.
 from rest_framework import status, viewsets
-
 from appStore.project.models import Project
 from appStore.stream.models import Stream
 from appStore.stream.serializers import StreamSerializer
 from appStore.utils.common import json_response, get_error_message
 
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 class StreamViewSet(viewsets.ModelViewSet):
     """
@@ -208,6 +209,8 @@ class StreamViewSet(viewsets.ModelViewSet):
                 if serializer_stream.is_valid():
                     self.perform_create(serializer_stream)
                 else:
+                    log.info('stram数据存储错误 ：%s，', serializer_stream.errors)
+                    log.info('stream存储数据为 ：%s，', data_stream)
                     serializer_stream_errors.append(serializer_stream.errors)
                     error_message.append(get_error_message(serializer_stream))
 

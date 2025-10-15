@@ -8,11 +8,13 @@
 import numpy as np
 # Create your views here.
 from rest_framework import status, viewsets
-
 from appStore.jvm2008.models import Jvm2008
 from appStore.jvm2008.serializers import Jvm2008Serializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
+
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 
 class Jvm2008ViewSet(viewsets.ModelViewSet):
@@ -318,6 +320,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
                 if serializer_jvm2008.is_valid():
                     self.perform_create(serializer_jvm2008)
                 else:
+                    log.info('jvm2008数据存储错误 ：%s，', serializer_jvm2008.errors)
+                    log.info('jvm2008存储数据为 ：%s，', data_jvm2008)
                     serializer_jvm2008_errors.append(serializer_jvm2008.errors)
                     errors_message.append(get_error_message(serializer_jvm2008))
         if serializer_jvm2008_errors:

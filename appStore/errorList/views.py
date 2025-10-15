@@ -8,10 +8,12 @@
 from appStore.errorList.models import KytuningError
 from appStore.errorList.serializers import ErroirListSerializer
 from appStore.utils.common import LimsPageSet, json_response
-
 from rest_framework import status, viewsets
 
-# Create your views here.
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+
+
 
 class ErrorListViewSet(viewsets.ModelViewSet):
     """
@@ -53,6 +55,8 @@ class ErrorListViewSet(viewsets.ModelViewSet):
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
+        log.info('errorList数据存储错误 ：%s，', config_serializer.errors)
+        log.info('errorList存储数据为 ：%s，', error_data)
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
     def put(self, request, *args, **kwargs):

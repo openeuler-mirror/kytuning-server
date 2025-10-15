@@ -8,11 +8,10 @@
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
 from rest_framework import status, viewsets
-
 from appStore.utils.common import json_response, get_link_status
 
-
-# Create your views here.
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 class TestMachineViewSet(viewsets.ModelViewSet):
     """
@@ -40,6 +39,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
+        log.info('Machine数据存储错误 ：%s，', config_serializer.errors)
+        log.info('Machine存储数据为 ：%s，', machine_data)
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
     def put(self, request, *args, **kwargs):
