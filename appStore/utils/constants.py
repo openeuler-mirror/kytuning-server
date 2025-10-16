@@ -6,7 +6,7 @@
  * Date: Fri Feb 23 10:00:37 2024 +0800
 """
 # 后端项目运行日志存放路径
-LOGGING_DIR = "/opt/kytuning/logs"
+LOGGING_DIR = "/var/log/kytuning/"
 
 # 服务端记录测试端的测试日志路径
 RESULT_LOG_FILE = '/var/www/html/result_log_file/'

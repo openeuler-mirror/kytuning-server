@@ -7,13 +7,15 @@
 """
 # Create your views here.
 import numpy as np
+# Create your views here.
 from rest_framework import status, viewsets
-
 from appStore.project.models import Project
 from appStore.unixbench.models import Unixbench
 from appStore.unixbench.serializers import UnixbenchSerializer
 from appStore.utils.common import json_response, get_error_message
 
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 class UnixbenchViewSet(viewsets.ModelViewSet):
     """
@@ -421,6 +423,8 @@ class UnixbenchViewSet(viewsets.ModelViewSet):
                 if serializer_unixbench.is_valid():
                     self.perform_create(serializer_unixbench)
                 else:
+                    log.info('unixbench数据存储错误 ：%s，', serializer_unixbench.errors)
+                    log.info('unixbench存储数据为 ：%s，', data_unixbench)
                     serializer_unixbench_errors.append(serializer_unixbench.errors)
                     error_message.append(get_error_message(serializer_unixbench))
         if serializer_unixbench_errors:

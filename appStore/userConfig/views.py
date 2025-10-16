@@ -10,8 +10,8 @@ from appStore.userConfig.models import UserConfig
 from appStore.userConfig.serializers import UserConfigSerializer
 from appStore.utils.common import json_response
 
-
-# Create your views here.
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
 class UserConfigViewSet(viewsets.ModelViewSet):
     """
@@ -36,6 +36,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         user_config_data = {}
         user_config_data['user_name'] = request.user.chinese_name
+        # user_config_data['user_password'] = request.data.get('user_password')
         user_config_data['config_name'] = request.data.get('config_name')
         user_config_data['project_name'] = request.data.get('project_name')
         user_config_data['test_ip'] = request.data.get('test_ip')
@@ -66,6 +67,8 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
+        log.info('userConfig数据存储错误 ：%s，', config_serializer.errors)
+        log.info('userConfig存储数据为 ：%s，', user_config_data)
         return json_response({}, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
     def put(self, request, *args, **kwargs):
@@ -78,6 +81,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
             if not config_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
             config_data.config_name = request.data.get('config_name')
+            # config_data.user_password = request.data.get('user_password')
             config_data.project_name = request.data.get('project_name')
             config_data.test_ip = request.data.get('test_ip')
             config_data.test_password = request.data.get('test_password')

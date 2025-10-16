@@ -15,6 +15,9 @@ from appStore.cpu2017.serializers import Cpu2017Serializer
 from appStore.project.models import Project
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+
 
 class Cpu2017ViewSet(viewsets.ModelViewSet):
     """
@@ -630,7 +633,6 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
             column_index += 1
         return datas, title_index, column_index, base_column_index
 
-
     def list(self, request, *args, **kwargs):
         """
         返回列表
@@ -822,6 +824,8 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
                             if serializer_cpu2017.is_valid():
                                 self.perform_create(serializer_cpu2017)
                             else:
+                                log.info('cpu2017数据存储错误 ：%s，', serializer_cpu2017.errors)
+                                log.info('cpu2017存储数据为 ：%s，', data_cpu2017)
                                 serializer_cpu2017_errors.append(serializer_cpu2017.errors)
                                 error_message.append(get_error_message(serializer_cpu2017))
         if serializer_cpu2017_errors:

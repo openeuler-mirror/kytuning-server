@@ -17,6 +17,9 @@ from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+
 class EnvViewSet(viewsets.ModelViewSet):
     """
     env数据管理
@@ -231,6 +234,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         #查数据库中是否有这条数据，如果有返回对应数据对应的时间戳
         filter_env = Env.objects.filter(time=data_env['time'])
         if filter_env:
+            log.info('该数据在环境信息表中已存入，环境信息id为 ：%s，', filter_env[0].id)
             return json_response({'env_id':filter_env[0].id}, status.HTTP_400_BAD_REQUEST, '该数据在环境信息表中已存入')
 
         data_env['hwinfo_machineinfo_manufacturer'] = request.data['envinfo']['hwinfo']['machineinfo']['manufacturer']
@@ -305,6 +309,8 @@ class EnvViewSet(viewsets.ModelViewSet):
             self.perform_create(serializer_env)
             request.data['env_id'] = serializer_env.data['id']
         if serializer_env.errors:
+            log.info('env数据存储错误 ：%s，', serializer_env.errors)
+            log.info('env存储数据为 ：%s，', data_env)
             return json_response(serializer_env.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_env))
         if not request.data['env_id']:
             return json_response({}, status.HTTP_400_BAD_REQUEST, '没有env_id')

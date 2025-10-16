@@ -9,7 +9,7 @@
 import os
 import json
 import logging
-
+# Create your views here.
 from django.http import FileResponse, HttpResponse
 from rest_framework import status, viewsets
 from rest_framework.test import APIRequestFactory
@@ -25,7 +25,6 @@ from appStore.project.models import Project
 from appStore.project.serializers import ProjectSerializer
 from appStore.stream.models import Stream
 from appStore.unixbench.models import Unixbench
-from appStore.users.models import UserProfile
 from appStore.utils.common import json_response, get_error_message
 
 from appStore.utils.export_excel import stream_excel, cpu2017_excel, cpu2006_excel, jvm2008_excel, iozone_excel, \

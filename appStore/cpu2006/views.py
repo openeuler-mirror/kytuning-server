@@ -13,6 +13,9 @@ from appStore.cpu2006.serializers import Cpu2006Serializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 
+import logging
+log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+
 
 class Cpu2006ViewSet(viewsets.ModelViewSet):
     """
@@ -968,6 +971,8 @@ class Cpu2006ViewSet(viewsets.ModelViewSet):
                             if serializer_cpu2006.is_valid():
                                 self.perform_create(serializer_cpu2006)
                             else:
+                                log.info('cpu2006数据存储错误 ：%s，', serializer_cpu2006.errors)
+                                log.info('cpu2006存储数据为 ：%s，', data_cpu2006)
                                 serializer_cpu2006_errors.append(serializer_cpu2006.errors)
                                 error_message.append(get_error_message(serializer_cpu2006))
         if serializer_cpu2006_errors:
