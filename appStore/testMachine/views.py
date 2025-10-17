@@ -66,6 +66,18 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '申请成功')
 
+    def cancel_apply_use_machine(self, request, *args, **kwargs):
+        machine_id = request.data.get('id')
+        machine_data = TestMachine.objects.get(id=machine_id)
+        if not machine_id or not machine_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        if machine_data.queue_user == request.user.chinese_name:
+            machine_data.queue_user = None
+            machine_data.save()
+            return json_response({}, status.HTTP_200_OK, '取消申请成功')
+        else:
+            return json_response({}, status.HTTP_200_OK, '不可取消别人的申请')
+
     def modify_server(self, request, *args, **kwargs):
         machine_id = request.data.get('id')
         machine_data = TestMachine.objects.get(id=machine_id)

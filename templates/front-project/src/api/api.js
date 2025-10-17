@@ -234,6 +234,14 @@ export function apply_use_machine(data) {
         data
     })
 }
+//取消申请使用设备
+export function cancel_apply_use_machine(data) {
+    return service({
+        method: 'post',
+        url: '/cancel_apply_use_machine/',
+        data
+    })
+}
 
 //修改服务器系统信息
 export function modify_server(data) {
