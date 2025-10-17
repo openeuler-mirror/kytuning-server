@@ -24,7 +24,7 @@ user_data = {
     # 替换为实际的文件路径
     "file_path": "./kytuning-result.xlsx",
     # 替换为要读取的工作表名称列表
-    "sheet_names": ["Speccpu2006(base)","Stream"],
+    "sheet_names": ["Stream","Lmbench","Unixbench","Fio","Specjvm2008","Speccpu2006(base)","Speccpu2017(base)"],
     # "sheet_names": ["Stream","Lmbench","Unixbench","Fio","Iozone","Specjvm2008","Speccpu2006(base)","Speccpu2017(base)"],
     # 保存数据的文件名
     "all_json_file": "./all_json_file.json",
@@ -430,12 +430,13 @@ def fio_excel_to_json(file_path, sheet_name, end_number):
     data = {}
     name_list_ = []
     for index, column in enumerate(columns):
-
         if index == 0:
             column_data = df[column].tolist()
-            key1 = [x for x in column_data if isinstance(x, str) and x not in ["执行命令:", "修改参数:"]]
+            key1_ = [x for x in column_data if isinstance(x, str) and x not in ["执行命令:", "修改参数:", "执行命令", "修改参数"]]
+            key1 = [item.split('(')[0] for item in key1_]
             key2 = df.iloc[:, 2].tolist()[2:][::4]
             name_list_ = ["fio-3.20-" + str(y) + "-" + str(x) + "-0-" for x, y in zip(key1, key2)]
+
 
         # 不需要处理index = 1 的情况全是"bs", "io", "iops", "bw",
         if 1 < index < end_number + 2:
