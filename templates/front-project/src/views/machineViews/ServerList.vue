@@ -30,11 +30,16 @@
         <el-table-column prop="task_status" label="任务状态"></el-table-column>
         <el-table-column prop="queue_user" label="排队人员"></el-table-column>
         <el-table-column prop="update_time" label="更新时间"></el-table-column>
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" width="300">
           <template #default="scope">
             <el-button type="primary" @click="modify(scope.row)" class="operate-button">编辑</el-button>
             <el-button type="danger" @click="finishedUsing(scope.row)"  class="operate-button">使用完成</el-button>
-            <el-button type="success" @click="applyUse(scope.row)" class="operate-button">申请</el-button>
+            <el-button type="success" @click="updateStatus(scope.row)" class="operate-button">更新状态</el-button>
+          </template>
+        </el-table-column>
+        <el-table-column label="申请" width="200">
+          <template #default="scope">
+            <el-button type="primary" @click="applyUse(scope.row)" class="operate-button">申请</el-button>
             <el-button type="danger" @click="cancelApplyUse(scope.row)" class="operate-button">取消申请</el-button>
           </template>
         </el-table-column>
@@ -68,7 +73,7 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {machine_list, apply_use_machine, cancel_apply_use_machine, modify_server, finished_using} from "@/api/api";
+import {machine_list, apply_use_machine, cancel_apply_use_machine, modify_server, finished_using, update_status} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
@@ -175,6 +180,18 @@ export default {
         ElMessage({message: '当前没有申请人员，无需取消申请', type: 'error'})
       }
     },
+    updateStatus(row){
+       if (row.owner) {
+        update_status({id: row.id}).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            this.getData()
+          }
+        })
+      }else {
+        ElMessage({message: '无人使用无需更新', type: 'success'})
+      }
+    }
   }
 };
 </script>

@@ -137,7 +137,19 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '使用完成状态修改成功')
         else:
-            return json_response({}, status.HTTP_200_OK, '不可取消别人的使用状态')
+            return json_response({}, status.HTTP_200_OK, '不可更改别人的使用状态')
+
+    def update_status(self, request, *args, **kwargs):
+        machine_id = request.data.get('id')
+        machine_data = TestMachine.objects.get(id=machine_id)
+        if not machine_id or not machine_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
+                                                   machine_data.BMC_password, machine_data.server_IP,
+                                                   machine_data.server_user_name, machine_data.server_password)
+        # TODO 通过后端逻辑获取
+        # machine_data.task_status =
+        return json_response({}, status.HTTP_200_OK, '更新状态完成')
 
 
     def delete(self, request, *args, **kwargs):
