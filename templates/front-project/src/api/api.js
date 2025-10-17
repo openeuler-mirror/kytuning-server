@@ -1,8 +1,12 @@
+/*
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wqz <wangqingzheng@kylinos.cn>
+ * Date: Mon May 20 11:10:24 2024 +0800
+ */
 // 项目中我们大多数时候都会把对应的接口请求封装成api来调用
 import service from '../service.js'
-
-//data 一般适用于POST、PUT请求
-//params 一般适用于GET请求
 
 // 登录接口
 export function login(data) {
@@ -70,25 +74,6 @@ export function project(type, paramsOrData) {
   return service(commonConfig);
 }
 
-
-// // 获取指定的project组
-// export function get_project(params) {
-//     return service({
-//         method: 'get',
-//         url: '/project/',
-//         params
-//     })
-// }
-
-// // project
-// export function project(type, data) {
-//     return service({
-//         method: type,
-//         url: '/project/',
-//         data
-//     })
-// }
-
 // project 合并数据接口
 export function mergeData(data) {
     return service({
@@ -115,14 +100,6 @@ export function env(params) {
     })
 }
 
-// // stream
-// export function stream(params) {
-//     return service({
-//         method: 'get',
-//         url: '/stream/',
-//         params,
-//     })
-// }
 //修改stream数据
 export function get_modify_stream(params) {
     return service({
