@@ -27,16 +27,16 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = UserProfileSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            user = UserProfile.objects.create_user(username=serializer.data['username'],
-                                                   password=serializer.data['password'],
-                                                   chinese_name=serializer.data['chinese_name'])
+        serializer_user = self.get_serializer(data=request.data)
+        if serializer_user.is_valid():
+            user = UserProfile.objects.create_user(username=serializer_user.data['username'],
+                                                   password=serializer_user.data['password'],
+                                                   chinese_name=serializer_user.data['chinese_name'])
             # 可以根据需要设置其他用户属性
             user.save()
-            return json_response(serializer.data, status.HTTP_200_OK, '创建成功！')
-        log.info('user数据存储错误 ：%s，', serializer.errors)
-        return json_response(serializer.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer))
+            return json_response(serializer_user.data, status.HTTP_200_OK, '创建成功！')
+        log.info('user数据存储错误 ：%s，', serializer_user.errors)
+        return json_response(serializer_user.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_user))
 
 
     def change_password(self, request, *args, **kwargs):

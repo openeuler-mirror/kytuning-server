@@ -27,20 +27,20 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         return json_response(serializer.data, status.HTTP_200_OK, '查询完成')
 
     def create(self, request, *args, **kwargs):
-        machine_data = {}
-        machine_data['owner'] = request.user.chinese_name
-        machine_data['machine_name'] = request.data.get('machine_name')
-        machine_data['arch_name'] = request.data.get('arch_name')
-        machine_data['cpu_module_name'] = request.data.get('cpu_module_name')
-        machine_data['BMC_IP'] = request.data.get('BMC_IP')
-        machine_data['BMC_user_name'] = request.data.get('BMC_user_name')
-        machine_data['BMC_password'] = request.data.get('BMC_password')
-        config_serializer = TestMachineSerializer(data=machine_data)
+        data_machine = {}
+        data_machine['owner'] = request.user.chinese_name
+        data_machine['machine_name'] = request.data.get('machine_name')
+        data_machine['arch_name'] = request.data.get('arch_name')
+        data_machine['cpu_module_name'] = request.data.get('cpu_module_name')
+        data_machine['BMC_IP'] = request.data.get('BMC_IP')
+        data_machine['BMC_user_name'] = request.data.get('BMC_user_name')
+        data_machine['BMC_password'] = request.data.get('BMC_password')
+        config_serializer = TestMachineSerializer(data=data_machine)
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
         log.info('Machine数据存储错误 ：%s，', config_serializer.errors)
-        log.info('Machine存储数据为 ：%s，', machine_data)
+        log.info('Machine存储数据为 ：%s，', data_machine)
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
     def put(self, request, *args, **kwargs):
