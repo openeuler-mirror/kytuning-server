@@ -48,7 +48,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-        machine_data.owner = request.user.chinese_name
         machine_data.machine_name = request.data.get('machine_name')
         machine_data.arch_name = request.data.get('arch_name')
         machine_data.cpu_module_name = request.data.get('cpu_module_name')
@@ -72,6 +71,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        machine_data.owner = request.user.chinese_name
         machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
