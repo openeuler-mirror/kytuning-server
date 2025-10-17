@@ -1,6 +1,6 @@
 /*
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wqz <wangqingzheng@kylinos.cn>
  * Date: Mon May 20 11:10:24 2024 +0800
@@ -226,6 +226,24 @@ export function machine_list(type, paramsOrData) {
   return service(commonConfig);
 }
 
+//修改服务器系统信息
+export function modify_server(data) {
+    return service({
+        method: 'post',
+        url: '/modify_server/',
+        data
+    })
+}
+
+//机器使用完成
+export function finished_using(data) {
+    return service({
+        method: 'post',
+        url: '/finished_using/',
+        data
+    })
+}
+
 //申请使用设备
 export function apply_use_machine(data) {
     return service({
@@ -243,12 +261,7 @@ export function cancel_apply_use_machine(data) {
     })
 }
 
-//修改服务器系统信息
-export function modify_server(data) {
-    return service({
-        method: 'post',
-        url: '/modify_server/',
-        data
-    })
-}
+
+
+
 

@@ -33,6 +33,7 @@
         <el-table-column label="操作" width="200">
           <template #default="scope">
             <el-button type="primary" @click="modify(scope.row)" class="operate-button">编辑</el-button>
+            <el-button type="danger" @click="finishedUsing(scope.row)"  class="operate-button">使用完成</el-button>
             <el-button type="success" @click="applyUse(scope.row)" class="operate-button">申请</el-button>
             <el-button type="danger" @click="cancelApplyUse(scope.row)" class="operate-button">取消申请</el-button>
           </template>
@@ -67,7 +68,7 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {machine_list, apply_use_machine, cancel_apply_use_machine, modify_server} from "@/api/api";
+import {machine_list, apply_use_machine, cancel_apply_use_machine, modify_server, finished_using} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
@@ -97,34 +98,7 @@ export default {
       });
     },
 
-    //申请使用
-    applyUse(row) {
-      if (row.queue_user) {
-        ElMessage({message: '已存在申请人员，请稍后再试', type: 'error'})
-      } else {
-        apply_use_machine({id: row.id}).then(response => {
-          if (response.data.code === 200) {
-            ElMessage({message: response.data.message, type: 'success'})
-            this.getData()
-          }
-        })
-      }
-    },
-
-    //取消申请 1、判断取消人员和申请人是否一致（前后端同时判断，保证数据可靠性）；2、是否存在申请人员（前端判断）
-    cancelApplyUse(row) {
-      if (row.queue_user) {
-        cancel_apply_use_machine({id: row.id}).then(response => {
-          if (response.data.code === 200) {
-            ElMessage({message: response.data.message, type: 'success'})
-            this.getData()
-          }
-        })
-      }else {
-        ElMessage({message: '当前没有申请人员，无需取消申请', type: 'error'})
-      }
-    },
-
+    //修改数据
     modify(row) {
       this.dialogModify = true;
       this.modifyID = row.id
@@ -156,6 +130,50 @@ export default {
     //取消修改
     closeInfo() {
       this.dialogModify = false
+    },
+
+    //使用完成
+    finishedUsing(row){
+      if (row.owner) {
+        finished_using({id: row.id}).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            this.getData()
+          }else {
+            ElMessage({message: response.data.message, type: 'success'})
+          }
+        })
+      } else {
+        ElMessage({message: '目前机器无人使用', type: 'error'})
+      }
+    },
+
+    //申请使用
+    applyUse(row) {
+      if (row.queue_user) {
+        ElMessage({message: '已存在申请人员，请稍后再试', type: 'error'})
+      } else {
+        apply_use_machine({id: row.id}).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            this.getData()
+          }
+        })
+      }
+    },
+
+    //取消申请 1、判断取消人员和申请人是否一致（前后端同时判断，保证数据可靠性）；2、是否存在申请人员（前端判断）
+    cancelApplyUse(row) {
+      if (row.queue_user) {
+        cancel_apply_use_machine({id: row.id}).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            this.getData()
+          }
+        })
+      }else {
+        ElMessage({message: '当前没有申请人员，无需取消申请', type: 'error'})
+      }
     },
   }
 };

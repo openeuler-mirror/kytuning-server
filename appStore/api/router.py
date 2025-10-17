@@ -1,6 +1,6 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Feb 23 11:19:26 2024 +0800
@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'', include(router.urls)),
     url('^apply_use_machine/', TestMachineViewSet.as_view({'post': 'apply_use_machine'}), name='apply_use_machine'),
     url('^cancel_apply_use_machine/', TestMachineViewSet.as_view({'post': 'cancel_apply_use_machine'}), name='cancel_apply_use_machine'),
+    url('^finished_using/', TestMachineViewSet.as_view({'post': 'finished_using'}), name='finished_using'),
     url('^modify_server/', TestMachineViewSet.as_view({'post': 'modify_server'}), name='modify_server'),
     url('^get_filter_name/', ProjectViewSet.as_view({'get': 'get_filter_name'}), name='get_filter_name'),
     url('^merge_data/', ProjectViewSet.as_view({'post': 'merge_data'}), name='merge_data'),
