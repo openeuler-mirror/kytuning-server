@@ -567,105 +567,105 @@ class LmbenchViewSet(viewsets.ModelViewSet):
         lmbench_keys = sorted([key for key in request.__dict__['data_lmbench'].keys() if key.startswith('lmbench')])[-1]
         for lmbench_json in request.__dict__['data_lmbench'][lmbench_keys]['items']:
             # 每一条lmbench数据
-            lmbench = {}
-            lmbench['env_id'] = request.__dict__['data_lmbench']['env_id']
-            lmbench['execute_cmd'] = request.__dict__['data_lmbench'][lmbench_keys].get('execute_cmd')
-            lmbench['modify_parameters'] = request.__dict__['data_lmbench'][lmbench_keys].get('modify_parameters')
+            data_lmbench = {}
+            data_lmbench['env_id'] = request.__dict__['data_lmbench']['env_id']
+            data_lmbench['execute_cmd'] = request.__dict__['data_lmbench'][lmbench_keys].get('execute_cmd')
+            data_lmbench['modify_parameters'] = request.__dict__['data_lmbench'][lmbench_keys].get('modify_parameters')
             # 处理数据，原始数据每个一级标就是一个json，把所有以及字段放到一个json中
             new_lmbench = {}
             for i in lmbench_json:
                 new_lmbench.update(i)
             for key, value in new_lmbench.items():
                 if key == "Basic system parameters":
-                    lmbench['basic_Mhz'] = value['Mhz']
-                    lmbench['basic_tlb_pages'] = value['tlb pages']
-                    lmbench['basic_cache_line_bytes'] = value['cache line bytes']
-                    lmbench['basic_mem_par'] = value['mem par']
-                    lmbench['basic_scal_load'] = value['scal load']
+                    data_lmbench['basic_Mhz'] = value['Mhz']
+                    data_lmbench['basic_tlb_pages'] = value['tlb pages']
+                    data_lmbench['basic_cache_line_bytes'] = value['cache line bytes']
+                    data_lmbench['basic_mem_par'] = value['mem par']
+                    data_lmbench['basic_scal_load'] = value['scal load']
                 elif key == "Processor":
-                    lmbench['processor_null_call'] = value['Mhz']
-                    lmbench['processor_null_I_O'] = value['null call']
-                    lmbench['processor_stat'] = value['null I/O']
-                    lmbench['processor_open_close'] = value['stat']
-                    lmbench['processor_slct_TCP'] = value['open close']
-                    lmbench['processor_sig_inst'] = value['slct TCP']
-                    lmbench['processor_sig_hndl'] = value['sig inst']
-                    lmbench['processor_fork_proc'] = value['sig hndl']
-                    lmbench['processor_exec_proc'] = value['fork proc']
-                    lmbench['processor_sh_proc'] = value['exec proc']
-                    lmbench['processor_Mhz'] = value['sh proc']
+                    data_lmbench['processor_null_call'] = value['Mhz']
+                    data_lmbench['processor_null_I_O'] = value['null call']
+                    data_lmbench['processor_stat'] = value['null I/O']
+                    data_lmbench['processor_open_close'] = value['stat']
+                    data_lmbench['processor_slct_TCP'] = value['open close']
+                    data_lmbench['processor_sig_inst'] = value['slct TCP']
+                    data_lmbench['processor_sig_hndl'] = value['sig inst']
+                    data_lmbench['processor_fork_proc'] = value['sig hndl']
+                    data_lmbench['processor_exec_proc'] = value['fork proc']
+                    data_lmbench['processor_sh_proc'] = value['exec proc']
+                    data_lmbench['processor_Mhz'] = value['sh proc']
                 elif key == "Basic integer operations":
-                    lmbench['basic_intgr_bit'] = value['intgr bit']
-                    lmbench['basic_intgr_add'] = value['intgr add']
-                    lmbench['basic_intgr_mul'] = value['intgr mul']
-                    lmbench['basic_intgr_div'] = value['intgr div']
-                    lmbench['basic_intgr_mod'] = value['intgr mod']
+                    data_lmbench['basic_intgr_bit'] = value['intgr bit']
+                    data_lmbench['basic_intgr_add'] = value['intgr add']
+                    data_lmbench['basic_intgr_mul'] = value['intgr mul']
+                    data_lmbench['basic_intgr_div'] = value['intgr div']
+                    data_lmbench['basic_intgr_mod'] = value['intgr mod']
                 elif key == "Basic uint64 operations":
-                    lmbench['basic_int64_bit'] = value['int64 bit']
-                    lmbench['basic_int64_add'] = value['int64 add']
-                    lmbench['basic_int64_mul'] = value['int64 mul']
-                    lmbench['basic_int64_div'] = value['int64 div']
-                    lmbench['basic_int64_mod'] = value['int64 mod']
+                    data_lmbench['basic_int64_bit'] = value['int64 bit']
+                    data_lmbench['basic_int64_add'] = value['int64 add']
+                    data_lmbench['basic_int64_mul'] = value['int64 mul']
+                    data_lmbench['basic_int64_div'] = value['int64 div']
+                    data_lmbench['basic_int64_mod'] = value['int64 mod']
                 elif key == "Basic float operations":
-                    lmbench['basic_float_add'] = value['float add']
-                    lmbench['basic_float_mul'] = value['float mul']
-                    lmbench['basic_float_div'] = value['float div']
-                    lmbench['basic_float_bogo'] = value['float bogo']
+                    data_lmbench['basic_float_add'] = value['float add']
+                    data_lmbench['basic_float_mul'] = value['float mul']
+                    data_lmbench['basic_float_div'] = value['float div']
+                    data_lmbench['basic_float_bogo'] = value['float bogo']
                 elif key == "Basic double operations":
-                    lmbench['basic_double_add'] = value['double add']
-                    lmbench['basic_double_mul'] = value['double mul']
-                    lmbench['basic_double_div'] = value['double div']
-                    lmbench['basic_double_bogo'] = value['double bogo']
+                    data_lmbench['basic_double_add'] = value['double add']
+                    data_lmbench['basic_double_mul'] = value['double mul']
+                    data_lmbench['basic_double_div'] = value['double div']
+                    data_lmbench['basic_double_bogo'] = value['double bogo']
                 elif key == "Context switching":
-                    lmbench['context_2p_0K'] = value['2p/0K']
-                    lmbench['context_2p_16K'] = value['2p/16K']
-                    lmbench['context_2p_64K'] = value['2p/64K']
-                    lmbench['context_8p_16K'] = value['8p/16K']
-                    lmbench['context_8p_64K'] = value['8p/64K']
-                    lmbench['context_16p_16K'] = value['16p/16K']
-                    lmbench['context_16p_64K'] = value['16p/64K']
+                    data_lmbench['context_2p_0K'] = value['2p/0K']
+                    data_lmbench['context_2p_16K'] = value['2p/16K']
+                    data_lmbench['context_2p_64K'] = value['2p/64K']
+                    data_lmbench['context_8p_16K'] = value['8p/16K']
+                    data_lmbench['context_8p_64K'] = value['8p/64K']
+                    data_lmbench['context_16p_16K'] = value['16p/16K']
+                    data_lmbench['context_16p_64K'] = value['16p/64K']
                 elif key == "*Local* Communication latencies":
-                    lmbench['local_2p_0K'] = value['2p/0K']
-                    lmbench['local_Pipe'] = value['Pipe']
-                    lmbench['local_AF_UNIX'] = value['AF UNIX']
-                    lmbench['local_UDP'] = value['UDP']
-                    lmbench['local_TCP'] = value['TCP']
-                    lmbench['local_TCP_conn'] = value['TCP conn']
-                    lmbench['local_RPC_TCP'] = value['RPC/TCP']
-                    lmbench['local_RPC_UDP'] = value['RPC/UDP']
+                    data_lmbench['local_2p_0K'] = value['2p/0K']
+                    data_lmbench['local_Pipe'] = value['Pipe']
+                    data_lmbench['local_AF_UNIX'] = value['AF UNIX']
+                    data_lmbench['local_UDP'] = value['UDP']
+                    data_lmbench['local_TCP'] = value['TCP']
+                    data_lmbench['local_TCP_conn'] = value['TCP conn']
+                    data_lmbench['local_RPC_TCP'] = value['RPC/TCP']
+                    data_lmbench['local_RPC_UDP'] = value['RPC/UDP']
                 elif key == "File & VM system latencies in microseconds":
-                    lmbench['file_and_system_0K_File_create'] = value['0K File create']
-                    lmbench['file_and_system_0K_File_delete'] = value['0K File delete']
-                    lmbench['file_and_system_10K_File_create'] = value['10K File create']
-                    lmbench['file_and_system_10K_File_delete'] = value['10K File delete']
-                    lmbench['file_and_system_Mmap_Latency'] = value['Mmap Latency']
-                    lmbench['file_and_system_Prot_Fault'] = value['Prot Fault']
-                    lmbench['file_and_system_Page_Fault'] = value['Page Fault']
-                    lmbench['file_and_system_100fd_selct'] = value['100fd selct']
+                    data_lmbench['file_and_system_0K_File_create'] = value['0K File create']
+                    data_lmbench['file_and_system_0K_File_delete'] = value['0K File delete']
+                    data_lmbench['file_and_system_10K_File_create'] = value['10K File create']
+                    data_lmbench['file_and_system_10K_File_delete'] = value['10K File delete']
+                    data_lmbench['file_and_system_Mmap_Latency'] = value['Mmap Latency']
+                    data_lmbench['file_and_system_Prot_Fault'] = value['Prot Fault']
+                    data_lmbench['file_and_system_Page_Fault'] = value['Page Fault']
+                    data_lmbench['file_and_system_100fd_selct'] = value['100fd selct']
                 elif key == "*Local* Communication bandwidths in MB/s - bigger is better":
-                    lmbench['local_bigger_Pipe'] = value['Pipe']
-                    lmbench['local_bigger_AF_UNIX'] = value['AF UNIX']
-                    lmbench['local_bigger_TCP'] = value['TCP']
-                    lmbench['local_bigger_File_reread'] = value['File reread']
-                    lmbench['local_bigger_Mmap_reread'] = value['Mmap reread']
-                    lmbench['local_bigger_Bcopy_libc'] = value['Bcopy(libc)']
-                    lmbench['local_bigger_Bcopy_hand'] = value['Bcopy(hand)']
-                    lmbench['local_bigger_Mem_read'] = value['Mem read']
-                    lmbench['local_bigger_Mem_write'] = value['Mem write']
+                    data_lmbench['local_bigger_Pipe'] = value['Pipe']
+                    data_lmbench['local_bigger_AF_UNIX'] = value['AF UNIX']
+                    data_lmbench['local_bigger_TCP'] = value['TCP']
+                    data_lmbench['local_bigger_File_reread'] = value['File reread']
+                    data_lmbench['local_bigger_Mmap_reread'] = value['Mmap reread']
+                    data_lmbench['local_bigger_Bcopy_libc'] = value['Bcopy(libc)']
+                    data_lmbench['local_bigger_Bcopy_hand'] = value['Bcopy(hand)']
+                    data_lmbench['local_bigger_Mem_read'] = value['Mem read']
+                    data_lmbench['local_bigger_Mem_write'] = value['Mem write']
                 elif key == "Memory latencies in nanoseconds":
-                    lmbench['memory_Mhz'] = value['Mhz']
-                    lmbench['memory_L1'] = value['L1 $']
-                    lmbench['memory_L2'] = value['L2 $']
-                    lmbench['memory_Main_mem'] = value['Main mem']
-                    lmbench['memory_Rand_mem'] = value['Rand mem']
-            lmbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in
-                       lmbench.items()}
-            serializer_lmbench = LmbenchSerializer(data=lmbench)
+                    data_lmbench['memory_Mhz'] = value['Mhz']
+                    data_lmbench['memory_L1'] = value['L1 $']
+                    data_lmbench['memory_L2'] = value['L2 $']
+                    data_lmbench['memory_Main_mem'] = value['Main mem']
+                    data_lmbench['memory_Rand_mem'] = value['Rand mem']
+            data_lmbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in
+                       data_lmbench.items()}
+            serializer_lmbench = LmbenchSerializer(data=data_lmbench)
             if serializer_lmbench.is_valid():
                 self.perform_create(serializer_lmbench)
             else:
                 log.info('lmbench数据存储错误 ：%s，', serializer_lmbench.errors)
-                log.info('lmbench存储数据为 ：%s，', lmbench)
+                log.info('lmbench存储数据为 ：%s，', data_lmbench)
                 serializer_lmbench_error.append(serializer_lmbench.errors)
                 error_message.append(get_error_message(serializer_lmbench))
         if serializer_lmbench_error:

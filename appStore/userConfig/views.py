@@ -34,42 +34,42 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         return json_response(serializer.data, status.HTTP_200_OK, '测试完成')
 
     def create(self, request, *args, **kwargs):
-        user_config_data = {}
-        user_config_data['user_name'] = request.user.chinese_name
+        data_user_config = {}
+        data_user_config['user_name'] = request.user.chinese_name
         # user_config_data['user_password'] = request.data.get('user_password')
-        user_config_data['config_name'] = request.data.get('config_name')
-        user_config_data['project_name'] = request.data.get('project_name')
-        user_config_data['test_ip'] = request.data.get('test_ip')
-        user_config_data['test_password'] = request.data.get('test_password')
-        user_config_data['stream_number'] = request.data.get('stream')
-        user_config_data['lmbench_number'] = request.data.get('lmbench')
-        user_config_data['unixbench_number'] = request.data.get('unixbench')
-        user_config_data['fio_number'] = request.data.get('fio')
-        user_config_data['iozone_number'] = request.data.get('iozone')
-        user_config_data['jvm2008_number'] = request.data.get('jvm2008')
-        user_config_data['cpu2006_number'] = request.data.get('cpu2006')
-        user_config_data['cpu2017_number'] = request.data.get('cpu2017')
-        user_config_data['stream_config'] = request.data.get('yaml')['stream']
-        user_config_data['lmbench_config'] = request.data.get('yaml')['lmbench']
-        user_config_data['unixbench_config'] = request.data.get('yaml')['unixbench']
-        user_config_data['fio_config'] = request.data.get('yaml')['fio']
-        user_config_data['iozone_config'] = request.data.get('yaml')['iozone']
-        user_config_data['jvm2008_config'] = request.data.get('yaml')['jvm2008']
-        user_config_data['cpu2006_config'] = request.data.get('yaml')['cpu2006']
-        user_config_data['cpu2006_loongarch64_config'] = request.data.get('yaml')['cpu2006_loongarch64']
-        user_config_data['cpu2017_config'] = request.data.get('yaml')['cpu2017']
-        user_config_data['message'] = request.data.get('message')
+        data_user_config['config_name'] = request.data.get('config_name')
+        data_user_config['project_name'] = request.data.get('project_name')
+        data_user_config['test_ip'] = request.data.get('test_ip')
+        data_user_config['test_password'] = request.data.get('test_password')
+        data_user_config['stream_number'] = request.data.get('stream')
+        data_user_config['lmbench_number'] = request.data.get('lmbench')
+        data_user_config['unixbench_number'] = request.data.get('unixbench')
+        data_user_config['fio_number'] = request.data.get('fio')
+        data_user_config['iozone_number'] = request.data.get('iozone')
+        data_user_config['jvm2008_number'] = request.data.get('jvm2008')
+        data_user_config['cpu2006_number'] = request.data.get('cpu2006')
+        data_user_config['cpu2017_number'] = request.data.get('cpu2017')
+        data_user_config['stream_config'] = request.data.get('yaml')['stream']
+        data_user_config['lmbench_config'] = request.data.get('yaml')['lmbench']
+        data_user_config['unixbench_config'] = request.data.get('yaml')['unixbench']
+        data_user_config['fio_config'] = request.data.get('yaml')['fio']
+        data_user_config['iozone_config'] = request.data.get('yaml')['iozone']
+        data_user_config['jvm2008_config'] = request.data.get('yaml')['jvm2008']
+        data_user_config['cpu2006_config'] = request.data.get('yaml')['cpu2006']
+        data_user_config['cpu2006_loongarch64_config'] = request.data.get('yaml')['cpu2006_loongarch64']
+        data_user_config['cpu2017_config'] = request.data.get('yaml')['cpu2017']
+        data_user_config['message'] = request.data.get('message')
         if request.data.get('is_send_config'):
-            user_config_data['is_send_config'] = request.data.get('is_send_config')
+            data_user_config['is_send_config'] = request.data.get('is_send_config')
             # 删除旧数据
             UserConfig.objects.filter(is_send_config=True).delete()
-        config_serializer = UserConfigSerializer(data=user_config_data)
-        if config_serializer.is_valid():
-            self.perform_create(config_serializer)
-            return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
-        log.info('userConfig数据存储错误 ：%s，', config_serializer.errors)
-        log.info('userConfig存储数据为 ：%s，', user_config_data)
-        return json_response({}, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
+        serializer_config = UserConfigSerializer(data=data_user_config)
+        if serializer_config.is_valid():
+            self.perform_create(serializer_config)
+            return json_response(serializer_config.data, status.HTTP_200_OK, '创建成功！')
+        log.info('userConfig数据存储错误 ：%s，', serializer_config.errors)
+        log.info('userConfig存储数据为 ：%s，', data_user_config)
+        return json_response({}, status.HTTP_400_BAD_REQUEST, serializer_config.errors)
 
     def put(self, request, *args, **kwargs):
         id = request.data.get('id')
