@@ -201,6 +201,9 @@ def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_
     if not "1 packets transmitted, 1 received" in output:
         return '网络未连接'
 
+    mv_ssh_keygen = "ssh-keygen -R " + server_IP
+    subprocess.run(mv_ssh_keygen, shell=True)
+
     ssh_cmd = f'sshpass -p {server_password} ssh -o StrictHostKeyChecking=no {server_user_name}@{server_IP}'
     result = subprocess.run(ssh_cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
