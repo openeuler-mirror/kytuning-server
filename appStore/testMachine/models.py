@@ -1,10 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
-"""
 from django.db import models
 
 
@@ -29,7 +22,7 @@ class TestMachine(models.Model):
     BMC_password = models.CharField(max_length=50, verbose_name='BMC密码')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
 
-    owner = models.CharField(max_length=50, verbose_name='当前操作系统负责人', default=None)
+    owner = models.CharField(max_length=50, verbose_name='当前操作系统负责人', null=True, blank=True)
     server_IP = models.CharField(max_length=50, verbose_name='server_IP', null=True, blank=True)
     server_user_name = models.CharField(max_length=50, verbose_name='服务器用户名', null=True, blank=True)
     server_password = models.CharField(max_length=50, verbose_name='服务器密码', null=True, blank=True)

@@ -1,10 +1,4 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
-"""
+# Create your views here.
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
 from rest_framework import status, viewsets
@@ -95,6 +89,25 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         # machine_data.task_status =
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '修改成功')
+
+    def finished_using(self, request, *args, **kwargs):
+        machine_id = request.data.get('id')
+        machine_data = TestMachine.objects.get(id=machine_id)
+        if not machine_id or not machine_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        if machine_data.owner == request.user.chinese_name:
+            machine_data.owner = None
+            machine_data.server_IP = None
+            machine_data.server_user_name = None
+            machine_data.server_password = None
+            machine_data.os_version = None
+            machine_data.link_status = None
+            machine_data.task_status = None
+            machine_data.save()
+            return json_response({}, status.HTTP_200_OK, '使用完成状态修改成功')
+        else:
+            return json_response({}, status.HTTP_200_OK, '不可取消别人的使用状态')
+
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
