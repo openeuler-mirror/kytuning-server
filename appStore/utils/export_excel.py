@@ -119,15 +119,28 @@ def create_base_export(user_name,sheetname,data):
         worksheet.merge_cells('A3:B3')
         worksheet.merge_cells('A4:B4')
     elif sheetname in ["Speccpu2006(base)","Speccpu2006(peak)"]:
+        # 复制前四行的第一列数据到第二列
+        for row_number in range(1, 5):
+            cell_value = worksheet.cell(row=row_number, column=1).value
+            worksheet.cell(row=row_number, column=2, value=cell_value)
+        # 删除第一列
+        worksheet.delete_cols(1)
+        worksheet.merge_cells('A1:C1')
+        worksheet.merge_cells('A2:C2')
+        worksheet.merge_cells('A3:C3')
+        worksheet.merge_cells('A4:C4')
+    elif sheetname in ["Speccpu2017(base)","Speccpu2017(peak)"]:
+        # 复制前四行的第一列数据到第二列
+        for row_number in range(1, 5):
+            cell_value = worksheet.cell(row=row_number, column=1).value
+            worksheet.cell(row=row_number, column=2, value=cell_value)
+        # 删除第一列
+        worksheet.delete_cols(1)
+        # 合并前四行的单元格
         worksheet.merge_cells('A1:D1')
         worksheet.merge_cells('A2:D2')
         worksheet.merge_cells('A3:D3')
         worksheet.merge_cells('A4:D4')
-    elif sheetname in ["Speccpu2017(base)","Speccpu2017(peak)"]:
-        worksheet.merge_cells('A1:E1')
-        worksheet.merge_cells('A2:E2')
-        worksheet.merge_cells('A3:E3')
-        worksheet.merge_cells('A4:E4')
     return worksheet,workbook
 
 def set_base_export_style(worksheet,config,sheetname):
@@ -494,11 +507,6 @@ def cpu2006_excel(user_name,sheetname, data):
     # 设置第三列的样式
     column_letter = get_column_letter(3)
     for cell in worksheet[column_letter]:
-        cell.fill = config.color_item_1
-        cell.font = config.font_item_1
-    # 设置第四列的样式
-    column_letter = get_column_letter(4)
-    for cell in worksheet[column_letter]:
         cell.fill = config.color_item_2
         cell.font = config.font_item_2
 
@@ -507,15 +515,13 @@ def cpu2006_excel(user_name,sheetname, data):
 
     # 合并列
     # 第一列
-    worksheet.merge_cells(start_row=5, start_column=1, end_row=66, end_column=1)
+    worksheet.merge_cells(start_row=5, start_column=1, end_row=35, end_column=1)
+    worksheet.merge_cells(start_row=36, start_column=1, end_row=66, end_column=1)
     # 第二列
-    worksheet.merge_cells(start_row=5, start_column=2, end_row=35, end_column=2)
-    worksheet.merge_cells(start_row=36, start_column=2, end_row=66, end_column=2)
-    # # 第三列
-    worksheet.merge_cells(start_row=5, start_column=3, end_row=17, end_column=3)
-    worksheet.merge_cells(start_row=18, start_column=3, end_row=35, end_column=3)
-    worksheet.merge_cells(start_row=36, start_column=3, end_row=48, end_column=3)
-    worksheet.merge_cells(start_row=49, start_column=3, end_row=66, end_column=3)
+    worksheet.merge_cells(start_row=5, start_column=2, end_row=17, end_column=2)
+    worksheet.merge_cells(start_row=18, start_column=2, end_row=35, end_column=2)
+    worksheet.merge_cells(start_row=36, start_column=2, end_row=48, end_column=2)
+    worksheet.merge_cells(start_row=49, start_column=2, end_row=66, end_column=2)
     # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
@@ -541,29 +547,22 @@ def cpu2017_excel(user_name,sheetname, data):
     # 设置第四列的样式
     column_letter = get_column_letter(4)
     for cell in worksheet[column_letter]:
-        cell.fill = config.color_item_1
-        cell.font = config.font_item_1
-    # 设置第五列的样式
-    column_letter = get_column_letter(5)
-    for cell in worksheet[column_letter]:
         cell.fill = config.color_item_2
         cell.font = config.font_item_2
-    #
-    # # 设置其它的表格样式
+
+    # 设置其它的表格样式
     worksheet = set_base_export_style(worksheet,config,sheetname)
 
     # 合并列
     # 第一列
-    worksheet.merge_cells(start_row=5, start_column=1, end_row=54, end_column=1)
+    worksheet.merge_cells(start_row=5, start_column=1, end_row=29, end_column=1)
+    worksheet.merge_cells(start_row=30, start_column=1, end_row=54, end_column=1)
     # 第二列
-    worksheet.merge_cells(start_row=5, start_column=2, end_row=29, end_column=2)
-    worksheet.merge_cells(start_row=30, start_column=2, end_row=54, end_column=2)
+    worksheet.merge_cells(start_row=5, start_column=2, end_row=15, end_column=2)
+    worksheet.merge_cells(start_row=16, start_column=2, end_row=29, end_column=2)
+    worksheet.merge_cells(start_row=30, start_column=2, end_row=40, end_column=2)
+    worksheet.merge_cells(start_row=41, start_column=2, end_row=54, end_column=2)
     # 第三列
-    worksheet.merge_cells(start_row=5, start_column=3, end_row=15, end_column=3)
-    worksheet.merge_cells(start_row=16, start_column=3, end_row=29, end_column=3)
-    worksheet.merge_cells(start_row=30, start_column=3, end_row=40, end_column=3)
-    worksheet.merge_cells(start_row=41, start_column=3, end_row=54, end_column=3)
-    # 第四列
-    worksheet.merge_cells(start_row=5, start_column=4, end_row=54, end_column=4)
-    # 保存工作簿到文件
+    worksheet.merge_cells(start_row=5, start_column=3, end_row=54, end_column=3)
+    # # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
