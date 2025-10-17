@@ -32,8 +32,8 @@
         <el-table-column prop="update_time" label="更新时间"></el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="scope">
-            <el-button type="primary" @click="modify(scope.row)">编辑</el-button>
-            <el-button type="success" @click="applyUse(scope.row)">申请使用</el-button>
+            <el-button type="primary" @click="modify(scope.row)"  class="operate-button">编辑</el-button>
+            <el-button type="success" @click="applyUse(scope.row)"  class="operate-button">申请</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -133,12 +133,20 @@ export default {
           this.getData()
         }
       })
-    }
+    },
+    //取消修改
+    closeInfo() {
+      this.dialogModify = false
+    },
   }
 };
 </script>
 
 
 <style scoped>
+.operate-button {
+  margin-left: 0;
+  margin-right: 10px;
+}
 </style>
 
