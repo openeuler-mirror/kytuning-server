@@ -47,6 +47,7 @@ router.register(r'machine_list', TestMachineViewSet, basename='machine_list')
 urlpatterns = [
     url(r'', include(router.urls)),
     url('^apply_use_machine/', TestMachineViewSet.as_view({'post': 'apply_use_machine'}), name='apply_use_machine'),
+    url('^cancel_apply_use_machine/', TestMachineViewSet.as_view({'post': 'cancel_apply_use_machine'}), name='cancel_apply_use_machine'),
     url('^modify_server/', TestMachineViewSet.as_view({'post': 'modify_server'}), name='modify_server'),
     url('^get_filter_name/', ProjectViewSet.as_view({'get': 'get_filter_name'}), name='get_filter_name'),
     url('^merge_data/', ProjectViewSet.as_view({'post': 'merge_data'}), name='merge_data'),
@@ -55,4 +56,5 @@ urlpatterns = [
     url('^change_password/', UserProfileViewSet.as_view({'put': 'change_password'}), name='change_password'),
     url('^do_test_case/', TestCaseViewSet.as_view({'post': 'do_test_case'}), name='do_test_case'),
     url('^down_message/', TestCaseViewSet.as_view({'get': 'down_message'}), name='down_message'),
+
 ]
