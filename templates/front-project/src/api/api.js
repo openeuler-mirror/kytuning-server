@@ -244,6 +244,15 @@ export function finished_using(data) {
     })
 }
 
+//更新状态
+export function update_status(data) {
+    return service({
+        method: 'post',
+        url: '/update_status/',
+        data
+    })
+}
+
 //申请使用设备
 export function apply_use_machine(data) {
     return service({

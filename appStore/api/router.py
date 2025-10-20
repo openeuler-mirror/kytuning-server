@@ -49,6 +49,7 @@ urlpatterns = [
     url('^apply_use_machine/', TestMachineViewSet.as_view({'post': 'apply_use_machine'}), name='apply_use_machine'),
     url('^cancel_apply_use_machine/', TestMachineViewSet.as_view({'post': 'cancel_apply_use_machine'}), name='cancel_apply_use_machine'),
     url('^finished_using/', TestMachineViewSet.as_view({'post': 'finished_using'}), name='finished_using'),
+    url('^update_status/', TestMachineViewSet.as_view({'post': 'update_status'}), name='update_status'),
     url('^modify_server/', TestMachineViewSet.as_view({'post': 'modify_server'}), name='modify_server'),
     url('^get_filter_name/', ProjectViewSet.as_view({'get': 'get_filter_name'}), name='get_filter_name'),
     url('^merge_data/', ProjectViewSet.as_view({'post': 'merge_data'}), name='merge_data'),
