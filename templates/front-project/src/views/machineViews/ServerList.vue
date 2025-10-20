@@ -33,7 +33,7 @@
         <el-table-column label="操作" width="300">
           <template #default="scope">
             <el-button type="primary" @click="modify(scope.row)" class="operate-button">编辑</el-button>
-            <el-button type="danger" @click="finishedUsing(scope.row)"  class="operate-button">使用完成</el-button>
+            <el-button type="danger" @click="finishedUsing(scope.row)" class="operate-button">使用完成</el-button>
             <el-button type="success" @click="updateStatus(scope.row)" class="operate-button">更新状态</el-button>
           </template>
         </el-table-column>
@@ -63,10 +63,11 @@
         </el-form-item>
         <el-form-item label="重构ISO名称" prop="os_version">
           <el-select v-model="machineData.iso_name" placeholder="请选择ISO">
-            <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name" placeholder="请输入错误类型"/>
+            <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"
+                       placeholder="请输入错误类型"/>
           </el-select>
         </el-form-item>
-          <el-button type="success">新增ISO</el-button>
+        <el-button type="success">新增ISO</el-button>
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
@@ -79,8 +80,17 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {machine_list, apply_use_machine, cancel_apply_use_machine, modify_server, finished_using, update_status, get_adapt_ISO} from "@/api/api";
+import {
+  machine_list,
+  apply_use_machine,
+  cancel_apply_use_machine,
+  modify_server,
+  finished_using,
+  update_status,
+  get_adapt_ISO
+} from "@/api/api";
 import utils from '@/utils/utils';
+import {getToken} from "@/utils/setToken";
 
 
 export default {
@@ -98,7 +108,7 @@ export default {
         'os_version': '',
         'iso_name': '',
       },
-      isoList:[],
+      isoList: [],
       dialogModify: false,
     };
   },
@@ -115,47 +125,51 @@ export default {
 
     //修改数据
     modify(row) {
-      get_adapt_ISO('get', {}).then((response) => {
-        this.isoList=response.data.data
-        console.log(response.data.data)
-      });
-      this.dialogModify = true;
-      this.modifyID = row.id
-      this.modifyArchName = row.arch_name
-      this.machineData = {
-        'server_IP': row.server_IP,
-        'server_user_name': row.server_user_name,
-        'server_password': row.server_password,
-        'os_version': row.os_version,
-        'iso_name': row.iso_name,
+      if (row.owner === getToken('chinesename') || getToken('chinesename') === 'root' || !row.owner) {
+        get_adapt_ISO('get', {}).then((response) => {
+          this.isoList = response.data.data
+          console.log(response.data.data)
+        });
+        this.dialogModify = true;
+        this.modifyID = row.id
+        this.modifyArchName = row.arch_name
+        this.machineData = {
+          'server_IP': row.server_IP,
+          'server_user_name': row.server_user_name,
+          'server_password': row.server_password,
+          'os_version': row.os_version,
+          'iso_name': row.iso_name,
+        }
+      } else {
+        ElMessage({message: '不可查看或修改他人机器详情', type: 'success'})
       }
     },
 
     //确定修改数据
     applyUseSure() {
       const machineData_ = {
-          id: this.modifyID,
-          server_IP: this.machineData.server_IP,
-          server_user_name: this.machineData.server_user_name,
-          server_password: this.machineData.server_password,
-          os_version: this.machineData.os_version,
-          iso_name: this.machineData.iso_name,
-        }
+        id: this.modifyID,
+        server_IP: this.machineData.server_IP,
+        server_user_name: this.machineData.server_user_name,
+        server_password: this.machineData.server_password,
+        os_version: this.machineData.os_version,
+        iso_name: this.machineData.iso_name,
+      }
 
       if (this.machineData.iso_name && this.machineData.iso_name !== "other(手动创建)") {
-        if (this.machineData.iso_name.includes(this.modifyArchName)){
+        if (this.machineData.iso_name.includes(this.modifyArchName)) {
           this.dialogModify = false;
           modify_server(machineData_).then(response => {
-          if (response.data.code === 200) {
-            ElMessage({message: response.data.message, type: 'success'})
-            this.getData()
-          }
-        })
-        }else {
+            if (response.data.code === 200) {
+              ElMessage({message: response.data.message, type: 'success'})
+              this.getData()
+            }
+          })
+        } else {
           ElMessage({message: '你的机器架构和ISO类型不匹配', type: 'success'})
         }
 
-      }else {
+      } else {
         this.dialogModify = false;
         modify_server(machineData_).then(response => {
           if (response.data.code === 200) {
@@ -171,13 +185,13 @@ export default {
     },
 
     //使用完成
-    finishedUsing(row){
+    finishedUsing(row) {
       if (row.owner) {
         finished_using({id: row.id}).then(response => {
           if (response.data.code === 200) {
             ElMessage({message: response.data.message, type: 'success'})
             this.getData()
-          }else {
+          } else {
             ElMessage({message: response.data.message, type: 'success'})
           }
         })
@@ -209,19 +223,19 @@ export default {
             this.getData()
           }
         })
-      }else {
+      } else {
         ElMessage({message: '当前没有申请人员，无需取消申请', type: 'error'})
       }
     },
-    updateStatus(row){
-       if (row.owner) {
+    updateStatus(row) {
+      if (row.owner) {
         update_status({id: row.id}).then(response => {
           if (response.data.code === 200) {
             ElMessage({message: response.data.message, type: 'success'})
             this.getData()
           }
         })
-      }else {
+      } else {
         ElMessage({message: '无人使用无需更新', type: 'success'})
       }
     },
