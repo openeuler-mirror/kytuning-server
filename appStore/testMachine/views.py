@@ -9,8 +9,7 @@
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
 from rest_framework import status, viewsets
-from appStore.utils.common import json_response, get_link_status
-
+from appStore.utils.common import json_response, get_link_status, update_system
 import logging
 log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
@@ -90,6 +89,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         if machine_data.owner == request.user.chinese_name:
+            # TODO 优化合并代码
             machine_data.server_IP = request.data.get('server_IP')
             machine_data.server_user_name = request.data.get('server_user_name')
             machine_data.server_password = request.data.get('server_password')
@@ -101,11 +101,13 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             # TODO 通过后端逻辑获取
             # machine_data.task_status =
             machine_data.save()
+            update_system(machine_data.server_IP,machine_data.server_user_name,machine_data.server_password)
             return json_response({}, status.HTTP_200_OK, '修改成功')
 
         elif not machine_data.owner:
             if request.user.chinese_name != machine_data.queue_user and machine_data.queue_user:
-                return json_response({}, status.HTTP_200_OK, '当前申请人是 %s ,请协商后在使用'%(machine_data.queue_user))
+                return json_response({}, status.HTTP_200_OK,
+                                     '当前申请人是 %s ,请协商后在使用' % (machine_data.queue_user))
             machine_data.owner = request.user.chinese_name
             machine_data.queue_user = None
             machine_data.server_IP = request.data.get('server_IP')
@@ -118,11 +120,10 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             # TODO 通过后端逻辑获取
             # machine_data.task_status =
             machine_data.save()
+            update_system(machine_data.server_IP, machine_data.server_user_name, machine_data.server_password)
             return json_response({}, status.HTTP_200_OK, '修改成功')
         else:
             return json_response({}, status.HTTP_200_OK, '不可修改他人使用的机器')
-
-
 
     def finished_using(self, request, *args, **kwargs):
         machine_id = request.data.get('id')
@@ -151,7 +152,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         # machine_data.task_status =
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '更新状态完成')
-
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)

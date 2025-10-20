@@ -210,5 +210,21 @@ def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_
     # 获取返回状态 0 代表成功
     if result.returncode:
         return '用户名或密码错误'
-
     return '在线'
+
+
+def update_system(IP,user_name,password):
+    # 复制脚本至需要重置的系统
+    scp_command = f'sshpass -p {password} scp -r ./appStore/utils/auto_install.sh ./appStore/utils/clear_kytuning_efibootmgr.sh ./appStore/utils/kytuning-ks.cfg {user_name}@{IP}:/root/'
+    result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, text=True)
+    if result.returncode:
+        return '文件复制出错'
+
+    ssh_command = f'sshpass -p {password} ssh -o ServerAliveInterval=10 {user_name}@{IP} "sh /root/auto_install.sh"'
+
+    subprocess.Popen(ssh_command, shell=True)
+    # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
+    # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+    #                                stderr=subprocess.DEVNULL, text=True)
+    return

@@ -57,7 +57,7 @@ update_grub_cfg(){
     # 在下一行增加inst.ks
     menuentry_line_number=$((menuentry_line_number + 1))
     # todo测试时先注销掉。
-    sed -i "${menuentry_line_number}s/$/ inst.ks=hd:LABEL=Kytuning:\/$KS_FILE_NAME inst.repo=hd:LABEL=Kytuning/" "$GRUB_CFG_PATH"
+     sed -i "${menuentry_line_number}s/$/ inst.ks=hd:LABEL=Kytuning:\/$KS_FILE_NAME inst.repo=hd:LABEL=Kytuning/" "$GRUB_CFG_PATH"
     echo "======在第 ${menuentry_line_number} 行添加了 inst.ks信息======"
   else
     echo "======未找到menuentry======"
