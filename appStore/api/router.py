@@ -8,6 +8,7 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 
+from appStore.adaptISO.views import AdaptISOListViewSet
 from appStore.cpu2006.views import Cpu2006ViewSet
 from appStore.cpu2017.views import Cpu2017ViewSet
 from appStore.env.views import EnvViewSet
@@ -43,6 +44,7 @@ router.register(r'test_case', TestCaseViewSet, basename='test_case')
 router.register(r'user_config', UserConfigViewSet, basename='user_config')
 router.register(r'error_list', ErrorListViewSet, basename='error_list')
 router.register(r'machine_list', TestMachineViewSet, basename='machine_list')
+router.register(r'get_adapt_ISO', AdaptISOListViewSet, basename='adapt_ISO')
 
 urlpatterns = [
     url(r'', include(router.urls)),

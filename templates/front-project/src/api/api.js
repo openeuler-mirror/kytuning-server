@@ -270,6 +270,15 @@ export function cancel_apply_use_machine(data) {
     })
 }
 
+//获取已适配的iso列表
+export function get_adapt_ISO(params) {
+    return service({
+        method: 'get',
+        url: '/get_adapt_ISO/',
+        params
+    })
+}
+
 
 
 
