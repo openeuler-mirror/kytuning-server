@@ -128,9 +128,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         if machine_data.owner == request.user.chinese_name:
             machine_data.owner = None
-            machine_data.server_IP = None
-            machine_data.server_user_name = None
-            machine_data.server_password = None
             machine_data.os_version = None
             machine_data.link_status = None
             machine_data.task_status = None
@@ -147,8 +144,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
                                                    machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
-        # TODO 通过后端逻辑获取
-        # machine_data.task_status =
+        machine_data.save()
         return json_response({}, status.HTTP_200_OK, '更新状态完成')
 
 
