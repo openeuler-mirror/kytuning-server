@@ -86,18 +86,16 @@ class TestMachineViewSet(viewsets.ModelViewSet):
     def modify_server(self, request, *args, **kwargs):
         machine_id = request.data.get('id')
         machine_data = TestMachine.objects.get(id=machine_id)
+        machine_data.server_IP = request.data.get('server_IP')
+        machine_data.server_user_name = request.data.get('server_user_name')
+        machine_data.server_password = request.data.get('server_password')
+        machine_data.os_version = request.data.get('os_version')
+        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
+                                                   machine_data.BMC_password, machine_data.server_IP,
+                                                   machine_data.server_user_name, machine_data.server_password)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         if machine_data.owner == request.user.chinese_name:
-            # TODO 优化合并代码
-            machine_data.server_IP = request.data.get('server_IP')
-            machine_data.server_user_name = request.data.get('server_user_name')
-            machine_data.server_password = request.data.get('server_password')
-            # 修改为已适配的iso
-            machine_data.os_version = request.data.get('os_version')
-            machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
-                                                       machine_data.BMC_password, machine_data.server_IP,
-                                                       machine_data.server_user_name, machine_data.server_password)
             # TODO 通过后端逻辑获取
             # machine_data.task_status =
             machine_data.save()
@@ -110,15 +108,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                                      '当前申请人是 %s ,请协商后在使用' % (machine_data.queue_user))
             machine_data.owner = request.user.chinese_name
             machine_data.queue_user = None
-            machine_data.server_IP = request.data.get('server_IP')
-            machine_data.server_user_name = request.data.get('server_user_name')
-            machine_data.server_password = request.data.get('server_password')
-            machine_data.os_version = request.data.get('os_version')
-            machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
-                                                       machine_data.BMC_password, machine_data.server_IP,
-                                                       machine_data.server_user_name, machine_data.server_password)
-            # TODO 通过后端逻辑获取
-            # machine_data.task_status =
             machine_data.save()
             update_system(machine_data.server_IP, machine_data.server_user_name, machine_data.server_password)
             return json_response({}, status.HTTP_200_OK, '修改成功')
