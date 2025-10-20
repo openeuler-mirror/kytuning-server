@@ -213,18 +213,42 @@ def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_
     return '在线'
 
 
-def update_system(IP,user_name,password):
+def update_system(user_name,server_IP,server_user_name,server_password):
     # 复制脚本至需要重置的系统
-    scp_command = f'sshpass -p {password} scp -r ./appStore/utils/auto_install.sh ./appStore/utils/clear_kytuning_efibootmgr.sh ./appStore/utils/kytuning-ks.cfg {user_name}@{IP}:/root/'
+    scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/kytuning-ks.cfg {server_user_name}@{server_IP}:/root/'%(str(user_name))
     result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, text=True)
     if result.returncode:
         return '文件复制出错'
 
-    ssh_command = f'sshpass -p {password} ssh -o ServerAliveInterval=10 {user_name}@{IP} "sh /root/auto_install.sh"'
+    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "sh /root/%s.sh"'%(str(user_name))
 
     subprocess.Popen(ssh_command, shell=True)
     # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
     # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
     #                                stderr=subprocess.DEVNULL, text=True)
     return
+
+import re
+
+import shutil
+
+def update_auto_install(user_name,replacements):
+    # 原始脚本文件路径
+    auto_install_file = './appStore/utils/autoInstall/auto_install.sh'
+    # 副本文件路径
+    user_install_file = './appStore/utils/autoInstall/' + str(user_name) + '.sh'
+    # 复制原始脚本文件到副本文件
+    shutil.copy2(auto_install_file, user_install_file)
+    # 读取副本脚本内容
+    with open(user_install_file, 'r') as f:
+        script_content = f.read()
+    # 遍历替换字典中的每个键值对，将对应的变量行替换为新值
+    for variable, new_value in replacements.items():
+        pattern = fr'({variable}=).*'
+        replacement = fr'\g<1>"{new_value}"'
+        script_content = re.sub(pattern, replacement, script_content)
+
+    # 将更新后的内容写回副本脚本文件
+    with open(user_install_file, 'w') as f:
+        f.write(script_content)
