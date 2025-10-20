@@ -58,9 +58,12 @@
         <el-form-item label="服务器密码" prop="server_password">
           <el-input v-model="machineData.server_password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="操作系统版本" prop="os_version">
-          <el-input v-model="machineData.os_version" autocomplete="off"></el-input>
+        <el-form-item label="ISO名称" prop="os_version">
+          <el-select v-model="machineData.os_version" placeholder="请选择ISO">
+            <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name" placeholder="请输入错误类型"/>
+          </el-select>
         </el-form-item>
+          <el-button type="success">新增ISO</el-button>
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
@@ -73,8 +76,9 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {machine_list, apply_use_machine, cancel_apply_use_machine, modify_server, finished_using, update_status} from "@/api/api";
+import {machine_list, apply_use_machine, cancel_apply_use_machine, modify_server, finished_using, update_status, get_adapt_ISO} from "@/api/api";
 import utils from '@/utils/utils';
+
 
 export default {
   name: 'serverList',
@@ -89,6 +93,7 @@ export default {
         'server_password': '',
         'os_version': '',
       },
+      isoList:[],
       dialogModify: false,
     };
   },
@@ -105,6 +110,9 @@ export default {
 
     //修改数据
     modify(row) {
+      get_adapt_ISO('get', {}).then((response) => {
+        this.isoList=response.data.data
+      });
       this.dialogModify = true;
       this.modifyID = row.id
       this.machineData = {
@@ -191,7 +199,7 @@ export default {
       }else {
         ElMessage({message: '无人使用无需更新', type: 'success'})
       }
-    }
+    },
   }
 };
 </script>
