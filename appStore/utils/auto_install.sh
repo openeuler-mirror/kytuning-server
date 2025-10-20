@@ -1,10 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Feb 23 10:00:37 2024 +0800
-"""
 #!/bin/bash
 
 # 制作启动盘的路径
@@ -72,17 +65,9 @@ update_grub_cfg(){
 }
 
 update_efi_bootorder(){
-  # 获取当前 EFI 启动项列表
-  boot_order=$(efibootmgr | grep BootOrder | awk -F': ' '{print $2}')
-  # 将 EFI 启动项列表转换为数组
-  IFS=',' read -ra boot_order_array <<< "$boot_order"
-  # 将第一个启动项移到列表的最后
-  first_boot_entry="${boot_order_array[0]}"
-  boot_order_array=("${boot_order_array[@]:1}" "$first_boot_entry")
-  # 将数组重新转换为逗号分隔的字符串
-  new_boot_order=$(IFS=, ; echo "${boot_order_array[*]}")
-  # 使用 efibootmgr 更新 EFI 启动项顺序
-  efibootmgr -o "$new_boot_order"
+  boot_entries=$(sudo efibootmgr | awk '/Kytuning/ {print $1}')
+  clean_entry=$(echo "$boot_entries" | tr -cd '[:alnum:]' | sed 's/Boot//')
+  efibootmgr -n $clean_entry
 }
 new_vfat_part(){
   [ x"$1" == x"" ] && exit
@@ -133,7 +118,9 @@ sed -i "s/NETWORK_CARD/$NETWORK_CARD/g; s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$
 # 替换ks文件中安装操作系统盘
 sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
 clear_kytuning_efibootmgr
+cp clear_kytuning_efibootmgr.sh $ISO_PATH
 efibootmgr --create --disk $STARTUP_DISK --part 1 --loader $BOOT_EFI --label "Kytuning"
-# update_efi_bootorder
+# 使用efibootmgr -n 命令指定下次启动项
+update_efi_bootorder
 sync
 #reboot
