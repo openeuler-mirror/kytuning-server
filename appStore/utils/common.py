@@ -13,7 +13,9 @@
 @time: 11/6/19 4:33 PM
 """
 import glob
+import re
 import os
+import shutil
 import tarfile
 import subprocess
 from django.core.paginator import Paginator, EmptyPage
@@ -229,9 +231,6 @@ def update_system(user_name,server_IP,server_user_name,server_password):
     #                                stderr=subprocess.DEVNULL, text=True)
     return
 
-import re
-
-import shutil
 
 def update_auto_install(user_name,replacements):
     # 原始脚本文件路径

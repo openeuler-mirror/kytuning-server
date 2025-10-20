@@ -58,8 +58,11 @@
         <el-form-item label="服务器密码" prop="server_password">
           <el-input v-model="machineData.server_password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="ISO名称" prop="os_version">
-          <el-select v-model="machineData.os_version" placeholder="请选择ISO">
+        <el-form-item label="当前操作系统" prop="server_password">
+          <el-input v-model="machineData.os_version" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="重构ISO名称" prop="os_version">
+          <el-select v-model="machineData.iso_name" placeholder="请选择ISO">
             <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name" placeholder="请输入错误类型"/>
           </el-select>
         </el-form-item>
@@ -87,11 +90,13 @@ export default {
     return {
       allDatas: [],
       modifyID: 0,
+      modifyArchName: NaN,
       machineData: {
         'server_IP': '',
         'server_user_name': '',
         'server_password': '',
         'os_version': '',
+        'iso_name': '',
       },
       isoList:[],
       dialogModify: false,
@@ -112,33 +117,53 @@ export default {
     modify(row) {
       get_adapt_ISO('get', {}).then((response) => {
         this.isoList=response.data.data
+        console.log(response.data.data)
       });
       this.dialogModify = true;
       this.modifyID = row.id
+      this.modifyArchName = row.arch_name
       this.machineData = {
         'server_IP': row.server_IP,
         'server_user_name': row.server_user_name,
         'server_password': row.server_password,
         'os_version': row.os_version,
+        'iso_name': row.iso_name,
       }
     },
 
     //确定修改数据
     applyUseSure() {
-      this.dialogModify = false;
       const machineData_ = {
-        id: this.modifyID,
-        server_IP: this.machineData.server_IP,
-        server_user_name: this.machineData.server_user_name,
-        server_password: this.machineData.server_password,
-        os_version: this.machineData.os_version,
-      }
-      modify_server(machineData_).then(response => {
-        if (response.data.code === 200) {
-          ElMessage({message: response.data.message, type: 'success'})
-          this.getData()
+          id: this.modifyID,
+          server_IP: this.machineData.server_IP,
+          server_user_name: this.machineData.server_user_name,
+          server_password: this.machineData.server_password,
+          os_version: this.machineData.os_version,
+          iso_name: this.machineData.iso_name,
         }
-      })
+
+      if (this.machineData.iso_name && this.machineData.iso_name !== "other(手动创建)") {
+        if (this.machineData.iso_name.includes(this.modifyArchName)){
+          this.dialogModify = false;
+          modify_server(machineData_).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            this.getData()
+          }
+        })
+        }else {
+          ElMessage({message: '你的机器架构和ISO类型不匹配', type: 'success'})
+        }
+
+      }else {
+        this.dialogModify = false;
+        modify_server(machineData_).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            this.getData()
+          }
+        })
+      }
     },
     //取消修改
     closeInfo() {
