@@ -24,7 +24,11 @@ NETWORK_IP="127.0.0.1"
 # 所需要制作成启动盘的盘符
 STARTUP_DISK="/dev/sda"
 # 系统安装盘
-SYSTEM_DISK='sdb'
+#SYSTEM_DISK='sdb'
+SYSTEM_DISK=$(df -lh | grep /boot/efi | awk '{print substr($1,6,3)}')
+# 所需要制作成启动盘的盘符
+#STARTUP_DISK="sda"
+STARTUP_DISK=$(ls /dev/sd[^"${SYSTEM_DISK: -1}"]* | head -n 1 | awk -F'/' '{print $3}')
 
 init_file() {
   # 判断MOUNT_PATH是否挂载
@@ -39,8 +43,8 @@ init_file() {
   # 判断ISO_PATH是否挂载
   iso_mount_status=$(df -h | grep "$ISO_PATH" | wc -l)
   if [ "$iso_mount_status" -gt 0 ]; then
-    echo "======ISO_PATH被挂载，umount $STARTUP_DISK======"
-    umount "$STARTUP_DISK"
+    echo "======ISO_PATH被挂载，umount /dev/$STARTUP_DISK======"
+    umount "/dev/$STARTUP_DISK"
   fi
 
   mkdir -p $MOUNT_PATH
@@ -71,14 +75,14 @@ update_efi_bootorder(){
 }
 new_vfat_part(){
   [ x"$1" == x"" ] && exit
-  fdisk $1 << EOF
-g
-n
-1
-2048
-+10G
-w
-EOF
+
+  #
+  CHK=$(lsblk /dev/$1 -o +fstype|grep ^$1|awk '{print $NF}')
+  [ x"$CHK" == x"iso9660" ] && dd if=/dev/zero of=/dev/$1 bs=512 count=1024
+
+  parted -s /dev/$1 mklabel gpt
+  parted -s /dev/$1 mkpart primary 1049kb 10G
+  partprobe
 }
 
 clear_kytuning_efibootmgr(){
@@ -106,9 +110,9 @@ if [ ! -f "$ISO_NAME" ]; then
   wget $HTTP_ISO_PATH
 fi
 new_vfat_part $STARTUP_DISK
-mkfs.vfat -n Kytuning $STARTUP_DISK"1"
+mkfs.vfat -n Kytuning /dev/$STARTUP_DISK"1"
 mount $ISO_NAME $MOUNT_PATH
-mount $STARTUP_DISK"1" $ISO_PATH
+mount /dev/$STARTUP_DISK"1" $ISO_PATH
 cp -ar $MOUNT_PATH/. $ISO_PATH
 #修改grub.cfg文件
 update_grub_cfg
@@ -119,7 +123,7 @@ sed -i "s/NETWORK_CARD/$NETWORK_CARD/g; s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$
 sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
 clear_kytuning_efibootmgr
 cp clear_kytuning_efibootmgr.sh $ISO_PATH
-efibootmgr --create --disk $STARTUP_DISK --part 1 --loader $BOOT_EFI --label "Kytuning"
+efibootmgr --create --disk /dev/$STARTUP_DISK --part 1 --loader $BOOT_EFI --label "Kytuning"
 # 使用efibootmgr -n 命令指定下次启动项
 update_efi_bootorder
 sync
