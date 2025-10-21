@@ -13,8 +13,8 @@ HTTP_ISO_PATH="http://localhost:9000/tools/Kylin-Server-V10-SP4-General-alpha-06
 # iso的名称
 ISO_NAME=$(basename "$HTTP_ISO_PATH")
 # efibootmgr对应的文件
-BOOT_EFI="/EFI/BOOT/BOOTX64.EFI"
-# BOOT_EFI="/EFI/BOOT/BOOTAA64.EFI"
+# BOOT_EFI="/EFI/BOOT/BOOTX64.EFI"
+BOOT_EFI="/EFI/BOOT/BOOTAA64.EFI"
 # grub.cfg文件中原始的菜单名称
 #GRUB_MENU_NAME="Kylin-Server-10"
 GRUB_MENU_NAME="UnionTechOS"
@@ -43,6 +43,7 @@ init_file() {
   iso_mount_status=$(df -h | grep "$ISO_PATH" | wc -l)
   if [ "$iso_mount_status" -gt 0 ]; then
     echo "======ISO_PATH被挂载，umount /dev/$STARTUP_DISK 1======"
+    umount /dev/$STARTUP_DISK
     umount /dev/$STARTUP_DISK"1"
   fi
 
@@ -51,6 +52,8 @@ init_file() {
 }
 
 update_grub_cfg(){
+  # 因为openEuler系统是从1启动的。
+  sed -i 's/set default="1"/set default="0"/g' $GRUB_CFG_PATH
   sed -i "s/$GRUB_MENU_NAME/Kytuning/g" $GRUB_CFG_PATH
   # 查找第一个menuentry所在的行号
   menuentry_line_number=$(grep -n -m 1 "menuentry" "$GRUB_CFG_PATH" | cut -d ":" -f 1)
