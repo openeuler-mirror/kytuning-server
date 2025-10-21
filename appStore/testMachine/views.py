@@ -91,9 +91,11 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
 
         machine_data.server_IP = request.data.get('server_IP')
+        machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
         new_iso_name = request.data.get('new_iso_name')
+        # install_iso_name = new_iso_name
         machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
                                                    machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
@@ -168,10 +170,10 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         return json_response({}, status.HTTP_200_OK, '更新状态完成')
 
     def delete(self, request, *args, **kwargs):
-        id = request.data.get('id', None)
-        if not id or not TestMachine.objects.filter(id=id):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
         if request.user.is_superuser:
+            id = request.data.get('id', None)
+            if not id or not TestMachine.objects.filter(id=id):
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
             test_case_data = TestMachine.objects.filter(id=id).first()
             if not test_case_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
