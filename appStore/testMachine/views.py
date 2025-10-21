@@ -100,26 +100,25 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                                                    machine_data.server_user_name, machine_data.server_password)
 
         replacements = {}
-        if machine_data.arch_name == 'aarch':
-            replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTAA64.EFI'
-        elif machine_data.arch_name == 'x86':
-            replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTX64.EFI'
-
-        replacements['GRUB_CFG_PATH'] = '$ISO_PATH' + '/EFI/BOOT/grub.cfg'
-        replacements['GRUB_MENU_NAME'] = 'Kylin-Server-10'
+        KS_FILE_NAME = None
         if install_iso_name == 'other(手动创建)' or not install_iso_name:
             ISO = None
         else:
             ISO = AdaptISO.objects.filter(ISO_name=install_iso_name).first()
             replacements['HTTP_ISO_PATH'] = ISO.http_address
+            replacements['BOOT_EFI'] = ISO.boot_efi
+            replacements['GRUB_CFG_PATH'] = '$ISO_PATH' + ISO.grub_cfg_path
+            replacements['GRUB_MENU_NAME'] = ISO.grub_menu_name
+            KS_FILE_NAME = ISO.grub_menu_name
+            replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
 
         if machine_data.owner == request.user.chinese_name:
-            # machine_data.task_status =
             machine_data.save()
             if ISO:
-                update_auto_install(request.user,replacements)
-                update_system(request.user,machine_data.server_IP,machine_data.server_user_name,machine_data.server_password)
+                update_auto_install(request.user, replacements)
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
+                              machine_data.server_password, KS_FILE_NAME)
             return json_response({}, status.HTTP_200_OK, '修改成功')
 
         elif not machine_data.owner:
@@ -131,7 +130,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             machine_data.save()
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password)
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
+                              machine_data.server_password, KS_FILE_NAME)
             return json_response({}, status.HTTP_200_OK, '修改成功')
         else:
             return json_response({}, status.HTTP_200_OK, '不可修改他人使用的机器')
