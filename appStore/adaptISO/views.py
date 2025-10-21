@@ -28,3 +28,25 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '查询完成')
 
+    def create(self, request, *args, **kwargs):
+        data_iso = {}
+        data_iso['user_name'] = request.user.chinese_name
+        data_iso['http_address'] = request.data.get('http_address')
+        data_iso['arch_name'] = request.data.get('arch_name')
+        data_iso['boot_efi'] = request.data.get('boot_efi')
+        data_iso['grub_cfg_path'] = request.data.get('grub_cfg_path')
+        data_iso['grub_menu_name'] = request.data.get('grub_menu_name')
+        data_iso['ks_file_name'] = request.data.get('ks_file_name')
+        data_iso['ISO_name'] = data_iso['http_address'].split('/')[-1]
+        if data_iso['ISO_name'].endswith('iso'):
+            config_serializer = AdaptISOListSerializer(data=data_iso)
+            if config_serializer.is_valid():
+                self.perform_create(config_serializer)
+                return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
+            log.info('Adaptiso数据存储错误 ：%s，', config_serializer.errors)
+            log.info('Adaptiso存储数据为 ：%s，', data_iso)
+            return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
+            # return json_response('111', status.HTTP_400_BAD_REQUEST, '111')
+        else:
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请检查iso路径以iso结尾')
+
