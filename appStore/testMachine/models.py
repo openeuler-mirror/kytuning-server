@@ -21,9 +21,13 @@ class TestMachine(models.Model):
         ("空闲", "空闲"),
         ("繁忙", "繁忙"),
     )
+    ARCH_NAME_TYPE = (
+        ("aarch", "aarch"),
+        ("x86", "x86"),
+    )
     machine_name = models.CharField(max_length=50, verbose_name='设备名称')
     cpu_module_name = models.CharField(max_length=50, verbose_name='cpu型号')
-    arch_name = models.CharField(max_length=50, verbose_name='架构')
+    arch_name = models.CharField(choices=ARCH_NAME_TYPE,max_length=50, verbose_name='架构')
     BMC_IP = models.CharField(max_length=50, verbose_name='BMC_IP')
     BMC_user_name = models.CharField(max_length=50, verbose_name='BMC用户名')
     BMC_password = models.CharField(max_length=50, verbose_name='BMC密码')

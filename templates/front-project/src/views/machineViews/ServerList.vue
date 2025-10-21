@@ -63,11 +63,10 @@
         </el-form-item>
         <el-form-item label="重构ISO名称" prop="os_version">
           <el-select v-model="machineData.iso_name" placeholder="请选择ISO">
-            <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"
-                       placeholder="请输入错误类型"/>
+            <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"/>
           </el-select>
         </el-form-item>
-        <el-button type="success">新增ISO</el-button>
+        <el-button type="success" @click="addiso('form')">新增ISO</el-button>
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
@@ -100,7 +99,8 @@ export default {
     return {
       allDatas: [],
       modifyID: 0,
-      modifyArchName: NaN,
+      modifySystemArchName: NaN,
+      modifyISOArchName: NaN,
       machineData: {
         'server_IP': '',
         'server_user_name': '',
@@ -128,11 +128,10 @@ export default {
       if (row.owner === getToken('chinesename') || getToken('chinesename') === 'root' || !row.owner) {
         get_adapt_ISO('get', {}).then((response) => {
           this.isoList = response.data.data
-          console.log(response.data.data)
         });
         this.dialogModify = true;
         this.modifyID = row.id
-        this.modifyArchName = row.arch_name
+        this.modifySystemArchName = row.arch_name
         this.machineData = {
           'server_IP': row.server_IP,
           'server_user_name': row.server_user_name,
@@ -157,7 +156,8 @@ export default {
       }
 
       if (this.machineData.iso_name && this.machineData.iso_name !== "other(手动创建)") {
-        if (this.machineData.iso_name.includes(this.modifyArchName)) {
+        const newData = this.isoList.find(item => item.ISO_name === this.machineData.iso_name)
+        if (newData.arch_name === this.modifySystemArchName) {
           this.dialogModify = false;
           modify_server(machineData_).then(response => {
             if (response.data.code === 200) {
@@ -239,6 +239,9 @@ export default {
         ElMessage({message: '无人使用无需更新', type: 'success'})
       }
     },
+    addiso(){
+      ElMessage({message: '待开发', type: 'success'})
+    }
   }
 };
 </script>
