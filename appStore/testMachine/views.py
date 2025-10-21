@@ -109,7 +109,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             replacements['BOOT_EFI'] = ISO.boot_efi
             replacements['GRUB_CFG_PATH'] = '$ISO_PATH' + ISO.grub_cfg_path
             replacements['GRUB_MENU_NAME'] = ISO.grub_menu_name
-            KS_FILE_NAME = ISO.grub_menu_name
+            KS_FILE_NAME = ISO.ks_file_name
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
 

@@ -1,10 +1,3 @@
-<!--
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Tue Mar 12 09:59:13 2024 +0800
--->
 <template>
   <div id="fixed-top">
     <!-- 搜索 -->
@@ -16,7 +9,7 @@
         <el-table-column prop="BMC_IP" label="BMC_IP"></el-table-column>
         <el-table-column prop="owner" label="当前负责人"></el-table-column>
         <el-table-column prop="server_IP" label="server_IP"></el-table-column>
-        <el-table-column prop="os_version" label="系统版本"></el-table-column>
+        <el-table-column prop="iso_name" label="当前ISO"></el-table-column>
         <el-table-column prop="link_status" label="连接状态">
           <template #default="scope">
             <el-button
@@ -58,11 +51,9 @@
         <el-form-item label="服务器密码" prop="server_password">
           <el-input v-model="machineData.server_password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="当前操作系统" prop="server_password">
-          <el-input v-model="machineData.os_version" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="重构ISO名称" prop="os_version">
-          <el-select v-model="machineData.iso_name" placeholder="请选择ISO">
+        <el-form-item label="重构ISO名称" prop="new_iso_name">
+          <el-select v-model="machineData.new_iso_name" placeholder="请选择ISO">
+<!--            <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"/>-->
             <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"/>
           </el-select>
         </el-form-item>
@@ -105,8 +96,8 @@ export default {
         'server_IP': '',
         'server_user_name': '',
         'server_password': '',
-        'os_version': '',
         'iso_name': '',
+        'new_iso_name':'',
       },
       isoList: [],
       dialogModify: false,
@@ -136,8 +127,7 @@ export default {
           'server_IP': row.server_IP,
           'server_user_name': row.server_user_name,
           'server_password': row.server_password,
-          'os_version': row.os_version,
-          'iso_name': row.iso_name,
+          'new_iso_name': row.new_iso_name,
         }
       } else {
         ElMessage({message: '不可查看或修改他人机器详情', type: 'success'})
@@ -151,12 +141,11 @@ export default {
         server_IP: this.machineData.server_IP,
         server_user_name: this.machineData.server_user_name,
         server_password: this.machineData.server_password,
-        os_version: this.machineData.os_version,
-        iso_name: this.machineData.iso_name,
+        new_iso_name: this.machineData.new_iso_name,
       }
 
-      if (this.machineData.iso_name && this.machineData.iso_name !== "other(手动创建)") {
-        const newData = this.isoList.find(item => item.ISO_name === this.machineData.iso_name)
+      if (this.machineData.new_iso_name && this.machineData.new_iso_name !== "other(手动创建)") {
+        const newData = this.isoList.find(item => item.ISO_name === this.machineData.new_iso_name)
         if (newData.arch_name === this.modifySystemArchName) {
           this.dialogModify = false;
           modify_server(machineData_).then(response => {

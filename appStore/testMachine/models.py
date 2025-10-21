@@ -37,7 +37,7 @@ class TestMachine(models.Model):
     server_IP = models.CharField(max_length=50, verbose_name='server_IP', null=True, blank=True)
     server_user_name = models.CharField(max_length=50, verbose_name='服务器用户名', null=True, blank=True)
     server_password = models.CharField(max_length=50, verbose_name='服务器密码', null=True, blank=True)
-    os_version = models.CharField(max_length=500, verbose_name='操作系统版本', null=True, blank=True)
+    iso_name = models.CharField(max_length=500, verbose_name='操作系统版本', null=True, blank=True)
     link_status = models.CharField(choices=Link_Status_Type, max_length=50, verbose_name='链接状态', null=True, blank=True)
     task_status = models.CharField(choices=Task_Status_Type, max_length=50, verbose_name='任务状态', null=True, blank=True)
     queue_user = models.CharField(max_length=50, verbose_name='排队人员', null=True, blank=True)
