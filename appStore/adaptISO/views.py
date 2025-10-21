@@ -37,7 +37,7 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
         data_iso['grub_cfg_path'] = request.data.get('grub_cfg_path')
         data_iso['grub_menu_name'] = request.data.get('grub_menu_name')
         data_iso['ks_file_name'] = request.data.get('ks_file_name')
-        data_iso['ISO_name'] = data_iso['http_address'].split('/')[-1]
+        data_iso['ISO_name'] = request.data.get('http_address').split('/')[-1]
         if data_iso['ISO_name'].endswith('iso'):
             config_serializer = AdaptISOListSerializer(data=data_iso)
             if config_serializer.is_valid():
@@ -46,7 +46,24 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             log.info('Adaptiso数据存储错误 ：%s，', config_serializer.errors)
             log.info('Adaptiso存储数据为 ：%s，', data_iso)
             return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
-            # return json_response('111', status.HTTP_400_BAD_REQUEST, '111')
         else:
             return json_response({}, status.HTTP_400_BAD_REQUEST, '请检查iso路径以iso结尾')
 
+    def put(self, request, *args, **kwargs):
+        iso_id = request.data.get('id')
+        iso_data = AdaptISO.objects.get(id=iso_id)
+        if not iso_id or not iso_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        iso_data.http_address = request.data.get('http_address')
+        iso_data.arch_name = request.data.get('arch_name')
+        iso_data.boot_efi = request.data.get('boot_efi')
+        iso_data.grub_cfg_path = request.data.get('grub_cfg_path')
+        iso_data.grub_menu_name = request.data.get('grub_menu_name')
+        iso_data.ks_file_name = request.data.get('ks_file_name')
+        iso_data.ISO_name = request.data.get('http_address').split('/')[-1]
+        field_values = {field.name: getattr(iso_data, field.name) for field in iso_data._meta.fields if field.name != '_state'}
+        serializer = self.get_serializer(data=field_values)
+        if serializer.is_valid():
+            iso_data.save()
+            return json_response(serializer.data, status.HTTP_200_OK, '更新成功！')
+        return json_response(serializer.errors, status.HTTP_400_BAD_REQUEST, '请确认ISO是否已存在')

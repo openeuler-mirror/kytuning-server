@@ -7,7 +7,6 @@
 -->
 <template>
   <div id="fixed-top">
-    <!-- 搜索 -->
     <el-button type="success" @click="add" style="float: right;">新增</el-button>
     <div class="cont">
       <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
