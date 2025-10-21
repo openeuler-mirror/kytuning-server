@@ -1,3 +1,10 @@
+<!--
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Tue Mar 12 09:59:13 2024 +0800
+-->
 <template>
   <div id="fixed-top">
     <!-- 搜索 -->
@@ -22,7 +29,7 @@
         </el-table-column>
         <el-table-column prop="task_status" label="任务状态"></el-table-column>
         <el-table-column prop="queue_user" label="排队人员"></el-table-column>
-        <el-table-column prop="update_time" label="更新时间"></el-table-column>
+        <el-table-column prop="update_time" label="更新时间" width="145"></el-table-column>
         <el-table-column label="操作" width="300">
           <template #default="scope">
             <el-button type="primary" @click="modify(scope.row)" class="operate-button">编辑</el-button>
@@ -155,7 +162,7 @@ export default {
             }
           })
         } else {
-          ElMessage({message: '你的机器架构和ISO类型不匹配', type: 'success'})
+          ElMessage({message: '你的机器架构和ISO类型不匹配', type: 'warning'})
         }
 
       } else {

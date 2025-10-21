@@ -16,8 +16,8 @@
     </div>
     <br>
 
-    <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" class="tableHead"
-               :header-cell-style="{fontSize:'5px'}">
+    <el-table :data="showData" tooltip-effect="dark"
+              border style="width: 100%" class="tableHead" :header-cell-style="{fontSize:'5px'}" >
       <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150"
                        :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
@@ -97,7 +97,7 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu2017 }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="test_time" sortable label="录入时间" width="105">
+      <el-table-column prop="test_time" sortable label="录入时间" width="145">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.test_time }}</div>
         </template>
@@ -107,9 +107,10 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.message }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" fixed="right" width="190">
+      <el-table-column label="操作" fixed="right" :width="getActionColumnWidth">
         <template #default="scope">
-          <el-button type="success" @click="addStore(scope.row)" class="operate-button">入库</el-button>
+           <el-button v-if="$route.path === '/tempData'" type="success" @click="addStore(scope.row)"
+                      class="operate-button" >入库</el-button>
           <el-button type="primary" @click="addCompar(scope.row)" class="operate-button">对比</el-button>
           <el-button type="warning" @click="edit(scope.row)" class="operate-button">修改</el-button>
           <el-button type="danger" @click="del(scope.row)" class="operate-button">删除</el-button>
@@ -177,7 +178,6 @@ import {ElMessage} from 'element-plus';
 import {project, getFilterName, mergeData} from "@/api/api.js";
 import utils from '@/utils/utils';
 
-
 export default {
   name: 'projectTable',
   mixins: [utils],
@@ -204,14 +204,34 @@ export default {
       },
     }
   },
+
+  watch: {
+    $route(to) {
+      // 路由变化时执行的逻辑
+      if (to.path === '/storeData' || to.path === '/tempData') {
+        // 执行重新获取数据的操作
+        this.getData()
+      }
+    }
+  },
   created() {
     this.getData()
+  },
+  computed:{
+    getActionColumnWidth() {
+      // 根据当前路由路径动态设置操作列的宽度
+      return this.$route.path === '/storeData' ? '240px' : '190px';
+    },
   },
   methods: {
     //获取页面数据
     getData() {
-      // get_project({baseId: '', comparsionIds: '',storeData:true}).then((response) => {
-      project('get', {baseId: '', comparsionIds: '', storeData: true}).then((response) => {
+      const requestData = {
+        baseId: '',
+        comparsionIds: '',
+        storeData: this.$route.path === '/storeData',
+      };
+      project('get', requestData).then((response) => {
         this.allDatas = response.data.data
         this.total = this.allDatas.length;
       });
@@ -264,6 +284,19 @@ export default {
           this.dialogPutProject = false
         }
       })
+    },
+    //入库
+    addStore(row) {
+      this.form = {...row}
+      this.form.store_data = true
+      project('put', this.form).then(response => {
+        if (response.data.code === 200) {
+          ElMessage({message: response.data.message, type: 'success'})
+          //更新页面数据，绑定key，每次key改变后就会刷新数据
+          this.dialogPutProject = false
+          this.getData()
+        }
+      });
     },
     //增加对比数据
     addCompar(row) {
