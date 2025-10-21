@@ -16,13 +16,12 @@ ISO_NAME=$(basename "$HTTP_ISO_PATH")
 BOOT_EFI="/EFI/BOOT/BOOTX64.EFI"
 # BOOT_EFI="/EFI/BOOT/BOOTAA64.EFI"
 # grub.cfg文件中原始的菜单名称
-GRUB_MENU_NAME="Kylin-Server-10"
+#GRUB_MENU_NAME="Kylin-Server-10"
+GRUB_MENU_NAME="UnionTechOS"
+
 # 网卡名称
-NETWORK_CARD="p17p2"
-# 静态IP地址
-NETWORK_IP="127.0.0.1"
-# 所需要制作成启动盘的盘符
-STARTUP_DISK="/dev/sda"
+#NETWORK_CARD="enp125s0f0"
+NETWORK_CARD=$(ip link show | awk -F ': ' '/state UP/ {print $2; exit}')
 # 系统安装盘
 #SYSTEM_DISK='sdb'
 SYSTEM_DISK=$(df -lh | grep /boot/efi | awk '{print substr($1,6,3)}')
@@ -38,13 +37,13 @@ init_file() {
       echo "======MOUNT_PATH被挂载，umount $MOUNT_PATH======"
       umount "$MOUNT_PATH"
     fi
-    rm -r "$MOUNT_PATH"
+    rm -r $MOUNT_PATH
   fi
   # 判断ISO_PATH是否挂载
   iso_mount_status=$(df -h | grep "$ISO_PATH" | wc -l)
   if [ "$iso_mount_status" -gt 0 ]; then
-    echo "======ISO_PATH被挂载，umount /dev/$STARTUP_DISK======"
-    umount "/dev/$STARTUP_DISK"
+    echo "======ISO_PATH被挂载，umount /dev/$STARTUP_DISK 1======"
+    umount /dev/$STARTUP_DISK"1"
   fi
 
   mkdir -p $MOUNT_PATH
@@ -76,7 +75,6 @@ update_efi_bootorder(){
 new_vfat_part(){
   [ x"$1" == x"" ] && exit
 
-  #
   CHK=$(lsblk /dev/$1 -o +fstype|grep ^$1|awk '{print $NF}')
   [ x"$CHK" == x"iso9660" ] && dd if=/dev/zero of=/dev/$1 bs=512 count=1024
 
@@ -114,7 +112,7 @@ mkfs.vfat -n Kytuning /dev/$STARTUP_DISK"1"
 mount $ISO_NAME $MOUNT_PATH
 mount /dev/$STARTUP_DISK"1" $ISO_PATH
 cp -ar $MOUNT_PATH/. $ISO_PATH
-#修改grub.cfg文件
+# 修改grub.cfg文件
 update_grub_cfg
 # 替换网卡信息
 cp $KS_FILE_NAME $ISO_PATH
