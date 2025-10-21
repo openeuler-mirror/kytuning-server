@@ -28,6 +28,12 @@ const routes = [
                 children: []
             },
             {
+                name: 'ISO适配列表',
+                path: '/ISO/list',
+                component: () => import('@/views/machineViews/ISOList.vue'),
+                children: []
+            },
+            {
                 name: '设备中心',
                 path: '/server/list',
                 component: () => import('@/views/machineViews/ServerList.vue'),
