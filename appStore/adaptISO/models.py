@@ -14,7 +14,7 @@ class AdaptISO(models.Model):
         ("aarch", "aarch"),
         ("x86", "x86"),
     )
-    ISO_name = models.CharField(max_length=500, verbose_name='ISO名称')
+    ISO_name = models.CharField(unique=True, max_length=500, verbose_name='ISO名称')
     http_address = models.CharField(max_length=500, verbose_name='ISO下载地址')
     arch_name = models.CharField(choices=ARCH_NAME_TYPE,max_length=50, verbose_name='架构')
     user_name = models.CharField(max_length=50, verbose_name='适配人员')

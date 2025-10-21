@@ -12,8 +12,7 @@
     <div class="cont">
       <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
                 tooltip-effect="dark" border style="width: 100%">
-        <el-table-column prop="ISO_name" label="ISO名字" width="300"></el-table-column>
-        <!--        <el-table-column prop="http_address" label="ISO下载地址" width="300"></el-table-column>-->
+        <el-table-column prop="ISO_name" label="ISO名称" width="300"></el-table-column>
         <el-table-column prop="arch_name" label="架构"></el-table-column>
         <el-table-column prop="user_name" label="适配人员"></el-table-column>
         <el-table-column prop="boot_efi" label="启动项的路径"></el-table-column>
@@ -32,9 +31,6 @@
   <div>
     <el-dialog :title="dialogTitle" v-model="dialogAddMachine" width="500px">
       <el-form :model="machineData" ref="machineForm" :rules="rules">
-        <!--        <el-form-item label="ISO名字" prop="ISO_name">-->
-        <!--          <el-input v-model="machineData.ISO_name" autocomplete="off"></el-input>-->
-        <!--        </el-form-item>-->
         <el-form-item label="ISO下载地址" prop="http_address">
           <el-input v-model="machineData.http_address" autocomplete="off"></el-input>
         </el-form-item>
@@ -43,9 +39,6 @@
             <el-option v-for="item in archTypes" :key="item" :label="item" :value="item" placeholder="请选择架构类型"/>
           </el-select>
         </el-form-item>
-        <!--        <el-form-item label="适配人员" prop="user_name">-->
-        <!--          <el-input v-model="machineData.user_name" autocomplete="off"></el-input>-->
-        <!--        </el-form-item>-->
         <el-form-item label="启动项的路径" prop="boot_efi">
           <el-input v-model="machineData.boot_efi" autocomplete="off"></el-input>
         </el-form-item>
@@ -61,8 +54,7 @@
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
-        <el-button type="primary" @click="dialogTitle === '新增设备' ? addSure('form') : addSure('form')">确 定
-        </el-button>
+        <el-button type="primary" @click="dialogTitle === '新增ISO' ? addSure('form') : modifySure('form')">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -92,6 +84,7 @@ export default {
       },
       archTypes: ['x86', 'aarch', 'mips', 'loongarch'],
       dialogAddMachine: false,
+      modifyID: 0,
       dialogTitle: '新增ISO',
     };
   },
@@ -141,6 +134,52 @@ export default {
           return false;
         }
       });
+    },
+
+    reset() {
+      this.machineData = {
+        machine_name: '',
+        cpu_module_name: '',
+        arch_name: '',
+        BMC_IP: '',
+        BMC_user_name: '',
+        BMC_password: '',
+      }
+      this.getData()
+    },
+
+    //修改数据
+    modify(row) {
+      this.dialogTitle = '修改设备信息'
+      this.dialogAddMachine = true
+      this.modifyID = row.id
+      this.machineData = {
+        http_address: row.http_address,
+        arch_name: row.arch_name,
+        boot_efi: row.boot_efi,
+        grub_cfg_path: row.grub_cfg_path,
+        grub_menu_name: row.grub_menu_name,
+        ks_file_name: row.ks_file_name
+      }
+    },
+    //确定修改数据
+    modifySure() {
+      this.dialogAddMachine = false;
+      const machineData_ = {
+            id: this.modifyID,
+            http_address: this.machineData.http_address,
+            arch_name: this.machineData.arch_name,
+            boot_efi: this.machineData.boot_efi,
+            grub_cfg_path: this.machineData.grub_cfg_path,
+            grub_menu_name: this.machineData.grub_menu_name,
+            ks_file_name: this.machineData.ks_file_name,
+          };
+      adapt_ISO('put', machineData_).then(response => {
+        if (response.data.code === 200) {
+          ElMessage({message: response.data.message, type: 'success'})
+          this.getData()
+        }
+      })
     },
   }
 }

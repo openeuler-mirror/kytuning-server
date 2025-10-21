@@ -7,7 +7,6 @@
 -->
 <template>
   <div id="fixed-top">
-    <!-- 搜索 -->
     <div class="cont">
       <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
                 tooltip-effect="dark" border style="width: 100%">
@@ -60,7 +59,6 @@
         </el-form-item>
         <el-form-item label="重构ISO名称" prop="new_iso_name">
           <el-select v-model="machineData.new_iso_name" placeholder="请选择ISO">
-<!--            <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"/>-->
             <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"/>
           </el-select>
         </el-form-item>
