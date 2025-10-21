@@ -78,7 +78,7 @@ export default {
         'BMC_user_name':'',
         'BMC_password':'',
       },
-      archTypes: ['x86', 'arm','mips','loongarch'],
+      archTypes: ['x86', 'aarch','mips','loongarch'],
       dialogAddMachine: false,
       modifyID: 0,
       dialogTitle:'新增设备',

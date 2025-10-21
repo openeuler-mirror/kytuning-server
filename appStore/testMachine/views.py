@@ -93,18 +93,17 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
-        machine_data.os_version = request.data.get('os_version')
-        install_iso_name = request.data.get('iso_name')
+        new_iso_name = request.data.get('new_iso_name')
         machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
                                                    machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
 
         replacements = {}
         KS_FILE_NAME = None
-        if install_iso_name == 'other(手动创建)' or not install_iso_name:
+        if new_iso_name == 'other(手动创建)' or not new_iso_name:
             ISO = None
         else:
-            ISO = AdaptISO.objects.filter(ISO_name=install_iso_name).first()
+            ISO = AdaptISO.objects.filter(ISO_name=new_iso_name).first()
             replacements['HTTP_ISO_PATH'] = ISO.http_address
             replacements['BOOT_EFI'] = ISO.boot_efi
             replacements['GRUB_CFG_PATH'] = '$ISO_PATH' + ISO.grub_cfg_path
@@ -114,6 +113,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             replacements['NETWORK_IP'] = machine_data.server_IP
 
         if machine_data.owner == request.user.chinese_name:
+            if new_iso_name:
+                machine_data.iso_name = new_iso_name
             machine_data.save()
             if ISO:
                 update_auto_install(request.user, replacements)
@@ -127,6 +128,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                                      '当前申请人是 %s ,请协商后在使用' % (machine_data.queue_user))
             machine_data.owner = request.user.chinese_name
             machine_data.queue_user = None
+            if new_iso_name:
+                machine_data.iso_name = new_iso_name
             machine_data.save()
             if ISO:
                 update_auto_install(request.user, replacements)
@@ -143,7 +146,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         if machine_data.owner == request.user.chinese_name:
             machine_data.owner = None
-            machine_data.os_version = None
+            machine_data.iso_name = None
             machine_data.link_status = None
             machine_data.task_status = None
             machine_data.save()
