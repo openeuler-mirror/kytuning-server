@@ -58,6 +58,7 @@ export default {
           removeToken('token')
           removeToken('username')
           setToken('username', res.data.username)
+          setToken('chinesename', res.data.chinesename)
           setToken('token', 'Bearer ' + res.data.token)
           this.$message({message: '登录成功', type: 'success'})
           this.$router.push('/tempData')
