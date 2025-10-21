@@ -44,7 +44,7 @@ router.register(r'test_case', TestCaseViewSet, basename='test_case')
 router.register(r'user_config', UserConfigViewSet, basename='user_config')
 router.register(r'error_list', ErrorListViewSet, basename='error_list')
 router.register(r'machine_list', TestMachineViewSet, basename='machine_list')
-router.register(r'get_adapt_ISO', AdaptISOListViewSet, basename='adapt_ISO')
+router.register(r'adapt_ISO', AdaptISOListViewSet, basename='adapt_ISO')
 
 urlpatterns = [
     url(r'', include(router.urls)),

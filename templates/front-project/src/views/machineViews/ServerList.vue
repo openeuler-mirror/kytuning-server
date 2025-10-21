@@ -84,7 +84,7 @@ import {
   modify_server,
   finished_using,
   update_status,
-  get_adapt_ISO
+  adapt_ISO
 } from "@/api/api";
 import utils from '@/utils/utils';
 import {getToken} from "@/utils/setToken";
@@ -124,7 +124,7 @@ export default {
     //修改数据
     modify(row) {
       if (row.owner === getToken('chinesename') || getToken('chinesename') === 'root' || !row.owner) {
-        get_adapt_ISO('get', {}).then((response) => {
+        adapt_ISO('get', {}).then((response) => {
           this.isoList = response.data.data
         });
         this.dialogModify = true;

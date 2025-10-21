@@ -28,7 +28,7 @@ const routes = [
                 children: []
             },
             {
-                name: 'ISO适配列表',
+                name: 'ISO适配',
                 path: '/ISO/list',
                 component: () => import('@/views/machineViews/ISOList.vue'),
                 children: []
