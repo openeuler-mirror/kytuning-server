@@ -130,9 +130,9 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                     return json_response({}, status.HTTP_200_OK, 'ft2500机器部支持openEuler-iso自动安装')
                 # 获取网卡信息，kylin的iso在intel机器上会修改网卡名称,后期做到ks文件中。
                 if ISO.ISO_name.startswith('Kylin') and machine_data.machine_name == 'intel':
-                    replacements['NETWORK_CARD'] = 'p17p2'
+                    replacements['NETWORK_NAME'] = 'p17p2'
                 else:
-                    replacements['NETWORK_CARD'] = 'ens17f1'
+                    replacements['NETWORK_NAME'] = 'ens17f1'
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME)
@@ -149,9 +149,9 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                     return json_response({}, status.HTTP_200_OK, 'ft2500机器部支持openEuler-iso自动安装')
                 # 获取网卡信息，kylin的iso在intel机器上会修改网卡名称,后期做到ks文件中。
                 if ISO.ISO_name.startswith('Kylin') and machine_data.machine_name == 'intel':
-                    replacements['NETWORK_CARD'] = 'p17p2'
+                    replacements['NETWORK_NAME'] = 'p17p2'
                 else:
-                    replacements['NETWORK_CARD'] = 'ens17f1'
+                    replacements['NETWORK_NAME'] = 'ens17f1'
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME)
