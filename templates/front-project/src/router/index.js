@@ -24,18 +24,21 @@ const routes = [
             {
                 name: '注册设备',
                 path: '/machine/list',
+                meta: { requiresAuth: true }, // 添加这一行，表示需要身份验证
                 component: () => import('@/views/machineViews/MachineList'),
                 children: []
             },
             {
                 name: 'ISO适配',
                 path: '/ISO/list',
+                meta: { requiresAuth: true },
                 component: () => import('@/views/machineViews/ISOList.vue'),
                 children: []
             },
             {
                 name: '设备中心',
                 path: '/server/list',
+                meta: { requiresAuth: true },
                 component: () => import('@/views/machineViews/ServerList.vue'),
                 children: []
             },
@@ -51,22 +54,26 @@ const routes = [
             {
                 path: '/test/list',
                 name: '测试列表',
+                meta: { requiresAuth: true },
                 component: () => import('@/views/testViews/TestList')
             },
             {
                 path: '/test/do_test',
                 name: '发起测试',
+                meta: { requiresAuth: true },
                 component: () => import('@/views/testViews/DoTest'),
                 // props:true  // 如果props设置为true，$route.params将被设置为组件属性记对象
             },
             // {
             //     path: '/test/do_test_yaml',
             //     name: '发起测试-yaml',
+            //     meta: { requiresAuth: true },
             //     component: () => import('@/views/testViews/DoTest-yaml'),
             // },
             {
                 path: '/test/config',
                 name: '配置管理',
+                meta: { requiresAuth: true },
                 component: () => import('@/views/testViews/ConfigList')
             },
         ]
@@ -80,11 +87,13 @@ const routes = [
             {
                 path: '/tempData',
                 name: '临时数据',
+                meta: { requiresAuth: true },
                 component: () => import('@/views/dataViews/StoreTable.vue'),
             },
             {
                 path: '/storeData',
                 name: '项目数据',
+                meta: { requiresAuth: true },
                 component: () => import('@/views/dataViews/StoreTable.vue'),
             },
         ]
@@ -98,6 +107,7 @@ const routes = [
             {
                 path: '/error/list',
                 name: '错误列表',
+                meta: { requiresAuth: true },
                 component: () => import('@/views/errorViews/ErrorList')
             },
         ]
@@ -105,54 +115,63 @@ const routes = [
     {
         name: 'env',
         path: '/env/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/EnvTable'),
     },
     {
         name: 'stream',
         path: '/stream/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/StreamTable'),
     },
     {
         name: 'lmbench',
         path: '/lmbench/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/LmbenchTable'),
     },
     {
         name: 'unixbench',
         path: '/unixbench/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/UnxibenchTable'),
     },
     {
         name: 'fio',
         path: '/fio/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/FioTable'),
     },
     {
         name: 'iozone',
         path: '/iozone/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/IozoneTable'),
     },
     {
         name: 'jvm2008',
         path: '/jvm2008/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/Jvm2008Table'),
     },
     {
         name: 'cpu2006',
         path: '/cpu2006/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/Cpu2006Table'),
     },
     {
         name: 'cpu2017',
         path: '/cpu2017/:baseId/:comparsionIds?',
+        meta: { requiresAuth: true },
         hidden: true,
         component: () => import('@/views/dataViews/Cpu2017Table'),
     }
