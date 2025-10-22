@@ -29,6 +29,9 @@ SYSTEM_DISK=$(df -lh | grep /boot/efi | awk '{print substr($1,6,3)}')
 #STARTUP_DISK="sda"
 STARTUP_DISK=$(ls /dev/sd[^"${SYSTEM_DISK: -1}"]* | head -n 1 | awk -F'/' '{print $3}')
 
+# ks文件中的面
+PASSWORD=''
+
 init_file() {
   # 判断MOUNT_PATH是否挂载
   if [ -d "$MOUNT_PATH" ]; then
@@ -122,8 +125,17 @@ cp $KS_FILE_NAME $ISO_PATH
 sed -i "s/NETWORK_CARD/$NETWORK_CARD/g; s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
 # 替换ks文件中安装操作系统盘
 sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
+# 增加用户密码传输
+sed -i "s/PASSWORD/$PASSWORD/g" "$ISO_PATH/$KS_FILE_NAME"
+
 clear_kytuning_efibootmgr
 cp clear_kytuning_efibootmgr.sh $ISO_PATH
+echo '-------复制network前----------'
+if [[ "$ISO_NAME" == openEuler* && ( "$NETWORK_IP" == "127.0.0.1" || "$NETWORK_IP" == "127.0.0.1" ) ]]; then
+  cp ifcfg-enP1p3s0f0 $ISO_PATH
+  sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/ifcfg-enP1p3s0f0"
+fi
+
 efibootmgr --create --disk /dev/$STARTUP_DISK --part 1 --loader $BOOT_EFI --label "Kytuning"
 # 使用efibootmgr -n 命令指定下次启动项
 update_efi_bootorder
