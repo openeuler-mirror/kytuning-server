@@ -18,8 +18,6 @@ NETWORK_IP=""
 BOOT_EFI=""
 # grub.cfg文件中原始的菜单名称
 GRUB_MENU_NAME=""
-# 网卡名称
-NETWORK_NAME=$(ip link show | awk -F ': ' '/state UP/ {print $2; exit}')
 # 磁盘个数
 DISK_COUNT=$(lsblk -d -o NAME | grep -c '^sd')
 # 系统安装盘
@@ -111,7 +109,6 @@ main(){
   # 修改grub.cfg文件
   update_grub_cfg
   # 替换网卡信息
-  sed -i "s/NETWORK_NAME/$NETWORK_NAME/g; s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
   # 替换ks文件中安装操作系统盘
   sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
   # 增加用户密码传输
