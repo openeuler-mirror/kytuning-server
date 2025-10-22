@@ -218,6 +218,12 @@ def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_
         return '用户名或密码错误'
     return '在线'
 
+def make_ks_password(new_server_password):
+    PASSWORD = crypt.crypt(new_server_password)
+    if '/' in PASSWORD or '$' in PASSWORD:
+        PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
+    return PASSWORD
+
 def update_auto_install(user_name, replacements):
     # 原始脚本文件路径
     auto_install_file = './appStore/utils/autoInstall/auto_install.sh'
@@ -256,11 +262,3 @@ def update_system(user_name, server_IP, server_user_name, server_password, KS_FI
     # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
     #                                stderr=subprocess.DEVNULL, text=True)
     return
-
-
-def make_ks_password(new_server_password):
-    PASSWORD = crypt.crypt(new_server_password)
-    if '/' in PASSWORD or '$' in PASSWORD:
-        PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
-    return PASSWORD
-
