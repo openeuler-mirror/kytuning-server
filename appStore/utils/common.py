@@ -131,11 +131,11 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
     subprocess.run(mv_ssh_keygen, shell=True)
 
     # 如果是最小化安装的话没有wget和unzip所以需要下载这两个软件包。
-    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "yum install wget unzip make -y"'
-    wget_result = subprocess.run(wget_command, shell=True)
-    if wget_result.returncode:
-        wget_result.stderr = "测试端下载run_kytuning代码出错,请检查账号、密码是否正确，网络是否可用\n请在其它机器中测试：\"" + wget_command
-        return wget_result
+    # wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "yum install wget unzip make -y"'
+    # wget_result = subprocess.run(wget_command, shell=True)
+    # if wget_result.returncode:
+    #     wget_result.stderr = "执行" + wget_command + "失败"
+    #     return wget_result
 
     # 下载run_kytuning代码
     wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (

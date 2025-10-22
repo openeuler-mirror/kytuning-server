@@ -111,7 +111,7 @@ export default {
   },
   computed: {
     showNewServerPassword() {
-       return this.machineData.new_iso_name && this.machineData.new_iso_name !== 'other(手动创建)';
+      return this.machineData.new_iso_name && this.machineData.new_iso_name !== 'other(手动创建)';
     },
   },
   created() {
@@ -156,8 +156,11 @@ export default {
         new_iso_name: this.machineData.new_iso_name,
         new_server_password: this.machineData.new_server_password,
       }
-
       if (this.machineData.new_iso_name && this.machineData.new_iso_name !== "other(手动创建)") {
+        if (!this.machineData.new_server_password) {
+          ElMessage({message: '重构系统请输入密码', type: 'success'})
+          return
+        }
         const newData = this.isoList.find(item => item.ISO_name === this.machineData.new_iso_name)
         if (newData.arch_name === this.modifySystemArchName) {
           this.dialogModify = false;

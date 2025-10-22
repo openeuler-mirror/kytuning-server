@@ -10,8 +10,8 @@
     <!-- 搜索 -->
     <el-button type="success" @click="add" style="float: right;">新增</el-button>
     <div class="cont">
-      <el-table :data="showData" :header-cell-style="{fontSize:'15px'}"
-                tooltip-effect="dark" border style="width: 100%">
+      <el-table :data="showData" :header-cell-style="{fontSize:'15px'}" tooltip-effect="dark" border
+                style="width: 100%">
         <el-table-column prop="ISO_name" label="ISO名称" width="300"></el-table-column>
         <el-table-column prop="arch_name" label="架构"></el-table-column>
         <el-table-column prop="user_name" label="适配人员"></el-table-column>
@@ -54,7 +54,8 @@
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
-        <el-button type="primary" @click="dialogTitle === '新增ISO' ? addSure('form') : modifySure('form')">确 定</el-button>
+        <el-button type="primary" @click="dialogTitle === '新增ISO' ? addSure('form') : modifySure('form')">确 定
+        </el-button>
       </template>
     </el-dialog>
   </div>
@@ -166,14 +167,14 @@ export default {
     modifySure() {
       this.dialogAddMachine = false;
       const machineData_ = {
-            id: this.modifyID,
-            http_address: this.machineData.http_address,
-            arch_name: this.machineData.arch_name,
-            boot_efi: this.machineData.boot_efi,
-            grub_cfg_path: this.machineData.grub_cfg_path,
-            grub_menu_name: this.machineData.grub_menu_name,
-            ks_file_name: this.machineData.ks_file_name,
-          };
+        id: this.modifyID,
+        http_address: this.machineData.http_address,
+        arch_name: this.machineData.arch_name,
+        boot_efi: this.machineData.boot_efi,
+        grub_cfg_path: this.machineData.grub_cfg_path,
+        grub_menu_name: this.machineData.grub_menu_name,
+        ks_file_name: this.machineData.ks_file_name,
+      };
       adapt_ISO('put', machineData_).then(response => {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})

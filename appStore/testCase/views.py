@@ -14,12 +14,15 @@ import time
 from django.http import HttpResponse, FileResponse, HttpRequest
 from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
+from appStore.testMachine.models import TestMachine
 from appStore.utils.common import test_case, json_response, get_error_message
 from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL
 from rest_framework import status, viewsets
 
 import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+
+log = logging.getLogger('mydjango')  # 这里的mydjango是settings中loggers里面对应的名字
+
 
 class TestCaseViewSet(viewsets.ModelViewSet):
     """
@@ -41,7 +44,6 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         data_test_case = {}
         data_test_case['user_name'] = request.user.chinese_name
         data_test_case['ip'] = request.data.get('test_ip')
-        test_password = request.data.get('test_password')
         data_test_case['project_name'] = request.data.get('project_name')
         data_test_case['stream'] = request.data.get('stream')
         data_test_case['lmbench'] = request.data.get('lmbench')
@@ -95,7 +97,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
 
         # 将配置数据写入YAML文件
         if int(data_test_case['stream']):
-            stream_yaml = request.data.get('yaml')['stream'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['stream'])))
+            stream_yaml = request.data.get('yaml')['stream'].replace('maxiterations:  1', 'maxiterations: %d' % (
+                int(data_test_case['stream'])))
             with open(user_config_path + '/yaml-base/stream-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(stream_yaml)
         if int(data_test_case['lmbench']):
@@ -128,8 +131,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 int(data_test_case['cpu2006'])))
             with open(user_config_path + '/yaml-base/cpu2006-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_yaml)
-            cpu2006_loongarch64_yaml = request.data.get('yaml')['cpu2006_loongarch64'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['cpu2006'])))
+            cpu2006_loongarch64_yaml = (request.data.get('yaml')['cpu2006_loongarch64'].replace(
+                    'maxiterations:  1','maxiterations: %d' % (int(data_test_case['cpu2006']))))
             with open(user_config_path + '/yaml-base/cpu2006-loongarch64-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_loongarch64_yaml)
         if int(data_test_case['cpu2017']):
@@ -146,7 +149,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         else:
             log.info('testCase数据存储错误 ：%s，', serializer_test_case.errors)
             log.info('testCase存储数据为 ：%s，', data_test_case)
-            return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_test_case))
+            return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST,
+                                 get_error_message(serializer_test_case))
 
         """保存至配置管理数据库"""
         from appStore.userConfig.views import UserConfigViewSet
@@ -158,7 +162,12 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         UserConfigViewSet.create(request=request_user_config, *args, **kwargs)
 
         # 运行测试
-        return_result = test_case(data_test_case['ip'], 'root', test_password, test_case_names,  user_config_path, data_test_case['result_log_name'])
+        TestMachine_ = TestMachine.objects.filter(server_IP=data_test_case['ip']).first()
+        if TestMachine_.owner != request.user.chinese_name:
+            return json_response('', status.HTTP_200_OK, '用户只能使用自己的机器测试')
+
+        return_result = test_case(data_test_case['ip'], TestMachine_.server_user_name, TestMachine_.server_password,
+                                  test_case_names, user_config_path, data_test_case['result_log_name'])
         if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
             TestCase.objects.filter(id=test_case_id).update(test_result=return_result.stderr)
             return json_response('', status.HTTP_204_NO_CONTENT, return_result.stderr)
@@ -177,8 +186,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
             # todo 判断这个日志文件是否需要被删除 验证是否正确
             if not TestCase.objects.get(id=id).is_error:
-                subprocess.run("rm -rf " + str(TestCase.objects.filter(id=id).first().result_log_name) + '.tar',
-                               shell=True)
+                subprocess.run("rm -rf " + str(TestCase.objects.filter(id=id).first().result_log_name) + '.tar', shell=True)
             # 删除数据
             TestCase.objects.filter(id=id).delete()
             # 删除日志文件
@@ -192,8 +200,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         # result_log_name = TestCase.objects.filter(id=test_case_id).first().result_log_name
         result_log_name = request.GET.get('result_log_name')
         # 检查文件是否存在
-        log_file_path = result_log_name+'.tar'
+        log_file_path = result_log_name + '.tar'
         if not os.path.exists(log_file_path):
             return HttpResponse('文件不存在', status=404)
         # 使用FileResponse对象将文件作为HTTP响应发送回前端
-        return FileResponse(open(log_file_path, 'rb'), as_attachment=True,status=200)
+        return FileResponse(open(log_file_path, 'rb'), as_attachment=True, status=200)
