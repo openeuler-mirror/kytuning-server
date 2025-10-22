@@ -18,10 +18,7 @@
         <el-table-column prop="iso_name" label="当前ISO"></el-table-column>
         <el-table-column prop="link_status" label="连接状态">
           <template #default="scope">
-            <el-button
-                v-if="scope.row.link_status"
-                :type="scope.row.link_status === '在线' ? 'success' : 'danger'"
-            >
+            <el-button v-if="scope.row.link_status" :type="scope.row.link_status === '在线' ? 'success' : 'danger'">
               {{ scope.row.link_status }}
             </el-button>
           </template>
@@ -61,6 +58,9 @@
           <el-select v-model="machineData.new_iso_name" placeholder="请选择ISO">
             <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"/>
           </el-select>
+        </el-form-item>
+        <el-form-item label="重构系统密码" prop="new_server_password" v-if="showNewServerPassword">
+          <el-input v-model="machineData.new_server_password" autocomplete="off"></el-input>
         </el-form-item>
         <el-button type="success" @click="addiso('form')">新增ISO</el-button>
       </el-form>
@@ -102,11 +102,17 @@ export default {
         'server_user_name': '',
         'server_password': '',
         'iso_name': '',
-        'new_iso_name':'',
+        'new_iso_name': '',
+        'new_server_password': '',
       },
       isoList: [],
       dialogModify: false,
     };
+  },
+  computed: {
+    showNewServerPassword() {
+       return this.machineData.new_iso_name && this.machineData.new_iso_name !== 'other(手动创建)';
+    },
   },
   created() {
     this.getData()
@@ -133,6 +139,7 @@ export default {
           'server_user_name': row.server_user_name,
           'server_password': row.server_password,
           'new_iso_name': row.new_iso_name,
+          'new_server_password': row.new_server_password,
         }
       } else {
         ElMessage({message: '不可查看或修改他人机器详情', type: 'success'})
@@ -147,6 +154,7 @@ export default {
         server_user_name: this.machineData.server_user_name,
         server_password: this.machineData.server_password,
         new_iso_name: this.machineData.new_iso_name,
+        new_server_password: this.machineData.new_server_password,
       }
 
       if (this.machineData.new_iso_name && this.machineData.new_iso_name !== "other(手动创建)") {
@@ -233,7 +241,7 @@ export default {
         ElMessage({message: '无人使用无需更新', type: 'success'})
       }
     },
-    addiso(){
+    addiso() {
       ElMessage({message: '待开发', type: 'success'})
     }
   }
