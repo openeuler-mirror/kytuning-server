@@ -6,12 +6,11 @@
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
 # Create your views here.
-import crypt
 from appStore.adaptISO.models import AdaptISO
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
 from rest_framework import status, viewsets
-from appStore.utils.common import json_response, get_link_status, update_system, update_auto_install
+from appStore.utils.common import json_response, get_link_status, update_system, update_auto_install, make_ks_password
 import logging
 log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
 
@@ -107,6 +106,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             ISO = None
         else:
             ISO = AdaptISO.objects.filter(ISO_name=new_iso_name).first()
+            # 判断iso和机器是否适配。
             replacements['HTTP_ISO_PATH'] = ISO.http_address
             replacements['BOOT_EFI'] = ISO.boot_efi
             replacements['GRUB_CFG_PATH'] = '$ISO_PATH' + ISO.grub_cfg_path
@@ -114,11 +114,14 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             KS_FILE_NAME = ISO.ks_file_name
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
-            PASSWORD = crypt.crypt(new_server_password)
-            if '/' in PASSWORD or '$' in PASSWORD:
-                # 在字符前添加"\"
-                PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
-            replacements['PASSWORD'] = PASSWORD
+            # ks文件中用户密码加密
+            if new_server_password:
+                replacements['PASSWORD'] = make_ks_password(new_server_password)
+            else:
+                return json_response({}, status.HTTP_200_OK,'重构系统请输入密码')
+
+        if machine_data.queue_user and request.user.chinese_name != machine_data.queue_user:
+            return json_response({}, status.HTTP_200_OK,'当前申请人是 %s ,请协商后在使用' % (machine_data.queue_user))
 
         if machine_data.owner == request.user.chinese_name:
             if new_iso_name:
@@ -127,23 +130,19 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME)
-                machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
 
         elif not machine_data.owner:
-            if request.user.chinese_name != machine_data.queue_user and machine_data.queue_user:
-                return json_response({}, status.HTTP_200_OK,
-                                     '当前申请人是 %s ,请协商后在使用' % (machine_data.queue_user))
             machine_data.owner = request.user.chinese_name
             machine_data.queue_user = None
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
-            machine_data.save()
             if ISO:
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME)
+            machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         else:
             return json_response({}, status.HTTP_200_OK, '不可修改他人使用的机器')
