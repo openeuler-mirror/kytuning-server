@@ -12,6 +12,7 @@
 @author: Wqz
 @time: 11/6/19 4:33 PM
 """
+import crypt
 import glob
 import re
 import os
@@ -255,4 +256,11 @@ def update_system(user_name, server_IP, server_user_name, server_password, KS_FI
     # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
     #                                stderr=subprocess.DEVNULL, text=True)
     return
+
+
+def make_ks_password(new_server_password):
+    PASSWORD = crypt.crypt(new_server_password)
+    if '/' in PASSWORD or '$' in PASSWORD:
+        PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
+    return PASSWORD
 
