@@ -95,6 +95,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
+        new_server_password = request.data.get('new_server_password')
         new_iso_name = request.data.get('new_iso_name')
         machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
                                                    machine_data.BMC_password, machine_data.server_IP,
@@ -113,7 +114,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             KS_FILE_NAME = ISO.ks_file_name
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
-            PASSWORD = crypt.crypt(machine_data.server_password)
+            PASSWORD = crypt.crypt(new_server_password)
             if '/' in PASSWORD or '$' in PASSWORD:
                 # 在字符前添加"\"
                 PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
@@ -122,11 +123,12 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if machine_data.owner == request.user.chinese_name:
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
-            machine_data.save()
             if ISO:
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME)
+                machine_data.server_password = new_server_password
+            machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
 
         elif not machine_data.owner:
