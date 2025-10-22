@@ -10,8 +10,10 @@ from appStore.testCase.models import TestCase
 
 class TestCaseSerializer(serializers.ModelSerializer):
     """
-    stream数据序列化
+    测试数据序列化
     """
+    test_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+
 
     class Meta:
         model = TestCase
