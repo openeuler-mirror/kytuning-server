@@ -67,3 +67,16 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             iso_data.save()
             return json_response(serializer.data, status.HTTP_200_OK, '更新成功！')
         return json_response(serializer.errors, status.HTTP_400_BAD_REQUEST, '请确认ISO是否已存在')
+
+    def delete(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            id = request.data.get('id', None)
+            if not id or not AdaptISO.objects.filter(id=id):
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+            test_case_data = AdaptISO.objects.filter(id=id).first()
+            if not test_case_data:
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+            AdaptISO.objects.filter(id=id).delete()
+            return json_response({}, status.HTTP_200_OK, '删除成功')
+        else:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员才能删除该数据')

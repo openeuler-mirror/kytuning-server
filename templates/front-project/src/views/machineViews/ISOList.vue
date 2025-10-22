@@ -181,6 +181,22 @@ export default {
         }
       })
     },
+
+    //删除数据
+    del(row) {
+      this.$confirm(`确认删除此行数据吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        adapt_ISO('delete', {id: row.id}).then(response => {
+          if (response.data.code === 200) {
+            ElMessage({message: response.data.message, type: 'success'})
+            this.getData()
+          }
+        })
+      })
+    },
   }
 }
 ;
