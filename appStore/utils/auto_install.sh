@@ -29,6 +29,7 @@ PASSWORD=''
 LOG_FILE='/var/log/kytuning-auto-install.log'
 
 init_file() {
+  umount "/mnt"
   umount "$MOUNT_PATH"
   umount /dev/$STARTUP_DISK*
   rm -r $MOUNT_PATH
@@ -109,6 +110,7 @@ main(){
   # 修改grub.cfg文件
   update_grub_cfg
   # 替换网卡信息
+  sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
   # 替换ks文件中安装操作系统盘
   sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
   # 增加用户密码传输
