@@ -1,3 +1,10 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Fri Mar 1 10:09:12 2024 +0800
+"""
 # Create your views here.
 from appStore.adaptISO.models import AdaptISO
 from appStore.adaptISO.serializers import AdaptISOListSerializer
@@ -17,7 +24,7 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
     pagination_class = LimsPageSet
 
     def list(self, request, *args, **kwargs):
-        queryset = AdaptISO.objects.all().order_by('-id')
+        queryset = AdaptISO.objects.all().order_by('ISO_name')
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '查询完成')
 

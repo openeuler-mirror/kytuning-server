@@ -130,6 +130,7 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
     mv_ssh_keygen = "ssh-keygen -R " + test_ip
     subprocess.run(mv_ssh_keygen, shell=True)
 
+    # todo 因为护网无法下载先注释掉
     # 如果是最小化安装的话没有wget和unzip所以需要下载这两个软件包。
     # wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "yum install wget unzip make -y"'
     # wget_result = subprocess.run(wget_command, shell=True)
@@ -212,7 +213,6 @@ def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_
     ssh_cmd = f'sshpass -p {server_password} ssh -o StrictHostKeyChecking=no {server_user_name}@{server_IP}'
     result = subprocess.run(ssh_cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                             text=True)
-
     # 获取返回状态 0 代表成功
     if result.returncode:
         return '用户名或密码错误'

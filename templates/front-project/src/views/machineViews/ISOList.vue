@@ -26,6 +26,19 @@
           </template>
         </el-table-column>
       </el-table>
+      <br>
+      <div class="parent-container">
+      <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[5, 10, 20, 30, 50, total]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+      >
+      </el-pagination>
+    </div>
     </div>
   </div>
   <div>
@@ -205,4 +218,9 @@ export default {
 
 
 <style scoped>
+.parent-container {
+  display: flex;
+  justify-content: center;
+  /*background-color: #f2f2f2;*/
+}
 </style>

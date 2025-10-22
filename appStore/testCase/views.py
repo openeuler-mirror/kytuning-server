@@ -35,9 +35,9 @@ class TestCaseViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = TestCase.objects.filter().all().order_by('-id')
         if not queryset:
-            return json_response({}, status.HTTP_200_OK, '列表')
+            return json_response({}, status.HTTP_200_OK, '没有对应数据')
         serializer = self.get_serializer(queryset, many=True)
-        return json_response(serializer.data, status.HTTP_200_OK, '测试完成')
+        return json_response(serializer.data, status.HTTP_200_OK, '获取列表完成')
 
     def do_test_case(self, request, *args, **kwargs):
         # 创建对应数据库

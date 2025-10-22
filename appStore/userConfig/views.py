@@ -24,14 +24,14 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         queryset = UserConfig.objects.filter(user_name=request.user.chinese_name).all().order_by('-id')
         id = request.GET.get('configID')
         if not queryset:
-            return json_response({}, status.HTTP_200_OK, '列表')
+            return json_response({}, status.HTTP_200_OK, '没有查到对应数据')
         if id:
             if id == '0':  # 获取最后一条数据
                 queryset = [queryset.first()]
             else:
                 queryset = queryset.filter(id=id)
         serializer = self.get_serializer(queryset, many=True)
-        return json_response(serializer.data, status.HTTP_200_OK, '测试完成')
+        return json_response(serializer.data, status.HTTP_200_OK, '用户列表获取完成')
 
     def create(self, request, *args, **kwargs):
         data_user_config = {}
