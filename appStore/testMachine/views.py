@@ -6,6 +6,7 @@
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
 # Create your views here.
+import crypt
 from appStore.adaptISO.models import AdaptISO
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
@@ -95,7 +96,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
         new_iso_name = request.data.get('new_iso_name')
-        # install_iso_name = new_iso_name
         machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
                                                    machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
@@ -113,6 +113,11 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             KS_FILE_NAME = ISO.ks_file_name
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
+            PASSWORD = crypt.crypt(machine_data.server_password)
+            if '/' in PASSWORD or '$' in PASSWORD:
+                # 在字符前添加"\"
+                PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
+            replacements['PASSWORD'] = PASSWORD
 
         if machine_data.owner == request.user.chinese_name:
             if new_iso_name:
