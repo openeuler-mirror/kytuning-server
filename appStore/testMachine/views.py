@@ -89,7 +89,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-
         machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
@@ -99,7 +98,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
                                                    machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
-
         replacements = {}
         KS_FILE_NAME = None
         if new_iso_name == 'other(手动创建)' or not new_iso_name:
@@ -127,18 +125,33 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
             if ISO:
+                # 判斷ft2500机器不适配openEuler的iso
+                if ISO.ISO_name.startswith('openEuler') and machine_data.machine_name == 'ft2500':
+                    return json_response({}, status.HTTP_200_OK, 'ft2500机器部支持openEuler-iso自动安装')
+                # 获取网卡信息，kylin的iso在intel机器上会修改网卡名称,后期做到ks文件中。
+                if ISO.ISO_name.startswith('Kylin') and machine_data.machine_name == 'intel':
+                    replacements['NETWORK_CARD'] = 'p17p2'
+                else:
+                    replacements['NETWORK_CARD'] = 'ens17f1'
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME)
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
-
         elif not machine_data.owner:
             machine_data.owner = request.user.chinese_name
             machine_data.queue_user = None
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
             if ISO:
+                # 判斷ft2500机器不适配openEuler的iso
+                if ISO.ISO_name.startswith('openEuler') and machine_data.machine_name == 'ft2500':
+                    return json_response({}, status.HTTP_200_OK, 'ft2500机器部支持openEuler-iso自动安装')
+                # 获取网卡信息，kylin的iso在intel机器上会修改网卡名称,后期做到ks文件中。
+                if ISO.ISO_name.startswith('Kylin') and machine_data.machine_name == 'intel':
+                    replacements['NETWORK_CARD'] = 'p17p2'
+                else:
+                    replacements['NETWORK_CARD'] = 'ens17f1'
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME)
