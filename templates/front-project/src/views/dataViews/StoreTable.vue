@@ -17,7 +17,7 @@
     <br>
 
     <el-table :data="showData" tooltip-effect="dark"
-              border style="width: 100%" class="tableHead" :header-cell-style="{fontSize:'5px'}" >
+              border style="width: 100%" class="tableHead" :header-cell-style="{fontSize:'15px'}" >
       <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150"
                        :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
@@ -131,6 +131,7 @@
       >
       </el-pagination>
     </div>
+
   </div>
   <div>
     <el-dialog :title="'修改project信息'" v-model="dialogPutProject" width="500px">

@@ -217,26 +217,6 @@ def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_
         return '用户名或密码错误'
     return '在线'
 
-
-def update_system(user_name, server_IP, server_user_name, server_password, KS_FILE_NAME):
-    # 复制脚本至需要重置的系统
-    scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/%s {server_user_name}@{server_IP}:/root/' % (
-    str(user_name), KS_FILE_NAME)
-    result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE, text=True)
-    if result.returncode:
-        return '文件复制出错'
-
-    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "sh /root/%s.sh"' % (
-        str(user_name))
-
-    subprocess.Popen(ssh_command, shell=True)
-    # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
-    # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-    #                                stderr=subprocess.DEVNULL, text=True)
-    return
-
-
 def update_auto_install(user_name, replacements):
     # 原始脚本文件路径
     auto_install_file = './appStore/utils/autoInstall/auto_install.sh'
@@ -256,3 +236,23 @@ def update_auto_install(user_name, replacements):
     # 将更新后的内容写回副本脚本文件
     with open(user_install_file, 'w') as f:
         f.write(script_content)
+
+def update_system(user_name, server_IP, server_user_name, server_password, KS_FILE_NAME):
+    # 复制脚本至需要重置的系统
+    # todo 后期ifcfg-enP1p3s0f0可以做服务器类型和ISO版本判断来确定ifcfg-enP1p3s0f0是否拷贝
+    scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (
+    str(user_name), KS_FILE_NAME)
+    result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, text=True)
+    if result.returncode:
+        return '文件复制出错'
+
+    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "sh /root/%s.sh"' % (
+        str(user_name))
+
+    subprocess.Popen(ssh_command, shell=True)
+    # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
+    # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+    #                                stderr=subprocess.DEVNULL, text=True)
+    return
+

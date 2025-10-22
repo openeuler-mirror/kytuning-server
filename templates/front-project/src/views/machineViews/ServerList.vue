@@ -8,7 +8,7 @@
 <template>
   <div id="fixed-top">
     <div class="cont">
-      <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
+      <el-table :data="showData" :header-cell-style="{fontSize:'15px'}"
                 tooltip-effect="dark" border style="width: 100%">
         <el-table-column prop="machine_name" label="设备名称"></el-table-column>
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
