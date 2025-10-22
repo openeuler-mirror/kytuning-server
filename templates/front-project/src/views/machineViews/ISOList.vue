@@ -10,7 +10,7 @@
     <!-- 搜索 -->
     <el-button type="success" @click="add" style="float: right;">新增</el-button>
     <div class="cont">
-      <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
+      <el-table :data="showData" :header-cell-style="{fontSize:'15px'}"
                 tooltip-effect="dark" border style="width: 100%">
         <el-table-column prop="ISO_name" label="ISO名称" width="300"></el-table-column>
         <el-table-column prop="arch_name" label="架构"></el-table-column>

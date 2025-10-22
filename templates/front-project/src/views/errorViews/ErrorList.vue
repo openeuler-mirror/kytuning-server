@@ -32,7 +32,7 @@
       <el-button type="warning" style=" margin-left: 50px;" @click="reset">重置</el-button>
     </div>
     <div class="cont">
-      <el-table :data="showData" :header-cell-style="{fontSize:'5px'}"
+      <el-table :data="showData" :header-cell-style="{fontSize:'15px'}"
                 tooltip-effect="dark" border style="width: 100%" class="tableHead">
         <el-table-column prop="error_type" label="错误类型"></el-table-column>
         <el-table-column prop="user_name" label="操作人员"></el-table-column>
