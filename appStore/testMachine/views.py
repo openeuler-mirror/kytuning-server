@@ -12,7 +12,9 @@ from appStore.testMachine.serializers import TestMachineSerializer
 from rest_framework import status, viewsets
 from appStore.utils.common import json_response, get_link_status, update_system, update_auto_install, make_ks_password
 import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+
+log = logging.getLogger('mydjango')  # 这里的mydjango是settings中loggers里面对应的名字
+
 
 class TestMachineViewSet(viewsets.ModelViewSet):
     """
@@ -23,7 +25,10 @@ class TestMachineViewSet(viewsets.ModelViewSet):
     serializer_class = TestMachineSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = TestMachine.objects.all().order_by('-id')
+        if (request.GET.get('search_by_name',None)):
+            queryset = TestMachine.objects.filter(owner=request.user.chinese_name).order_by('-id')
+        else:
+            queryset = TestMachine.objects.all().order_by('-id')
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '查询完成')
 
@@ -125,9 +130,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
             if ISO:
-                # 判斷ft2500机器不适配openEuler的iso
-                if ISO.ISO_name.startswith('openEuler') and machine_data.machine_name == 'ft2500':
-                    return json_response({}, status.HTTP_200_OK, 'ft2500机器部支持openEuler-iso自动安装')
                 # 获取网卡信息，kylin的iso在intel机器上会修改网卡名称,后期做到ks文件中。
                 if ISO.ISO_name.startswith('Kylin') and machine_data.machine_name == 'intel':
                     replacements['NETWORK_NAME'] = 'p17p2'
@@ -145,8 +147,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 machine_data.iso_name = new_iso_name
             if ISO:
                 # 判斷ft2500机器不适配openEuler的iso
-                if ISO.ISO_name.startswith('openEuler') and machine_data.machine_name == 'ft2500':
-                    return json_response({}, status.HTTP_200_OK, 'ft2500机器部支持openEuler-iso自动安装')
                 # 获取网卡信息，kylin的iso在intel机器上会修改网卡名称,后期做到ks文件中。
                 if ISO.ISO_name.startswith('Kylin') and machine_data.machine_name == 'intel':
                     replacements['NETWORK_NAME'] = 'p17p2'

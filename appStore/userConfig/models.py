@@ -13,8 +13,6 @@ class UserConfig(models.Model):
     config_name = models.CharField(max_length=50, verbose_name='配置文件名称')
     user_name = models.CharField(max_length=50, verbose_name='用户名称')
     project_name = models.CharField(max_length=50, verbose_name='测试项目名称')
-    test_ip = models.CharField(max_length=50, verbose_name='测试机器IP')
-    test_password = models.CharField(max_length=50, verbose_name='测试机器密码')
     stream_number = models.CharField(max_length=100, verbose_name='stream测试迭代次数')
     lmbench_number = models.CharField(max_length=100, verbose_name='lmbench测试迭代次数')
     unixbench_number = models.CharField(max_length=100, verbose_name='unixbench测试迭代次数')

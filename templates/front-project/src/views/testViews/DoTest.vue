@@ -56,28 +56,12 @@
             <el-button type="primary" class="test-button" @click="doBase">一键摸底</el-button>
             <el-button type="primary" class="test-button" @click="lastTest">还原上次测试</el-button>
           </el-form-item>
-
           <el-form-item label="测试机器IP：">
-            <el-input v-model="formData.testIP"/>
-            <!--            <el-select v-model="testIP" placeholder="请选择测试机器IP">-->
-            <!--              <el-option v-for="option in machineOptions" :key="option.value" :label="option.label"-->
-            <!--                         :value="option.value"/>-->
-            <!--            </el-select>-->
-            <el-form-item>
-              <!--              <el-button type="primary" class="button-style" @click="testlink">测试连接</el-button>-->
-            </el-form-item>
-          </el-form-item>
-
-          <el-form-item label="测试机器密码：">
-            <el-input v-model="formData.testPassword" placeholder="因为还没有做设备管理，所以先让用户手动输入密码"/>
-            <!--            <el-select v-model="testIP" placeholder="请选择测试机器IP">-->
-            <!--              <el-option v-for="option in machineOptions" :key="option.value" :label="option.label"-->
-            <!--                         :value="option.value"/>-->
-            <!--            </el-select>-->
-            <!--            <el-form-item>-->
-            <!--              <el-button type="primary" class="button-style" @click="testlink">测试连接</el-button>-->
-            <!--            </el-form-item>-->
-          </el-form-item>
+          <el-select v-model="formData.testIP" placeholder="请选择测试机器IP" class="m-2">
+            <el-option v-for="option in machineOptions" :key="option.server_IP" :label="option.server_IP"
+                                     :value="option.server_IP"/>
+          </el-select>
+        </el-form-item>
           <el-form-item label="描述：">
             <el-input v-model="formData.message"/>
           </el-form-item>
@@ -124,7 +108,7 @@
 import {ref} from 'vue'
 import baseYamlData from '@/utils/yaml.js';
 import {ElMessage} from 'element-plus'
-import {do_test_case, user_config} from "@/api/api";
+import {do_test_case, user_config, machine_list} from "@/api/api";
 
 export default {
   name: 'doTest',
@@ -136,7 +120,6 @@ export default {
         projectName: '',
         yamlData: baseYamlData,
         testIP: '',
-        testPassword: '',
         message: '',
         iterations: {
           stream: '',
@@ -157,6 +140,7 @@ export default {
       configID: 0,
       configData: '',
       configDatas: [],
+      machineOptions: [],
       rules: {
         configName: [{required: true, message: 'configName不能为空', trigger: 'blur'}],
         projectName: [{required: true, message: 'projectName不能为空', trigger: 'blur'}],
@@ -164,11 +148,15 @@ export default {
       },
     };
   },
+
   created() {
-    this.getData()
+    this.selecp_IP()
   },
   methods: {
-    getData() {
+    selecp_IP(){
+       machine_list('get', {'search_by_name':true}).then((response) => {
+        this.machineOptions=response.data.data
+      });
     },
     //展示yaml文件
     showYaml(yamlType) {
@@ -197,7 +185,7 @@ export default {
       this.formData.iterations.cpu2017 = 0
       this.formData.yamlData = baseYamlData
     },
-    //最后一次测试数据
+    //换源上传测试数据
     lastTest() {
       user_config('get', {configID: 0}).then(response => {
         const config = response.data.data[0]
@@ -224,10 +212,10 @@ export default {
           cpu2017: config.cpu2017_config,
         }
         this.formData.testIP = config.test_ip
-        this.formData.testPassword = config.test_password
         this.formData.message = config.message
       })
     },
+
     //选中配置列表
     select() {
       user_config('get').then(response => {
@@ -265,7 +253,6 @@ export default {
       this.formData.yamlData.cpu2006_loongarch64_config = this.configData.cpu2006_loongarch64_config_config
       this.formData.yamlData.cpu2017 = this.configData.cpu2017_config
       this.formData.testIP = this.configData.test_ip
-      this.formData.testPassword = this.configData.test_password
       this.formData.message = this.configData.message
       this.configDialog = false
     },
@@ -278,7 +265,6 @@ export default {
             config_name: this.formData.configName,
             project_name: this.formData.projectName,
             test_ip: this.formData.testIP,
-            test_password: this.formData.testPassword,
             stream: this.formData.iterations.stream,
             lmbench: this.formData.iterations.lmbench,
             unixbench: this.formData.iterations.unixbench,
@@ -303,7 +289,6 @@ export default {
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
-          test_password: this.formData.testPassword,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
           unixbench: this.formData.iterations.unixbench,
@@ -327,7 +312,6 @@ export default {
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
-          test_password: this.formData.testPassword,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
           unixbench: this.formData.iterations.unixbench,
@@ -344,7 +328,6 @@ export default {
           this.formData.configName = ''
           this.formData.projectName = ''
           this.formData.testIP = ''
-          this.formData.testPassword = ''
           this.formData.iterations.stream = ''
           this.formData.iterations.lmbench = ''
           this.formData.iterations.unixbench = ''
