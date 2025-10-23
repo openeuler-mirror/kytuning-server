@@ -8,7 +8,7 @@
 <template>
   <div id="fixed-top">
     <!-- 搜索 -->
-    <div style="display: flex; justify-content: space-between; width: 85%;padding-top: 20px;">
+    <div style="display: flex; justify-content: space-between; width: 85%;">
       <div style="display: flex; justify-content: space-between; width: 86%;margin-left: 7%;">
         <el-form-item label="错误类型：">
           <el-select v-model="errorData.errType" class="m-2" placeholder="请选择错误类型">

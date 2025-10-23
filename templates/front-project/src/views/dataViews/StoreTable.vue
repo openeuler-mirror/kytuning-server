@@ -7,32 +7,40 @@
 -->
 <template>
   <div>
-    <div id="tatle-div">
-      <el-row class="mb-4">
-        <el-button @click="getComparativeData()" type="primary" plain>数据对比</el-button>
-        <el-button @click="mergeData()" type="danger" plain>合并数据</el-button>
-        <el-button @click="searchComparData()" type="success">修改对比数据</el-button>
-      </el-row>
+    <div class="floating-buttons">
+      <div id="tatle-div">
+        <el-row class="mb-4">
+          <el-button @click="getComparativeData()" type="primary" plain>数据对比</el-button>
+          <el-button @click="mergeData()" type="danger" plain>合并数据</el-button>
+          <el-button @click="searchComparData()" type="success">修改对比数据</el-button>
+        </el-row>
+      </div>
     </div>
+
     <br>
 
-    <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" class="tableHead" :header-cell-style="{fontSize:'15px'}">
-      <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150" :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
+    <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" class="tableHead"
+              :header-cell-style="{fontSize:'15px'}">
+      <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150"
+                       :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="user_name" label="上传人员" :filters=userNames :filter-method="filterHandler" filter-placement="bottom-end">
+      <el-table-column prop="user_name" label="上传人员" :filters=userNames :filter-method="filterHandler"
+                       filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.user_name }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="os_version" label="系统版本" width="245" :filters=osNames :filter-method="filterHandler" filter-placement="bottom-end">
+      <el-table-column prop="os_version" label="系统版本" width="245" :filters=osNames :filter-method="filterHandler"
+                       filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.os_version }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="cpu_module_name" label="cpu型号" width="195" :filters=cpuNames :filter-method="filterHandler" filter-placement="bottom-end">
+      <el-table-column prop="cpu_module_name" label="cpu型号" width="195" :filters=cpuNames
+                       :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu_module_name }}</div>
         </template>
@@ -198,6 +206,13 @@ export default {
       rules: {
         project_name: [{required: true, message: '请输入项目名称'}],
       },
+      select: {
+        project_name: "",
+        user_name: "",
+        os_version: "",
+        cpu_module_name: "",
+      },
+
     }
   },
 
@@ -367,6 +382,12 @@ export default {
 </script>
 
 <style scoped>
+.floating-buttons {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
 #tatle-div {
   display: flex; /* 将 div 设置为弹性容器 */
   justify-content: center; /* 将按钮水平居中对齐 */
