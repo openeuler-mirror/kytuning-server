@@ -23,7 +23,6 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="task_status" label="任务状态"></el-table-column>
         <el-table-column prop="queue_user" label="排队人员"></el-table-column>
         <el-table-column prop="update_time" label="更新时间" width="145"></el-table-column>
         <el-table-column label="操作" width="300">
