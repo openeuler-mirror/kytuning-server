@@ -38,7 +38,7 @@
   </div>
   <div>
     <el-dialog :title="dialogTitle" v-model="dialogAddMachine" width="500px">
-      <el-form :model="machineData" ref="machineForm" :rules="rules">
+      <el-form :model="machineData" ref="machineForm">
         <el-form-item label="ISO下载地址" prop="http_address">
           <el-input v-model="machineData.http_address" autocomplete="off"></el-input>
         </el-form-item>
@@ -48,7 +48,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="ks文件名称" prop="ks_file_name">
-          <el-input v-model="machineData.ks_file_name" autocomplete="off"></el-input>
+          <el-select v-model="machineData.ks_file_name" class="m-2" placeholder="请选择ks文件">
+            <el-option v-for="item in ksList" :key="item" :label="item" :value="item" placeholder="请选择ks文件"/>
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -62,7 +64,7 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {adapt_ISO} from "@/api/api";
+import {adapt_ISO, getksList} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
@@ -79,6 +81,7 @@ export default {
         'ks_file_name': '',
       },
       archTypes: ['x86', 'aarch', 'mips', 'loongarch'],
+      ksList:[],
       dialogAddMachine: false,
       modifyID: 0,
       dialogTitle: '新增ISO',
@@ -92,6 +95,9 @@ export default {
       adapt_ISO('get', {}).then((response) => {
         this.allDatas = response.data.data
         this.total = this.allDatas.length;
+      });
+      getksList('get', {}).then((response) => {
+        this.ksList=response.data.data
       });
     },
 

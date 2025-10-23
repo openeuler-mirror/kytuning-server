@@ -59,5 +59,6 @@ urlpatterns = [
     url('^change_password/', UserProfileViewSet.as_view({'put': 'change_password'}), name='change_password'),
     url('^do_test_case/', TestCaseViewSet.as_view({'post': 'do_test_case'}), name='do_test_case'),
     url('^down_message/', TestCaseViewSet.as_view({'get': 'down_message'}), name='down_message'),
+    url('^get_ks/', AdaptISOListViewSet.as_view({'get': 'get_ks'}), name='get_ks'),
 
 ]

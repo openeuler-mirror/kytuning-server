@@ -283,6 +283,19 @@ export function adapt_ISO(type, paramsOrData) {
 }
 
 
+//获取ks文件列表
+export function getksList(type, paramsOrData) {
+  const commonConfig = {
+    method: type,
+    url: '/get_ks/',
+  };
+  if (type === 'get') {
+    commonConfig.params = paramsOrData;
+  } else {
+    commonConfig.data = paramsOrData;
+  }
+  return service(commonConfig);
+}
 
 
 

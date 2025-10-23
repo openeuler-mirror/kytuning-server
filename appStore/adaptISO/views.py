@@ -82,3 +82,8 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员才能删除该数据')
+
+    def get_ks(self, request, *args, **kwargs):
+        # 先手动写四后期在考虑是做成数据库还是读取路径下的ks文件名称
+        data = ['kylin-ks.cfg', 'uos-ks-1050a.cfg', 'uos-ks.cfg', 'openEuler-ks.cfg']
+        return json_response(data, status.HTTP_200_OK, '获取ks列表完成')
