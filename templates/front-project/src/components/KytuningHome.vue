@@ -11,7 +11,7 @@
     <el-container class="content">
       <Menu/>
       <el-container>
-        <el-main>
+        <el-main style="padding-top: 0px;">
           <div class="cont">
             <router-view></router-view>
           </div>
@@ -38,10 +38,9 @@ export default {
 </script>
 
 <style lang="less">
-#home {
+.home {
   width: 100%;
   height: 100%;
-  overflow: scroll;
 
   .content {
     position: absolute;
