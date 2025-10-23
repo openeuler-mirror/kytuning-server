@@ -11,7 +11,7 @@
       <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" :header-cell-style="{fontSize:'15px'}"
                 class="tableHead">
         <el-table-column prop="project_name" label="项目名称"></el-table-column>
-        <el-table-column prop="user_name" label="测试人员"></el-table-column>
+        <el-table-column prop="user_name" label="测试人员" width="90"></el-table-column>
         <el-table-column prop="ip" label="ip" width="125"></el-table-column>
         <el-table-column prop="stream" label="stream" width="70"></el-table-column>
         <el-table-column prop="lmbench" label="lmbench" width="80"></el-table-column>
@@ -21,6 +21,7 @@
         <el-table-column prop="jvm2008" label="jvm2008" width="80"></el-table-column>
         <el-table-column prop="cpu2006" label="cpu2006" width="80"></el-table-column>
         <el-table-column prop="cpu2017" label="cpu2017" width="80"></el-table-column>
+        <el-table-column prop="test_time" label="测试开始时间" width="150"></el-table-column>
         <el-table-column prop="test_result" label="运行结果"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
