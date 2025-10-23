@@ -156,10 +156,6 @@ import utils from '@/utils/utils';
 export default {
   name: 'errorList',
   mixins: [utils],
-  // components: {
-  //   AllHeader,
-  //   Menu,
-  // },
   data() {
     return {
       allDatas: [],
@@ -255,7 +251,6 @@ export default {
 
     addSure() {
       //errorForm这个是上面form表单中的ref对应的标记
-      console.log(this.$refs.errorForm, 111)
       this.$refs.errorForm.validate((valid) => {
         if (valid) {
           this.dialogErrorPost = false;

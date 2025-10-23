@@ -7,7 +7,7 @@ MOUNT_PATH="/mnt/kytuning-iso"
 # ks文件名称
 KS_FILE_NAME="kytuning-ks.cfg"
 # 指定grub.cfg文件的路径
-GRUB_CFG_PATH=""
+GRUB_CFG_PATH="$ISO_PATH/EFI/BOOT/grub.cfg"
 # iso的下载路径
 HTTP_ISO_PATH=""
 # iso的名称
@@ -16,8 +16,6 @@ ISO_NAME=$(basename "$HTTP_ISO_PATH")
 NETWORK_IP=""
 # efibootmgr对应的文件
 BOOT_EFI=""
-# grub.cfg文件中原始的菜单名称
-GRUB_MENU_NAME=""
 # 磁盘个数
 DISK_COUNT=$(lsblk -d -o NAME | grep -c '^sd')
 # 系统安装盘
@@ -42,6 +40,8 @@ init_file() {
 update_grub_cfg(){
   # 设置安装系统启动项（openEuler默认是1）。
   sed -i 's/set default="1"/set default="0"/g' $GRUB_CFG_PATH
+  # grub.cfg文件中原始的菜单名称
+  GRUB_MENU_NAME=$(grep -oP "LABEL=\K[^ ]+" $MOUNT_PATH/EFI/BOOT/grub.cfg | head -n 1)
   sed -i "s/$GRUB_MENU_NAME/Kytuning/g" $GRUB_CFG_PATH
   # 查找第一个menuentry所在的行号
   menuentry_line_number=$(grep -n -m 1 "menuentry" "$GRUB_CFG_PATH" | cut -d ":" -f 1)
@@ -87,7 +87,7 @@ clear_kytuning_efibootmgr(){
 }
 
 main(){
-  echo '===============[info]:自动安装脚本运行开始，开始时间：'$(date) | tee -a "$LOG_FILE"
+  echo '===============[info]:自动安装脚本运行开始，开始时间：'$(date) | tee "$LOG_FILE"
   if [ $DISK_COUNT -lt 2 ]; then
     echo '[error]:当前系统只有一个盘不支持安装' | tee -a "$LOG_FILE"
     exit 1
@@ -109,7 +109,7 @@ main(){
   cp $KS_FILE_NAME $ISO_PATH
   # 修改grub.cfg文件
   update_grub_cfg
-  # 替换网卡信息
+  # 替换IP信息
   sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
   # 替换ks文件中安装操作系统盘
   sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
@@ -117,16 +117,21 @@ main(){
   sed -i "s/PASSWORD/$PASSWORD/g" "$ISO_PATH/$KS_FILE_NAME"
   clear_kytuning_efibootmgr
   cp clear_kytuning_efibootmgr.sh $ISO_PATH
-  if [[ "$ISO_NAME" == openEuler* && ( "$NETWORK_IP" == "127.0.0.1" || "$NETWORK_IP" == "127.0.0.1" ) ]]; then
-    cp ifcfg-enP1p3s0f0 $ISO_PATH
-    sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/ifcfg-enP1p3s0f0"
+  # 有ifcfg-enP1p3s0f0文件才会复制
+  if [ -e "ifcfg-enP1p3s0f0" ]; then
+      cp ifcfg-enP1p3s0f0 "$ISO_PATH"
+      sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/ifcfg-enP1p3s0f0"
   fi
   # 创建efi引导向
   efibootmgr --create --disk /dev/$STARTUP_DISK --part 1 --loader $BOOT_EFI --label "Kytuning"
   # 使用efibootmgr -n 命令指定下次启动项
   update_efi_bootorder
   sync
-  #reboot
+  echo '---------->[info]:查看启动盘内容为：' | tee -a "$LOG_FILE"
+  ls $ISO_PATH | tee -a "$LOG_FILE"
+  echo '<----------' | tee -a "$LOG_FILE"
+  # todo 调试保留处，正式部署后删除。
+  reboot
   echo '===============[info]:自动安装脚本运行结束，结束时间：'$(date) | tee -a "$LOG_FILE"
 }
 

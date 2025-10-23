@@ -14,9 +14,6 @@
         <el-table-column prop="ISO_name" label="ISO名称" width="300"></el-table-column>
         <el-table-column prop="arch_name" label="架构"></el-table-column>
         <el-table-column prop="user_name" label="适配人员"></el-table-column>
-        <el-table-column prop="boot_efi" label="启动项的路径"></el-table-column>
-        <el-table-column prop="grub_cfg_path" label="grub文件路径"></el-table-column>
-        <el-table-column prop="grub_menu_name" label="LABEL值"></el-table-column>
         <el-table-column prop="ks_file_name" label="ks文件名称"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
@@ -50,15 +47,6 @@
             <el-option v-for="item in archTypes" :key="item" :label="item" :value="item" placeholder="请选择架构类型"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="启动项的路径" prop="boot_efi">
-          <el-input v-model="machineData.boot_efi" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="grub.cfg文件路径" prop="grub_cfg_path">
-          <el-input v-model="machineData.grub_cfg_path" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="LABEL值" prop="grub_menu_name">
-          <el-input v-model="machineData.grub_menu_name" autocomplete="off"></el-input>
-        </el-form-item>
         <el-form-item label="ks文件名称" prop="ks_file_name">
           <el-input v-model="machineData.ks_file_name" autocomplete="off"></el-input>
         </el-form-item>
@@ -88,9 +76,6 @@ export default {
         'http_address': '',
         'arch_name': '',
         'user_name': '',
-        'boot_efi': '',
-        'grub_cfg_path': '',
-        'grub_menu_name': '',
         'ks_file_name': '',
       },
       archTypes: ['x86', 'aarch', 'mips', 'loongarch'],
@@ -128,9 +113,6 @@ export default {
           const machineData_ = {
             http_address: this.machineData.http_address,
             arch_name: this.machineData.arch_name,
-            boot_efi: this.machineData.boot_efi,
-            grub_cfg_path: this.machineData.grub_cfg_path,
-            grub_menu_name: this.machineData.grub_menu_name,
             ks_file_name: this.machineData.ks_file_name,
           };
           adapt_ISO('post', machineData_).then((response) => {
@@ -167,9 +149,6 @@ export default {
       this.machineData = {
         http_address: row.http_address,
         arch_name: row.arch_name,
-        boot_efi: row.boot_efi,
-        grub_cfg_path: row.grub_cfg_path,
-        grub_menu_name: row.grub_menu_name,
         ks_file_name: row.ks_file_name
       }
     },
@@ -180,9 +159,6 @@ export default {
         id: this.modifyID,
         http_address: this.machineData.http_address,
         arch_name: this.machineData.arch_name,
-        boot_efi: this.machineData.boot_efi,
-        grub_cfg_path: this.machineData.grub_cfg_path,
-        grub_menu_name: this.machineData.grub_menu_name,
         ks_file_name: this.machineData.ks_file_name,
       };
       adapt_ISO('put', machineData_).then(response => {
