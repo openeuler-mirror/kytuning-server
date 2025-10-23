@@ -3,26 +3,23 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
-import configparser
 import os
-import shutil
-import subprocess
 import time
-# Create your views here.
+import shutil
+import logging
+import subprocess
+from rest_framework import status, viewsets
 from django.http import HttpResponse, FileResponse, HttpRequest
+# Create your views here.
 from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
 from appStore.testMachine.models import TestMachine
 from appStore.utils.common import test_case, json_response, get_error_message
 from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL
-from rest_framework import status, viewsets
 
-import logging
-
-log = logging.getLogger('mydjango')  # 这里的mydjango是settings中loggers里面对应的名字
-
+log = logging.getLogger('kytuninglog')
 
 class TestCaseViewSet(viewsets.ModelViewSet):
     """
@@ -97,38 +94,31 @@ class TestCaseViewSet(viewsets.ModelViewSet):
 
         # 将配置数据写入YAML文件
         if int(data_test_case['stream']):
-            stream_yaml = request.data.get('yaml')['stream'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['stream'])))
+            stream_yaml = request.data.get('yaml')['stream'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['stream'])))
             with open(user_config_path + '/yaml-base/stream-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(stream_yaml)
         if int(data_test_case['lmbench']):
-            lmbench_yaml = request.data.get('yaml')['lmbench'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['lmbench'])))
+            lmbench_yaml = request.data.get('yaml')['lmbench'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['lmbench'])))
             with open(user_config_path + '/yaml-base/lmbench-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(lmbench_yaml)
         if int(data_test_case['unixbench']):
-            unixbench_yaml = request.data.get('yaml')['unixbench'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['unixbench'])))
+            unixbench_yaml = request.data.get('yaml')['unixbench'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['unixbench'])))
             with open(user_config_path + '/yaml-base/unixbench-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(unixbench_yaml)
         if int(data_test_case['fio']):
-            fio_yaml = request.data.get('yaml')['fio'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['fio'])))
+            fio_yaml = request.data.get('yaml')['fio'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['fio'])))
             with open(user_config_path + '/yaml-base/fio-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(fio_yaml)
         if int(data_test_case['iozone']):
-            iozone_yaml = request.data.get('yaml')['iozone'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['iozone'])))
+            iozone_yaml = request.data.get('yaml')['iozone'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['iozone'])))
             with open(user_config_path + '/yaml-base/iozone-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(iozone_yaml)
         if int(data_test_case['jvm2008']):
-            jvm2008_yaml = request.data.get('yaml')['jvm2008'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['jvm2008'])))
+            jvm2008_yaml = request.data.get('yaml')['jvm2008'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['jvm2008'])))
             with open(user_config_path + '/yaml-base/jvm2008-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(jvm2008_yaml)
         if int(data_test_case['cpu2006']):
-            cpu2006_yaml = request.data.get('yaml')['cpu2006'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['cpu2006'])))
+            cpu2006_yaml = request.data.get('yaml')['cpu2006'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['cpu2006'])))
             with open(user_config_path + '/yaml-base/cpu2006-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_yaml)
             cpu2006_loongarch64_yaml = (request.data.get('yaml')['cpu2006_loongarch64'].replace(
@@ -136,8 +126,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             with open(user_config_path + '/yaml-base/cpu2006-loongarch64-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_loongarch64_yaml)
         if int(data_test_case['cpu2017']):
-            cpu2017_yaml = request.data.get('yaml')['cpu2017'].replace('maxiterations:  1', 'maxiterations: %d' % (
-                int(data_test_case['cpu2017'])))
+            cpu2017_yaml = request.data.get('yaml')['cpu2017'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['cpu2017'])))
             with open(user_config_path + '/yaml-base/cpu2017-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2017_yaml)
         # 创建请求测试数据
@@ -177,7 +166,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 return json_response('', status.HTTP_200_OK, '测试完成')
         except Exception as e:
             log.error('测试的测试数据ID是：%s，发生的异常是：%s', test_case_id, str(e))
-            TestCase.objects.filter(id=test_case_id).update(test_result='测试失败')
+            TestCase.objects.filter(id=test_case_id).update(test_result='测试完成')
             return json_response('', status.HTTP_500_INTERNAL_SERVER_ERROR, '发生异常，详细信息请查看日志')
 
     def delete(self, request, *args, **kwargs):
@@ -189,20 +178,16 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             test_case_data = TestCase.objects.filter(id=id).first()
             if not test_case_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-            # todo 判断这个日志文件是否需要被删除 验证是否正确
             if not TestCase.objects.get(id=id).is_error:
+                # 删除日志文件
                 subprocess.run("rm -rf " + str(TestCase.objects.filter(id=id).first().result_log_name) + '.tar', shell=True)
             # 删除数据
             TestCase.objects.filter(id=id).delete()
-            # 删除日志文件
-
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
 
     def down_message(self, request, *args, **kwargs):
-        # test_case_id = request.GET.get('id')
-        # result_log_name = TestCase.objects.filter(id=test_case_id).first().result_log_name
         result_log_name = request.GET.get('result_log_name')
         # 检查文件是否存在
         log_file_path = result_log_name + '.tar'

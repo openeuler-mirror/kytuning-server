@@ -1,21 +1,20 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Thu Feb 29 16:18:43 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
+import logging
 import numpy as np
-# Create your views here.
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.jvm2008.models import Jvm2008
 from appStore.jvm2008.serializers import Jvm2008Serializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
-
+log = logging.getLogger('kytuninglog')
 
 class Jvm2008ViewSet(viewsets.ModelViewSet):
     """
@@ -117,7 +116,6 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
             average_base_sunflow = np.mean(base_sunflow_list).round(2) if not np.isnan(np.mean(base_sunflow_list)) else None
             average_base_xml = np.mean(base_xml_list).round(2) if not np.isnan(np.mean(base_xml_list)) else None
             average_base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2) if not np.isnan(np.mean(base_Noncompliant_pomposite_result_list)) else None
-
             peak_compiler_list = [d.compiler for d in peak_data_ if d.compiler is not None]
             peak_compress_list = [d.compress for d in peak_data_ if d.compress is not None]
             peak_crypto_list = [d.crypto for d in peak_data_ if d.crypto is not None]
@@ -235,13 +233,6 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
@@ -314,8 +305,7 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
                 data_jvm2008['xml'] = jvm2008_json['items'][tune_type]['xml']
                 data_jvm2008['Noncompliant_pomposite_result'] = jvm2008_json['items'][tune_type].get(
                     'Noncompliant composite result:')
-                data_jvm2008 = {key: value if not isinstance(value, str) or value != '' else None for key, value in
-                                data_jvm2008.items()}
+                data_jvm2008 = {key: value if not isinstance(value, str) or value != '' else None for key, value in data_jvm2008.items()}
                 serializer_jvm2008 = Jvm2008Serializer(data=data_jvm2008)
                 if serializer_jvm2008.is_valid():
                     self.perform_create(serializer_jvm2008)

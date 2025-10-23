@@ -1,23 +1,20 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Tue Feb 27 15:28:44 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
-import math
+import logging
 import numpy as np
-
-# Create your views here.
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.cpu2017.models import Cpu2017
 from appStore.cpu2017.serializers import Cpu2017Serializer
 from appStore.project.models import Project
-from appStore.utils.common import LimsPageSet, json_response, get_error_message
+from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
-
+log = logging.getLogger('kytuninglog')
 
 class Cpu2017ViewSet(viewsets.ModelViewSet):
     """
@@ -27,10 +24,7 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
     serializer_class = Cpu2017Serializer
 
     def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
-        # 初始化数据为空 否则如果下面只获取的单线程或者多线程另外一组获取不到可能会报错
         serializer = self.get_serializer(serializer_, many=True)
-
-        # thread dtype tuneType
         # 先判断数据的TuneType确定是base还是peak
         # 在判断数据的thread确定是单线程还是多线程
         # 在判断tuneType确定是int还是fp
@@ -626,21 +620,13 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
             datas[3]['column' + str(column_index)] = ''
-            for i in range(104):
-                if i > 3:
-                    datas[i]['column' + str(column_index)] = \
-                        "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+            for i in range(4, 104):
+                datas[i]['column' + str(column_index)] = \
+                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
             column_index += 1
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
@@ -818,8 +804,7 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
                             data_cpu2017['int_548_exchange2_r'] = value[key1]['548.exchange2_r']
                             data_cpu2017['int_557_xz_r'] = value[key1]['557.xz_r']
                             data_cpu2017['int_SPECrate2017_int'] = value[key1]['SPECrate2017_int']
-                            data_cpu2017 = {key: value if not isinstance(value, str) or value != '' else None for
-                                            key, value in data_cpu2017.items()}
+                            data_cpu2017 = {key: value if not isinstance(value, str) or value != '' else None for key, value in data_cpu2017.items()}
                             serializer_cpu2017 = Cpu2017Serializer(data=data_cpu2017)
                             if serializer_cpu2017.is_valid():
                                 self.perform_create(serializer_cpu2017)
@@ -830,7 +815,6 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
                                 error_message.append(get_error_message(serializer_cpu2017))
         if serializer_cpu2017_errors:
             print(serializer_cpu2017_errors, "cpu2017")
-            return json_response(serializer_cpu2017_errors, status.HTTP_400_BAD_REQUEST,
-                             error_message)
+            return json_response(serializer_cpu2017_errors, status.HTTP_400_BAD_REQUEST, error_message)
         else:
             return

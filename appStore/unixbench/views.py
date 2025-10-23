@@ -1,34 +1,31 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Mar 4 10:06:06 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
-# Create your views here.
+import logging
 import numpy as np
-# Create your views here.
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.project.models import Project
 from appStore.unixbench.models import Unixbench
 from appStore.unixbench.serializers import UnixbenchSerializer
 from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+log = logging.getLogger('kytuninglog')
 
 class UnixbenchViewSet(viewsets.ModelViewSet):
     """
     Unixbench数据管理
     """
-
     queryset = Unixbench.objects.all().order_by('id')
     serializer_class = UnixbenchSerializer
 
     def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
         groups = set([d.mark_name for d in serializer_])
-
         single_Dhrystone = None
         single_Double_Precision = None
         single_execl_throughput = None
@@ -330,13 +327,6 @@ class UnixbenchViewSet(viewsets.ModelViewSet):
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
@@ -384,8 +374,7 @@ class UnixbenchViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Unixbench.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index,
-                                                                                    column_index, base_column_index)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
@@ -417,8 +406,7 @@ class UnixbenchViewSet(viewsets.ModelViewSet):
                 data_unixbench['shell_scripts_8'] = unixbench_json[thread]['Shell Scripts (8 concurrent)(lpm)']
                 data_unixbench['system_call_overhead'] = unixbench_json[thread]['System Call Overhead(lps)']
                 data_unixbench['index_score'] = unixbench_json[thread]['Index Score(sum)']
-                data_unixbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in
-                                  data_unixbench.items()}
+                data_unixbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in data_unixbench.items()}
                 serializer_unixbench = UnixbenchSerializer(data=data_unixbench)
                 if serializer_unixbench.is_valid():
                     self.perform_create(serializer_unixbench)

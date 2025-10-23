@@ -34,4 +34,4 @@ class UserConfig(models.Model):
     is_send_config = models.BooleanField(default=False,verbose_name="是否是发起测试而保存的数据")
 
     class Meta:
-        db_table = 'userConfig'
+        db_table = 'user_config'

@@ -1,20 +1,20 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
+import logging
 import numpy as np
-# Create your views here.
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.project.models import Project
 from appStore.stream.models import Stream
 from appStore.stream.serializers import StreamSerializer
 from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+log = logging.getLogger('kytuninglog')
 
 class StreamViewSet(viewsets.ModelViewSet):
     """
@@ -115,7 +115,6 @@ class StreamViewSet(viewsets.ModelViewSet):
             datas[12]['column' + str(column_index)] = average_multi_add
             datas[13]['column' + str(column_index)] = average_multi_triad
             column_index += 1
-
         if not base_column_index:
             # 记录基准数据
             base_column_index = column_index - 1
@@ -136,13 +135,6 @@ class StreamViewSet(viewsets.ModelViewSet):
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
@@ -168,13 +160,6 @@ class StreamViewSet(viewsets.ModelViewSet):
         return json_response(datas, status.HTTP_200_OK, '列表')
 
     def get_modify_stream(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         queryset = Stream.objects.filter(env_id=env_id).all()
         if not queryset:
@@ -203,8 +188,7 @@ class StreamViewSet(viewsets.ModelViewSet):
                 data_stream['multi_scale'] = stream_json['多线程']['Scale']
                 data_stream['multi_add'] = stream_json['多线程']['Add']
                 data_stream['multi_triad'] = stream_json['多线程']['Triad']
-                data_stream = {key: value if not isinstance(value, str) or value != '' else None for key, value in
-                               data_stream.items()}
+                data_stream = {key: value if not isinstance(value, str) or value != '' else None for key, value in data_stream.items()}
                 serializer_stream = StreamSerializer(data=data_stream)
                 if serializer_stream.is_valid():
                     self.perform_create(serializer_stream)

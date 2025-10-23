@@ -6,18 +6,18 @@
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
 # Create your views here.
+import logging
+from rest_framework import status, viewsets
+# Create your views here.
 from appStore.adaptISO.models import AdaptISO
 from appStore.adaptISO.serializers import AdaptISOListSerializer
 from appStore.utils.common import LimsPageSet, json_response
-from rest_framework import status, viewsets
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
-
+log = logging.getLogger('kytuninglog')
 
 class AdaptISOListViewSet(viewsets.ModelViewSet):
     """
-    错误收集数据管理
+     iso适配列表数据管理
     """
     queryset = AdaptISO.objects.all()
     serializer_class = AdaptISOListSerializer
@@ -52,7 +52,6 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员才能创建该数据')
 
-
     def put(self, request, *args, **kwargs):
         if request.user.is_superuser:
             iso_id = request.data.get('id')
@@ -63,7 +62,8 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
                 new_iso_name = request.data.get('http_address').split('/')[-1]
                 if iso_data.ISO_name != new_iso_name:
                     if AdaptISO.objects.get(ISO_name=new_iso_name):
-                        return json_response({}, status.HTTP_205_RESET_CONTENT, '"ISO_name": [ "具有 ISO名称 的 adapt iso 已存在。"] ')
+                        return json_response({}, status.HTTP_205_RESET_CONTENT,
+                                             '"ISO_name": [ "具有 ISO名称 的 adapt iso 已存在。"] ')
             iso_data.http_address = request.data.get('http_address')
             iso_data.arch_name = request.data.get('arch_name')
             iso_data.boot_efi = request.data.get('boot_efi')
@@ -73,7 +73,6 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             iso_data.ISO_name = request.data.get('http_address').split('/')[-1]
             iso_data.save()
             return json_response('', status.HTTP_200_OK, '更新成功！')
-
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员才能修改数据')
 

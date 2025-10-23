@@ -13,7 +13,7 @@ import django.utils.timezone as timezone
 
 # Create your models here.
 class Project(models.Model):
-    """Project表"""
+    """project表"""
     env_id = models.IntegerField(verbose_name='环境id')
     project_name = models.CharField(max_length=255, verbose_name='项目名称',null=True,blank=True)
     user_name = models.CharField(max_length=255, verbose_name='测试人员名称')

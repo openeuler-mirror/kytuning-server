@@ -32,4 +32,4 @@ class TestCase(models.Model):
 
 
     class Meta:
-        db_table = 'testCase'
+        db_table = 'test_case'

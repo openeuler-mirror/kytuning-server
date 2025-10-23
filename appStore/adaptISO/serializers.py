@@ -6,16 +6,14 @@
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
 from rest_framework import serializers
-
 from appStore.adaptISO.models import AdaptISO
 
 
 class AdaptISOListSerializer(serializers.ModelSerializer):
     """
-    errorList数据序列化
+    iso适配列表数据序列化
     """
 
     class Meta:
         model = AdaptISO
         fields = '__all__'
-

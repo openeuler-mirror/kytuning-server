@@ -1,26 +1,17 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
-"""
+import logging
+from rest_framework import status, viewsets
 # Create your views here.
 from appStore.adaptISO.models import AdaptISO
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
-from rest_framework import status, viewsets
 from appStore.utils.common import json_response, get_link_status, update_system, update_auto_install, make_ks_password
-import logging
 
-log = logging.getLogger('mydjango')  # 这里的mydjango是settings中loggers里面对应的名字
-
+log = logging.getLogger('kytuninglog')
 
 class TestMachineViewSet(viewsets.ModelViewSet):
     """
     测试机器数据管理
     """
-
     queryset = TestMachine.objects.all().order_by('-id')
     serializer_class = TestMachineSerializer
 
@@ -133,6 +124,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME, machine_data.machine_name, ISO.ISO_name)
+                machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         elif not machine_data.owner:
@@ -144,6 +136,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
                               machine_data.server_password, KS_FILE_NAME)
+                machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         else:
@@ -172,7 +165,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
                                                    machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
-
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '更新状态完成')
 

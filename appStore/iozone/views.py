@@ -1,23 +1,20 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Thu Feb 29 16:18:43 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
+import logging
 import numpy as np
-
-# Create your views here.
 from rest_framework import status, viewsets
-
+# Create your views here.
 from appStore.iozone.models import Iozone
 from appStore.iozone.serializers import IozoneSerializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
-
+log = logging.getLogger('kytuninglog')
 
 class IozoneViewSet(viewsets.ModelViewSet):
     """
@@ -284,20 +281,15 @@ class IozoneViewSet(viewsets.ModelViewSet):
             datas[3]['column' + str(column_index)] = ''
             for i in range(4, 22):
                 datas[i]['column' + str(column_index)] = \
-                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
+                        'column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if \
+                    datas[i]['column' + str(column_index - 1)] is not None and datas[i][
+                        'column' + str(base_column_index)] is not None else None
             column_index += 1
-
         return datas, title_index, column_index, base_column_index
 
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
@@ -358,8 +350,7 @@ class IozoneViewSet(viewsets.ModelViewSet):
                 data_iozone['reread_test'] = iozone_json['测试记录'][0]['重读测试（KB/s）']
                 data_iozone['random_read_test'] = iozone_json['测试记录'][0]['随机读测试（KB/s）']
                 data_iozone['random_write_test'] = iozone_json['测试记录'][0]['随机写测试（KB/s）']
-                data_iozone = {key: value if not isinstance(value, str) or value != '' else None for key, value in
-                                data_iozone.items()}
+                data_iozone = {key: value if not isinstance(value, str) or value != '' else None for key, value in data_iozone.items()}
                 serializer_iozone = IozoneSerializer(data=data_iozone)
                 if serializer_iozone.is_valid():
                     self.perform_create(serializer_iozone)

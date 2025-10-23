@@ -1,21 +1,20 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Mon Feb 26 11:15:07 2024 +0800
 """
+import logging
 import numpy as np
-# Create your views here.
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.cpu2006.models import Cpu2006
 from appStore.cpu2006.serializers import Cpu2006Serializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
-
+log = logging.getLogger('kytuninglog')
 
 class Cpu2006ViewSet(viewsets.ModelViewSet):
     """
@@ -26,7 +25,6 @@ class Cpu2006ViewSet(viewsets.ModelViewSet):
 
     def get_data(self, serializer_, datas, title_index, column_index, base_column_index):
         serializer = self.get_serializer(serializer_, many=True)
-        # thread dtype tuneType
         # 先判断数据的TuneType确定是base还是peak
         # 在判断数据的thread确定是单线程还是多线程
         # 在判断tuneType确定是int还是fp
@@ -188,9 +186,8 @@ class Cpu2006ViewSet(viewsets.ModelViewSet):
             datas[1]['column' + str(column_index)] = datas[1]['column' + str(column_index - 1)]
             datas[2]['column' + str(column_index)] = ''
             datas[3]['column' + str(column_index)] = ''
-            for i in range(128):
-                if i > 3:
-                    datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
+            for i in range(4, 128):
+                datas[i]['column' + str(column_index)] = datas[i]['column' + str(column_index - 1)]
             column_index += 1
         else:
             # 计算平均值
@@ -744,21 +741,13 @@ class Cpu2006ViewSet(viewsets.ModelViewSet):
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
             datas[3]['column' + str(column_index)] = ''
-            for i in range(128):
-                    if i > 3:
-                        datas[i]['column' + str(column_index)] = \
-                            "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+            for i in range(4, 128):
+                datas[i]['column' + str(column_index)] = \
+                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
             column_index += 1
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
@@ -977,7 +966,6 @@ class Cpu2006ViewSet(viewsets.ModelViewSet):
                                 error_message.append(get_error_message(serializer_cpu2006))
         if serializer_cpu2006_errors:
             print(serializer_cpu2006_errors, "cpu2006")
-            return json_response(serializer_cpu2006_errors, status.HTTP_400_BAD_REQUEST,
-                             error_message)
+            return json_response(serializer_cpu2006_errors, status.HTTP_400_BAD_REQUEST, error_message)
         else:
             return
