@@ -34,9 +34,6 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             data_iso['user_name'] = request.user.chinese_name
             data_iso['http_address'] = request.data.get('http_address')
             data_iso['arch_name'] = request.data.get('arch_name')
-            data_iso['boot_efi'] = request.data.get('boot_efi')
-            data_iso['grub_cfg_path'] = request.data.get('grub_cfg_path')
-            data_iso['grub_menu_name'] = request.data.get('grub_menu_name')
             data_iso['ks_file_name'] = request.data.get('ks_file_name')
             data_iso['ISO_name'] = request.data.get('http_address').split('/')[-1]
             if data_iso['ISO_name'].endswith('iso'):
@@ -66,9 +63,6 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
                                              '"ISO_name": [ "具有 ISO名称 的 adapt iso 已存在。"] ')
             iso_data.http_address = request.data.get('http_address')
             iso_data.arch_name = request.data.get('arch_name')
-            iso_data.boot_efi = request.data.get('boot_efi')
-            iso_data.grub_cfg_path = request.data.get('grub_cfg_path')
-            iso_data.grub_menu_name = request.data.get('grub_menu_name')
             iso_data.ks_file_name = request.data.get('ks_file_name')
             iso_data.ISO_name = request.data.get('http_address').split('/')[-1]
             iso_data.save()

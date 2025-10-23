@@ -236,12 +236,12 @@ export default {
         cpu_names: "",
       },
       sure_filter: {
-        storeData: this.$route.path === '/storeData',
+        storeData: "",
         project_name: "",
         user_name: "",
         os_names: "",
         cpu_names: "",
-      }
+      },
     }
   },
 
@@ -284,24 +284,23 @@ export default {
         this.filter.user_name = response.data.data.user_name
         this.filter.os_names = response.data.data.os_names
         this.filter.cpu_names = response.data.data.cpu_names
-        console.log(this.filter, 1111111)
       });
     },
     search(){
+      this.sure_filter.storeData = this.$route.path === '/storeData'
       project('get', this.sure_filter).then((response) => {
         this.allDatas = response.data.data
         this.total = this.allDatas.length;
       });
     },
     filterReset() {
-      console.log(this.filter, 1111111)
       this.sure_filter = {
+        storeData:"",
         project_name: "",
         user_name: "",
         os_names: "",
         cpu_names: "",
       }
-      console.log(this.filter, 22222)
       this.getData()
     },
     //数据对比
@@ -436,8 +435,10 @@ export default {
 .floating-buttons {
   position: sticky;
   top: 0;
-
+  background-color: #fff; /* Set your desired background color */
+  z-index: 10;
 }
+
 
 #tatle-div {
   display: flex; /* 将 div 设置为弹性容器 */
