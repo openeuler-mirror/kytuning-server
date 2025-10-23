@@ -3,9 +3,8 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 09:58:09 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
-# Create your views here.
 import os
 import json
 import logging
@@ -26,11 +25,10 @@ from appStore.project.serializers import ProjectSerializer
 from appStore.stream.models import Stream
 from appStore.unixbench.models import Unixbench
 from appStore.utils.common import json_response, get_error_message
-
 from appStore.utils.export_excel import stream_excel, cpu2017_excel, cpu2006_excel, jvm2008_excel, iozone_excel, \
     fio_excel, unixbench_excel, lmbench_excel, env_excel
 
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+log = logging.getLogger('kytuninglog')
 
 class ProjectViewSet(viewsets.ModelViewSet):
     """
@@ -421,7 +419,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             self.perform_create(serializer_project)
         else:
             log.info('project数据存储失败：%s', serializer_project.errors)
-            print(serializer_project.errors, "project----------------")
+            print(serializer_project.errors, "project")
             return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
                                  get_error_message(serializer_project))
 
@@ -559,7 +557,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
             sheetname = "Speccpu2017(peak)"
             cpu2017_excel(request.user,sheetname, cpu2017_data_peak)
 
-        # todo 是否需要实现多线程记录数据，目前测试可以，如果有很多组数据的化可能会获取失败。
         # 打开文件
         file_path = os.path.join(EXCEL_TEMP, '%s.xlsx'%(request.user))
         if os.path.exists(file_path):

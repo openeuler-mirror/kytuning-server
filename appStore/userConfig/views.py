@@ -3,15 +3,16 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:10:52 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
+import logging
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.userConfig.models import UserConfig
 from appStore.userConfig.serializers import UserConfigSerializer
 from appStore.utils.common import json_response
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+log = logging.getLogger('kytuninglog')
 
 class UserConfigViewSet(viewsets.ModelViewSet):
     """

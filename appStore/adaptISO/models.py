@@ -24,4 +24,4 @@ class AdaptISO(models.Model):
     ks_file_name = models.CharField(max_length=50, verbose_name='ks文件名称')
 
     class Meta:
-        db_table = 'adaptISO'
+        db_table = 'adapt_iso'

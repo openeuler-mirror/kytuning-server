@@ -34,4 +34,4 @@ class KytuningError(models.Model):
     solution = models.CharField(max_length=50, verbose_name='解决方案')
 
     class Meta:
-        db_table = 'KytuningError'
+        db_table = 'Kytuning_error'

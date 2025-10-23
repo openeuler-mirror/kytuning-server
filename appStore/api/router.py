@@ -7,7 +7,6 @@
 """
 from django.conf.urls import url, include
 from rest_framework import routers
-
 from appStore.adaptISO.views import AdaptISOListViewSet
 from appStore.cpu2006.views import Cpu2006ViewSet
 from appStore.cpu2017.views import Cpu2017ViewSet

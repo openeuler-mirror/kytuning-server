@@ -64,8 +64,6 @@ class Cpu2006(models.Model):
     fp_482_sphinx3 = models.FloatField(verbose_name="482.sphinx3",null=True,blank=True)
     fp_SPECfp_2006 = models.FloatField(verbose_name="SPECfp_2006",null=True,blank=True)
 
-
     class Meta:
-        db_table = 'cpu2006'
-
+        db_table = 'cpu_2006'
 

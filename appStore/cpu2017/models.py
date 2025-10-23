@@ -12,7 +12,7 @@ from django.db import models
 # Create your models here.
 
 class Cpu2017(models.Model):
-    """cpu_2006表"""
+    """cpu_2017表"""
     ThreadType = (
         ("单线程", "单线程"),
         ("多线程", "多线程"),

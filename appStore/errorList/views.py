@@ -3,17 +3,16 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Feb 23 11:19:26 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
+import logging
+from rest_framework import status, viewsets
+# Create your views here.
 from appStore.errorList.models import KytuningError
 from appStore.errorList.serializers import ErroirListSerializer
 from appStore.utils.common import LimsPageSet, json_response
-from rest_framework import status, viewsets
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
-
-
+log = logging.getLogger('kytuninglog')
 
 class ErrorListViewSet(viewsets.ModelViewSet):
     """

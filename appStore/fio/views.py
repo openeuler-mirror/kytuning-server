@@ -3,17 +3,17 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Thu Feb 29 16:18:43 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
-# Create your views here.
+import logging
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.fio.models import Fio
 from appStore.fio.serializers import FioSerializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+log = logging.getLogger('kytuninglog')
 
 class FioViewSet(viewsets.ModelViewSet):
     """
@@ -253,13 +253,6 @@ class FioViewSet(viewsets.ModelViewSet):
         return new_data
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')

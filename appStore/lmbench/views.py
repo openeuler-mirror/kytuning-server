@@ -3,19 +3,18 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Thu Feb 29 16:18:43 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
+import logging
 import numpy as np
-# Create your views here.
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.lmbench.models import Lmbench
 from appStore.lmbench.serializers import LmbenchSerializer
 from appStore.project.models import Project
 from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
-
+log = logging.getLogger('kytuninglog')
 
 class LmbenchViewSet(viewsets.ModelViewSet):
     """
@@ -38,7 +37,6 @@ class LmbenchViewSet(viewsets.ModelViewSet):
                     datas[i]['column' + str(column_index)] = None
                 title_index += 1
                 column_index += 1
-
             else:
                 # 基准数据和对比数据的全部数据
                 datas[0]['column' + str(column_index)] = 'Lmbench#' + str(title_index)
@@ -429,7 +427,6 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             datas[73]['column' + str(column_index)] = average_memory_Main_mem
             datas[74]['column' + str(column_index)] = average_memory_Rand_mem
             column_index += 1
-
         if not base_column_index:
             # 记录基准数据
             base_column_index = column_index - 1
@@ -457,13 +454,6 @@ class LmbenchViewSet(viewsets.ModelViewSet):
         return datas, title_index, column_index, base_column_index
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         comparsionIds = comparsionIds.split(',')
@@ -555,8 +545,7 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Lmbench.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index,
-                                                                                    column_index, base_column_index)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
         return json_response(datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
@@ -658,8 +647,7 @@ class LmbenchViewSet(viewsets.ModelViewSet):
                     data_lmbench['memory_L2'] = value['L2 $']
                     data_lmbench['memory_Main_mem'] = value['Main mem']
                     data_lmbench['memory_Rand_mem'] = value['Rand mem']
-            data_lmbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in
-                       data_lmbench.items()}
+            data_lmbench = {key: value if not isinstance(value, str) or value != '' else None for key, value in data_lmbench.items()}
             serializer_lmbench = LmbenchSerializer(data=data_lmbench)
             if serializer_lmbench.is_valid():
                 self.perform_create(serializer_lmbench)

@@ -10,7 +10,7 @@ from django.db import models
 
 # Create your models here.
 class TestMachine(models.Model):
-    """测试机器表"""
+    """测试机器列表"""
     Link_Status_Type = (
         ("在线", "在线"),
         ("离线", "离线"),
@@ -42,4 +42,4 @@ class TestMachine(models.Model):
     update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
     class Meta:
-        db_table = 'testMachine'
+        db_table = 'test_machine'

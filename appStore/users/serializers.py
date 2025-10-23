@@ -11,7 +11,7 @@ from appStore.users.models import UserProfile
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """
-    用户信息
+    用户信息序列化
     """
 
     def create(self, validated_data):

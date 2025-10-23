@@ -3,22 +3,21 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Feb 23 14:07:53 2024 +0800
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
 import os
 import json
+import logging
 from base64 import b64decode
 from django.http import HttpRequest
-
-# Create your views here.
 from rest_framework import status, viewsets
+# Create your views here.
 from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+log = logging.getLogger('kytuninglog')
 
 class EnvViewSet(viewsets.ModelViewSet):
     """
@@ -29,13 +28,6 @@ class EnvViewSet(viewsets.ModelViewSet):
     pagination_class = LimsPageSet
 
     def list(self, request, *args, **kwargs):
-        """
-        返回列表
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
         env_id = request.GET.get('env_id')
         comparsionIds = request.GET.get('comparsionIds')
         if comparsionIds:
@@ -219,15 +211,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         env_data = {'data': datas}
         return json_response(env_data, status.HTTP_200_OK, '列表')
 
-
     def create(self, request, *args, **kwargs):
-        """
-            接收json文件，创建所有数据
-            :param request:
-            :param args:
-            :param kwargs:
-            :return:
-        """
         """环境数据处理"""
         data_env = {}
         data_env['time'] = request.data['time']
@@ -275,18 +259,12 @@ class EnvViewSet(viewsets.ModelViewSet):
         data_env['swinfo_os_osversion'] = request.data['envinfo']['swinfo']['os']['osversion']
         data_env['swinfo_os_kernel'] = request.data['envinfo']['swinfo']['os']['kernel']
         data_env['swinfo_os_grub'] = request.data['envinfo']['swinfo']['os']['grub']
-        data_env['swinfo_runtime_sysconf'] = b64decode(request.data['envinfo']['swinfo']['runtime']['sysctl']).decode(
-            "ascii")
-        data_env['swinfo_runtime_sysctl'] = b64decode(request.data['envinfo']['swinfo']['runtime']['sysconf']).decode(
-            "ascii")
-        data_env['swinfo_runtime_systemctlinfo'] = b64decode(
-            request.data['envinfo']['swinfo']['runtime']['systemctlinfo']).decode("ascii")
-        data_env['swinfo_runtime_driverinfo'] = b64decode(
-            request.data['envinfo']['swinfo']['runtime']['driverinfo']).decode("ascii")
-        data_env['swinfo_runtime_rpmlist'] = b64decode(request.data['envinfo']['swinfo']['runtime']['rpmlist']).decode(
-            "ascii")
-        data_env['swinfo_runtime_ipclist'] = b64decode(request.data['envinfo']['swinfo']['runtime']['ipclist']).decode(
-            "ascii")
+        data_env['swinfo_runtime_sysconf'] = b64decode(request.data['envinfo']['swinfo']['runtime']['sysctl']).decode("ascii")
+        data_env['swinfo_runtime_sysctl'] = b64decode(request.data['envinfo']['swinfo']['runtime']['sysconf']).decode("ascii")
+        data_env['swinfo_runtime_systemctlinfo'] = b64decode(request.data['envinfo']['swinfo']['runtime']['systemctlinfo']).decode("ascii")
+        data_env['swinfo_runtime_driverinfo'] = b64decode(request.data['envinfo']['swinfo']['runtime']['driverinfo']).decode("ascii")
+        data_env['swinfo_runtime_rpmlist'] = b64decode(request.data['envinfo']['swinfo']['runtime']['rpmlist']).decode("ascii")
+        data_env['swinfo_runtime_ipclist'] = b64decode(request.data['envinfo']['swinfo']['runtime']['ipclist']).decode("ascii")
         data_env['swinfo_runtime_selinux_status'] = request.data['envinfo']['swinfo']['runtime']['selinux_status']
         data_env['swinfo_runtime_power_status'] = request.data['envinfo']['swinfo']['runtime']['power_status']
         data_env['swinfo_runtime_cpu_sched'] = request.data['envinfo']['swinfo']['runtime']['cpu_sched']
@@ -296,15 +274,13 @@ class EnvViewSet(viewsets.ModelViewSet):
         data_env['swinfo_software_ver_glibcversion'] = request.data['envinfo']['swinfo']['software_ver']['glibcversion']
         data_env['swinfo_software_ver_javaversion'] = request.data['envinfo']['swinfo']['software_ver']['javaversion']
         data_env['swinfo_software_ver_g_version'] = request.data['envinfo']['swinfo']['software_ver']['g++version']
-        data_env['swinfo_software_ver_gfortranversion'] = request.data['envinfo']['swinfo']['software_ver'][
-            'gfortranversion']
-        data_env['swinfo_software_ver_pythonversion'] = request.data['envinfo']['swinfo']['software_ver'][
-            'pythonversion']
+        data_env['swinfo_software_ver_gfortranversion'] = request.data['envinfo']['swinfo']['software_ver']['gfortranversion']
+        data_env['swinfo_software_ver_pythonversion'] = request.data['envinfo']['swinfo']['software_ver']['pythonversion']
         data_env['nwinfo_nic'] = str(request.data['envinfo']['nwinfo']['nic'])
         serializer_env = self.get_serializer(data=data_env)
         request.data['env_id'] = '1'
         if serializer_env.is_valid():
-            # wqz
+            # todo 调试保留处，正式部署后删除。
             # request.data['env_id'] = 1
             self.perform_create(serializer_env)
             request.data['env_id'] = serializer_env.data['id']
@@ -323,7 +299,6 @@ class EnvViewSet(viewsets.ModelViewSet):
         file_name = '%s.json' % (data_env['time'])
         with open(json_file_path + file_name, 'w') as file:
             json.dump(request.data, file)
-
         project_message = []
 
         """stream数据处理"""

@@ -204,10 +204,6 @@ def set_base_export_style(worksheet,config,sheetname):
         for cell in row:
             cell.border = config.border_thin
             cell.alignment = config.alignment_center
-        # if row[0].row == 1 or row[0].row == 4:
-        #     worksheet.row_dimensions[row[0].row].height = 50
-        # elif row[0].row == 2 or row[0].row == 3:
-        #     worksheet.row_dimensions[row[0].row].height = 25
     return worksheet
 
 def env_excel(user_name,data):

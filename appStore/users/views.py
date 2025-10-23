@@ -1,28 +1,23 @@
 """
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
- * Author: wqz <wangqingzheng@kylinos.cn>
- * Date: Thu Aug 15 17:26:05 2024 +0800
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Mon Feb 26 11:15:07 2024 +0800
 """
-from appStore.users.models import UserProfile
+import logging
 from rest_framework import status, viewsets
+# Create your views here.
+from appStore.users.models import UserProfile
 from appStore.users.serializers import UserProfileSerializer
 from appStore.utils.common import json_response, get_error_message
 
-import logging
-log = logging.getLogger('mydjango') #这里的mydjango是settings中loggers里面对应的名字
+log = logging.getLogger('kytuninglog')
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """
     用户数据管理
     """
-    # permission_classes = (ZbmPermission,)
-    # authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
-    # queryset = UserProfile.objects.all().order_by('-id')
-    # serializer_class = UserSerializer
-    # pagination_class = LimsPageSet
-
     queryset = UserProfile.objects.all().order_by('-id')
     serializer_class = UserProfileSerializer
 
