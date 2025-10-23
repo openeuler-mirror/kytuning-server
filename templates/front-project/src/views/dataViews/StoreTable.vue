@@ -8,6 +8,36 @@
 <template>
   <div>
     <div class="floating-buttons">
+      <div style="display: flex; justify-content: space-between; width: 85%;">
+        <div style="display: flex; justify-content: space-between; width: 86%;margin-left: 7%;">
+          <el-form-item label="项目名称：">
+            <el-select v-model="sure_filter.project_name" class="m-2" placeholder="请选择项目名称">
+              <el-option v-for="item in filter.project_name" :key="item" :label="item" :value="item"
+                         placeholder="请输入项目名称"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="上传人员：">
+            <el-select v-model="sure_filter.user_name" class="m-2" placeholder="请选择上传人员">
+              <el-option v-for="item in filter.user_name" :key="item" :label="item" :value="item"
+                         placeholder="请选择上传人员"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="系统版本：">
+            <el-select v-model="sure_filter.os_names" class="m-2" placeholder="请选择系统版本">
+              <el-option v-for="item in filter.os_names" :key="item" :label="item" :value="item"
+                         placeholder="请选择系统版本"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="cpu型号：">
+            <el-select v-model="sure_filter.cpu_names" class="m-2" placeholder="请选择cpu型号">
+              <el-option v-for="item in filter.cpu_names" :key="item" :label="item" :value="item"
+                         placeholder="请选择cpu型号"/>
+            </el-select>
+          </el-form-item>
+        </div>
+        <el-button type="primary" style="margin-left: 20px; " @click="search">搜索</el-button>
+        <el-button type="warning" style="margin-left: 50px;" @click="filterReset">重置</el-button>
+      </div>
       <div id="tatle-div">
         <el-row class="mb-4">
           <el-button @click="getComparativeData()" type="primary" plain>数据对比</el-button>
@@ -16,9 +46,7 @@
         </el-row>
       </div>
     </div>
-
     <br>
-
     <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" class="tableHead"
               :header-cell-style="{fontSize:'15px'}">
       <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150"
@@ -122,7 +150,6 @@
       </el-table-column>
     </el-table>
     <br>
-
     <div class="parent-container">
       <el-pagination
           @size-change="handleSizeChange"
@@ -134,7 +161,6 @@
           :total="total">
       </el-pagination>
     </div>
-
   </div>
   <div>
     <el-dialog :title="'修改project信息'" v-model="dialogPutProject" width="500px">
@@ -153,13 +179,11 @@
         </span>
       </template>
     </el-dialog>
-
     <el-drawer v-model="boolCompar" :show-close="false">
       <template #header="{  titleId, titleClass }">
         <h4 :id="titleId" :class="titleClass">数据对比</h4>
         <el-button type="danger" @click="reset">重置</el-button>
       </template>
-
       <el-table :data="compars" tooltip-effect="dark" border height="500" style="width: 100%" class="tableHead">
         <el-table-column label="项目名称" prop="project_name" show-overflow-tooltip/>
         <!--        </el-table-column>-->
@@ -171,7 +195,6 @@
           </template>
         </el-table-column>
       </el-table>
-
     </el-drawer>
   </div>
 </template>
@@ -206,13 +229,19 @@ export default {
       rules: {
         project_name: [{required: true, message: '请输入项目名称'}],
       },
-      select: {
+      filter: {
         project_name: "",
         user_name: "",
-        os_version: "",
-        cpu_module_name: "",
+        os_names: "",
+        cpu_names: "",
       },
-
+      sure_filter: {
+        storeData: this.$route.path === '/storeData',
+        project_name: "",
+        user_name: "",
+        os_names: "",
+        cpu_names: "",
+      }
     }
   },
 
@@ -251,7 +280,29 @@ export default {
         this.userNames = response.data.data.userNames
         this.osNames = response.data.data.osNames
         this.cpuNames = response.data.data.cpuNames
+        this.filter.project_name = response.data.data.project_name
+        this.filter.user_name = response.data.data.user_name
+        this.filter.os_names = response.data.data.os_names
+        this.filter.cpu_names = response.data.data.cpu_names
+        console.log(this.filter, 1111111)
       });
+    },
+    search(){
+      project('get', this.sure_filter).then((response) => {
+        this.allDatas = response.data.data
+        this.total = this.allDatas.length;
+      });
+    },
+    filterReset() {
+      console.log(this.filter, 1111111)
+      this.sure_filter = {
+        project_name: "",
+        user_name: "",
+        os_names: "",
+        cpu_names: "",
+      }
+      console.log(this.filter, 22222)
+      this.getData()
     },
     //数据对比
     getComparativeData() {
@@ -385,7 +436,7 @@ export default {
 .floating-buttons {
   position: sticky;
   top: 0;
-  z-index: 10;
+
 }
 
 #tatle-div {
