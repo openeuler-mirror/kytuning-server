@@ -11,18 +11,15 @@
       <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"/>
     </div>
     <div style="overflow-x: auto;">
-      <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;"
-                :show-header="false" :row-style="{ height: '50px' }">
+      <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" :row-style="{ height: '50px' }">
         <template v-for="i in numColumns" :key="i">
-          <el-table-column :prop="`column${i}`" align="center"
-                           :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null">
+          <el-table-column :prop="`column${i}`" align="center" :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null">
             <template #default="{row}">
               <el-tooltip :content="row[`column${i}`]" effect="light">
                 <div style="height: 30px">{{ row[`column${i}`] && row[`column${i}`].toString() || '' }}</div>
               </el-tooltip>
             </template>
           </el-table-column>
-          <!--          <el-table-column :prop="`column${i}`" align="center"></el-table-column>-->
         </template>
       </el-table>
     </div>

@@ -11,11 +11,9 @@
       <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     </div>
     <div style="overflow-x: auto;">
-      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
-                :show-header="false" highlight-current-row>
+      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" highlight-current-row>
         <template v-for="(value, key,index) in tableDatas[0]" :key="key">
-          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 4 ? '85' : ''"
-                           align="center">
+          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 4 ? '85' : ''" align="center">
             <template v-slot="{ row }">
               <div :class="getCellClassName(row, key)">
                 {{ row[key] }}
@@ -28,15 +26,16 @@
   </div>
 </template>
 
+
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
 import TableHeader from "@/components/common/TableHeader.vue";
-import { cpu2017 } from "@/api/api.js";
+import {cpu2017} from "@/api/api.js";
 import utils from "@/utils/utils";
 import '@/assets/css/global.css';
 
 export default {
-  name:'cpu2017Table',
+  name: 'cpu2017Table',
   components: {
     ElTable,
     ElTableColumn,
@@ -59,16 +58,16 @@ export default {
     this.getData()
   },
   methods: {
-    getData(){
+    getData() {
       cpu2017(this.paramsData).then((response) => {
-      this.tableDatas = response.data.data;
-      this.showAllData = false; // 默认显示平均数据
-      const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
-        const value = this.tableDatas[0][key];
-        return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
+        this.tableDatas = response.data.data;
+        this.showAllData = false; // 默认显示平均数据
+        const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
+          const value = this.tableDatas[0][key];
+          return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
+        });
+        this.keysToHide = keysToHide;
       });
-      this.keysToHide = keysToHide;
-    });
     },
 
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
@@ -137,7 +136,7 @@ export default {
 <style scoped>
 
 .red-cell {
-  color:red;
+  color: red;
   background-color: pink;
   /* 其他样式属性 */
 }
@@ -149,6 +148,7 @@ export default {
   width: 100%;
   z-index: 9999;
 }
+
 .el-table {
   margin-top: 68px;
 }

@@ -12,13 +12,11 @@
       <form>
         <div class="form-group">
           <label for="username">用户名：</label>
-          <input type="text" id="username" v-model="form.username" placeholder="请输入用户名" @keyup.enter="handleEnterKey"
-                 autocomplete="current-username" />
+          <input type="text" id="username" v-model="form.username" placeholder="请输入用户名" @keyup.enter="handleEnterKey" autocomplete="current-username"/>
         </div>
         <div class="form-group">
           <label for="password">密码：</label>
-          <input type="password" id="password" v-model="form.password" placeholder="请输入密码" @keyup.enter="handleEnterKey"
-                 autocomplete="current-password"/>
+          <input type="password" id="password" v-model="form.password" placeholder="请输入密码" @keyup.enter="handleEnterKey" autocomplete="current-password"/>
         </div>
         <div class="button-wrapper">
           <el-button type="primary" @click="login">登录</el-button>
@@ -29,12 +27,11 @@
   </div>
 </template>
 
-
 <script>
 import background from '@/assets/login.jpg';
-import { ElMessage } from 'element-plus';
-import { setToken,removeToken } from '@/utils/setToken.js'
-import { login } from '@/api/api.js'
+import {ElMessage} from 'element-plus';
+import {setToken, removeToken} from '@/utils/setToken.js'
+import {login} from '@/api/api.js'
 
 export default {
   name: 'kytuningLogin',
@@ -64,12 +61,12 @@ export default {
           this.$router.push('/tempData')
         }
       }).catch(error => {
-    // 捕获错误
-    if (error.response) {
-      // 请求已发送，并且服务器返回非 2xx 响应
-      ElMessage.error({message:'用户名或密码错误',duration: 1000});
-    }
-    })
+        // 捕获错误
+        if (error.response) {
+          // 请求已发送，并且服务器返回非 2xx 响应
+          ElMessage.error({message: '用户名或密码错误', duration: 1000});
+        }
+      })
     },
     handleEnterKey() {
       this.login();

@@ -17,7 +17,6 @@ export function login(data) {
     })
 }
 
-
 // 测试管理列表，因为这个get请求不需要参数所以可以
 export function test_case(type,data) {
     return service({
@@ -100,17 +99,7 @@ export function env(params) {
     })
 }
 
-//修改stream数据
-export function get_modify_stream(params) {
-    return service({
-        method: 'get',
-        url: '/get_modify_stream/',
-        params,
-    })
-}
-
-
-//修改stream数据
+//stream数据
 export function stream(type, paramsOrData) {
   const commonConfig = {
     method: type,
@@ -124,6 +113,14 @@ export function stream(type, paramsOrData) {
   return service(commonConfig);
 }
 
+//修改stream数据
+export function get_modify_stream(params) {
+    return service({
+        method: 'get',
+        url: '/get_modify_stream/',
+        params,
+    })
+}
 
 // lmbench
 export function lmbench(params) {
@@ -261,6 +258,7 @@ export function apply_use_machine(data) {
         data
     })
 }
+
 //取消申请使用设备
 export function cancel_apply_use_machine(data) {
     return service({
@@ -270,6 +268,7 @@ export function cancel_apply_use_machine(data) {
     })
 }
 
+//适配的iso列表
 export function adapt_ISO(type, paramsOrData) {
   const commonConfig = {
     method: type,

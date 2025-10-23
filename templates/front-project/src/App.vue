@@ -6,7 +6,7 @@
  * Date: Thu Mar 7 14:23:35 2024 +0800
 -->
 <template>
-    <router-view></router-view>
+  <router-view></router-view>
 </template>
 
 <script>
@@ -22,10 +22,11 @@ html {
   width: 100%;
   height: 100%;
 }
+
 body {
   width: 100%;
   height: 100%;
-  overflow-x:hidden;
+  overflow-x: hidden;
 }
 </style>
 

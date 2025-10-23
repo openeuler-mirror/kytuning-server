@@ -8,8 +8,7 @@
 <template>
   <div id="fixed-top">
     <div class="cont">
-      <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" :header-cell-style="{fontSize:'15px'}"
-                class="tableHead">
+      <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" :header-cell-style="{fontSize:'15px'}" class="tableHead">
         <el-table-column prop="project_name" label="项目名称"></el-table-column>
         <el-table-column prop="user_name" label="测试人员" width="90"></el-table-column>
         <el-table-column prop="ip" label="ip" width="125"></el-table-column>
@@ -39,8 +38,7 @@
             :page-sizes="[5, 10, 20, 30, 50]"
             :page-size="pageSize"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="total"
-        >
+            :total="total">
         </el-pagination>
       </div>
     </div>

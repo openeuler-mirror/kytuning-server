@@ -25,7 +25,6 @@ class TestCaseViewSet(viewsets.ModelViewSet):
     """
     测试用例数据管理
     """
-
     queryset = TestCase.objects.all().order_by('-id')
     serializer_class = TestCaseSerializer
 
