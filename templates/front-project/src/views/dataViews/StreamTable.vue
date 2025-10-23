@@ -8,15 +8,12 @@
 <template>
   <div>
     <div id="fixed-top">
-      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"
-                   @data-loaded="handleDataLoaded"/>
+      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"  @data-loaded="handleDataLoaded"/>
     </div>
     <div style="overflow-x: auto; display: flex; flex: 1;">
-      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;"
-                :show-header="false" highlight-current-row>
+      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" highlight-current-row>
         <template v-for="(value, key, index) in tableDatas[0]" :key="key">
-          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 2 ? '100' : ''"
-                           align="center">
+          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 2 ? '100' : ''" align="center">
             <template v-slot="{ row }">
               <div :class="getCellClassName(row, key)">
                 {{ row[key] }}

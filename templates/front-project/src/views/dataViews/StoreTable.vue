@@ -16,28 +16,23 @@
     </div>
     <br>
 
-    <el-table :data="showData" tooltip-effect="dark"
-              border style="width: 100%" class="tableHead" :header-cell-style="{fontSize:'15px'}" >
-      <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150"
-                       :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
+    <el-table :data="showData" tooltip-effect="dark" border style="width: 100%" class="tableHead" :header-cell-style="{fontSize:'15px'}">
+      <el-table-column fixed="left" prop="project_name" label="项目名称" column-key="project_name" width="150" :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="user_name" label="上传人员" :filters=userNames
-                       :filter-method="filterHandler" filter-placement="bottom-end">
+      <el-table-column prop="user_name" label="上传人员" :filters=userNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.user_name }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="os_version" label="系统版本" width="245" :filters=osNames
-                       :filter-method="filterHandler" filter-placement="bottom-end">
+      <el-table-column prop="os_version" label="系统版本" width="245" :filters=osNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.os_version }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="cpu_module_name" label="cpu型号" width="195" :filters=cpuNames
-                       :filter-method="filterHandler" filter-placement="bottom-end">
+      <el-table-column prop="cpu_module_name" label="cpu型号" width="195" :filters=cpuNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu_module_name }}</div>
         </template>
@@ -109,8 +104,9 @@
       </el-table-column>
       <el-table-column label="操作" fixed="right" :width="getActionColumnWidth">
         <template #default="scope">
-           <el-button v-if="$route.path === '/tempData'" type="success" @click="addStore(scope.row)"
-                      class="operate-button" >入库</el-button>
+          <el-button v-if="$route.path === '/tempData'" type="success" @click="addStore(scope.row)"
+                     class="operate-button">入库
+          </el-button>
           <el-button type="primary" @click="addCompar(scope.row)" class="operate-button">对比</el-button>
           <el-button type="warning" @click="edit(scope.row)" class="operate-button">修改</el-button>
           <el-button type="danger" @click="del(scope.row)" class="operate-button">删除</el-button>
@@ -127,8 +123,7 @@
           :page-sizes="[5, 10, 20, 30, 50, total]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-      >
+          :total="total">
       </el-pagination>
     </div>
 
@@ -180,7 +175,7 @@ import {project, getFilterName, mergeData} from "@/api/api.js";
 import utils from '@/utils/utils';
 
 export default {
-  name: 'projectTable',
+  name: 'storeTable',
   mixins: [utils],
   data() {
     return {
@@ -218,7 +213,7 @@ export default {
   created() {
     this.getData()
   },
-  computed:{
+  computed: {
     getActionColumnWidth() {
       // 根据当前路由路径动态设置操作列的宽度
       return this.$route.path === '/storeData' ? '240px' : '190px';

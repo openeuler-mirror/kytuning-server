@@ -7,9 +7,9 @@
 -->
 <template>
   <div class="home">
-    <AllHeader />
+    <AllHeader/>
     <el-container class="content">
-      <Menu />
+      <Menu/>
       <el-container>
         <el-main>
           <div class="cont">
@@ -26,25 +26,29 @@ import AllHeader from "@/components/common/AllHeader";
 
 import Menu from "@/components/common/AllMenu";
 import utils from "@/utils/utils";
+
 export default {
-  name: 'errorList',
+  name: 'KytuningHome',
   mixins: [utils],
   components: {
     AllHeader,
     Menu,
-  }}
+  }
+}
 </script>
 
 <style lang="less">
 #home {
   width: 100%;
   height: 100%;
-  overflow:scroll;
+  overflow: scroll;
+
   .content {
     position: absolute;
     width: 100%;
     top: 68px;
     bottom: 0;
+
     .cont {
       margin: 20px 0;
     }

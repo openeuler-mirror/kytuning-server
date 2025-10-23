@@ -10,8 +10,7 @@
     <!-- 搜索 -->
     <el-button type="success" @click="add" style="float: right;">新增</el-button>
     <div class="cont">
-      <el-table :data="showData" :header-cell-style="{fontSize:'15px'}" tooltip-effect="dark" border
-                style="width: 100%">
+      <el-table :data="showData" :header-cell-style="{fontSize:'15px'}" tooltip-effect="dark" border style="width: 100%">
         <el-table-column prop="ISO_name" label="ISO名称" width="300"></el-table-column>
         <el-table-column prop="arch_name" label="架构"></el-table-column>
         <el-table-column prop="user_name" label="适配人员"></el-table-column>
@@ -28,17 +27,16 @@
       </el-table>
       <br>
       <div class="parent-container">
-      <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[5, 10, 20, 30, 50, total]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-      >
-      </el-pagination>
-    </div>
+        <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="currentPage"
+            :page-sizes="[5, 10, 20, 30, 50, total]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total">
+        </el-pagination>
+      </div>
     </div>
   </div>
   <div>
@@ -67,8 +65,7 @@
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
-        <el-button type="primary" @click="dialogTitle === '新增ISO' ? addSure('form') : modifySure('form')">确 定
-        </el-button>
+        <el-button type="primary" @click="dialogTitle === '新增ISO' ? addSure('form') : modifySure('form')">确 定</el-button>
       </template>
     </el-dialog>
   </div>
@@ -81,7 +78,7 @@ import {adapt_ISO} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
-  name: 'michineList',
+  name: 'isoList',
   mixins: [utils],
   data() {
     return {

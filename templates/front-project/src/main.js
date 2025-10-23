@@ -1,11 +1,11 @@
 /*
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Thu Mar 7 14:25:09 2024 +0800
  */
-import { createApp } from 'vue'
+ import {createApp} from 'vue'
 import App from './App.vue'
 import axios from 'axios'
 import router from './router'
@@ -40,17 +40,16 @@ window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
 
 // 导航守卫
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.meta.requiresAuth;
+    const requiresAuth = to.meta.requiresAuth;
 
-  if (requiresAuth && !localStorage.getItem('token')) {
-    // 如果需要身份验证且用户未登录，则重定向到登录页面
-    next('/');
-  } else {
-    // 如果用户已登录或者路由不需要身份验证，则继续正常的导航
-    next();
-  }
+    if (requiresAuth && !localStorage.getItem('token')) {
+        // 如果需要身份验证且用户未登录，则重定向到登录页面
+        next('/');
+    } else {
+        // 如果用户已登录或者路由不需要身份验证，则继续正常的导航
+        next();
+    }
 });
-
 
 
 app.config.globalProperties.$https = axios

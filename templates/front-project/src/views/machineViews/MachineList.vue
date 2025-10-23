@@ -25,7 +25,7 @@
     </div>
   </div>
   <div>
-    <el-dialog :title="dialogTitle"  v-model="dialogAddMachine" width="500px">
+    <el-dialog :title="dialogTitle" v-model="dialogAddMachine" width="500px">
       <el-form :model="machineData" ref="machineForm" :rules="rules">
         <el-form-item label="设备名称" prop="machine_name">
           <el-input v-model="machineData.machine_name" autocomplete="off"></el-input>
@@ -50,7 +50,8 @@
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
-        <el-button type="primary" @click="dialogTitle === '新增设备' ? addSure('form') : modifySure('form')">确 定</el-button>
+        <el-button type="primary" @click="dialogTitle === '新增设备' ? addSure('form') : modifySure('form')">确 定
+        </el-button>
       </template>
     </el-dialog>
   </div>
@@ -73,13 +74,13 @@ export default {
         'cpu_module_name': '',
         'arch_name': '',
         'BMC_IP': '',
-        'BMC_user_name':'',
-        'BMC_password':'',
+        'BMC_user_name': '',
+        'BMC_password': '',
       },
-      archTypes: ['x86', 'aarch','mips','loongarch'],
+      archTypes: ['x86', 'aarch', 'mips', 'loongarch'],
       dialogAddMachine: false,
       modifyID: 0,
-      dialogTitle:'新增设备',
+      dialogTitle: '新增设备',
     };
   },
   created() {
@@ -145,7 +146,7 @@ export default {
 
     //修改数据
     modify(row) {
-      this.dialogTitle='修改设备信息'
+      this.dialogTitle = '修改设备信息'
       this.dialogAddMachine = true
       this.modifyID = row.id
       this.machineData = {

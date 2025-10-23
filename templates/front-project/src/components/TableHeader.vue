@@ -17,22 +17,14 @@
         <el-button type="primary" @click="goToHome">返回数据首页</el-button>
         <el-button type="primary" @click="modify">修改数据</el-button>
         <el-button type="success" @click="goTo('env')">环境信息</el-button>
-        <el-button :type="buttonType('stream')" @click="goTo('stream')" :disabled="toDisabled('stream')">stream
-        </el-button>
-        <el-button :type="buttonType('lmbench')" @click="goTo('lmbench')" :disabled="toDisabled('lmbench')">lmbench
-        </el-button>
-        <el-button :type="buttonType('unixbench')" @click="goTo('unixbench')" :disabled="toDisabled('unixbench')">
-          unixbench
-        </el-button>
+        <el-button :type="buttonType('stream')" @click="goTo('stream')" :disabled="toDisabled('stream')">stream</el-button>
+        <el-button :type="buttonType('lmbench')" @click="goTo('lmbench')" :disabled="toDisabled('lmbench')">lmbench</el-button>
+        <el-button :type="buttonType('unixbench')" @click="goTo('unixbench')" :disabled="toDisabled('unixbench')">unixbench</el-button>
         <el-button :type="buttonType('fio')" @click="goTo('fio')" :disabled="toDisabled('fio')">fio</el-button>
-        <el-button :type="buttonType('iozone')" @click="goTo('iozone')" :disabled="toDisabled('iozone')">iozone
-        </el-button>
-        <el-button :type="buttonType('jvm2008')" @click="goTo('jvm2008')" :disabled="toDisabled('jvm2008')">jvm2008
-        </el-button>
-        <el-button :type="buttonType('cpu2006')" @click="goTo('cpu2006')" :disabled="toDisabled('cpu2006')">cpu2006
-        </el-button>
-        <el-button :type="buttonType('cpu2017')" @click="goTo('cpu2017')" :disabled="toDisabled('cpu2017')">cpu2017
-        </el-button>
+        <el-button :type="buttonType('iozone')" @click="goTo('iozone')" :disabled="toDisabled('iozone')">iozone</el-button>
+        <el-button :type="buttonType('jvm2008')" @click="goTo('jvm2008')" :disabled="toDisabled('jvm2008')">jvm2008</el-button>
+        <el-button :type="buttonType('cpu2006')" @click="goTo('cpu2006')" :disabled="toDisabled('cpu2006')">cpu2006</el-button>
+        <el-button :type="buttonType('cpu2017')" @click="goTo('cpu2017')" :disabled="toDisabled('cpu2017')">cpu2017</el-button>
       </el-row>
     </el-card>
   </div>
@@ -98,7 +90,6 @@
   </el-dialog>
 </template>
 
-
 <script>
 import {ElMessage} from 'element-plus';
 import utils from '@/utils/utils';
@@ -117,7 +108,6 @@ export default {
       api: '',
       selectDataDialog: false,
       PutStreamDialog: false,
-
       selectDatas: [],
       selectData: {
         single_array_size: '',
