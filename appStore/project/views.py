@@ -44,15 +44,28 @@ class ProjectViewSet(viewsets.ModelViewSet):
         :param kwargs:
         :return:
         """
-        baseId = request.GET.get('baseId',None)
-        comparsionIds = request.GET.get('comparsionIds',None)
+        baseId = request.GET.get('baseId', None)
+        comparsionIds = request.GET.get('comparsionIds', None)
         storeData = request.GET.get('storeData')
+        project_name = request.GET.get('project_name', None)
+        user_name = request.GET.get('user_name', None)
+        os_names = request.GET.get('os_names', None)
+        cpu_names = request.GET.get('cpu_names', None)
+
         if comparsionIds:
             baseId = baseId + ',' + comparsionIds
         if baseId:
             project_queryset = Project.objects.filter(env_id__in=(baseId.split(',')))
         else:
             project_queryset = Project.objects.all().order_by("-id")
+            if project_name:
+                project_queryset = project_queryset.filter(project_name=project_name)
+            if user_name:
+                project_queryset = project_queryset.filter(user_name=user_name)
+            if os_names:
+                project_queryset = project_queryset.filter(os_version=os_names)
+            if cpu_names:
+                project_queryset = project_queryset.filter(cpu_module_name=cpu_names)
             if storeData == 'true':
                 project_queryset = project_queryset.filter(store_data=True)
         if not project_queryset:
@@ -79,7 +92,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def get_filter_name(self, request, *args, **kwargs):
         project_queryset = Project.objects.all()
         serializer = self.get_serializer(project_queryset, many=True)
-        projectNames_ = set([d['project_name'] for d in serializer.data])
+        projectNames_ = list(set([d['project_name'] for d in serializer.data]))
         userNames_ = list(set([d['user_name'] for d in serializer.data]))
         osNames_ = list(set([d['os_version'] for d in serializer.data]))
         cpuNames_ = list(set([d['cpu_module_name'] for d in serializer.data]))
@@ -87,7 +100,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         userNames = [{'text': name, 'value': name} for name in userNames_]
         osNames = [{'text': name, 'value': name} for name in osNames_]
         cpuNames = [{'text': name, 'value': name} for name in cpuNames_]
-        datas = {'projectNames': projectNames, 'userNames': userNames, 'osNames': osNames, 'cpuNames': cpuNames}
+        # 因为一个是excel表格样式的搜索一个是正常的搜索框，他们所需返回格式不同，直接放一起了。
+        datas = {'projectNames': projectNames, 'userNames': userNames, 'osNames': osNames, 'cpuNames': cpuNames,
+                 'project_name': projectNames_, 'user_name': userNames_, 'os_names': osNames_, 'cpu_names': cpuNames_}
         return json_response(datas, status.HTTP_200_OK, '筛选数据获取完成')
 
     def merge_data(self, request, *args, **kwargs):
@@ -369,6 +384,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         data_project['project_name'] = request.__dict__['data_project']['project_name']
         data_project['user_name'] = request.__dict__['data_project']['chinese_name']
         data_project['os_version'] = request.__dict__['data_project']['envinfo']['swinfo']['os']['osversion']
+        if not data_project['os_version']:
+            data_project['os_version'] = "未获取"
         data_project['cpu_module_name'] = request.__dict__['data_project']['envinfo']['hwinfo']['cpu']['model_name']
         data_project['ip'] = \
             request.__dict__['data_project']['envinfo']['nwinfo']['nic'][0]['ip']

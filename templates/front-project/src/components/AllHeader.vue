@@ -25,7 +25,7 @@ export default {
     }
   },
   created() {
-    this.name = getToken('username')
+    this.name = getToken('chinesename')
   }
 }
 </script>
