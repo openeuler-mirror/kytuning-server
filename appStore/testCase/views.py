@@ -140,7 +140,6 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 int(data_test_case['cpu2017'])))
             with open(user_config_path + '/yaml-base/cpu2017-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2017_yaml)
-        # return json_response({}, status.HTTP_400_BAD_REQUEST,{})
         # 创建请求测试数据
         serializer_test_case = TestCaseSerializer(data=data_test_case)
         if serializer_test_case.is_valid():
@@ -165,15 +164,21 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         TestMachine_ = TestMachine.objects.filter(server_IP=data_test_case['ip']).first()
         if TestMachine_.owner != request.user.chinese_name:
             return json_response('', status.HTTP_200_OK, '用户只能使用自己的机器测试')
-
-        return_result = test_case(data_test_case['ip'], TestMachine_.server_user_name, TestMachine_.server_password,
-                                  test_case_names, user_config_path, data_test_case['result_log_name'])
-        if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
-            TestCase.objects.filter(id=test_case_id).update(test_result=return_result.stderr)
-            return json_response('', status.HTTP_204_NO_CONTENT, return_result.stderr)
-        else:
-            TestCase.objects.filter(id=test_case_id).update(test_result='测试完成')
-            return json_response('', status.HTTP_200_OK, '测试完成')
+        try:
+            return_result = test_case(data_test_case['ip'], TestMachine_.server_user_name, TestMachine_.server_password,
+                                      test_case_names, user_config_path, data_test_case['result_log_name'])
+            if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
+                log.info('测试的测试数据ID是：%s，测试的返回结果return_result是：%s', test_case_id, str(return_result))
+                log.info('测试的测试数据ID是：%s，测试的返回结果return_result.stderr是：%s', test_case_id, str(return_result.stderr))
+                TestCase.objects.filter(id=test_case_id).update(test_result=return_result.stderr)
+                return json_response('', status.HTTP_204_NO_CONTENT, return_result.stderr)
+            else:
+                TestCase.objects.filter(id=test_case_id).update(test_result='测试完成')
+                return json_response('', status.HTTP_200_OK, '测试完成')
+        except Exception as e:
+            log.error('测试的测试数据ID是：%s，发生的异常是：%s', test_case_id, str(e))
+            TestCase.objects.filter(id=test_case_id).update(test_result='测试失败')
+            return json_response('', status.HTTP_500_INTERNAL_SERVER_ERROR, '发生异常，详细信息请查看日志')
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)

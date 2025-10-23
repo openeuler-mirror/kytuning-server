@@ -132,7 +132,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             if ISO:
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
-                              machine_data.server_password, KS_FILE_NAME)
+                              machine_data.server_password, KS_FILE_NAME, machine_data.machine_name, ISO.ISO_name)
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         elif not machine_data.owner:

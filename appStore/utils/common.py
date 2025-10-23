@@ -130,13 +130,12 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
     mv_ssh_keygen = "ssh-keygen -R " + test_ip
     subprocess.run(mv_ssh_keygen, shell=True)
 
-    # todo 因为护网无法下载先注释掉
     # 如果是最小化安装的话没有wget和unzip所以需要下载这两个软件包。
-    # wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "yum install wget unzip make -y"'
-    # wget_result = subprocess.run(wget_command, shell=True)
-    # if wget_result.returncode:
-    #     wget_result.stderr = "执行" + wget_command + "失败"
-    #     return wget_result
+    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "yum install wget unzip make -y"'
+    wget_result = subprocess.run(wget_command, shell=True)
+    if wget_result.returncode:
+        wget_result.stderr = "执行" + wget_command + "失败"
+        return wget_result
 
     # 下载run_kytuning代码
     wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (
@@ -244,11 +243,15 @@ def update_auto_install(user_name, replacements):
     with open(user_install_file, 'w') as f:
         f.write(script_content)
 
-def update_system(user_name, server_IP, server_user_name, server_password, KS_FILE_NAME):
+def update_system(user_name, server_IP, server_user_name, server_password, KS_FILE_NAME, machine_name, ISO_name):
     # 复制脚本至需要重置的系统
-    # todo 后期ifcfg-enP1p3s0f0可以做服务器类型和ISO版本判断来确定ifcfg-enP1p3s0f0是否拷贝
-    scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (
-    str(user_name), KS_FILE_NAME)
+    if machine_name == 'intel' and ISO_name.startswith('openEuler'):
+        #先删除可能存在的旧的ifcfg-enP1p3s0f0文件
+        rm_networkcfg_command = f'sshpass -p {server_password} ssh -o StrictHostKeyChecking=no {server_user_name}@{server_IP} "rm -rf /root/ifcfg-enP1p3s0f0"'
+        subprocess.run(rm_networkcfg_command, shell=True)
+        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (str(user_name), KS_FILE_NAME)
+    else:
+        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh {server_user_name}@{server_IP}:/root/' % (str(user_name), KS_FILE_NAME)
     result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, text=True)
     if result.returncode:
