@@ -102,9 +102,10 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             ISO = AdaptISO.objects.filter(ISO_name=new_iso_name).first()
             # 判断iso和机器是否适配。
             replacements['HTTP_ISO_PATH'] = ISO.http_address
-            replacements['BOOT_EFI'] = ISO.boot_efi
-            replacements['GRUB_CFG_PATH'] = '$ISO_PATH' + ISO.grub_cfg_path
-            replacements['GRUB_MENU_NAME'] = ISO.grub_menu_name
+            if ISO.arch_name == 'x86':
+                replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTX64.EFI'
+            elif ISO.arch_name == 'aarch':
+                replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTAA64.EFI'
             KS_FILE_NAME = ISO.ks_file_name
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
