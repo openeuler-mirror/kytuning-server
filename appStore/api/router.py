@@ -1,10 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Feb 23 11:19:26 2024 +0800
-"""
 from django.conf.urls import url, include
 from rest_framework import routers
 from appStore.adaptISO.views import AdaptISOListViewSet
@@ -15,6 +8,7 @@ from appStore.errorList.views import ErrorListViewSet
 from appStore.fio.views import FioViewSet
 from appStore.iozone.views import IozoneViewSet
 from appStore.jvm2008.views import Jvm2008ViewSet
+from appStore.ksFile.views import KsFileListViewSet
 from appStore.lmbench.views import LmbenchViewSet
 from appStore.project.views import ProjectViewSet
 from appStore.stream.views import StreamViewSet
@@ -44,6 +38,7 @@ router.register(r'user_config', UserConfigViewSet, basename='user_config')
 router.register(r'error_list', ErrorListViewSet, basename='error_list')
 router.register(r'machine_list', TestMachineViewSet, basename='machine_list')
 router.register(r'adapt_ISO', AdaptISOListViewSet, basename='adapt_ISO')
+router.register(r'ks_file', KsFileListViewSet, basename='ks_file')
 
 urlpatterns = [
     url(r'', include(router.urls)),
