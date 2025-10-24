@@ -1,10 +1,3 @@
-/*
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Thu Mar 7 14:16:46 2024 +0800
- */
 import {createRouter, createWebHistory} from 'vue-router'
 
 
@@ -26,6 +19,13 @@ const routes = [
                 path: '/machine/list',
                 meta: { requiresAuth: true }, // 添加这一行，表示需要身份验证
                 component: () => import('@/views/machineViews/MachineList'),
+                children: []
+            },
+            {
+                name: 'ks文件',
+                path: '/ks/list',
+                meta: { requiresAuth: true },
+                component: () => import('@/views/machineViews/KSList.vue'),
                 children: []
             },
             {
