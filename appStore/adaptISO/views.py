@@ -48,17 +48,16 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_400_BAD_REQUEST, '请检查iso路径以iso结尾')
 
     def put(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            iso_id = request.data.get('id')
-            iso_data = AdaptISO.objects.get(id=iso_id)
-            if not iso_id or not iso_data:
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        iso_id = request.data.get('id')
+        iso_data = AdaptISO.objects.get(id=iso_id)
+        if not iso_id or not iso_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        if request.user.is_superuser or request.user.chinese_name == iso_data.user_name:
             if iso_data.http_address != request.data.get('http_address'):
                 new_iso_name = request.data.get('http_address').split('/')[-1]
                 if iso_data.ISO_name != new_iso_name:
                     if AdaptISO.objects.get(ISO_name=new_iso_name):
-                        return json_response({}, status.HTTP_205_RESET_CONTENT,
-                                             '"ISO_name": [ "具有 ISO名称 的 adapt iso 已存在。"] ')
+                        return json_response({}, status.HTTP_205_RESET_CONTENT,'该ISO已经录入数据库，不可重复录入。')
             iso_data.http_address = request.data.get('http_address')
             iso_data.arch_name = request.data.get('arch_name')
             iso_data.ks_file_name = TOOLS_URL + '/auto-install/' + request.data.get('ks_file_name')
@@ -66,20 +65,20 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             iso_data.save()
             return json_response('', status.HTTP_200_OK, '更新成功！')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员才能修改数据')
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理人员才能修改数据')
 
     def delete(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            id = request.data.get('id', None)
-            if not id or not AdaptISO.objects.filter(id=id):
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
-            test_case_data = AdaptISO.objects.filter(id=id).first()
-            if not test_case_data:
+        id = request.data.get('id', None)
+        if not id or not AdaptISO.objects.filter(id=id):
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+        adapt_iso_data = AdaptISO.objects.filter(id=id).first()
+        if request.user.is_superuser or request.user.chinese_name == adapt_iso_data.user_name:
+            if not adapt_iso_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
             AdaptISO.objects.filter(id=id).delete()
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员才能删除该数据')
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理人员才能删除该数据')
 
     def get_ks(self, request, *args, **kwargs):
         # 先手动写四后期在考虑是做成数据库还是读取路径下的ks文件名称
