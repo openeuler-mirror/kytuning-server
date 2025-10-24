@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'appStore.userConfig.apps.UserconfigConfig',
     'appStore.errorList.apps.ErrorListConfig',
     'appStore.adaptISO.apps.AdaptISOConfig',
+    'appStore.ksFile.apps.KsFileConfig',
 ]
 AUTH_USER_MODEL = 'users.UserProfile'
 MIDDLEWARE = [

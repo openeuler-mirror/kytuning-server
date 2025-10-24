@@ -438,18 +438,9 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             datas[3]['column' + str(column_index)] = ''
             for i in range(4, 75):
                 if 60 < i < 70:
-                    datas[i]['column' + str(column_index)] = \
-                        "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
-                            'column' + str(base_column_index)]) / datas[i][
-                                        'column' + str(base_column_index)] * 100) if datas[i]['column' + str(
-                            column_index - 1)] is not None and datas[i]['column' + str(
-                            base_column_index)] is not None else None
+                    datas[i]['column' + str(column_index)] = "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
                 else:
-                    datas[i]['column' + str(column_index)] = \
-                        "%.2f%%" % ((datas[i]['column' + str(base_column_index)] - datas[i][
-                            'column' + str(column_index - 1)]) / datas[i]['column' + str(base_column_index)] * 100) if \
-                            datas[i]['column' + str(column_index - 1)] is not None and datas[i][
-                                'column' + str(base_column_index)] is not None else None
+                    datas[i]['column' + str(column_index)] = "%.2f%%" % ((datas[i]['column' + str(base_column_index)] - datas[i]['column' + str(column_index - 1)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
             column_index += 1
         return datas, title_index, column_index, base_column_index
 
