@@ -30,25 +30,22 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
         return json_response(serializer.data, status.HTTP_200_OK, '查询完成')
 
     def create(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            data_iso = {}
-            data_iso['user_name'] = request.user.chinese_name
-            data_iso['http_address'] = request.data.get('http_address')
-            data_iso['arch_name'] = request.data.get('arch_name')
-            data_iso['ks_file_name'] = TOOLS_URL + '/auto-install/' + request.data.get('ks_file_name')
-            data_iso['ISO_name'] = request.data.get('http_address').split('/')[-1]
-            if data_iso['ISO_name'].endswith('iso'):
-                config_serializer = AdaptISOListSerializer(data=data_iso)
-                if config_serializer.is_valid():
-                    self.perform_create(config_serializer)
-                    return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
-                log.info('Adaptiso数据存储错误 ：%s，', config_serializer.errors)
-                log.info('Adaptiso存储数据为 ：%s，', data_iso)
-                return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
-            else:
-                return json_response({}, status.HTTP_400_BAD_REQUEST, '请检查iso路径以iso结尾')
+        data_iso = {}
+        data_iso['user_name'] = request.user.chinese_name
+        data_iso['http_address'] = request.data.get('http_address')
+        data_iso['arch_name'] = request.data.get('arch_name')
+        data_iso['ks_file_name'] = TOOLS_URL + '/auto-install/' + request.data.get('ks_file_name')
+        data_iso['ISO_name'] = request.data.get('http_address').split('/')[-1]
+        if data_iso['ISO_name'].endswith('iso'):
+            config_serializer = AdaptISOListSerializer(data=data_iso)
+            if config_serializer.is_valid():
+                self.perform_create(config_serializer)
+                return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
+            log.info('Adaptiso数据存储错误 ：%s，', config_serializer.errors)
+            log.info('Adaptiso存储数据为 ：%s，', data_iso)
+            return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员才能创建该数据')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请检查iso路径以iso结尾')
 
     def put(self, request, *args, **kwargs):
         if request.user.is_superuser:
@@ -86,6 +83,7 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
 
     def get_ks(self, request, *args, **kwargs):
         # 先手动写四后期在考虑是做成数据库还是读取路径下的ks文件名称
+        # data = ['kylin-ks.cfg', 'uos-ks-1050a.cfg', 'uos-ks.cfg', 'openEuler-ks.cfg']
         data=[]
         import requests
         import re

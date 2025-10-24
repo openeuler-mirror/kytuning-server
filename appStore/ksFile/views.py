@@ -40,6 +40,19 @@ class KsFileListViewSet(viewsets.ModelViewSet):
         log.info('Machine存储数据为 ：%s，', ks_data)
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
+    def put(self, request, *args, **kwargs):
+        ks_id = request.data.get('id')
+        ks_data = KsFile.objects.get(id=ks_id)
+        if not ks_id or not ks_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        if request.user.is_superuser or request.user.chinese_name == ks_data.user_name:
+            ks_data.ks_name = request.data.get('ks_name')
+            ks_data.ks_content = request.data.get('ks_content')
+            ks_data.save()
+            return json_response('', status.HTTP_200_OK, '更新成功！')
+        else:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员或者管理人员才能修改数据')
+
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
         if not id or not KsFile.objects.filter(id=id):
