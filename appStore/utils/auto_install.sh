@@ -92,6 +92,10 @@ main(){
     echo '[error]:当前系统只有一个盘不支持安装' | tee -a "$LOG_FILE"
     exit 1
   fi
+  if [ -z "$SYSTEM_DISK" ]; then
+    echo '[error]: 未自动识别到系统盘，请排查lsblk中是否有/boot/efi分区' | tee -a "$LOG_FILE"
+    exit 1
+  fi
   init_file "$MOUNT_PATH"
   if [ ! -f "$ISO_NAME" ]; then
     echo '[info]:当前系统安装的iso为：'$ISO_NAME | tee -a "$LOG_FILE"
