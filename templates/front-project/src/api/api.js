@@ -1,12 +1,8 @@
-/*
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wqz <wangqingzheng@kylinos.cn>
- * Date: Mon May 20 11:10:24 2024 +0800
- */
 // 项目中我们大多数时候都会把对应的接口请求封装成api来调用
 import service from '../service.js'
+
+//data 一般适用于POST、PUT请求
+//params 一般适用于GET请求
 
 // 登录接口
 export function login(data) {
@@ -297,5 +293,17 @@ export function getksList(type, paramsOrData) {
   return service(commonConfig);
 }
 
-
+//适配的iso列表
+export function ksList(type, paramsOrData) {
+  const commonConfig = {
+    method: type,
+    url: '/ks_file/',
+  };
+  if (type === 'get') {
+    commonConfig.params = paramsOrData;
+  } else {
+    commonConfig.data = paramsOrData;
+  }
+  return service(commonConfig);
+}
 
