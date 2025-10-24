@@ -1,3 +1,10 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Fri Mar 1 10:09:12 2024 +0800
+"""
 import logging
 from rest_framework import status, viewsets
 # Create your views here.
@@ -95,18 +102,15 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                                                    machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
         replacements = {}
-        KS_FILE_NAME = None
         if new_iso_name == 'other(手动创建)' or not new_iso_name:
             ISO = None
         else:
             ISO = AdaptISO.objects.filter(ISO_name=new_iso_name).first()
-            # 判断iso和机器是否适配。
             replacements['HTTP_ISO_PATH'] = ISO.http_address
             if ISO.arch_name == 'x86':
                 replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTX64.EFI'
             elif ISO.arch_name == 'aarch':
                 replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTAA64.EFI'
-            KS_FILE_NAME = ISO.ks_file_name
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
             # ks文件中用户密码加密
@@ -123,8 +127,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 machine_data.iso_name = new_iso_name
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
-                              machine_data.server_password, KS_FILE_NAME, machine_data.machine_name, ISO.ISO_name)
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name)
                 machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
@@ -135,8 +138,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 machine_data.iso_name = new_iso_name
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
-                              machine_data.server_password, KS_FILE_NAME)
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name)
                 machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')

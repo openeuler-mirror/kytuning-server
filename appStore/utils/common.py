@@ -117,7 +117,7 @@ def get_page(data, objs):
 
 def test_case(test_ip, test_username, test_password, test_case_names, user_config_path, result_log_name):
     """
-
+    发起测试
     :param test_ip: 测试机器的ip
     :param test_username: 测试机器的用户名
     :param test_password: 测试机器的密码
@@ -193,6 +193,16 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
 
 
 def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_name, server_password):
+    """
+    获取链接状态
+    :param BMC_IP:
+    :param BMC_user_name:
+    :param BMC_password:
+    :param server_IP:
+    :param server_user_name:
+    :param server_password:
+    :return:
+    """
     # 判断离线状态 f是可以使用变量
     ipmi_cmd = f"ipmitool -H {BMC_IP} -I lanplus -U {BMC_user_name} -P \'{BMC_password}\' chassis power status"
     result = subprocess.run(ipmi_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -218,12 +228,23 @@ def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_
     return '在线'
 
 def make_ks_password(new_server_password):
+    """
+    制作ks文件中的密码加密
+    :param new_server_password: 用户输入密码
+    :return: 加密后的密码
+    """
     PASSWORD = crypt.crypt(new_server_password)
     if '/' in PASSWORD or '$' in PASSWORD:
         PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
     return PASSWORD
 
 def update_auto_install(user_name, replacements):
+    """
+    更新自动化安装脚本
+    :param user_name: 用户名称
+    :param replacements: 需要替换的内容
+    :return:
+    """
     # 原始脚本文件路径
     auto_install_file = './appStore/utils/autoInstall/auto_install.sh'
     # 副本文件路径
@@ -243,15 +264,25 @@ def update_auto_install(user_name, replacements):
     with open(user_install_file, 'w') as f:
         f.write(script_content)
 
-def update_system(user_name, server_IP, server_user_name, server_password, KS_FILE_NAME, machine_name, ISO_name):
+def update_system(user_name, server_IP, server_user_name, server_password, machine_name, ISO_name):
+    """
+    执行自动化安装系统的脚本
+    :param user_name:
+    :param server_IP:
+    :param server_user_name:
+    :param server_password:
+    :param machine_name:
+    :param ISO_name:
+    :return:
+    """
     # 复制脚本至需要重置的系统
     if machine_name == 'intel' and ISO_name.startswith('openEuler'):
-        #先删除可能存在的旧的ifcfg-enP1p3s0f0文件
+        # 先删除可能存在的旧的ifcfg-enP1p3s0f0文件
         rm_networkcfg_command = f'sshpass -p {server_password} ssh -o StrictHostKeyChecking=no {server_user_name}@{server_IP} "rm -rf /root/ifcfg-enP1p3s0f0"'
         subprocess.run(rm_networkcfg_command, shell=True)
-        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (str(user_name), KS_FILE_NAME)
+        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (str(user_name))
     else:
-        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh {server_user_name}@{server_IP}:/root/' % (str(user_name), KS_FILE_NAME)
+        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh {server_user_name}@{server_IP}:/root/' % (str(user_name))
     result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, text=True)
     if result.returncode:

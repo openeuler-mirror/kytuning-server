@@ -12,6 +12,7 @@ from rest_framework import status, viewsets
 from appStore.adaptISO.models import AdaptISO
 from appStore.adaptISO.serializers import AdaptISOListSerializer
 from appStore.utils.common import LimsPageSet, json_response
+from appStore.utils.constants import TOOLS_URL
 
 log = logging.getLogger('kytuninglog')
 
@@ -34,7 +35,7 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             data_iso['user_name'] = request.user.chinese_name
             data_iso['http_address'] = request.data.get('http_address')
             data_iso['arch_name'] = request.data.get('arch_name')
-            data_iso['ks_file_name'] = request.data.get('ks_file_name')
+            data_iso['ks_file_name'] = TOOLS_URL + '/auto-install/' + request.data.get('ks_file_name')
             data_iso['ISO_name'] = request.data.get('http_address').split('/')[-1]
             if data_iso['ISO_name'].endswith('iso'):
                 config_serializer = AdaptISOListSerializer(data=data_iso)
@@ -63,7 +64,7 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
                                              '"ISO_name": [ "具有 ISO名称 的 adapt iso 已存在。"] ')
             iso_data.http_address = request.data.get('http_address')
             iso_data.arch_name = request.data.get('arch_name')
-            iso_data.ks_file_name = request.data.get('ks_file_name')
+            iso_data.ks_file_name = TOOLS_URL + '/auto-install/' + request.data.get('ks_file_name')
             iso_data.ISO_name = request.data.get('http_address').split('/')[-1]
             iso_data.save()
             return json_response('', status.HTTP_200_OK, '更新成功！')
@@ -85,5 +86,15 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
 
     def get_ks(self, request, *args, **kwargs):
         # 先手动写四后期在考虑是做成数据库还是读取路径下的ks文件名称
-        data = ['kylin-ks.cfg', 'uos-ks-1050a.cfg', 'uos-ks.cfg', 'openEuler-ks.cfg']
-        return json_response(data, status.HTTP_200_OK, '获取ks列表完成')
+        data=[]
+        import requests
+        import re
+        url = TOOLS_URL+'/auto-install/'
+        response = requests.get(url)
+        if response.status_code == 200:
+            cfg_files = re.findall(r'href="([^"]*\.cfg)"', response.text)
+            data = sorted(cfg_files)
+        if data:
+            return json_response(data, status.HTTP_200_OK, '获取ks列表完成')
+        else:
+            return json_response(data, status.HTTP_200_OK, '未获取到ks文件，请确认httpd服务器是否工作正常')
