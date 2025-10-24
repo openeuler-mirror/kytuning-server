@@ -40,5 +40,19 @@ class KsFileListViewSet(viewsets.ModelViewSet):
         log.info('Machine存储数据为 ：%s，', ks_data)
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
+    def delete(self, request, *args, **kwargs):
+        id = request.data.get('id', None)
+        if not id or not KsFile.objects.filter(id=id):
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+        ks_file_data = KsFile.objects.filter(id=id).first()
+        if not ks_file_data:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        # 判断只有能删除自己的数据或者是管理员。
+        if request.user.is_superuser or ks_file_data.user_name == request.user.chinese_name:
+            KsFile.objects.filter(id=id).delete()
+            return json_response({}, status.HTTP_200_OK, '删除成功')
+        else:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员或者管理人员才能删除该数据')
+
 
 
