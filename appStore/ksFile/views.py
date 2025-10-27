@@ -61,7 +61,7 @@ class KsFileListViewSet(viewsets.ModelViewSet):
         if not ks_file_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         # 判断只有能删除自己的数据或者是管理员。
-        if request.user.is_superuser or ks_file_data.user_name == request.user.chinese_name:
+        if request.user.is_superuser or request.user.chinese_name == ks_file_data.user_name:
             KsFile.objects.filter(id=id).delete()
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
