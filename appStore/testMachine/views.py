@@ -127,7 +127,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 machine_data.iso_name = new_iso_name
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name)
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
                 machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
@@ -138,7 +138,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 machine_data.iso_name = new_iso_name
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name)
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
                 machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
