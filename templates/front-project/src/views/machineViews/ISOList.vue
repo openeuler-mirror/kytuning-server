@@ -64,7 +64,7 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {adapt_ISO, ksList} from "@/api/api";
+import {adapt_ISO, ksList,} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {

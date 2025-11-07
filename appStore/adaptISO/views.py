@@ -80,18 +80,3 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理人员才能删除该数据')
 
-    def get_ks(self, request, *args, **kwargs):
-        # 先手动写四后期在考虑是做成数据库还是读取路径下的ks文件名称
-        # data = ['kylin-ks.cfg', 'uos-ks-1050a.cfg', 'uos-ks.cfg', 'openEuler-ks.cfg']
-        data=[]
-        import requests
-        import re
-        url = TOOLS_URL+'/auto-install/'
-        response = requests.get(url)
-        if response.status_code == 200:
-            cfg_files = re.findall(r'href="([^"]*\.cfg)"', response.text)
-            data = sorted(cfg_files)
-        if data:
-            return json_response(data, status.HTTP_200_OK, '获取ks列表完成')
-        else:
-            return json_response(data, status.HTTP_200_OK, '未获取到ks文件，请确认httpd服务器是否工作正常')
