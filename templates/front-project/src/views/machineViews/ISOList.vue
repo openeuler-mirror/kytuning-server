@@ -64,7 +64,7 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {adapt_ISO, getksList} from "@/api/api";
+import {adapt_ISO, ksList} from "@/api/api";
 import utils from '@/utils/utils';
 
 export default {
@@ -96,8 +96,9 @@ export default {
         this.allDatas = response.data.data
         this.total = this.allDatas.length;
       });
-      getksList('get', {}).then((response) => {
-        this.ksList=response.data.data
+      ksList('get', {}).then((response) => {
+
+        this.ksList = response.data.data.map(item => item.ks_name);
       });
     },
 

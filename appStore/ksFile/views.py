@@ -5,6 +5,7 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Mon Feb 26 10:58:36 2024 +0800
 """
+import os
 import logging
 from rest_framework import status, viewsets
 # Create your views here.
@@ -35,6 +36,10 @@ class KsFileListViewSet(viewsets.ModelViewSet):
         config_serializer = KsFileListSerializer(data=ks_data)
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
+            # 创建ks文件
+            with open('./appStore/utils/autoInstall/' + ks_data['ks_name'], 'w') as file:
+                file.write(ks_data['ks_content'])
+            log.info('创建%s文件完成，', ks_data['ks_name'])
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
         log.info('Machine数据存储错误 ：%s，', config_serializer.errors)
         log.info('Machine存储数据为 ：%s，', ks_data)
@@ -49,6 +54,10 @@ class KsFileListViewSet(viewsets.ModelViewSet):
             ks_data.ks_name = request.data.get('ks_name')
             ks_data.ks_content = request.data.get('ks_content')
             ks_data.save()
+            # 更新ks文件
+            with open('./appStore/utils/autoInstall/' + ks_data.ks_name, 'w') as file:
+                file.write(ks_data.ks_content)
+            log.info('更新%s文件完成，', ks_data.ks_name)
             return json_response('', status.HTTP_200_OK, '更新成功！')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员或者管理人员才能修改数据')
@@ -63,6 +72,12 @@ class KsFileListViewSet(viewsets.ModelViewSet):
         # 判断只有能删除自己的数据或者是管理员。
         if request.user.is_superuser or request.user.chinese_name == ks_file_data.user_name:
             KsFile.objects.filter(id=id).delete()
+            try:
+                # 删除ks文件
+                os.remove('./appStore/utils/autoInstall/' + ks_file_data.ks_name)
+                log.info('删除%s文件完成，', ks_file_data.ks_name)
+            except Exception as e:
+                log.info('删除%s文件时发生错误：%s，', (ks_file_data.ks_name, e))
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员或者管理人员才能删除该数据')
