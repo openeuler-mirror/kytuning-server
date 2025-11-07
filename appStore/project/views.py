@@ -504,12 +504,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         """env数据"""
         # 因为listhan函数中有self.get_serializer(serializer_, many=True)，如果用到的话会报错。所以不能像create方法那样使用
         from appStore.env.views import EnvViewSet
-        env_data = self.simulate_request(EnvViewSet, {'env_id': env_id, 'comparsionIds': ""})
+        env_data = self.simulate_request(EnvViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
+        # 为了计算表头合并单元格的位置
+        compar_num = len(eval(comparsionIds))
         env_data = json.loads(env_data)
-        env_excel(request.user,env_data)
+        env_excel(request.user, env_data, compar_num)
 
         """stream数据"""
-        if Project.objects.filter(env_id = env_id).first().stream:
+        if Project.objects.filter(env_id=env_id).first().stream:
             from appStore.stream.views import StreamViewSet
             stream_data = self.simulate_request(StreamViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             stream_data = json.loads(stream_data)
