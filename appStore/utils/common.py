@@ -264,7 +264,7 @@ def update_auto_install(user_name, replacements):
     with open(user_install_file, 'w') as f:
         f.write(script_content)
 
-def update_system(user_name, server_IP, server_user_name, server_password, machine_name, ISO_name):
+def update_system(user_name, server_IP, server_user_name, server_password, machine_name, ISO_name, ks_name):
     """
     执行自动化安装系统的脚本
     :param user_name:
@@ -280,17 +280,13 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
         # 先删除可能存在的旧的ifcfg-enP1p3s0f0文件
         rm_networkcfg_command = f'sshpass -p {server_password} ssh -o StrictHostKeyChecking=no {server_user_name}@{server_IP} "rm -rf /root/ifcfg-enP1p3s0f0"'
         subprocess.run(rm_networkcfg_command, shell=True)
-        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (str(user_name))
+        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (str(user_name), ks_name)
     else:
-        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh {server_user_name}@{server_IP}:/root/' % (str(user_name))
-    result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE, text=True)
+        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh {server_user_name}@{server_IP}:/root/' % (str(user_name), ks_name)
+    result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result.returncode:
         return '文件复制出错'
-
-    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "sh /root/%s.sh"' % (
-        str(user_name))
-
+    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "sh /root/%s.sh"' % (str(user_name))
     subprocess.Popen(ssh_command, shell=True)
     # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
     # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,

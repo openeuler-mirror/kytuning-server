@@ -4,10 +4,7 @@
 ISO_PATH="kytuning-iso"
 # 原始mount路径
 MOUNT_PATH="/mnt/kytuning-iso"
-# ks文件下载地址及名称
 KS_FILE_NAME=''
-# ks文件名称
-KS_NAME=$(basename "$KS_FILE_NAME")
 # 指定grub.cfg文件的路径
 GRUB_CFG_PATH="$ISO_PATH/EFI/BOOT/grub.cfg"
 # iso的下载路径
@@ -50,7 +47,7 @@ update_grub_cfg(){
   if [ -n "$menuentry_line_number" ]; then
     # 在下一行增加inst.ks
     menuentry_line_number=$((menuentry_line_number + 1))
-    sed -i "${menuentry_line_number}s/$/ inst.ks=hd:LABEL=Kytuning:\/$KS_NAME inst.repo=hd:LABEL=Kytuning/" "$GRUB_CFG_PATH"
+    sed -i "${menuentry_line_number}s/$/ inst.ks=hd:LABEL=Kytuning:\/$KS_FILE_NAME inst.repo=hd:LABEL=Kytuning/" "$GRUB_CFG_PATH"
     echo '[info]:修改grub配置文件内容完成' | tee -a "$LOG_FILE"
   else
     echo '[error]:未找到menuentry' | tee -a "$LOG_FILE"
@@ -107,28 +104,20 @@ main(){
       exit 1
     fi
   fi
-  rm -f $KS_NAME
-  # 下载ks文件
-  wget $KS_FILE_NAME
-  # 检查下载是否成功
-  if [ $? -ne 0 ]; then
-      echo '[error]:下载ks文件失败，请检查网络和下载地址是否正确' | tee -a "$LOG_FILE"
-      exit 1
-  fi
   new_vfat_part $STARTUP_DISK
   mkfs.vfat -n Kytuning /dev/$STARTUP_DISK"1"
   mount $ISO_NAME $MOUNT_PATH
   mount /dev/$STARTUP_DISK"1" $ISO_PATH
   cp -ar $MOUNT_PATH/. $ISO_PATH
-  cp $KS_NAME $ISO_PATH
+  cp $KS_FILE_NAME $ISO_PATH
   # 修改grub.cfg文件
   update_grub_cfg
   # 替换IP信息
-  sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_NAME"
+  sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
   # 替换ks文件中安装操作系统盘
-  sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_NAME"
+  sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
   # 增加用户密码传输
-  sed -i "s/PASSWORD/$PASSWORD/g" "$ISO_PATH/$KS_NAME"
+  sed -i "s/PASSWORD/$PASSWORD/g" "$ISO_PATH/$KS_FILE_NAME"
   clear_kytuning_efibootmgr
   cp clear_kytuning_efibootmgr.sh $ISO_PATH
   # 有ifcfg-enP1p3s0f0文件才会复制
@@ -145,7 +134,7 @@ main(){
   ls $ISO_PATH | tee -a "$LOG_FILE"
   echo '<----------' | tee -a "$LOG_FILE"
   # todo 调试保留处，正式部署后删除。
-  reboot
+#  reboot
   echo '===============[info]:自动安装脚本运行结束，结束时间：'$(date) | tee -a "$LOG_FILE"
 }
 

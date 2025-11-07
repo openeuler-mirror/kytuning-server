@@ -60,7 +60,7 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
                         return json_response({}, status.HTTP_205_RESET_CONTENT,'该ISO已经录入数据库，不可重复录入。')
             iso_data.http_address = request.data.get('http_address')
             iso_data.arch_name = request.data.get('arch_name')
-            iso_data.ks_file_name = TOOLS_URL + '/auto-install/' + request.data.get('ks_file_name')
+            iso_data.ks_file_name = request.data.get('ks_file_name')
             iso_data.ISO_name = request.data.get('http_address').split('/')[-1]
             iso_data.save()
             return json_response('', status.HTTP_200_OK, '更新成功！')
