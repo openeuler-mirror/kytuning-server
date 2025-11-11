@@ -79,7 +79,7 @@ const routes = [
         ]
     },
     {
-        path: '/storeData',
+        path: '/projectData',
         name: '数据管理',
         iconClass: 'fa fa-users',
         component: () => import('@/components/KytuningHome'),
@@ -88,13 +88,13 @@ const routes = [
                 path: '/tempData',
                 name: '临时数据',
                 meta: { requiresAuth: true },
-                component: () => import('@/views/dataViews/StoreTable.vue'),
+                component: () => import('@/views/dataViews/ProjectTable.vue'),
             },
             {
-                path: '/storeData',
+                path: '/projectData',
                 name: '项目数据',
                 meta: { requiresAuth: true },
-                component: () => import('@/views/dataViews/StoreTable.vue'),
+                component: () => import('@/views/dataViews/ProjectTable.vue'),
             },
         ]
     },

@@ -97,7 +97,6 @@ export default {
         this.total = this.allDatas.length;
       });
       ksList('get', {}).then((response) => {
-
         this.ksList = response.data.data.map(item => item.ks_name);
       });
     },
