@@ -46,7 +46,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         """
         baseId = request.GET.get('baseId', None)
         comparsionIds = request.GET.get('comparsionIds', None)
-        storeData = request.GET.get('storeData')
+        projectData = request.GET.get('projectData')
         project_name = request.GET.get('project_name', None)
         user_name = request.GET.get('user_name', None)
         os_names = request.GET.get('os_names', None)
@@ -66,8 +66,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 project_queryset = project_queryset.filter(os_version=os_names)
             if cpu_names:
                 project_queryset = project_queryset.filter(cpu_module_name=cpu_names)
-            if storeData == 'true':
-                project_queryset = project_queryset.filter(store_data=True)
+            if projectData == 'true':
+                project_queryset = project_queryset.filter(project_data=True)
         if not project_queryset:
             return json_response({}, status.HTTP_200_OK, '未查询到project数据')
         serializer = self.get_serializer(project_queryset, many=True)
@@ -77,12 +77,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         id = request.data.get('id', None)
         project_name = request.data.get('project_name', None)
         message = request.data.get('message', None)
-        store_data = request.data.get('store_data', None)
+        project_data = request.data.get('project_data', None)
         if not project_name and not id:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id和project_name')
         user_name = Project.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
-            Project.objects.filter(id=id).update(id=id,project_name=project_name,message=message,store_data=store_data)
+            Project.objects.filter(id=id).update(id=id,project_name=project_name,message=message,project_data=project_data)
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '该用户不允许修改此数据')
         queryset = Project.objects.filter(id=id)

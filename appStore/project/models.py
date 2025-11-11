@@ -31,7 +31,7 @@ class Project(models.Model):
     cpu2017 = models.IntegerField(default=0, verbose_name='几组cpu2017数据')
     test_time = models.DateTimeField(verbose_name="记录时间", default=timezone.now)
     message = models.TextField(verbose_name='项目描述', null=True, blank=True)
-    store_data = models.BooleanField(verbose_name='是否是存储数据', default=False)
+    project_data = models.BooleanField(verbose_name='是否是存储数据', default=False)
 
     class Meta:
         db_table = 'project'

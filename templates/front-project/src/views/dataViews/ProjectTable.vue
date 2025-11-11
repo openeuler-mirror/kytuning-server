@@ -11,27 +11,23 @@
       <div style="display: flex; justify-content: space-between; width: 85%;">
         <div style="display: flex; justify-content: space-between; width: 86%;margin-left: 7%;">
           <el-form-item label="项目名称：">
-            <el-select v-model="sure_filter.project_name" class="m-2" placeholder="请选择项目名称">
-              <el-option v-for="item in filter.project_name" :key="item" :label="item" :value="item"
-                         placeholder="请输入项目名称"/>
+            <el-select v-model="sure_filter.project_name" class="m-2" placeholder="请选择项目名称" filterable>
+              <el-option v-for="item in filter.project_name" :key="item" :label="item" :value="item" placeholder="请输入项目名称"/>
             </el-select>
           </el-form-item>
           <el-form-item label="上传人员：">
             <el-select v-model="sure_filter.user_name" class="m-2" placeholder="请选择上传人员">
-              <el-option v-for="item in filter.user_name" :key="item" :label="item" :value="item"
-                         placeholder="请选择上传人员"/>
+              <el-option v-for="item in filter.user_name" :key="item" :label="item" :value="item" placeholder="请选择上传人员"/>
             </el-select>
           </el-form-item>
           <el-form-item label="系统版本：">
             <el-select v-model="sure_filter.os_names" class="m-2" placeholder="请选择系统版本">
-              <el-option v-for="item in filter.os_names" :key="item" :label="item" :value="item"
-                         placeholder="请选择系统版本"/>
+              <el-option v-for="item in filter.os_names" :key="item" :label="item" :value="item" placeholder="请选择系统版本"/>
             </el-select>
           </el-form-item>
           <el-form-item label="cpu型号：">
             <el-select v-model="sure_filter.cpu_names" class="m-2" placeholder="请选择cpu型号">
-              <el-option v-for="item in filter.cpu_names" :key="item" :label="item" :value="item"
-                         placeholder="请选择cpu型号"/>
+              <el-option v-for="item in filter.cpu_names" :key="item" :label="item" :value="item" placeholder="请选择cpu型号"/>
             </el-select>
           </el-form-item>
         </div>
@@ -53,6 +49,11 @@
                        :filters=projectNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
+        </template>
+      </el-table-column>
+       <el-table-column prop="message" label="描述" >
+        <template #default="scope">
+          <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.message }}</div>
         </template>
       </el-table-column>
       <el-table-column prop="user_name" label="上传人员" :filters=userNames :filter-method="filterHandler"
@@ -133,11 +134,7 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.test_time }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="message" label="描述">
-        <template #default="scope">
-          <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.message }}</div>
-        </template>
-      </el-table-column>
+
       <el-table-column label="操作" fixed="right" :width="getActionColumnWidth">
         <template #default="scope">
           <el-button v-if="$route.path === '/tempData'" type="success" @click="addProject(scope.row)"
