@@ -24,6 +24,8 @@ class TestMachine(models.Model):
     ARCH_NAME_TYPE = (
         ("aarch", "aarch"),
         ("x86", "x86"),
+        ("mips", "mips"),
+        ("loongarch", "loongarch"),
     )
     machine_name = models.CharField(max_length=50, verbose_name='设备名称')
     cpu_module_name = models.CharField(max_length=50, verbose_name='cpu型号')

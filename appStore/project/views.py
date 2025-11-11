@@ -46,26 +46,26 @@ class ProjectViewSet(viewsets.ModelViewSet):
         """
         baseId = request.GET.get('baseId', None)
         comparsionIds = request.GET.get('comparsionIds', None)
-        projectData = request.GET.get('projectData')
+        projectData = request.GET.get('projectData',None)
         project_name = request.GET.get('project_name', None)
         user_name = request.GET.get('user_name', None)
         os_names = request.GET.get('os_names', None)
         cpu_names = request.GET.get('cpu_names', None)
-
         if comparsionIds:
             baseId = baseId + ',' + comparsionIds
         if baseId:
             project_queryset = Project.objects.filter(env_id__in=(baseId.split(',')))
         else:
             project_queryset = Project.objects.all().order_by("-id")
+
             if project_name:
-                project_queryset = project_queryset.filter(project_name=project_name)
+                project_queryset = project_queryset.filter(project_name__icontains=project_name)
             if user_name:
                 project_queryset = project_queryset.filter(user_name=user_name)
             if os_names:
-                project_queryset = project_queryset.filter(os_version=os_names)
+                project_queryset = project_queryset.filter(os_version__icontains=os_names)
             if cpu_names:
-                project_queryset = project_queryset.filter(cpu_module_name=cpu_names)
+                project_queryset = project_queryset.filter(cpu_module_name__icontains=cpu_names)
             if projectData == 'true':
                 project_queryset = project_queryset.filter(project_data=True)
         if not project_queryset:
