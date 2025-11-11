@@ -37,7 +37,6 @@ class UserConfigViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data_user_config = {}
         data_user_config['user_name'] = request.user.chinese_name
-        # user_config_data['user_password'] = request.data.get('user_password')
         data_user_config['config_name'] = request.data.get('config_name')
         data_user_config['project_name'] = request.data.get('project_name')
         data_user_config['stream_number'] = request.data.get('stream')
@@ -61,7 +60,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         if request.data.get('is_send_config'):
             data_user_config['is_send_config'] = request.data.get('is_send_config')
             # 删除旧数据
-            UserConfig.objects.filter(is_send_config=True).delete()
+            UserConfig.objects.filter(user_name=data_user_config['user_name']).filter(is_send_config=True).delete()
         serializer_config = UserConfigSerializer(data=data_user_config)
         if serializer_config.is_valid():
             self.perform_create(serializer_config)
