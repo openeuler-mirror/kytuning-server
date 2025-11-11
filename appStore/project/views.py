@@ -506,7 +506,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         from appStore.env.views import EnvViewSet
         env_data = self.simulate_request(EnvViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
         # 为了计算表头合并单元格的位置
-        compar_num = len(eval(comparsionIds))
+        if comparsionIds:
+            compar_num = len(comparsionIds.split(','))
+        else:
+            compar_num = 0
         env_data = json.loads(env_data)
         env_excel(request.user, env_data, compar_num)
 
@@ -515,7 +518,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             from appStore.stream.views import StreamViewSet
             stream_data = self.simulate_request(StreamViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             stream_data = json.loads(stream_data)
-            stream_excel(request.user,stream_data)
+            stream_excel(request.user,{'data' : stream_data['data']['datas'],'analyze_data' : stream_data['data']['analyze_data']})
 
         """lmbench数据"""
         if Project.objects.filter(env_id=env_id).first().lmbench:

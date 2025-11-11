@@ -292,3 +292,46 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
     # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
     #                                stderr=subprocess.DEVNULL, text=True)
     return
+
+
+
+def get_analyze_data(datas,test_type):
+    """
+    数据分析内容结果获取
+    :param datas: 对比数据
+    :param test_type: 测试类型
+    :return: 数据分析结果
+    """
+    if test_type == 'stream':
+        matching_keys = [key for key, value in datas[0].items() if value == '对比值']
+        base_name = datas[1]['column3']
+        all_analyze = ''
+        for matching_key in matching_keys:
+            compar_name = datas[1]['column'+str(int(matching_key.split('column')[-1])-1)]
+            analyze = compar_name + '对比'+ base_name + '\n'
+            for data in datas[4:]:
+                value = round(float(data[matching_key].strip('%')), 2)
+                if value >= 5:
+                    analyze += str(data['column1'])+'的'+str(data['column2'])+'提升了'+str(value)+'%'+'\n'
+                elif value <= -5:
+                    analyze += str(data['column1'])+'的'+str(data['column2'])+'提升了'+str(value)+'%'+'\n'
+            if analyze == compar_name + '对比' + base_name + '\n':
+                analyze += '数据对比没有明显差距，相对持平状态。' + '\n'
+                all_analyze += analyze + '\n'
+            else:
+                all_analyze += analyze + '\n'
+        return all_analyze
+    elif test_type == 'unixbench':
+        pass
+    elif test_type == 'lmbench':
+        pass
+    elif test_type == 'fio':
+        pass
+    elif test_type == 'iozone':
+        pass
+    elif test_type == 'jvm2008':
+        pass
+    elif test_type == 'cpu2006':
+        pass
+    elif test_type == 'cpu2017':
+        pass
