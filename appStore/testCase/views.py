@@ -136,8 +136,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         else:
             log.info('testCase数据存储错误 ：%s，', serializer_test_case.errors)
             log.info('testCase存储数据为 ：%s，', data_test_case)
-            return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST,
-                                 get_error_message(serializer_test_case))
+            return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_test_case))
 
         """保存至配置管理数据库"""
         from appStore.userConfig.views import UserConfigViewSet
