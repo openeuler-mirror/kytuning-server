@@ -13,10 +13,10 @@
 @time: 26/7/23 4:33 PM
 """
 import os
+import string
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.utils import get_column_letter
-
 from appStore.utils.constants import EXCEL_TEMP
 
 
@@ -144,6 +144,13 @@ def create_base_export(user_name,sheetname,data):
     return worksheet,workbook
 
 def set_base_export_style(worksheet,config,sheetname):
+    """
+    设置表格头样式
+    :param worksheet:
+    :param config:
+    :param sheetname:
+    :return:
+    """
     # 设置表头样式
     for cell in worksheet[1]:
         cell.fill = config.color_col_top
@@ -206,7 +213,13 @@ def set_base_export_style(worksheet,config,sheetname):
             cell.alignment = config.alignment_center
     return worksheet
 
-def env_excel(user_name,data):
+def env_excel(user_name,data,compar_num):
+    """
+    设置环境表格的样式
+    :param user_name:
+    :param data:
+    :return:
+    """
     if not os.path.exists(EXCEL_TEMP):
         os.makedirs(EXCEL_TEMP)
     if os.path.exists(EXCEL_TEMP + '%s.xlsx'%(user_name)):
@@ -215,6 +228,9 @@ def env_excel(user_name,data):
     workbook = openpyxl.Workbook()
     # 获取默认的工作表对象
     worksheet = workbook.active
+
+    # 计算共有多少列
+    end_column = string.ascii_uppercase[compar_num + 3]
 
     worksheet.title = "性能测试环境"
 
@@ -256,7 +272,9 @@ def env_excel(user_name,data):
     worksheet.column_dimensions["A"].width = 15
     worksheet.column_dimensions["B"].width = 15
     worksheet.column_dimensions["C"].width = 15
-    worksheet.column_dimensions["D"].width = 50
+    # 设置D列及以后的宽度
+    for column in string.ascii_uppercase[3:string.ascii_uppercase.index(end_column) + 1]:
+        worksheet.column_dimensions[column].width = 50
 
     # 磁盘和网卡占位
     disk_row_nu = 0
@@ -290,8 +308,9 @@ def env_excel(user_name,data):
     # nic
     worksheet.merge_cells(start_row=59 + d_n_row_nu, start_column=2, end_row=worksheet.max_row, end_column=2)
 
-    # 合并行
-    worksheet.merge_cells('A1:D1')
+    # 表头的合并行
+    worksheet.merge_cells(f'A1:{end_column}1')
+
     # 设置行高
     worksheet.row_dimensions[1].height = 30
     # 设置边框
@@ -306,7 +325,7 @@ def env_excel(user_name,data):
         #     worksheet.row_dimensions[row[0].row].height = 25
 
     # D列左对齐
-    for row in worksheet["D"]:
+    for row in worksheet[end_column]:
         row.alignment = config.alignment_left
 
     worksheet.cell(row=1, column=1).value = "性能测试环境统计表"
@@ -314,6 +333,12 @@ def env_excel(user_name,data):
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def stream_excel(user_name,data):
+    """
+    设置stream表格样式
+    :param user_name:
+    :param data:
+    :return:
+    """
     sheetname = "Stream"
     config = Config()
     worksheet,workbook = create_base_export(user_name, sheetname,data)
@@ -340,6 +365,12 @@ def stream_excel(user_name,data):
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def lmbench_excel(user_name,data):
+    """
+    设置lmbench表格样式
+    :param user_name:
+    :param data:
+    :return:
+    """
     sheetname = "Lmbench"
     config = Config()
     worksheet, workbook = create_base_export(user_name,sheetname, data)
@@ -375,6 +406,12 @@ def lmbench_excel(user_name,data):
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def unixbench_excel(user_name,data):
+    """
+    设置unixbench表格样式
+    :param user_name:
+    :param data:
+    :return:
+    """
     sheetname = "Unixbench"
     config = Config()
     worksheet, workbook = create_base_export(user_name,sheetname, data)
@@ -406,6 +443,12 @@ def unixbench_excel(user_name,data):
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def fio_excel(user_name,data):
+    """
+    设置fio表格样式
+    :param user_name:
+    :param data:
+    :return:
+    """
     sheetname = "Fio"
     config = Config()
     worksheet, workbook = create_base_export(user_name,sheetname, data)
@@ -435,6 +478,12 @@ def fio_excel(user_name,data):
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def iozone_excel(user_name,data):
+    """
+    设置iozone表格样式
+    :param user_name:
+    :param data:
+    :return:
+    """
     sheetname = "Iozone"
     config = Config()
     worksheet, workbook = create_base_export(user_name,sheetname, data)
@@ -460,6 +509,12 @@ def iozone_excel(user_name,data):
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def jvm2008_excel(user_name,data):
+    """
+    设置jvm2008表格样式
+    :param user_name:
+    :param data:
+    :return:
+    """
     sheetname = "Specjvm2008"
     config = Config()
     worksheet,workbook = create_base_export(user_name,sheetname,data)
@@ -487,6 +542,13 @@ def jvm2008_excel(user_name,data):
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def cpu2006_excel(user_name,sheetname, data):
+    """
+    设置cpu2006表格样式
+    :param user_name:
+    :param sheetname:
+    :param data:
+    :return:
+    """
     config = Config()
     worksheet,workbook = create_base_export(user_name,sheetname,data)
 
@@ -522,6 +584,13 @@ def cpu2006_excel(user_name,sheetname, data):
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
 def cpu2017_excel(user_name,sheetname, data):
+    """
+    设置cpu2017表格样式
+    :param user_name:
+    :param sheetname:
+    :param data:
+    :return:
+    """
     config = Config()
     worksheet,workbook = create_base_export(user_name,sheetname,data)
 
