@@ -341,11 +341,11 @@ def get_iozone_analyze_message(key, value, old_mark_name, number, analyze):
     elif value <-5:
         name3 = '下降'
     if old_mark_name == name1:
-        analyze += name1 + name2 + name3 + str(value) + '%，'
+        analyze += name2 + name3 + str(value) + '%，'
     else:
         old_mark_name = name1
         analyze = analyze[:-1]+';'
-        analyze += '\n%d.'%(number)
+        analyze += '\n%d.'%(number) + name1 + name2 + name3 + str(value) + '%，'
         number += 1
     return analyze,old_mark_name,number
 
