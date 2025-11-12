@@ -12,7 +12,7 @@ from rest_framework import status, viewsets
 from appStore.jvm2008.models import Jvm2008
 from appStore.jvm2008.serializers import Jvm2008Serializer
 from appStore.project.models import Project
-from appStore.utils.common import json_response, get_error_message
+from appStore.utils.common import json_response, get_error_message, get_analyze_data
 
 log = logging.getLogger('kytuninglog')
 
@@ -275,10 +275,10 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Jvm2008.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas,
-                                                                                    title_index, column_index,
-                                                                                    base_column_index)
-        return json_response(datas, status.HTTP_200_OK, '列表')
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+        analyze_data = get_analyze_data(datas, 'jvm2008')
+        all_datas = {'datas': datas, 'analyze_data': analyze_data}
+        return json_response(all_datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_jvm2008_errors = []

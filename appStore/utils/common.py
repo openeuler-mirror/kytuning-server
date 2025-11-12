@@ -295,13 +295,11 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
 
 def get_range(value_list):
     """
-
     :param value_list:原始分割列表
     :return: （大于5有几组数据，大于5的最小值，大于5的最大值，小于5有几组数据，小于5的最小值，小于5的最大值）
     """
     # 将数据转换为浮点数类型,列表中不能装%号类型，要么就会变成str类型，所以直接去除%处理。
     data = [float(value.replace('%', '')) if value is not None else 0.0 for value in value_list]
-
 
     # 大于5%的元素数量和范围
     greater_than_5 = [value for value in data if value > 5]
@@ -479,7 +477,6 @@ def get_analyze_data(datas,test_type):
                     number += 1
                     analyze = get_analyze_message(Memory_latencies_value, analyze)
                     analyze += '\n'
-
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'unixbench':
@@ -496,7 +493,6 @@ def get_analyze_data(datas,test_type):
                 number = 1
                 for data in datas[4:]:
                     compare_values.append(data[matching_key])
-
                 single_list = compare_values[:12]
                 single_value = get_range(single_list)
                 if single_value[0] or single_value[3]:
@@ -524,7 +520,6 @@ def get_analyze_data(datas,test_type):
                         analyze += '总分下降%d%%;\n' % (single_score)
                     else:
                         analyze += '总分基本持平;\n'
-
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'fio':
@@ -558,20 +553,64 @@ def get_analyze_data(datas,test_type):
                 # 全部的对比数据的名称和值
                 compare_names = []
                 compare_values = []
-                number = 1
                 for data in datas[4:]:
                     compare_names.append(data['column1'])
                     compare_values.append(data[matching_key])
                 compare_dict = dict(zip(compare_names, compare_values))
-
-                old_mark_name = ''
                 for key,value in compare_dict.items():
                     value_ = float(value.replace('%', '')) if value is not None else 0.0
-                    analyze, old_mark_name, number = get_iozone_analyze_message(key, value_, old_mark_name, number, analyze)
+                    analyze, old_mark_name, number = get_analyze_message(key, value_,)
             all_analyze += analyze + '\n\n'
         return all_analyze
     elif test_type == 'jvm2008':
-        pass
+        matching_keys = [key for key, value in datas[0].items() if value == '对比值']
+        base_name = datas[1]['column3']
+        all_analyze = ''
+        for matching_key in matching_keys:
+            compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
+            if compar_name:
+                analyze = compar_name + '对比' + base_name + '\n'
+
+                # 全部的对比数据的值
+                compare_values = []
+                number = 1
+                for data in datas[4:]:
+                    compare_values.append(data[matching_key])
+                base_list = compare_values[:12]
+                if base_list[-1]:
+                    base_value = get_range(base_list)
+                    if base_value[0] or base_value[3]:
+                        analyze += '%d.base' % (number)
+                        number += 1
+                        analyze = get_analyze_message(base_value, analyze)
+                        single_score = float(base_list[-1].replace('%', '')) if base_list[-1] is not None else 0
+                        if single_score > 2:
+                            analyze += '总分提升%d%%;\n' % (single_score)
+                        elif single_score < -2:
+                            analyze += '总分下降%d%%;\n' % (single_score)
+                        else:
+                            analyze += '总分基本持平;\n'
+                else:
+                    analyze += '总分获取失败;\n'
+
+                peak_list = compare_values[12:]
+                if peak_list[-1]:
+                    peak_value = get_range(peak_list)
+                    if peak_value[0] or peak_value[3]:
+                        analyze += '%d.peak' % (number)
+                        number += 1
+                        analyze = get_analyze_message(peak_value, analyze)
+                        peak_score = float(peak_list[-1].replace('%', '')) if peak_list[-1] is not None else 0
+                        if peak_score > 2:
+                            analyze += '总分提升%d%%;\n' % (peak_score)
+                        elif peak_score < -2:
+                            analyze += '总分下降%d%%;\n' % (peak_score)
+                        else:
+                            analyze += '总分基本持平;\n'
+                else:
+                    analyze += '总分获取失败;\n'
+                all_analyze += analyze + '\n'
+        return all_analyze
     elif test_type == 'cpu2006':
         pass
     elif test_type == 'cpu2017':
