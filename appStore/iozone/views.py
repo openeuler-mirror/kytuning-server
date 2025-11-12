@@ -12,7 +12,7 @@ from rest_framework import status, viewsets
 from appStore.iozone.models import Iozone
 from appStore.iozone.serializers import IozoneSerializer
 from appStore.project.models import Project
-from appStore.utils.common import json_response, get_error_message
+from appStore.utils.common import json_response, get_error_message, get_analyze_data
 
 log = logging.getLogger('kytuninglog')
 
@@ -329,7 +329,9 @@ class IozoneViewSet(viewsets.ModelViewSet):
             for comparativeId in comparsionIds:
                 comparsion_queryset = Iozone.objects.filter(env_id=comparativeId).all()
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
-        return json_response(datas, status.HTTP_200_OK, '列表')
+        analyze_data = get_analyze_data(datas, 'iozone')
+        all_datas = {'datas': datas, 'analyze_data': analyze_data}
+        return json_response(all_datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_iozone_errors = []

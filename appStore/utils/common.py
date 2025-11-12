@@ -328,6 +328,28 @@ def get_analyze_message(data,analyze):
         analyze += '有%d个单项性能下降%s~%s;' % (data[3], data[4], data[5])
     return analyze
 
+def get_iozone_analyze_message(key, value, old_mark_name, number, analyze):
+    name2 = key.split('-')[1].split('（')[0]
+    if key.split('-')[0] == 'double':
+        name1='两倍内存时：'
+    elif key.split('-')[0] == 'full':
+        name1='一倍内存时：'
+    elif key.split('-')[0] == 'half':
+        name1='内存一半时：'
+    if value > 5:
+        name3 = '提升'
+    elif value <-5:
+        name3 = '下降'
+    if old_mark_name == name1:
+        analyze += name1 + name2 + name3 + str(value) + '%，'
+    else:
+        old_mark_name = name1
+        analyze = analyze[:-1]+';'
+        analyze += '\n%d.'%(number)
+        number += 1
+    return analyze,old_mark_name,number
+
+
 def get_analyze_data(datas,test_type):
     """
     数据分析内容结果获取
@@ -526,7 +548,28 @@ def get_analyze_data(datas,test_type):
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'iozone':
-        pass
+        matching_keys = [key for key, value in datas[0].items() if value == '对比值']
+        base_name = datas[1]['column3']
+        all_analyze = ''
+        for matching_key in matching_keys:
+            compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
+            if compar_name:
+                analyze = compar_name + '对比' + base_name + '\n'
+                # 全部的对比数据的名称和值
+                compare_names = []
+                compare_values = []
+                number = 1
+                for data in datas[4:]:
+                    compare_names.append(data['column1'])
+                    compare_values.append(data[matching_key])
+                compare_dict = dict(zip(compare_names, compare_values))
+
+                old_mark_name = ''
+                for key,value in compare_dict.items():
+                    value_ = float(value.replace('%', '')) if value is not None else 0.0
+                    analyze, old_mark_name, number = get_iozone_analyze_message(key, value_, old_mark_name, number, analyze)
+            all_analyze += analyze + '\n\n'
+        return all_analyze
     elif test_type == 'jvm2008':
         pass
     elif test_type == 'cpu2006':

@@ -546,7 +546,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             from appStore.iozone.views import IozoneViewSet
             iozone_data = self.simulate_request(IozoneViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             iozone_data = json.loads(iozone_data)
-            iozone_excel(request.user,iozone_data)
+            iozone_excel(request.user,{'data': iozone_data['data']['datas'], 'analyze_data': iozone_data['data']['analyze_data']})
 
         """jvm2008数据"""
         if Project.objects.filter(env_id = env_id).first().jvm2008:
