@@ -12,7 +12,7 @@ from rest_framework import status, viewsets
 from appStore.project.models import Project
 from appStore.unixbench.models import Unixbench
 from appStore.unixbench.serializers import UnixbenchSerializer
-from appStore.utils.common import json_response, get_error_message
+from appStore.utils.common import json_response, get_error_message, get_analyze_data
 
 log = logging.getLogger('kytuninglog')
 
