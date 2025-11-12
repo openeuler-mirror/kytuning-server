@@ -23,6 +23,11 @@
         </template>
       </el-table>
     </div>
+    <div>
+      <el-card class="box-card" style="white-space: pre-line;">
+        {{ analyzeData }}
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -44,6 +49,7 @@ export default {
   data() {
     return {
       tableDatas: [],
+      analyzeData: [],
       keysToHide: [],
       showAllData: false,
       dataName: this.$route.name,
@@ -60,7 +66,8 @@ export default {
   methods: {
     getData() {
       stream('get', this.paramsData).then((response) => {
-        this.tableDatas = response.data.data;
+        this.analyzeData = response.data.data.analyze_data
+        this.tableDatas = response.data.data.datas;
         this.showAllData = false; // 默认显示全部数据
         const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
           const value = this.tableDatas[0][key];

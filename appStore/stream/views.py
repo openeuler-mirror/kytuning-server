@@ -12,7 +12,7 @@ from rest_framework import status, viewsets
 from appStore.project.models import Project
 from appStore.stream.models import Stream
 from appStore.stream.serializers import StreamSerializer
-from appStore.utils.common import json_response, get_error_message
+from appStore.utils.common import json_response, get_error_message, get_analyze_data
 
 log = logging.getLogger('kytuninglog')
 
@@ -157,7 +157,12 @@ class StreamViewSet(viewsets.ModelViewSet):
             for comparativeId in comparsionIds:
                 comparsion_queryset = Stream.objects.filter(env_id=comparativeId).all()
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
-        return json_response(datas, status.HTTP_200_OK, '列表')
+
+        analyze_data = get_analyze_data(datas,'stream')
+
+        all_datas = {'datas': datas, 'analyze_data': analyze_data}
+
+        return json_response(all_datas, status.HTTP_200_OK, '列表')
 
     def get_modify_stream(self, request, *args, **kwargs):
         env_id = request.GET.get('env_id')

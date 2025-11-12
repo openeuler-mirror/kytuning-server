@@ -119,9 +119,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             else:
                 return json_response({}, status.HTTP_200_OK,'重构系统请输入密码')
 
-        if machine_data.queue_user and request.user.chinese_name != machine_data.queue_user:
-            return json_response({}, status.HTTP_200_OK,'当前申请人是 %s ,请协商后在使用' % (machine_data.queue_user))
-
         if machine_data.owner == request.user.chinese_name:
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
@@ -132,6 +129,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         elif not machine_data.owner:
+            if machine_data.queue_user and machine_data.queue_user != request.user.chinese_name:
+                return json_response({}, status.HTTP_200_OK, '当前申请人是 %s，请协商后在使用' % machine_data.queue_user)
             machine_data.owner = request.user.chinese_name
             machine_data.queue_user = None
             if new_iso_name:
@@ -143,7 +142,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         else:
-            return json_response({}, status.HTTP_200_OK, '不可修改他人使用的机器')
+            return json_response({}, status.HTTP_200_OK, '不可修改他人的机器')
 
     def finished_using(self, request, *args, **kwargs):
         machine_id = request.data.get('id')

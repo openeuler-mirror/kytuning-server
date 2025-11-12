@@ -361,6 +361,12 @@ def stream_excel(user_name,data):
     # 合并列
     worksheet.merge_cells(start_row=5, start_column=1, end_row=9, end_column=1)
     worksheet.merge_cells(start_row=10, start_column=1, end_row=14, end_column=1)
+
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row+1, end_column=len(data['data'][0]))
+
     # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
