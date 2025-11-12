@@ -525,14 +525,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
             from appStore.lmbench.views import LmbenchViewSet
             lmbench_data = self.simulate_request(LmbenchViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             lmbench_data = json.loads(lmbench_data)
-            lmbench_excel(request.user,lmbench_data)
+            lmbench_excel(request.user,{'data': lmbench_data['data']['datas'], 'analyze_data': lmbench_data['data']['analyze_data']})
 
         """unixbench数据"""
         if Project.objects.filter(env_id=env_id).first().unixbench:
             from appStore.unixbench.views import UnixbenchViewSet
             unixbench_data = self.simulate_request(UnixbenchViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             unixbench_data = json.loads(unixbench_data)
-            unixbench_excel(request.user,unixbench_data)
+            unixbench_excel(request.user,{'data': unixbench_data['data']['datas'], 'analyze_data': unixbench_data['data']['analyze_data']})
 
         """fio数据"""
         if Project.objects.filter(env_id=env_id).first().fio:

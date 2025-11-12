@@ -375,7 +375,9 @@ class UnixbenchViewSet(viewsets.ModelViewSet):
             for comparativeId in comparsionIds:
                 comparsion_queryset = Unixbench.objects.filter(env_id=comparativeId).all()
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
-        return json_response(datas, status.HTTP_200_OK, '列表')
+        analyze_data = get_analyze_data(datas, 'unixbench')
+        all_datas = {'datas': datas, 'analyze_data': analyze_data}
+        return json_response(all_datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_unixbench_errors = []
