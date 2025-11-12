@@ -408,6 +408,12 @@ def lmbench_excel(user_name,data):
     worksheet.merge_cells(start_row=54, start_column=1, end_row=61, end_column=1)
     worksheet.merge_cells(start_row=62, start_column=1, end_row=70, end_column=1)
     worksheet.merge_cells(start_row=71, start_column=1, end_row=75, end_column=1)
+
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
+
     # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
@@ -445,6 +451,11 @@ def unixbench_excel(user_name,data):
     for row in worksheet["B"]:
         row.alignment = config.alignment_left
 
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
+
     # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
@@ -479,6 +490,11 @@ def fio_excel(user_name,data):
     for i in range(int((worksheet.max_row-4)/4)):
         bw_row.append(4*i + 8)
         worksheet.merge_cells(start_row=5+4*i, start_column=1, end_row=8+4*i, end_column=1)
+
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))

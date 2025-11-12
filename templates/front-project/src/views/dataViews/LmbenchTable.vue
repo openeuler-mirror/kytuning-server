@@ -13,7 +13,7 @@
     <div style="overflow-x: auto;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" highlight-current-row>
         <template v-for="(value, key,index) in tableDatas[0]" :key="key">
-          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 2 ? '100' : ''" align="center">
+          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index < 2 ? '130' : ''" align="center">
             <template v-slot="{ row }">
               <div :class="getCellClassName(row, key)">
                 {{ row[key] }}
@@ -22,6 +22,11 @@
           </el-table-column>
         </template>
       </el-table>
+    </div>
+    <div>
+      <el-card class="box-card" style="white-space: pre-line;">
+        {{ analyzeData }}
+      </el-card>
     </div>
   </div>
 </template>
@@ -35,7 +40,7 @@ import utils from "@/utils/utils";
 import '@/assets/css/global.css';
 
 export default {
-  name: 'LmbenchTable',
+  name: 'lmbenchTable',
   components: {
     ElTable,
     ElTableColumn,
@@ -46,6 +51,7 @@ export default {
     return {
       numColumns: 1,
       tableDatas: [],
+      analyzeData: [],
       keysToHide: [],
       showAllData: false,
       dataName: this.$route.name,
@@ -61,7 +67,8 @@ export default {
   methods: {
     getData() {
       lmbench(this.paramsData).then((response) => {
-        this.tableDatas = response.data.data;
+        this.tableDatas = response.data.data.datas;
+        this.analyzeData = response.data.data.analyze_data;
         this.numColumns = Object.keys(this.tableDatas[0]).length;
         this.showAllData = false; // 默认显示平均数据
         const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {

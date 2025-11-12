@@ -341,18 +341,19 @@ def get_analyze_data(datas,test_type):
         all_analyze = ''
         for matching_key in matching_keys:
             compar_name = datas[1]['column'+str(int(matching_key.split('column')[-1])-1)]
-            analyze = compar_name + '对比'+ base_name + '\n'
-            for data in datas[4:]:
-                value = round(float(data[matching_key].strip('%')), 2)
-                if value >= 5:
-                    analyze += str(data['column1'])+'的'+str(data['column2'])+'提升了'+str(value)+'%'+'\n'
-                elif value <= -5:
-                    analyze += str(data['column1'])+'的'+str(data['column2'])+'提升了'+str(value)+'%'+'\n'
-            if analyze == compar_name + '对比' + base_name + '\n':
-                analyze += '数据对比没有明显差距，相对持平状态。' + '\n'
-                all_analyze += analyze + '\n'
-            else:
-                all_analyze += analyze + '\n'
+            if compar_name:
+                analyze = compar_name + '对比'+ base_name + '\n'
+                for data in datas[4:]:
+                    value = round(float(data[matching_key].strip('%')), 2)
+                    if value >= 5:
+                        analyze += str(data['column1'])+'的'+str(data['column2'])+'提升了'+str(value)+'%'+'\n'
+                    elif value <= -5:
+                        analyze += str(data['column1'])+'的'+str(data['column2'])+'提升了'+str(value)+'%'+'\n'
+                if analyze == compar_name + '对比' + base_name + '\n':
+                    analyze += '数据对比没有明显差距，相对持平状态。' + '\n'
+                    all_analyze += analyze + '\n'
+                else:
+                    all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'lmbench':
         matching_keys = [key for key, value in datas[0].items() if value == '对比值']
@@ -505,7 +506,25 @@ def get_analyze_data(datas,test_type):
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'fio':
-        pass
+        matching_keys = [key for key, value in datas[0].items() if value == '对比值']
+        base_name = datas[1]['column3']
+        all_analyze = ''
+        for matching_key in matching_keys:
+            compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
+            if compar_name:
+                analyze = compar_name + '对比' + base_name + '\n'
+                # 全部的对比数据的值
+                compare_values = []
+                number = 1
+                for data in datas[4:]:
+                    compare_values.append(data[matching_key])
+                # compare_values[2::4]只要iops的数据
+                fio_value = get_range(compare_values[2::4])
+                analyze += '%d.总共测试%d项，' % (number,len(compare_values[2::4]))
+                analyze = get_analyze_message(fio_value,analyze)
+                analyze += '\n'
+                all_analyze += analyze + '\n'
+        return all_analyze
     elif test_type == 'iozone':
         pass
     elif test_type == 'jvm2008':

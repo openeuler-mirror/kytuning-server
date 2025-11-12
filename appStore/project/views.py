@@ -539,7 +539,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             from appStore.fio.views import FioViewSet
             fio_data = self.simulate_request(FioViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             fio_data = json.loads(fio_data)
-            fio_excel(request.user,fio_data)
+            fio_excel(request.user,{'data': fio_data['data']['datas'], 'analyze_data': fio_data['data']['analyze_data']})
 
         """iozone数据"""
         if Project.objects.filter(env_id = env_id).first().iozone:
