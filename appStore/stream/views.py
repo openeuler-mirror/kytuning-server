@@ -159,9 +159,7 @@ class StreamViewSet(viewsets.ModelViewSet):
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
 
         analyze_data = get_analyze_data(datas,'stream')
-
         all_datas = {'datas': datas, 'analyze_data': analyze_data}
-
         return json_response(all_datas, status.HTTP_200_OK, '列表')
 
     def get_modify_stream(self, request, *args, **kwargs):
