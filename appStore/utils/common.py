@@ -293,7 +293,40 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
     #                                stderr=subprocess.DEVNULL, text=True)
     return
 
+def get_range(value_list):
+    """
 
+    :param value_list:原始分割列表
+    :return: （大于5有几组数据，大于5的最小值，大于5的最大值，小于5有几组数据，小于5的最小值，小于5的最大值）
+    """
+    # 将数据转换为浮点数类型,列表中不能装%号类型，要么就会变成str类型，所以直接去除%处理。
+    data = [float(value.replace('%', '')) if value is not None else 0.0 for value in value_list]
+
+    # 大于5%的元素数量和范围
+    greater_than_5 = [value for value in data if value > 5]
+    count_greater_than_5 = len(greater_than_5)
+    min_greater_than_5 = "{:.2f}%".format(min(greater_than_5)) if greater_than_5 else None
+    max_greater_than_5 = "{:.2f}%".format(max(greater_than_5)) if greater_than_5 else None
+
+    # 小于-5%的元素数量和范围
+    less_than_minus_5 = [value for value in data if value < -5]
+    count_less_than_minus_5 = len(less_than_minus_5)
+    min_less_than_minus_5 = "{:.2f}%".format(-min(less_than_minus_5)) if less_than_minus_5 else None
+    max_less_than_minus_5 = "{:.2f}%".format(-max(less_than_minus_5)) if less_than_minus_5 else None
+
+    return (count_greater_than_5,min_greater_than_5,max_greater_than_5,count_less_than_minus_5,max_less_than_minus_5,min_less_than_minus_5)
+
+def get_analyze_message(data,analyze):
+    if data[0] == 1:
+        analyze += '有1个单项性能提升%s，' % (data[1])
+    elif data[0] > 1:
+        analyze += '有%d个单项性能提升%s~%s，' % (data[0], data[1], data[2])
+    if data[3] == 1:
+        analyze += '有1个单项性能下降%s;' % (data[4])
+    elif data[3] > 1:
+        analyze += '有%d个单项性能下降%s~%s;' % (data[3], data[4], data[5])
+    analyze += '\n'
+    return analyze
 
 def get_analyze_data(datas,test_type):
     """
@@ -321,9 +354,108 @@ def get_analyze_data(datas,test_type):
             else:
                 all_analyze += analyze + '\n'
         return all_analyze
-    elif test_type == 'unixbench':
-        pass
     elif test_type == 'lmbench':
+        matching_keys = [key for key, value in datas[0].items() if value == '对比值']
+        base_name = datas[1]['column3']
+        all_analyze = ''
+        for matching_key in matching_keys:
+            compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
+            analyze = compar_name + '对比' + base_name + '\n'
+
+            # 全部的对比数据的值
+            compare_values=[]
+            number=1
+            for data in datas[4:]:
+                compare_values.append(data[matching_key])
+
+            print('========开始===========')
+            Basic_system_list=compare_values[:5]
+            Basic_system_value = get_range(Basic_system_list)
+            if Basic_system_value[0] or Basic_system_value[3]:
+                analyze += '%d.大项Basic system parameters中'%(number)
+                number += 1
+                analyze = get_analyze_message(Basic_system_value, analyze)
+                # if Basic_system_value[0] == 1:
+                #     analyze += '有1个单项性能提升%s，'%(Basic_system_value[1])
+                # elif Basic_system_value[0] > 1:
+                #     analyze += '有%d个单项性能提升%s~%s，'%(Basic_system_value[0], Basic_system_value[1],Basic_system_value[2])
+                # if Basic_system_value[3] == 1:
+                #     analyze += '有1个单项性能下降%s，' % (Basic_system_value[4])
+                # elif Basic_system_value[3] > 1:
+                #     analyze += '有%d个单项性能下降%s~%s;' % (Basic_system_value[3], Basic_system_value[4],Basic_system_value[5])
+                # analyze += '\n'
+
+            Processor_list=compare_values[5:16]
+            Processor_value = get_range(Processor_list)
+            if Processor_value[0] or Processor_value[3]:
+                analyze += '%d.大项Processor中'%(number)
+                number += 1
+                analyze = get_analyze_message(Processor_value, analyze)
+
+            Basic_integer_list=compare_values[16:21]
+            Basic_integer_value = get_range(Basic_integer_list)
+            if Basic_integer_value[0] or Basic_integer_value[3]:
+                analyze += '%d.大项Basic integer operations中' % (number)
+                number += 1
+                analyze = get_analyze_message(Basic_integer_value, analyze)
+
+            Basic_uint64_list=compare_values[21:26]
+            Basic_uint64_value = get_range(Basic_uint64_list)
+            if Basic_uint64_value[0] or Basic_uint64_value[3]:
+                analyze += '%d.大项Basic uint64 operations中' % (number)
+                number += 1
+                analyze = get_analyze_message(Basic_uint64_value, analyze)
+            Basic_float_list=compare_values[26:30]
+            Basic_uint64_value = get_range(Basic_uint64_list)
+            if Basic_uint64_value[0] or Basic_uint64_value[3]:
+                analyze += '%d.大项Basic float operations中' % (number)
+                number += 1
+                analyze = get_analyze_message(Basic_uint64_value, analyze)
+
+            Basic_double_list=compare_values[30:34]
+            Basic_double_value = get_range(Basic_double_list)
+            if Basic_double_value[0] or Basic_double_value[3]:
+                analyze += '%d.大项Basic double operations中' % (number)
+                number += 1
+                analyze = get_analyze_message(Basic_double_value, analyze)
+
+            Context_switching_list=compare_values[34:41]
+            Context_switching_value = get_range(Context_switching_list)
+            if Context_switching_value[0] or Basic_uint64_value[3]:
+                analyze += '%d.大项Context switching中' % (number)
+                number += 1
+                analyze = get_analyze_message(Context_switching_value, analyze)
+
+            Communication_latencies_list=compare_values[41:49]
+            Communication_latencies_value = get_range(Communication_latencies_list)
+            if Communication_latencies_value[0] or Communication_latencies_value[3]:
+                analyze += '%d.大项*Local* Communication latencies中' % (number)
+                number += 1
+                analyze = get_analyze_message(Communication_latencies_value, analyze)
+
+            File_and_VM_list=compare_values[49:57]
+            File_and_VM_value = get_range(File_and_VM_list)
+            if File_and_VM_value[0] or File_and_VM_value[3]:
+                analyze += '%d.大项File & VM system latencies in microseconds中' % (number)
+                number += 1
+                analyze = get_analyze_message(File_and_VM_value, analyze)
+
+            Communication_bandwidths_list=compare_values[57:66]
+            Communication_bandwidths_value = get_range(Communication_bandwidths_list)
+            if Communication_bandwidths_value[0] or Communication_bandwidths_value[3]:
+                analyze += '%d.大项*Local* Communication bandwidths in MB/s - bigger is better中' % (number)
+                number += 1
+                analyze = get_analyze_message(Communication_bandwidths_value, analyze)
+
+            Memory_latencies_list=compare_values[66:71]
+            Memory_latencies_value = get_range(Memory_latencies_list)
+            if Memory_latencies_value[0] or Memory_latencies_value[3]:
+                analyze += '%d.大项Memory latencies in nanoseconds中' % (number)
+                number += 1
+                analyze = get_analyze_message(Memory_latencies_value, analyze)
+            print('==========结束=========')
+        return all_analyze
+    elif test_type == 'unixbench':
         pass
     elif test_type == 'fio':
         pass
