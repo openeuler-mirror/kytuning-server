@@ -553,7 +553,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             from appStore.jvm2008.views import Jvm2008ViewSet
             jvm2008_data = self.simulate_request(Jvm2008ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             jvm2008_data  = json.loads(jvm2008_data)
-            jvm2008_excel(request.user,jvm2008_data)
+            jvm2008_excel(request.user,{'data': jvm2008_data['data']['datas'], 'analyze_data': jvm2008_data['data']['analyze_data']})
 
         """speccpu2006数据"""
         if Project.objects.filter(env_id = env_id).first().cpu2006:
