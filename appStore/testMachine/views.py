@@ -93,7 +93,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         machine_data.server_IP = request.data.get('server_IP')
-        machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
         new_server_password = request.data.get('new_server_password')
