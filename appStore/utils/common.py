@@ -619,7 +619,7 @@ def get_analyze_data(datas,test_type):
         return all_analyze
     elif test_type == 'cpu2006':
         matching_keys = [key for key, value in datas[0].items() if value == '对比值']
-        base_name = datas[1]['column3']
+        base_name = datas[1]['column5']
         all_analyze = ''
         for matching_key in matching_keys:
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
@@ -702,4 +702,89 @@ def get_analyze_data(datas,test_type):
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'cpu2017':
-        pass
+        matching_keys = [key for key, value in datas[0].items() if value == '对比值']
+        base_name = datas[1]['column6']
+        all_analyze = ''
+        for matching_key in matching_keys:
+            compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
+            if compar_name:
+                analyze = compar_name + '对比' + base_name + '\n'
+
+                # 全部的对比数据的值
+                compare_values = []
+                number = 1
+                for data in datas[4:]:
+                    compare_values.append(data[matching_key])
+
+                base_sing_int_list = compare_values[:11]
+                if base_sing_int_list[-1]:
+                    base_value = get_range(base_sing_int_list[:-1])
+                    if base_value[0] or base_value[3]:
+                        analyze += '%d.base-单线程-int' % (number)
+                        number += 1
+                        analyze = get_analyze_message(base_value, analyze)
+                        int_score = float(base_sing_int_list[-1].replace('%', '')) if base_sing_int_list[-1] is not None else 0
+                        if int_score > 2:
+                            analyze += '总分提升%s%%;\n' % (int_score)
+                        elif int_score < -2:
+                            analyze += '总分下降%s%%;\n' % (int_score)
+                        else:
+                            analyze += '总分基本持平;\n'
+                else:
+                    analyze += '总分获取失败;\n'
+
+                base_sing_fp_list = compare_values[11:25]
+                if base_sing_fp_list[-1]:
+                    base_value = get_range(base_sing_fp_list[:-1])
+                    if base_value[0] or base_value[3]:
+                        analyze += '%d.base-单线程-fp' % (number)
+                        number += 1
+                        analyze = get_analyze_message(base_value, analyze)
+                        fp_score = float(base_sing_fp_list[-1].replace('%', '')) if base_sing_fp_list[
+                                                                                        -1] is not None else 0
+                        if fp_score > 2:
+                            analyze += '总分提升%s%%;\n' % (fp_score)
+                        elif fp_score < -2:
+                            analyze += '总分下降%s%%;\n' % (fp_score)
+                        else:
+                            analyze += '总分基本持平;\n'
+                else:
+                    analyze += '总分获取失败;\n'
+
+                base_multi_int_list = compare_values[25:36]
+                if base_multi_int_list[-1]:
+                    base_value = get_range(base_multi_int_list[:-1])
+                    if base_value[0] or base_value[3]:
+                        analyze += '%d.base-多线程-int' % (number)
+                        number += 1
+                        analyze = get_analyze_message(base_value, analyze)
+                        int_score = float(base_multi_int_list[-1].replace('%', '')) if base_multi_int_list[
+                                                                                           -1] is not None else 0
+                        if int_score > 2:
+                            analyze += '总分提升%s%%;\n' % (int_score)
+                        elif int_score < -2:
+                            analyze += '总分下降%s%%;\n' % (int_score)
+                        else:
+                            analyze += '总分基本持平;\n'
+                else:
+                    analyze += '总分获取失败;\n'
+
+                base_multi_fp_list = compare_values[36:50]
+                if base_multi_fp_list[-1]:
+                    base_value = get_range(base_multi_fp_list[:-1])
+                    if base_value[0] or base_value[3]:
+                        analyze += '%d.base-多线程-fp' % (number)
+                        number += 1
+                        analyze = get_analyze_message(base_value, analyze)
+                        fp_score = float(base_multi_fp_list[-1].replace('%', '')) if base_multi_fp_list[
+                                                                                         -1] is not None else 0
+                        if fp_score > 2:
+                            analyze += '总分提升%s%%;\n' % (fp_score)
+                        elif fp_score < -2:
+                            analyze += '总分下降%s%%;\n' % (fp_score)
+                        else:
+                            analyze += '总分基本持平;\n'
+                else:
+                    analyze += '总分获取失败;\n'
+                all_analyze += analyze + '\n'
+        return all_analyze
