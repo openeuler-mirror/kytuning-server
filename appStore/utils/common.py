@@ -234,8 +234,11 @@ def make_ks_password(new_server_password):
     :return: 加密后的密码
     """
     PASSWORD = crypt.crypt(new_server_password)
-    if '/' in PASSWORD or '$' in PASSWORD:
-        PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
+    if '$' in PASSWORD or '/' in PASSWORD or '&' in PASSWORD or ';' in PASSWORD:
+        PASSWORD = PASSWORD.replace('$', r'\$')  # 转义$（注意：$需先替换，避免后续替换冲突）
+        PASSWORD = PASSWORD.replace('/', r'\/')
+        PASSWORD = PASSWORD.replace('&', r'\&')
+        PASSWORD = PASSWORD.replace(';', r'\;')
     return PASSWORD
 
 def update_auto_install(user_name, replacements):
