@@ -302,13 +302,13 @@ def get_range(value_list):
     data = [float(value.replace('%', '')) if value is not None else 0.0 for value in value_list]
 
     # 大于5%的元素数量和范围
-    greater_than_5 = [value for value in data if value > 5]
+    greater_than_5 = [value for value in data if value >= 5]
     count_greater_than_5 = len(greater_than_5)
     min_greater_than_5 = "{:.2f}%".format(min(greater_than_5)) if greater_than_5 else None
     max_greater_than_5 = "{:.2f}%".format(max(greater_than_5)) if greater_than_5 else None
 
     # 小于-5%的元素数量和范围
-    less_than_minus_5 = [value for value in data if value < -5]
+    less_than_minus_5 = [value for value in data if value <= -5]
     count_less_than_minus_5 = len(less_than_minus_5)
     min_less_than_minus_5 = "{:.2f}%".format(-min(less_than_minus_5)) if less_than_minus_5 else None
     max_less_than_minus_5 = "{:.2f}%".format(-max(less_than_minus_5)) if less_than_minus_5 else None
@@ -423,11 +423,11 @@ def get_analyze_data(datas,test_type):
                     analyze += '\n'
 
                 Basic_float_list=compare_values[26:30]
-                Basic_uint64_value = get_range(Basic_uint64_list)
-                if Basic_uint64_value[0] or Basic_uint64_value[3]:
+                Basic_float_value = get_range(Basic_float_list)
+                if Basic_float_value[0] or Basic_float_value[3]:
                     analyze += '%d.大项Basic float operations中' % (number)
                     number += 1
-                    analyze = get_analyze_message(Basic_uint64_value, analyze)
+                    analyze = get_analyze_message(Basic_float_value, analyze)
                     analyze += '\n'
 
                 Basic_double_list=compare_values[30:34]
@@ -440,7 +440,7 @@ def get_analyze_data(datas,test_type):
 
                 Context_switching_list=compare_values[34:41]
                 Context_switching_value = get_range(Context_switching_list)
-                if Context_switching_value[0] or Basic_uint64_value[3]:
+                if Context_switching_value[0] or Context_switching_value[3]:
                     analyze += '%d.大项Context switching中' % (number)
                     number += 1
                     analyze = get_analyze_message(Context_switching_value, analyze)
@@ -504,13 +504,15 @@ def get_analyze_data(datas,test_type):
                         if single_score > 2:
                             analyze += '总分提升%s%%;\n'%(single_score)
                         elif single_score < -2:
-                            analyze += '总分下降%s%%;\n'%(single_score)
+                            analyze += '总分下降%s%%;\n'%(-single_score)
                         else:
                             analyze += '总分基本持平;\n'
+                    else:
+                        analyze += '总分基本持平;\n'
                 else:
                     analyze += '总分获取失败;\n'
 
-                multi_list = compare_values[13:25]
+                multi_list = compare_values[13:26]
                 if multi_list[-1]:
                     multi_value = get_range(multi_list[:-1])
                     if multi_value[0] or multi_value[3]:
@@ -521,9 +523,11 @@ def get_analyze_data(datas,test_type):
                         if multi_score > 2:
                             analyze += '总分提升%s%%;\n' % (multi_score)
                         elif multi_score < -2:
-                            analyze += '总分下降%s%%;\n' % (multi_score)
+                            analyze += '总分下降%s%%;\n' % (-multi_score)
                         else:
                             analyze += '总分基本持平;\n'
+                    else:
+                        analyze += '总分基本持平;\n'
                 else:
                     analyze += '总分获取失败;\n'
                 all_analyze += analyze + '\n'
@@ -740,8 +744,7 @@ def get_analyze_data(datas,test_type):
                         analyze += '%d.base-单线程-fp' % (number)
                         number += 1
                         analyze = get_analyze_message(base_value, analyze)
-                        fp_score = float(base_sing_fp_list[-1].replace('%', '')) if base_sing_fp_list[
-                                                                                        -1] is not None else 0
+                        fp_score = float(base_sing_fp_list[-1].replace('%', '')) if base_sing_fp_list[-1] is not None else 0
                         if fp_score > 2:
                             analyze += '总分提升%s%%;\n' % (fp_score)
                         elif fp_score < -2:
@@ -758,8 +761,7 @@ def get_analyze_data(datas,test_type):
                         analyze += '%d.base-多线程-int' % (number)
                         number += 1
                         analyze = get_analyze_message(base_value, analyze)
-                        int_score = float(base_multi_int_list[-1].replace('%', '')) if base_multi_int_list[
-                                                                                           -1] is not None else 0
+                        int_score = float(base_multi_int_list[-1].replace('%', '')) if base_multi_int_list[-1] is not None else 0
                         if int_score > 2:
                             analyze += '总分提升%s%%;\n' % (int_score)
                         elif int_score < -2:
@@ -776,8 +778,7 @@ def get_analyze_data(datas,test_type):
                         analyze += '%d.base-多线程-fp' % (number)
                         number += 1
                         analyze = get_analyze_message(base_value, analyze)
-                        fp_score = float(base_multi_fp_list[-1].replace('%', '')) if base_multi_fp_list[
-                                                                                         -1] is not None else 0
+                        fp_score = float(base_multi_fp_list[-1].replace('%', '')) if base_multi_fp_list[-1] is not None else 0
                         if fp_score > 2:
                             analyze += '总分提升%s%%;\n' % (fp_score)
                         elif fp_score < -2:
