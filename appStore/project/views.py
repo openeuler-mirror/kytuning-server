@@ -573,12 +573,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
             from appStore.cpu2017.views import Cpu2017ViewSet
             cpu2017_data = self.simulate_request(Cpu2017ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             cpu2017_data = json.loads(cpu2017_data)
-            cpu2017_data_base = {'data': cpu2017_data['data'][:54]}
-            cpu2017_data_peak = {'data': cpu2017_data['data'][:4] + cpu2017_data['data'][54:]}
+            cpu2017_data_base = {'data': cpu2017_data['data']['datas'][:54]}
+            cpu2017_data_peak = {'data': cpu2017_data['data']['datas'][:4] + cpu2017_data['data']['datas'][54:]}
             sheetname = "Speccpu2017(base)"
-            cpu2017_excel(request.user,sheetname, cpu2017_data_base)
+            # cpu2017_excel(request.user,sheetname, cpu2017_data_base)
+            cpu2017_excel(request.user,sheetname,{'data': cpu2017_data_base['data'], 'analyze_data': cpu2017_data['data']['analyze_data']})
             sheetname = "Speccpu2017(peak)"
-            cpu2017_excel(request.user,sheetname, cpu2017_data_peak)
+            cpu2017_excel(request.user,sheetname, {'data': cpu2017_data_peak['data'], 'analyze_data': ''})
 
         # 打开文件
         file_path = os.path.join(EXCEL_TEMP, '%s.xlsx'%(request.user))

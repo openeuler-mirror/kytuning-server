@@ -667,5 +667,11 @@ def cpu2017_excel(user_name,sheetname, data):
     worksheet.merge_cells(start_row=41, start_column=2, end_row=54, end_column=2)
     # 第三列
     worksheet.merge_cells(start_row=5, start_column=3, end_row=54, end_column=3)
+
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
+
     # # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
