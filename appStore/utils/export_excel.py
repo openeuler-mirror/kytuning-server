@@ -193,10 +193,10 @@ def set_base_export_style(worksheet,config,sheetname):
             for row in worksheet.iter_rows(min_row=2, min_col=i, max_col=i):
                 cell = row[0]
                 cell_value = cell.value
-                if cell_value and float(cell_value[:-1]) > 10:
+                if cell_value and float(cell_value[:-1]) > 5:
                     cell.fill = config.color_compar_up
                     cell.font = config.font_compar_up
-                elif cell_value and float(cell_value[:-1]) < -10:
+                elif cell_value and float(cell_value[:-1]) < -5:
                     cell.fill = config.color_compar_down
                     cell.font = config.font_compar_down
                 # 每个数据
