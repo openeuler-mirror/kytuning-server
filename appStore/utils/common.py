@@ -502,9 +502,9 @@ def get_analyze_data(datas,test_type):
                         analyze = get_analyze_message(single_value, analyze)
                         single_score = float(compare_values[12].replace('%', '')) if compare_values[12] is not None else 0
                         if single_score > 2:
-                            analyze += '总分提升%d%%;\n'%(single_score)
+                            analyze += '总分提升%s%%;\n'%(single_score)
                         elif single_score < -2:
-                            analyze += '总分下降%d%%;\n'%(single_score)
+                            analyze += '总分下降%s%%;\n'%(single_score)
                         else:
                             analyze += '总分基本持平;\n'
                 else:
@@ -519,9 +519,9 @@ def get_analyze_data(datas,test_type):
                         analyze = get_analyze_message(multi_value, analyze)
                         multi_score = float(compare_values[25].replace('%', '')) if compare_values[25] is not None else 0
                         if multi_score > 2:
-                            analyze += '总分提升%d%%;\n' % (multi_score)
+                            analyze += '总分提升%s%%;\n' % (multi_score)
                         elif multi_score < -2:
-                            analyze += '总分下降%d%%;\n' % (multi_score)
+                            analyze += '总分下降%s%%;\n' % (multi_score)
                         else:
                             analyze += '总分基本持平;\n'
                 else:
@@ -591,9 +591,9 @@ def get_analyze_data(datas,test_type):
                         analyze = get_analyze_message(base_value, analyze)
                         single_score = float(base_list[-1].replace('%', '')) if base_list[-1] is not None else 0
                         if single_score > 2:
-                            analyze += '总分提升%d%%;\n' % (single_score)
+                            analyze += '总分提升%s%%;\n' % (single_score)
                         elif single_score < -2:
-                            analyze += '总分下降%d%%;\n' % (single_score)
+                            analyze += '总分下降%s%%;\n' % (single_score)
                         else:
                             analyze += '总分基本持平;\n'
                 else:
@@ -608,9 +608,9 @@ def get_analyze_data(datas,test_type):
                         analyze = get_analyze_message(peak_value, analyze)
                         peak_score = float(peak_list[-1].replace('%', '')) if peak_list[-1] is not None else 0
                         if peak_score > 2:
-                            analyze += '总分提升%d%%;\n' % (peak_score)
+                            analyze += '总分提升%s%%;\n' % (peak_score)
                         elif peak_score < -2:
-                            analyze += '总分下降%d%%;\n' % (peak_score)
+                            analyze += '总分下降%s%%;\n' % (peak_score)
                         else:
                             analyze += '总分基本持平;\n'
                 else:
@@ -641,9 +641,9 @@ def get_analyze_data(datas,test_type):
                         analyze = get_analyze_message(base_value, analyze)
                         int_score = float(base_sing_int_list[-1].replace('%', '')) if base_sing_int_list[-1] is not None else 0
                         if int_score > 2:
-                            analyze += '总分提升%d%%;\n' % (int_score)
+                            analyze += '总分提升%s%%;\n' % (int_score)
                         elif int_score < -2:
-                            analyze += '总分下降%d%%;\n' % (int_score)
+                            analyze += '总分下降%s%%;\n' % (int_score)
                         else:
                             analyze += '总分基本持平;\n'
                 else:
@@ -658,9 +658,9 @@ def get_analyze_data(datas,test_type):
                         analyze = get_analyze_message(base_value, analyze)
                         fp_score = float(base_sing_fp_list[-1].replace('%', '')) if base_sing_fp_list[-1] is not None else 0
                         if fp_score > 2:
-                            analyze += '总分提升%d%%;\n' % (fp_score)
+                            analyze += '总分提升%s%%;\n' % (fp_score)
                         elif fp_score < -2:
-                            analyze += '总分下降%d%%;\n' % (fp_score)
+                            analyze += '总分下降%s%%;\n' % (fp_score)
                         else:
                             analyze += '总分基本持平;\n'
                 else:
@@ -675,9 +675,9 @@ def get_analyze_data(datas,test_type):
                         analyze = get_analyze_message(base_value, analyze)
                         int_score = float(base_multi_int_list[-1].replace('%', '')) if base_multi_int_list[-1] is not None else 0
                         if int_score > 2:
-                            analyze += '总分提升%d%%;\n' % (int_score)
+                            analyze += '总分提升%s%%;\n' % (int_score)
                         elif int_score < -2:
-                            analyze += '总分下降%d%%;\n' % (int_score)
+                            analyze += '总分下降%s%%;\n' % (int_score)
                         else:
                             analyze += '总分基本持平;\n'
                 else:
@@ -692,9 +692,9 @@ def get_analyze_data(datas,test_type):
                         analyze = get_analyze_message(base_value, analyze)
                         fp_score = float(base_multi_fp_list[-1].replace('%', '')) if base_multi_fp_list[-1] is not None else 0
                         if fp_score > 2:
-                            analyze += '总分提升%d%%;\n' % (fp_score)
+                            analyze += '总分提升%s%%;\n' % (fp_score)
                         elif fp_score < -2:
-                            analyze += '总分下降%d%%;\n' % (fp_score)
+                            analyze += '总分下降%s%%;\n' % (fp_score)
                         else:
                             analyze += '总分基本持平;\n'
                 else:
