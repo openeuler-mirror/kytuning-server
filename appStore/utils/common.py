@@ -699,5 +699,7 @@ def get_analyze_data(datas,test_type):
                             analyze += '总分基本持平;\n'
                 else:
                     analyze += '总分获取失败;\n'
+                all_analyze += analyze + '\n'
+        return all_analyze
     elif test_type == 'cpu2017':
         pass

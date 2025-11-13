@@ -560,20 +560,21 @@ class ProjectViewSet(viewsets.ModelViewSet):
             from appStore.cpu2006.views import Cpu2006ViewSet
             cpu2006_data = self.simulate_request(Cpu2006ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             cpu2006_data = json.loads(cpu2006_data)
-            cpu2006_data_base = {'data': cpu2006_data["data"][:66]}
-            cpu2006_data_peak = {'data': cpu2006_data["data"][:4] + cpu2006_data["data"][66:]}
+            cpu2006_data_base = {'data': cpu2006_data['data']['datas'][:66]}
+            cpu2006_data_peak = {'data': cpu2006_data['data']['datas'][:4] + cpu2006_data['data']['datas'][66:]}
             sheetname = "Speccpu2006(base)"
-            cpu2006_excel(request.user,sheetname, cpu2006_data_base)
+            cpu2006_excel(request.user,sheetname, {'data': cpu2006_data_base['data'], 'analyze_data': cpu2006_data['data']['analyze_data']})
             sheetname = "Speccpu2006(peak)"
-            cpu2006_excel(request.user,sheetname, cpu2006_data_peak)
+            cpu2006_excel(request.user,sheetname, {'data': cpu2006_data_peak['data'], 'analyze_data': ''})
+
 
         """speccpu2017数据"""
         if Project.objects.filter(env_id = env_id).first().cpu2017:
             from appStore.cpu2017.views import Cpu2017ViewSet
             cpu2017_data = self.simulate_request(Cpu2017ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             cpu2017_data = json.loads(cpu2017_data)
-            cpu2017_data_base = {'data': cpu2017_data["data"][:54]}
-            cpu2017_data_peak = {'data': cpu2017_data["data"][:4] + cpu2017_data["data"][54:]}
+            cpu2017_data_base = {'data': cpu2017_data['data'][:54]}
+            cpu2017_data_peak = {'data': cpu2017_data['data'][:4] + cpu2017_data['data'][54:]}
             sheetname = "Speccpu2017(base)"
             cpu2017_excel(request.user,sheetname, cpu2017_data_base)
             sheetname = "Speccpu2017(peak)"
