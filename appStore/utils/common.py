@@ -495,7 +495,7 @@ def get_analyze_data(datas,test_type):
                     compare_values.append(data[matching_key])
                 single_list = compare_values[:12]
                 if single_list[-1]:
-                    single_value = get_range(single_list)
+                    single_value = get_range(single_list[:-1])
                     if single_value[0] or single_value[3]:
                         analyze += '%d.单线程中' % (number)
                         number += 1
@@ -512,7 +512,7 @@ def get_analyze_data(datas,test_type):
 
                 multi_list = compare_values[13:25]
                 if multi_list[-1]:
-                    multi_value = get_range(multi_list)
+                    multi_value = get_range(multi_list[:-1])
                     if multi_value[0] or multi_value[3]:
                         analyze += '%d.多线程中' % (number)
                         number += 1
@@ -584,7 +584,7 @@ def get_analyze_data(datas,test_type):
                     compare_values.append(data[matching_key])
                 base_list = compare_values[:12]
                 if base_list[-1]:
-                    base_value = get_range(base_list)
+                    base_value = get_range(base_list[:-1])
                     if base_value[0] or base_value[3]:
                         analyze += '%d.base' % (number)
                         number += 1
@@ -601,7 +601,7 @@ def get_analyze_data(datas,test_type):
 
                 peak_list = compare_values[12:]
                 if peak_list[-1]:
-                    peak_value = get_range(peak_list)
+                    peak_value = get_range(peak_list[:-1])
                     if peak_value[0] or peak_value[3]:
                         analyze += '%d.peak' % (number)
                         number += 1
