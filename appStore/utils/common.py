@@ -510,7 +510,7 @@ def get_analyze_data(datas,test_type):
                     else:
                         analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.单线程总分获取失败;\n' % (number)
 
                 multi_list = compare_values[13:26]
                 if multi_list[-1]:
@@ -529,7 +529,7 @@ def get_analyze_data(datas,test_type):
                     else:
                         analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.多线程总分获取失败;\n' % (number)
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'fio':
@@ -601,7 +601,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base总分获取失败;\n' % (number)
 
                 peak_list = compare_values[12:]
                 if peak_list[-1]:
@@ -618,7 +618,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.peak总分获取失败;\n' % (number)
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'cpu2006':
@@ -651,7 +651,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base-单线程-int总分获取失败;\n' % (number)
 
                 base_sing_fp_list = compare_values[13:31]
                 if base_sing_fp_list[-1]:
@@ -668,7 +668,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base-单线程-fp总分获取失败;\n' % (number)
 
                 base_multi_int_list = compare_values[31:44]
                 if base_multi_int_list[-1]:
@@ -685,7 +685,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base-多线程-int总分获取失败;\n' % (number)
 
                 base_multi_fp_list = compare_values[44:62]
                 if base_multi_fp_list[-1]:
@@ -702,7 +702,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base-多线程-fp总分获取失败;\n' % (number)
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'cpu2017':
@@ -735,7 +735,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base-单线程-int总分获取失败;\n' % (number)
 
                 base_sing_fp_list = compare_values[11:25]
                 if base_sing_fp_list[-1]:
@@ -752,7 +752,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base-单线程-fp总分获取失败;\n' % (number)
 
                 base_multi_int_list = compare_values[25:36]
                 if base_multi_int_list[-1]:
@@ -769,7 +769,7 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base-多线程-int总分获取失败;\n' % (number)
 
                 base_multi_fp_list = compare_values[36:50]
                 if base_multi_fp_list[-1]:
@@ -786,6 +786,6 @@ def get_analyze_data(datas,test_type):
                         else:
                             analyze += '总分基本持平;\n'
                 else:
-                    analyze += '总分获取失败;\n'
+                    analyze += '%d.base-多线程-fp总分获取失败;\n' % (number)
                 all_analyze += analyze + '\n'
         return all_analyze
