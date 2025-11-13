@@ -99,7 +99,6 @@ def create_base_export(user_name,sheetname,data):
         worksheet = workbook.create_sheet(sheetname)
 
     # 获取表头
-    print(data)
     header = list(data['data'][0].keys())
     worksheet.append(header)
 
@@ -613,6 +612,12 @@ def cpu2006_excel(user_name,sheetname, data):
     worksheet.merge_cells(start_row=18, start_column=2, end_row=35, end_column=2)
     worksheet.merge_cells(start_row=36, start_column=2, end_row=48, end_column=2)
     worksheet.merge_cells(start_row=49, start_column=2, end_row=66, end_column=2)
+
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
+
     # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
