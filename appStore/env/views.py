@@ -391,7 +391,8 @@ class EnvViewSet(viewsets.ModelViewSet):
         ProjectViewSet.create(request=request_project, *args, **kwargs)
 
         """修改测试列表的状态"""
-        TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
+        if request.data.get('test_case_id'):
+            TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
 
         return json_response({}, status.HTTP_200_OK, '创建成功！')
 
