@@ -138,8 +138,7 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
         return wget_result
 
     # 下载run_kytuning代码
-    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (
-        TOOLS_URL)
+    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (TOOLS_URL)
     wget_result = subprocess.run(wget_command, shell=True)
     if wget_result.returncode:
         wget_result.stderr = "测试端下载run_kytuning代码出错,请检查账号、密码是否正确，网络是否可用\n请在其它机器中测试：\"" + wget_command
@@ -185,7 +184,9 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
     for file_path in file_paths:
         if os.path.exists(file_path):
             os.remove(file_path)
-    if return_result.returncode:
+
+    # 放在后面是为了获取日志
+    if return_result.returncode and return_result.returncode != 255:
         return_result.stderr = "sh run.sh 命令出错，请查看详细日志"
         return return_result
 
