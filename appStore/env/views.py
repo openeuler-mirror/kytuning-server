@@ -15,6 +15,7 @@ from rest_framework import status, viewsets
 from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
+from appStore.testCase.models import TestCase
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
@@ -280,8 +281,6 @@ class EnvViewSet(viewsets.ModelViewSet):
         serializer_env = self.get_serializer(data=data_env)
         request.data['env_id'] = '1'
         if serializer_env.is_valid():
-            # todo 调试保留处，正式部署后删除。
-            # request.data['env_id'] = 1
             self.perform_create(serializer_env)
             request.data['env_id'] = serializer_env.data['id']
         if serializer_env.errors:
@@ -390,6 +389,9 @@ class EnvViewSet(viewsets.ModelViewSet):
         request_project.project_message = project_message
         ProjectViewSet = ProjectViewSet()
         ProjectViewSet.create(request=request_project, *args, **kwargs)
+
+        """修改测试列表的状态"""
+        TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
 
         return json_response({}, status.HTTP_200_OK, '创建成功！')
 
