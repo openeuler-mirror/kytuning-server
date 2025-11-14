@@ -493,14 +493,14 @@ def get_analyze_data(datas,test_type):
                 number = 1
                 for data in datas[4:]:
                     compare_values.append(data[matching_key])
-                single_list = compare_values[:12]
+                single_list = compare_values[:13]
                 if single_list[-1]:
                     single_value = get_range(single_list[:-1])
                     if single_value[0] or single_value[3]:
                         analyze += '%d.单线程中' % (number)
                         number += 1
                         analyze = get_analyze_message(single_value, analyze)
-                        single_score = float(compare_values[12].replace('%', '')) if compare_values[12] is not None else 0
+                        single_score = float(single_list[-1].replace('%', '')) if single_list[-1] is not None else 0
                         if single_score > 2:
                             analyze += '总分提升%s%%;\n'%(single_score)
                         elif single_score < -2:
@@ -519,7 +519,7 @@ def get_analyze_data(datas,test_type):
                         analyze += '%d.多线程中' % (number)
                         number += 1
                         analyze = get_analyze_message(multi_value, analyze)
-                        multi_score = float(compare_values[25].replace('%', '')) if compare_values[25] is not None else 0
+                        multi_score = float(multi_list[-1].replace('%', '')) if multi_list[-1] is not None else 0
                         if multi_score > 2:
                             analyze += '总分提升%s%%;\n' % (multi_score)
                         elif multi_score < -2:
