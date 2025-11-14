@@ -12,6 +12,7 @@ from django.db import models
 class KsFile(models.Model):
     """ks文件列表"""
     ks_name = models.CharField(unique=True, max_length=500, verbose_name='ks文件名称')
+    message = models.CharField(max_length=500, verbose_name='备注信息', null=True, blank=True)
     ks_content = models.TextField(verbose_name='ks文件内容')
     user_name = models.CharField(max_length=50, verbose_name='创建人员')
 

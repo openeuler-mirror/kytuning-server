@@ -1,10 +1,18 @@
+<!--
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Mon Mar 11 16:52:35 2024 +0800
+-->
 <template>
   <div id="fixed-top">
     <!-- 搜索 -->
     <el-button type="success" @click="add" style="float: right;">新增</el-button>
     <div class="cont">
       <el-table :data="showData" :header-cell-style="{fontSize:'15px'}" tooltip-effect="dark" border style="width: 100%">
-        <el-table-column prop="ks_name" label="ks文件名称" width="300"></el-table-column>
+        <el-table-column prop="ks_name" label="ks文件名称"></el-table-column>
+        <el-table-column prop="message" label="备注信息" ></el-table-column>
 <!--        <el-table-column prop="ks_content" label="ks文件内容"></el-table-column>-->
         <el-table-column prop="user_name" label="管理人员"></el-table-column>
         <el-table-column label="操作" width="180">
@@ -30,9 +38,12 @@
   </div>
   <div>
     <el-dialog :title="dialogTitle" v-model="dialogAddKsFile" width="1000px">
-      <el-form :model="ksFileData" ref="ksFileForm">
+      <el-form :model="ksFileData" ref="ksFileForm"  label-width="100px">
         <el-form-item label="ks文件名称" prop="http_address">
           <el-input v-model="ksFileData.ks_name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="备注信息" prop="http_address">
+          <el-input v-model="ksFileData.message" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="ks文件内容" prop="http_address">
           <el-input type="textarea" :rows="20"  placeholder="请输入内容" v-model="ksFileData.ks_content"></el-input>
@@ -60,6 +71,7 @@ export default {
       allDatas: [],
       ksFileData: {
         'ks_name': '',
+        'message': '',
         'ks_content': '',
       },
       dialogAddKsFile: false,
@@ -95,6 +107,7 @@ export default {
           this.dialogAddKsFile = false;
           const ksFileData_ = {
             ks_name: this.ksFileData.ks_name,
+            message: this.ksFileData.message,
             ks_content: this.ksFileData.ks_content,
           };
           ksList('post', ksFileData_).then((response) => {
@@ -114,6 +127,7 @@ export default {
     reset() {
       this.ksFileData = {
         ks_name: '',
+        message: '',
         ks_content: '',
       }
       this.getData()
@@ -126,6 +140,7 @@ export default {
       this.modifyID = row.id
       this.ksFileData = {
         ks_name: row.ks_name,
+        message: row.message,
         ks_content: row.ks_content,
       }
     },
@@ -135,6 +150,7 @@ export default {
       const ksFileData_ = {
         id: this.modifyID,
         ks_name: this.ksFileData.ks_name,
+        message: this.ksFileData.message,
         ks_content: this.ksFileData.ks_content,
       };
       ksList('put', ksFileData_).then(response => {

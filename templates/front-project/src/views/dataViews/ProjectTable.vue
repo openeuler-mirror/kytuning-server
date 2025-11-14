@@ -140,7 +140,7 @@
           <el-button v-if="$route.path === '/tempData'" type="success" @click="addProject(scope.row)"
                      class="operate-button">入库
           </el-button>
-          <el-button type="primary" @click="addCompar(scope.row)" class="operate-button">对比</el-button>
+          <el-button type="primary" @click="addCompar(scope.row)" class="operate-button">选择</el-button>
           <el-button type="warning" @click="edit(scope.row)" class="operate-button">修改</el-button>
           <el-button type="danger" @click="del(scope.row)" class="operate-button">删除</el-button>
         </template>
