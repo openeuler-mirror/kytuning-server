@@ -321,9 +321,9 @@ def get_analyze_message(data,analyze):
     elif data[0] > 1:
         analyze += '有%d个单项性能提升%s~%s，' % (data[0], data[1], data[2])
     if data[3] == 1:
-        analyze += '有1个单项性能下降%s;' % (data[4])
+        analyze += '有1个单项性能下降%s，' % (data[4])
     elif data[3] > 1:
-        analyze += '有%d个单项性能下降%s~%s;' % (data[3], data[4], data[5])
+        analyze += '有%d个单项性能下降%s~%s，' % (data[3], data[4], data[5])
     return analyze
 
 def get_iozone_analyze_message(key, value, old_mark_name, number, analyze):
