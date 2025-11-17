@@ -445,7 +445,7 @@ def get_analyze_data(datas,test_type):
 
                 Context_switching_list=compare_values[34:41]
                 Context_switching_value = get_range(Context_switching_list)
-                if Context_switching_value[0] or Basic_uint64_value[3]:
+                if Context_switching_value[0] or Context_switching_value[3]:
                     analyze += '%d.大项Context switching中' % (number)
                     number += 1
                     analyze = get_analyze_message(Context_switching_value, analyze)
