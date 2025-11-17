@@ -30,7 +30,7 @@ class KytuningError(models.Model):
     test_type = models.CharField(choices=TestType,max_length=50, verbose_name='测试类型')
     error_description = models.CharField(max_length=250, verbose_name='错误描述')
     error_log_excerpt = models.CharField(max_length=250, verbose_name='错误日志节选')
-    error_log_path = models.CharField(max_length=250, verbose_name='错误日志路径')
+    error_log_path = models.CharField(max_length=250, verbose_name='错误日志路径', null=True, blank=True)
     solution = models.CharField(max_length=50, verbose_name='解决方案')
 
     class Meta:
