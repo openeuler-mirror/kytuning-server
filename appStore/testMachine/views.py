@@ -33,6 +33,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data_machine = {}
         data_machine['owner'] = request.user.chinese_name
+        data_machine['creator'] = request.user.chinese_name
         data_machine['machine_name'] = request.data.get('machine_name')
         data_machine['arch_name'] = request.data.get('arch_name')
         data_machine['cpu_module_name'] = request.data.get('cpu_module_name')
@@ -92,6 +93,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
@@ -174,10 +176,10 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if not id or not TestMachine.objects.filter(id=id):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
         test_case_data = TestMachine.objects.filter(id=id).first()
-        if request.user.is_superuser or request.user.chinese_name == test_case_data.owner:
+        if request.user.is_superuser or request.user.chinese_name == test_case_data.creator:
             if not test_case_data:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
             TestMachine.objects.filter(id=id).delete()
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理人员才能删除该数据')
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有创建人员才能删除该数据')

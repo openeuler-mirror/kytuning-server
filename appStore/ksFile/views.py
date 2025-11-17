@@ -32,6 +32,7 @@ class KsFileListViewSet(viewsets.ModelViewSet):
         ks_data = {}
         ks_data['user_name'] = request.user.chinese_name
         ks_data['ks_name'] = request.data.get('ks_name')
+        ks_data['message'] = request.data.get('message')
         ks_data['ks_content'] = request.data.get('ks_content')
         config_serializer = KsFileListSerializer(data=ks_data)
         if config_serializer.is_valid():
@@ -52,6 +53,7 @@ class KsFileListViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         if request.user.is_superuser or request.user.chinese_name == ks_data.user_name:
             ks_data.ks_name = request.data.get('ks_name')
+            ks_data.message = request.data.get('message')
             ks_data.ks_content = request.data.get('ks_content')
             ks_data.save()
             # 更新ks文件

@@ -5,7 +5,7 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Thu Mar 7 14:25:09 2024 +0800
  */
- import {createApp} from 'vue'
+import {createApp} from 'vue'
 import App from './App.vue'
 import axios from 'axios'
 import router from './router'
@@ -15,6 +15,7 @@ import echarts from 'echarts'
 //vue2使用的是element-ui，vue3使用的就是element-plus
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
+import {removeToken} from "@/utils/setToken";
 
 
 const app = createApp(App)
@@ -36,12 +37,18 @@ window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
         callback = debounce(callback, 16);
         super(callback);
     }
-}
+};
+
+// 在你的Vue组件中或者你的入口文件中，监听window.onbeforeunload事件
+// onbeforeunload事件是一个在即将离开当前页面（或关闭当前窗口）时触发的事件
+window.onbeforeunload = function() {
+  // 清除session
+  removeToken('filter');
+};
 
 // 导航守卫
 router.beforeEach((to, from, next) => {
     const requiresAuth = to.meta.requiresAuth;
-
     if (requiresAuth && !localStorage.getItem('token')) {
         // 如果需要身份验证且用户未登录，则重定向到登录页面
         next('/');

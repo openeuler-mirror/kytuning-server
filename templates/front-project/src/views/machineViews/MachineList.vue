@@ -14,6 +14,7 @@
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
         <el-table-column prop="arch_name" label="架构"></el-table-column>
         <el-table-column prop="BMC_IP" label="BMC_IP"></el-table-column>
+        <el-table-column prop="creator" label="创建人员"></el-table-column>
         <el-table-column prop="create_time" label="创建时间"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">

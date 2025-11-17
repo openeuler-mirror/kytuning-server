@@ -82,15 +82,6 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             os.makedirs(os.path.join(user_config_path, "conf"))
             os.makedirs(os.path.join(user_config_path, "yaml-base"))
 
-        # 修改 conf/kytuning.cfg文件
-        with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
-            configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
-            configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
-            configfile.write('project_name={}\n'.format(data_test_case['project_name']))
-            configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
-            configfile.write('upload=true\n')
-            configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
-
         # 将配置数据写入YAML文件
         if int(data_test_case['stream']):
             stream_yaml = request.data.get('yaml')['stream'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['stream'])))
@@ -121,7 +112,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             with open(user_config_path + '/yaml-base/cpu2006-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_yaml)
             cpu2006_loongarch64_yaml = (request.data.get('yaml')['cpu2006_loongarch64'].replace(
-                    'maxiterations:  1','maxiterations: %d' % (int(data_test_case['cpu2006']))))
+                'maxiterations:  1','maxiterations: %d' % (int(data_test_case['cpu2006']))))
             with open(user_config_path + '/yaml-base/cpu2006-loongarch64-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_loongarch64_yaml)
         if int(data_test_case['cpu2017']):
@@ -133,6 +124,16 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         if serializer_test_case.is_valid():
             self.perform_create(serializer_test_case)
             test_case_id = serializer_test_case.data['id']
+            # 修改 conf/kytuning.cfg文件
+            with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
+                configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
+                configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
+                configfile.write('project_name={}\n'.format(data_test_case['project_name']))
+                configfile.write('project_message={}\n'.format(request.data.get('project_message')))
+                configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
+                configfile.write('upload=true\n')
+                configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
+                configfile.write('test_case_id={}\n'.format(test_case_id))
         else:
             log.info('testCase数据存储错误 ：%s，', serializer_test_case.errors)
             log.info('testCase存储数据为 ：%s，', data_test_case)
@@ -193,3 +194,4 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             return HttpResponse('文件不存在', status=404)
         # 使用FileResponse对象将文件作为HTTP响应发送回前端
         return FileResponse(open(log_file_path, 'rb'), as_attachment=True, status=200)
+

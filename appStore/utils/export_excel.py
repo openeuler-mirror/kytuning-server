@@ -99,7 +99,6 @@ def create_base_export(user_name,sheetname,data):
         worksheet = workbook.create_sheet(sheetname)
 
     # 获取表头
-    print(data)
     header = list(data['data'][0].keys())
     worksheet.append(header)
 
@@ -194,10 +193,10 @@ def set_base_export_style(worksheet,config,sheetname):
             for row in worksheet.iter_rows(min_row=2, min_col=i, max_col=i):
                 cell = row[0]
                 cell_value = cell.value
-                if cell_value and float(cell_value[:-1]) > 10:
+                if cell_value and float(cell_value[:-1]) > 5:
                     cell.fill = config.color_compar_up
                     cell.font = config.font_compar_up
-                elif cell_value and float(cell_value[:-1]) < -10:
+                elif cell_value and float(cell_value[:-1]) < -5:
                     cell.fill = config.color_compar_down
                     cell.font = config.font_compar_down
                 # 每个数据
@@ -566,6 +565,11 @@ def jvm2008_excel(user_name,data):
     worksheet.merge_cells(start_row=5, start_column=1, end_row=16, end_column=1)
     worksheet.merge_cells(start_row=17, start_column=1, end_row=28, end_column=1)
 
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
+
     # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
@@ -608,6 +612,12 @@ def cpu2006_excel(user_name,sheetname, data):
     worksheet.merge_cells(start_row=18, start_column=2, end_row=35, end_column=2)
     worksheet.merge_cells(start_row=36, start_column=2, end_row=48, end_column=2)
     worksheet.merge_cells(start_row=49, start_column=2, end_row=66, end_column=2)
+
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
+
     # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
 
@@ -657,5 +667,11 @@ def cpu2017_excel(user_name,sheetname, data):
     worksheet.merge_cells(start_row=41, start_column=2, end_row=54, end_column=2)
     # 第三列
     worksheet.merge_cells(start_row=5, start_column=3, end_row=54, end_column=3)
+
+    # 在最下方增加一行，设置单元格内容并合并
+    new_row = worksheet.max_row + 1
+    worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
+
     # # 保存工作簿到文件
     workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))

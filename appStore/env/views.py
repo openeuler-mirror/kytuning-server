@@ -15,6 +15,7 @@ from rest_framework import status, viewsets
 from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
+from appStore.testCase.models import TestCase
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
@@ -108,10 +109,10 @@ class EnvViewSet(viewsets.ModelViewSet):
                  {'column1': 'swinfo', 'column2': 'os', 'column3': 'kernel', 'column4': data_['swinfo_os_kernel']},
                  {'column1': 'swinfo', 'column2': 'os', 'column3': 'grub', 'column4': data_['swinfo_os_grub']},
                  {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysconf', 'column4': data_['swinfo_runtime_sysconf']},
-                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysctl', 'column4': data_['swinfo_runtime_sysctl']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysctl', 'column4': ' '.join(sorted(data_['swinfo_runtime_sysctl'].split('\n')))},
                  {'column1': 'swinfo','column2': 'runtime','column3': 'systemctlinfo','column4': data_['swinfo_runtime_systemctlinfo']},
                  {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'driverinfo', 'column4': data_['swinfo_runtime_driverinfo']},
-                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'rpmlist', 'column4': data_['swinfo_runtime_rpmlist']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'rpmlist', 'column4': ' '.join(sorted(data_['swinfo_runtime_rpmlist'].split('\n')))},
                  {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'ipclist', 'column4': data_['swinfo_runtime_ipclist']},
                  {'column1': 'swinfo','column2': 'runtime','column3': 'selinux_status','column4': data_['swinfo_runtime_selinux_status']},
                  {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'power_status','column4': data_['swinfo_runtime_power_status']},
@@ -185,10 +186,10 @@ class EnvViewSet(viewsets.ModelViewSet):
             datas[nic_number-19].update({'column%d'%(start_number):compar_data_['swinfo_os_kernel']})
             datas[nic_number-18].update({'column%d'%(start_number):compar_data_['swinfo_os_grub']})
             datas[nic_number-17].update({'column%d'%(start_number):compar_data_['swinfo_runtime_sysconf']})
-            datas[nic_number-16].update({'column%d'%(start_number):compar_data_['swinfo_runtime_sysctl']})
+            datas[nic_number-16].update({'column%d'%(start_number):' '.join(sorted(compar_data_['swinfo_runtime_sysctl'].split('\n')))})
             datas[nic_number-15].update({'column%d'%(start_number):compar_data_['swinfo_runtime_systemctlinfo']})
             datas[nic_number-14].update({'column%d'%(start_number):compar_data_['swinfo_runtime_driverinfo']})
-            datas[nic_number-13].update({'column%d'%(start_number):compar_data_['swinfo_runtime_rpmlist']})
+            datas[nic_number-13].update({'column%d'%(start_number):' '.join(sorted(compar_data_['swinfo_runtime_rpmlist'].split('\n')))})
             datas[nic_number-12].update({'column%d'%(start_number):compar_data_['swinfo_runtime_ipclist']})
             datas[nic_number-11].update({'column%d'%(start_number):compar_data_['swinfo_runtime_selinux_status']})
             datas[nic_number-10].update({'column%d'%(start_number):compar_data_['swinfo_runtime_power_status']})
@@ -280,8 +281,6 @@ class EnvViewSet(viewsets.ModelViewSet):
         serializer_env = self.get_serializer(data=data_env)
         request.data['env_id'] = '1'
         if serializer_env.is_valid():
-            # todo 调试保留处，正式部署后删除。
-            # request.data['env_id'] = 1
             self.perform_create(serializer_env)
             request.data['env_id'] = serializer_env.data['id']
         if serializer_env.errors:
@@ -299,7 +298,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         file_name = '%s.json' % (data_env['time'])
         with open(json_file_path + file_name, 'w') as file:
             json.dump(request.data, file)
-        project_message = []
+        error_message = []
 
         """stream数据处理"""
         from appStore.stream.views import StreamViewSet
@@ -309,7 +308,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         StreamViewSet = StreamViewSet()
         stream_message = StreamViewSet.create(request=request_stream, *args, **kwargs)
         if stream_message:
-            project_message.append({"stream": json.loads(stream_message.content.decode('utf-8'))['data']})
+            error_message.append({"stream": json.loads(stream_message.content.decode('utf-8'))['data']})
 
         """lmbench数据处理"""
         from appStore.lmbench.views import LmbenchViewSet
@@ -319,7 +318,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         LmbenchViewSet = LmbenchViewSet()
         lmbench_message = LmbenchViewSet.create(request=request_unixbench, *args, **kwargs)
         if lmbench_message:
-            project_message.append({"lmbench": json.loads(lmbench_message.content.decode('utf-8'))['data']})
+            error_message.append({"lmbench": json.loads(lmbench_message.content.decode('utf-8'))['data']})
 
         """unixbench数据处理"""
         from appStore.unixbench.views import UnixbenchViewSet
@@ -329,7 +328,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         UnixbenchViewSet = UnixbenchViewSet()
         unixbench_message = UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
         if unixbench_message:
-            project_message.append({"unixbench": json.loads(unixbench_message.content.decode('utf-8'))['data']})
+            error_message.append({"unixbench": json.loads(unixbench_message.content.decode('utf-8'))['data']})
 
         """fio数据处理"""
         from appStore.fio.views import FioViewSet
@@ -339,7 +338,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         FioViewSet = FioViewSet()
         fio_message = FioViewSet.create(request=request_fio, *args, **kwargs)
         if fio_message:
-            project_message.append({"fio": json.loads(fio_message.content.decode('utf-8'))['data']})
+            error_message.append({"fio": json.loads(fio_message.content.decode('utf-8'))['data']})
 
         """iozone数据处理"""
         from appStore.iozone.views import IozoneViewSet
@@ -349,7 +348,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         IozoneViewSet = IozoneViewSet()
         iozone_message = IozoneViewSet.create(request=request_iozone, *args, **kwargs)
         if iozone_message:
-            project_message.append({"iozone": json.loads(iozone_message.content.decode('utf-8'))['data']})
+            error_message.append({"iozone": json.loads(iozone_message.content.decode('utf-8'))['data']})
 
         """jvm2008数据处理"""
         from appStore.jvm2008.views import Jvm2008ViewSet
@@ -359,7 +358,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         Jvm2008ViewSet = Jvm2008ViewSet()
         jvm_message = Jvm2008ViewSet.create(request=request_jvm2008, *args, **kwargs)
         if jvm_message:
-            project_message.append({"jvm2008": json.loads(jvm_message.content.decode('utf-8'))['data']})
+            error_message.append({"jvm2008": json.loads(jvm_message.content.decode('utf-8'))['data']})
 
         """speccpu2006数据处理"""
         from appStore.cpu2006.views import Cpu2006ViewSet
@@ -369,7 +368,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         Cpu2006ViewSet = Cpu2006ViewSet()
         cpu2006_message = Cpu2006ViewSet.create(request=request_cpu2006, *args, **kwargs)
         if cpu2006_message:
-            project_message.append({"cpu2006": json.loads(cpu2006_message.content.decode('utf-8'))['data']})
+            error_message.append({"cpu2006": json.loads(cpu2006_message.content.decode('utf-8'))['data']})
 
         """speccpu2017数据处理"""
         from appStore.cpu2017.views import Cpu2017ViewSet
@@ -379,7 +378,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         Cpu2017ViewSet = Cpu2017ViewSet()
         cpu2017_message =  Cpu2017ViewSet.create(request=request_cpu2017, *args, **kwargs)
         if cpu2017_message:
-            project_message.append({"cpu2017": json.loads(cpu2017_message.content.decode('utf-8'))['data']})
+            error_message.append({"cpu2017": json.loads(cpu2017_message.content.decode('utf-8'))['data']})
 
         """project数据处理"""
         from appStore.project.views import ProjectViewSet
@@ -387,9 +386,13 @@ class EnvViewSet(viewsets.ModelViewSet):
         request_project.method = 'POST'
         request.data['chinese_name']=request.user.chinese_name
         request_project.data_project = request.data
-        request_project.project_message = project_message
+        request_project.error_message = error_message
         ProjectViewSet = ProjectViewSet()
         ProjectViewSet.create(request=request_project, *args, **kwargs)
+
+        """修改测试列表的状态"""
+        if request.data.get('test_case_id'):
+            TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
 
         return json_response({}, status.HTTP_200_OK, '创建成功！')
 

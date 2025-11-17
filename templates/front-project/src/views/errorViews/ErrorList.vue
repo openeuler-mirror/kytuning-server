@@ -175,7 +175,6 @@ export default {
         testType: [{required: true, message: '请选择测试类型', trigger: 'change'}],
         errorDescription: [{required: true, message: '请输入错误描述', trigger: 'blur'}],
         errorExport: [{required: true, message: '请输入错误日志节选', trigger: 'blur'}],
-        errorLogPath: [{required: true, message: '请选中错误数据', trigger: 'blur'}],
         solution: [{required: true, message: '请输入解决方案', trigger: 'blur'}],
       },
       dialogErrorPost: false,

@@ -23,6 +23,11 @@
         </template>
       </el-table>
     </div>
+    <div>
+      <el-card class="box-card" style="white-space: pre-line;">
+        {{ analyzeData }}
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -46,6 +51,7 @@ export default {
     return {
       tableDatas: [],
       keysToHide: [],
+      analyzeData: [],
       showAllData: false,
       dataName: this.$route.name,
       paramsData: {
@@ -60,7 +66,8 @@ export default {
   methods: {
     getData() {
       cpu2017(this.paramsData).then((response) => {
-        this.tableDatas = response.data.data;
+        this.tableDatas = response.data.data.datas;
+        this.analyzeData = response.data.data.analyze_data;
         this.showAllData = false; // 默认显示平均数据
         const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
           const value = this.tableDatas[0][key];

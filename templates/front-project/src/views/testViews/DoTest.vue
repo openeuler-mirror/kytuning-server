@@ -60,7 +60,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="描述：">
-          <el-input v-model="formData.message"/>
+          <el-input v-model="formData.project_message"/>
         </el-form-item>
       </el-form>
       <div class="button-container">
@@ -87,7 +87,7 @@
                 tooltip-effect="dark" border style="width: 100%" class="tableHead">
         <el-table-column type="selection" width="55"/>
         <el-table-column prop="config_name" label="配置文件名称"/>
-        <el-table-column prop="message" label="描述"/>
+        <el-table-column prop="project_message" label="描述"/>
       </el-table>
 
       <template #footer>
@@ -116,7 +116,7 @@ export default {
         projectName: '',
         yamlData: baseYamlData,
         testIP: '',
-        message: '',
+        project_message: '',
         iterations: {
           stream: '',
           lmbench: '',
@@ -208,7 +208,7 @@ export default {
           cpu2017: config.cpu2017_config,
         }
         this.formData.testIP = config.test_ip
-        this.formData.message = config.message
+        this.formData.project_message = config.project_message
       })
     },
 
@@ -249,7 +249,7 @@ export default {
       this.formData.yamlData.cpu2006_loongarch64_config = this.configData.cpu2006_loongarch64_config_config
       this.formData.yamlData.cpu2017 = this.configData.cpu2017_config
       this.formData.testIP = this.configData.test_ip
-      this.formData.message = this.configData.message
+      this.formData.project_message = this.configData.project_message
       this.configDialog = false
     },
     //更新配置
@@ -270,7 +270,7 @@ export default {
             cpu2006: this.formData.iterations.cpu2006,
             cpu2017: this.formData.iterations.cpu2017,
             yaml: this.formData.yamlData,
-            message: this.formData.message,
+            project_message: this.formData.project_message,
           }
           user_config('put', formData).then(response => {
             ElMessage({message: response.data.message, type: 'success'})
@@ -294,7 +294,7 @@ export default {
           cpu2006: this.formData.iterations.cpu2006,
           cpu2017: this.formData.iterations.cpu2017,
           yaml: this.formData.yamlData,
-          message: this.formData.message
+          project_message: this.formData.project_message
         }
         user_config('post', formData).then(response => {
           ElMessage({message: response.data.message, type: 'success'})
@@ -317,7 +317,7 @@ export default {
           cpu2006: this.formData.iterations.cpu2006,
           cpu2017: this.formData.iterations.cpu2017,
           yaml: this.formData.yamlData,
-          message: this.formData.message
+          project_message: this.formData.project_message
         }
         do_test_case(formData).then(response => {
           console.log(response.data.code)
@@ -333,7 +333,7 @@ export default {
           this.formData.iterations.cpu2006 = ''
           this.formData.iterations.cpu2017 = ''
           this.formData.yamlData = ''
-          this.formData.message = ''
+          this.formData.project_message = ''
         });
         ElMessage({message: '发起测试完成', type: 'success'});
       }
