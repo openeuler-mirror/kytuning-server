@@ -11,7 +11,7 @@
       <el-table :data="showData" :header-cell-style="{fontSize:'15px'}" tooltip-effect="dark" border style="width: 100%">
         <el-table-column prop="machine_name" label="设备名称"></el-table-column>
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
-        <el-table-column prop="BMC_IP" label="BMC_IP">
+        <el-table-column prop="BMC_IP" label="BMC_IP" width="135">
           <template #default="scope">
             <el-link type="info" :href="'https://' + scope.row.BMC_IP" target="_blank">{{ scope.row.BMC_IP }}</el-link>
           </template>
