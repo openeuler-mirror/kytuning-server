@@ -4,22 +4,22 @@
       <div style="display: flex; justify-content: space-between; width: 85%;">
         <div style="display: flex; justify-content: space-between; width: 86%;margin-left: 7%;">
           <el-form-item label="项目名称：">
-            <el-select v-model="sure_filter.project_name" class="m-2" placeholder="请选择项目名称" filterable allow-create clearable>
+            <el-select v-model="user_filter.project_name" class="m-2" placeholder="请选择项目名称" filterable allow-create clearable>
               <el-option v-for="item in filter.project_name" :key="item" :label="item" :value="item" placeholder="请输入项目名称"/>
             </el-select>
           </el-form-item>
           <el-form-item label="上传人员：">
-            <el-select v-model="sure_filter.user_name" class="m-2" placeholder="请选择上传人员">
+            <el-select v-model="user_filter.user_name" class="m-2" placeholder="请选择上传人员">
               <el-option v-for="item in filter.user_name" :key="item" :label="item" :value="item" placeholder="请选择上传人员"/>
             </el-select>
           </el-form-item>
           <el-form-item label="系统版本：">
-            <el-select v-model="sure_filter.os_names" class="m-2" placeholder="请选择系统版本" filterable allow-create clearable>
+            <el-select v-model="user_filter.os_names" class="m-2" placeholder="请选择系统版本" filterable allow-create clearable>
               <el-option v-for="item in filter.os_names" :key="item" :label="item" :value="item" placeholder="请选择系统版本"/>
             </el-select>
           </el-form-item>
           <el-form-item label="cpu型号：">
-            <el-select v-model="sure_filter.cpu_names" class="m-2" placeholder="请选择cpu型号" filterable allow-create clearable>
+            <el-select v-model="user_filter.cpu_names" class="m-2" placeholder="请选择cpu型号" filterable allow-create clearable>
               <el-option v-for="item in filter.cpu_names" :key="item" :label="item" :value="item" placeholder="请选择cpu型号"/>
             </el-select>
           </el-form-item>
@@ -197,6 +197,7 @@
 import {ElMessage} from 'element-plus';
 import {project, getFilterName, mergeData} from "@/api/api.js";
 import utils from '@/utils/utils';
+import {getToken, setToken} from '@/utils/setToken.js'
 
 export default {
   name: 'ProjectTable',
@@ -222,14 +223,16 @@ export default {
       rules: {
         project_name: [{required: true, message: '请输入项目名称'}],
       },
+      //搜索栏展示的数据
       filter: {
         project_name: "",
         user_name: "",
         os_names: "",
         cpu_names: "",
       },
-      sure_filter: {
-        projectData: "",
+      //用户输入的数据
+      user_filter: {
+        // projectData: "",
         project_name: "",
         user_name: "",
         os_names: "",
@@ -259,11 +262,37 @@ export default {
   methods: {
     //获取页面数据
     getData() {
-      const requestData = {
-        baseId: '',
-        comparsionIds: '',
-        projectData: this.$route.path === '/projectData',
-      };
+      const osession_filter = JSON.parse(getToken('filter', this.user_filter))
+      console.log(osession_filter,111)
+      console.log(typeof osession_filter,1122)
+      let requestData;
+      if (osession_filter) {
+        console.log(osession_filter.project_name,222)
+        console.log(osession_filter.user_name,333)
+        requestData = {
+          baseId: '',
+          comparsionIds: '',
+          projectData: this.$route.path === '/projectData',
+          // projectData:this.user_filter.projectData,
+          project_name: osession_filter.project_name,
+          user_name: osession_filter.user_name,
+          os_names: osession_filter.os_names,
+          cpu_names: osession_filter.cpu_names,
+        };
+         // 还原搜索栏信息
+        this.user_filter.project_name = osession_filter.project_name
+        this.user_filter.user_name = osession_filter.user_name
+        this.user_filter.os_names = osession_filter.os_names
+        this.user_filter.cpu_names = osession_filter.cpu_names
+      } else {
+        requestData = {
+          baseId: '',
+          comparsionIds: '',
+          projectData: this.$route.path === '/projectData',
+          // projectData:this.user_filter.projectData,
+        };
+      }
+
       project('get', requestData).then((response) => {
         this.allDatas = response.data.data
         this.total = this.allDatas.length;
@@ -280,14 +309,14 @@ export default {
       });
     },
     search(){
-      this.sure_filter.projectData = this.$route.path === '/projectData'
-      project('get', this.sure_filter).then((response) => {
+      this.user_filter.projectData = this.$route.path === '/projectData'
+      project('get', this.user_filter).then((response) => {
         this.allDatas = response.data.data
         this.total = this.allDatas.length;
       });
     },
     filterReset() {
-      this.sure_filter = {
+      this.user_filter = {
         projectData:"",
         project_name: "",
         user_name: "",
@@ -298,6 +327,8 @@ export default {
     },
     //数据对比
     getComparativeData() {
+      console.log(this.user_filter,113331)
+      console.log(this.$route.fullPath,222)
       if (this.compars.length === 0) {
         ElMessage.error({message: '请选择一条基准数据和至少一条对比数据', duration: 1000});
         return;
@@ -307,9 +338,11 @@ export default {
       const firstNonZeroIndex = List1.findIndex(num => num !== 0);
       const selectedType = List2[firstNonZeroIndex]
       const comparsionIds = Object.values(this.compars).map(item => item.env_id);
+      // setToken('filter',this.user_filter)
+      setToken('filter', JSON.stringify(this.user_filter))
       this.$router.push({
         name: selectedType,
-        "params": {baseId: comparsionIds[0], comparsionIds: comparsionIds.slice(1).join(', ')}
+        "params": {baseId: comparsionIds[0], comparsionIds: comparsionIds.slice(1).join(', '), path: this.$route.fullPath, filter: this.user_filter}
       });
     },
     //查看对比数据
@@ -418,7 +451,15 @@ export default {
       const List2 = ['stream', 'lmbench', 'unixbench', 'fio', 'iozone', 'jvm2008', 'cpu2006', 'cpu2017']
       const firstNonZeroIndex = List1.findIndex(num => num !== 0);
       this.selectedType = List2[firstNonZeroIndex]
-      this.$router.push({name: this.selectedType, "params": {baseId: row.env_id, comparsionIds: ''}});
+      this.$router.push({
+        name: this.selectedType,
+        "params": {baseId: row.env_id, comparsionIds: '', path: this.$route.fullPath, filter: this.user_filter}
+      });
+    },
+
+    beforeDestroy() {
+      // 清除存储的搜索记录
+      sessionStorage.removeItem('searchParams');
     },
   }
 }
