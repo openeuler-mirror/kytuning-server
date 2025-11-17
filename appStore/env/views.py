@@ -109,10 +109,10 @@ class EnvViewSet(viewsets.ModelViewSet):
                  {'column1': 'swinfo', 'column2': 'os', 'column3': 'kernel', 'column4': data_['swinfo_os_kernel']},
                  {'column1': 'swinfo', 'column2': 'os', 'column3': 'grub', 'column4': data_['swinfo_os_grub']},
                  {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysconf', 'column4': data_['swinfo_runtime_sysconf']},
-                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysctl', 'column4': data_['swinfo_runtime_sysctl']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'sysctl', 'column4': ' '.join(sorted(data_['swinfo_runtime_sysctl'].split('\n')))},
                  {'column1': 'swinfo','column2': 'runtime','column3': 'systemctlinfo','column4': data_['swinfo_runtime_systemctlinfo']},
                  {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'driverinfo', 'column4': data_['swinfo_runtime_driverinfo']},
-                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'rpmlist', 'column4': data_['swinfo_runtime_rpmlist']},
+                 {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'rpmlist', 'column4': ' '.join(sorted(data_['swinfo_runtime_rpmlist'].split('\n')))},
                  {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'ipclist', 'column4': data_['swinfo_runtime_ipclist']},
                  {'column1': 'swinfo','column2': 'runtime','column3': 'selinux_status','column4': data_['swinfo_runtime_selinux_status']},
                  {'column1': 'swinfo', 'column2': 'runtime', 'column3': 'power_status','column4': data_['swinfo_runtime_power_status']},
@@ -186,10 +186,10 @@ class EnvViewSet(viewsets.ModelViewSet):
             datas[nic_number-19].update({'column%d'%(start_number):compar_data_['swinfo_os_kernel']})
             datas[nic_number-18].update({'column%d'%(start_number):compar_data_['swinfo_os_grub']})
             datas[nic_number-17].update({'column%d'%(start_number):compar_data_['swinfo_runtime_sysconf']})
-            datas[nic_number-16].update({'column%d'%(start_number):compar_data_['swinfo_runtime_sysctl']})
+            datas[nic_number-16].update({'column%d'%(start_number):' '.join(sorted(compar_data_['swinfo_runtime_sysctl'].split('\n')))})
             datas[nic_number-15].update({'column%d'%(start_number):compar_data_['swinfo_runtime_systemctlinfo']})
             datas[nic_number-14].update({'column%d'%(start_number):compar_data_['swinfo_runtime_driverinfo']})
-            datas[nic_number-13].update({'column%d'%(start_number):compar_data_['swinfo_runtime_rpmlist']})
+            datas[nic_number-13].update({'column%d'%(start_number):' '.join(sorted(compar_data_['swinfo_runtime_rpmlist'].split('\n')))})
             datas[nic_number-12].update({'column%d'%(start_number):compar_data_['swinfo_runtime_ipclist']})
             datas[nic_number-11].update({'column%d'%(start_number):compar_data_['swinfo_runtime_selinux_status']})
             datas[nic_number-10].update({'column%d'%(start_number):compar_data_['swinfo_runtime_power_status']})
