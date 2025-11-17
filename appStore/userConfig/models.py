@@ -30,7 +30,7 @@ class UserConfig(models.Model):
     cpu2006_config = models.TextField(verbose_name='cpu2006测试配置文件')
     cpu2006_loongarch64_config = models.TextField(verbose_name='cpu2006_loongarch64测试配置文件')
     cpu2017_config = models.TextField(verbose_name='cpu2017测试配置文件')
-    message = models.CharField(max_length=200,verbose_name='描述信息', null=True, blank=True)
+    project_message = models.CharField(max_length=200,verbose_name='描述信息', null=True, blank=True)
     is_send_config = models.BooleanField(default=False,verbose_name="是否是发起测试而保存的数据")
 
     class Meta:
