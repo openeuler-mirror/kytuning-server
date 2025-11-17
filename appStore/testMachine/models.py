@@ -33,6 +33,7 @@ class TestMachine(models.Model):
     BMC_IP = models.CharField(max_length=50, verbose_name='BMC_IP')
     BMC_user_name = models.CharField(max_length=50, verbose_name='BMC用户名')
     BMC_password = models.CharField(max_length=50, verbose_name='BMC密码')
+    creator = models.CharField(max_length=50, verbose_name='创建人员')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     owner = models.CharField(max_length=50, verbose_name='当前操作系统负责人', null=True, blank=True)
     server_IP = models.CharField(max_length=50, verbose_name='server_IP', null=True, blank=True)
