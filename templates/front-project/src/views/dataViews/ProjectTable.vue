@@ -44,25 +44,22 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
         </template>
       </el-table-column>
-       <el-table-column prop="project_message" label="描述" >
+      <el-table-column prop="project_message" label="描述" >
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_message }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="user_name" label="上传人员" :filters=userNames :filter-method="filterHandler"
-                       filter-placement="bottom-end">
+      <el-table-column prop="user_name" label="上传人员" :filters=userNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.user_name }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="os_version" label="系统版本" width="245" :filters=osNames :filter-method="filterHandler"
-                       filter-placement="bottom-end">
+      <el-table-column prop="os_version" label="系统版本" width="245" :filters=osNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.os_version }}</div>
         </template>
       </el-table-column>
-      <el-table-column prop="cpu_module_name" label="cpu型号" width="195" :filters=cpuNames
-                       :filter-method="filterHandler" filter-placement="bottom-end">
+      <el-table-column prop="cpu_module_name" label="cpu型号" width="195" :filters=cpuNames :filter-method="filterHandler" filter-placement="bottom-end">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.cpu_module_name }}</div>
         </template>
@@ -125,6 +122,12 @@
       <el-table-column prop="test_time" sortable label="录入时间" width="145">
         <template #default="scope">
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.test_time }}</div>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="error_message" label="存储错误描述" >
+        <template #default="scope">
+          <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.error_message }}</div>
         </template>
       </el-table-column>
 
