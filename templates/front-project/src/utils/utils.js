@@ -68,6 +68,8 @@ export default {
                 link.setAttribute('download', 'log.tar')
                 document.body.appendChild(link)
                 link.click()
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(link);
             }).catch(error => {
                 if (error.code === "ERR_BAD_REQUEST") {
                     ElMessage({message: "下载失败没有找到对应日志", type: 'warning'})
