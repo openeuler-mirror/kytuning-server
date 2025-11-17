@@ -298,7 +298,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         file_name = '%s.json' % (data_env['time'])
         with open(json_file_path + file_name, 'w') as file:
             json.dump(request.data, file)
-        project_message = []
+        error_message = []
 
         """stream数据处理"""
         from appStore.stream.views import StreamViewSet
@@ -308,7 +308,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         StreamViewSet = StreamViewSet()
         stream_message = StreamViewSet.create(request=request_stream, *args, **kwargs)
         if stream_message:
-            project_message.append({"stream": json.loads(stream_message.content.decode('utf-8'))['data']})
+            error_message.append({"stream": json.loads(stream_message.content.decode('utf-8'))['data']})
 
         """lmbench数据处理"""
         from appStore.lmbench.views import LmbenchViewSet
@@ -318,7 +318,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         LmbenchViewSet = LmbenchViewSet()
         lmbench_message = LmbenchViewSet.create(request=request_unixbench, *args, **kwargs)
         if lmbench_message:
-            project_message.append({"lmbench": json.loads(lmbench_message.content.decode('utf-8'))['data']})
+            error_message.append({"lmbench": json.loads(lmbench_message.content.decode('utf-8'))['data']})
 
         """unixbench数据处理"""
         from appStore.unixbench.views import UnixbenchViewSet
@@ -328,7 +328,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         UnixbenchViewSet = UnixbenchViewSet()
         unixbench_message = UnixbenchViewSet.create(request=request_unixbench, *args, **kwargs)
         if unixbench_message:
-            project_message.append({"unixbench": json.loads(unixbench_message.content.decode('utf-8'))['data']})
+            error_message.append({"unixbench": json.loads(unixbench_message.content.decode('utf-8'))['data']})
 
         """fio数据处理"""
         from appStore.fio.views import FioViewSet
@@ -338,7 +338,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         FioViewSet = FioViewSet()
         fio_message = FioViewSet.create(request=request_fio, *args, **kwargs)
         if fio_message:
-            project_message.append({"fio": json.loads(fio_message.content.decode('utf-8'))['data']})
+            error_message.append({"fio": json.loads(fio_message.content.decode('utf-8'))['data']})
 
         """iozone数据处理"""
         from appStore.iozone.views import IozoneViewSet
@@ -348,7 +348,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         IozoneViewSet = IozoneViewSet()
         iozone_message = IozoneViewSet.create(request=request_iozone, *args, **kwargs)
         if iozone_message:
-            project_message.append({"iozone": json.loads(iozone_message.content.decode('utf-8'))['data']})
+            error_message.append({"iozone": json.loads(iozone_message.content.decode('utf-8'))['data']})
 
         """jvm2008数据处理"""
         from appStore.jvm2008.views import Jvm2008ViewSet
@@ -358,7 +358,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         Jvm2008ViewSet = Jvm2008ViewSet()
         jvm_message = Jvm2008ViewSet.create(request=request_jvm2008, *args, **kwargs)
         if jvm_message:
-            project_message.append({"jvm2008": json.loads(jvm_message.content.decode('utf-8'))['data']})
+            error_message.append({"jvm2008": json.loads(jvm_message.content.decode('utf-8'))['data']})
 
         """speccpu2006数据处理"""
         from appStore.cpu2006.views import Cpu2006ViewSet
@@ -368,7 +368,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         Cpu2006ViewSet = Cpu2006ViewSet()
         cpu2006_message = Cpu2006ViewSet.create(request=request_cpu2006, *args, **kwargs)
         if cpu2006_message:
-            project_message.append({"cpu2006": json.loads(cpu2006_message.content.decode('utf-8'))['data']})
+            error_message.append({"cpu2006": json.loads(cpu2006_message.content.decode('utf-8'))['data']})
 
         """speccpu2017数据处理"""
         from appStore.cpu2017.views import Cpu2017ViewSet
@@ -378,7 +378,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         Cpu2017ViewSet = Cpu2017ViewSet()
         cpu2017_message =  Cpu2017ViewSet.create(request=request_cpu2017, *args, **kwargs)
         if cpu2017_message:
-            project_message.append({"cpu2017": json.loads(cpu2017_message.content.decode('utf-8'))['data']})
+            error_message.append({"cpu2017": json.loads(cpu2017_message.content.decode('utf-8'))['data']})
 
         """project数据处理"""
         from appStore.project.views import ProjectViewSet
@@ -386,7 +386,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         request_project.method = 'POST'
         request.data['chinese_name']=request.user.chinese_name
         request_project.data_project = request.data
-        request_project.project_message = project_message
+        request_project.error_message = error_message
         ProjectViewSet = ProjectViewSet()
         ProjectViewSet.create(request=request_project, *args, **kwargs)
 
