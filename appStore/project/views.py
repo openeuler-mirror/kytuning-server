@@ -76,13 +76,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def put(self, request, *args, **kwargs):
         id = request.data.get('id', None)
         project_name = request.data.get('project_name', None)
-        message = request.data.get('message', None)
+        project_message = request.data.get('project_message', None)
         project_data = request.data.get('project_data', None)
         if not project_name and not id:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id和project_name')
         user_name = Project.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
-            Project.objects.filter(id=id).update(id=id,project_name=project_name,message=message,project_data=project_data)
+            Project.objects.filter(id=id).update(id=id,project_name=project_name,project_message=project_message,project_data=project_data)
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '该用户不允许修改此数据')
         queryset = Project.objects.filter(id=id)
@@ -377,10 +377,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data_project = {}
         data_project['env_id'] = request.__dict__['data_project']['env_id']
-        if request.__dict__['project_message']:
-            data_project['message'] = str(request.__dict__['project_message'])
+        if request.__dict__['data_project']['project_message']:
+            data_project['project_message'] = str(request.__dict__['data_project']['project_message'])
         else:
-            data_project['message'] = None
+            data_project['project_message'] = None
         data_project['project_name'] = request.__dict__['data_project']['project_name']
         data_project['user_name'] = request.__dict__['data_project']['chinese_name']
         data_project['os_version'] = request.__dict__['data_project']['envinfo']['swinfo']['os']['osversion']

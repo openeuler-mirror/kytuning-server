@@ -1,10 +1,3 @@
-<!--
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Mar 11 16:52:35 2024 +0800
--->
 <template>
   <div>
     <div class="floating-buttons">
@@ -51,9 +44,9 @@
           <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_name }}</div>
         </template>
       </el-table-column>
-       <el-table-column prop="message" label="描述" >
+       <el-table-column prop="project_message" label="描述" >
         <template #default="scope">
-          <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.message }}</div>
+          <div @click="handleRowClick(scope.row)" style="cursor: pointer;">{{ scope.row.project_message }}</div>
         </template>
       </el-table-column>
       <el-table-column prop="user_name" label="上传人员" :filters=userNames :filter-method="filterHandler"
@@ -165,8 +158,8 @@
         <el-form-item label="项目名称" width="80px" prop="project_name">
           <el-input v-model="form.project_name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="message" width="80px" prop="message">
-          <el-input v-model="form.message" autocomplete="off"></el-input>
+        <el-form-item label="project_message" width="80px" prop="project_message">
+          <el-input v-model="form.project_message" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -185,7 +178,7 @@
         <el-table-column label="项目名称" prop="project_name" show-overflow-tooltip/>
         <!--        </el-table-column>-->
         <el-table-column label="第几次测试" prop="times"/>
-        <el-table-column label="描述" prop="message"/>
+        <el-table-column label="描述" prop="project_message"/>
         <el-table-column label="操作">
           <template #default="scope">
             <el-button type="danger" @click="delCompar(scope.row)">删除</el-button>
@@ -221,7 +214,7 @@ export default {
       form: {
         id: 0,
         project_name: "",
-        message: "",
+        project_message: "",
       },
       rules: {
         project_name: [{required: true, message: '请输入项目名称'}],
