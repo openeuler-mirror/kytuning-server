@@ -13,7 +13,7 @@
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
         <el-table-column prop="BMC_IP" label="BMC_IP">
           <template #default="scope">
-            <el-link type="info" :href="'http://' + scope.row.BMC_IP" target="_blank">{{ scope.row.BMC_IP }}</el-link>
+            <el-link type="info" :href="'https://' + scope.row.BMC_IP" target="_blank">{{ scope.row.BMC_IP }}</el-link>
           </template>
         </el-table-column>
         <el-table-column prop="owner" label="使用人"></el-table-column>

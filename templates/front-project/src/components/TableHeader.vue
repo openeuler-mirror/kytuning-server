@@ -208,7 +208,7 @@ export default {
     },
     goToHome() {
       this.$nextTick(() => {
-        this.$router.push({path: '/projectData'})
+        this.$router.push({path: '/tempData'})
       })
     },
     //跳转其它页面
