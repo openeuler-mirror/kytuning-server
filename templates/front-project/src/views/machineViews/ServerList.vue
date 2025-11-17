@@ -11,9 +11,13 @@
       <el-table :data="showData" :header-cell-style="{fontSize:'15px'}" tooltip-effect="dark" border style="width: 100%">
         <el-table-column prop="machine_name" label="设备名称"></el-table-column>
         <el-table-column prop="cpu_module_name" label="CPU型号"></el-table-column>
-        <el-table-column prop="BMC_IP" label="BMC_IP"></el-table-column>
-        <el-table-column prop="owner" label="当前负责人"></el-table-column>
-        <el-table-column prop="server_IP" label="server_IP"></el-table-column>
+        <el-table-column prop="BMC_IP" label="BMC_IP">
+          <template #default="scope">
+            <el-link type="info" :href="'http://' + scope.row.BMC_IP" target="_blank">{{ scope.row.BMC_IP }}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column prop="owner" label="使用人"></el-table-column>
+        <el-table-column prop="server_IP" label="server_IP" width="130"></el-table-column>
         <el-table-column prop="iso_name" label="当前ISO"></el-table-column>
         <el-table-column prop="link_status" label="连接状态">
           <template #default="scope">
@@ -22,7 +26,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="queue_user" label="排队人员"></el-table-column>
+        <el-table-column prop="queue_user" label="队列"></el-table-column>
         <el-table-column prop="update_time" label="更新时间" width="145"></el-table-column>
         <el-table-column label="操作" width="300">
           <template #default="scope">
