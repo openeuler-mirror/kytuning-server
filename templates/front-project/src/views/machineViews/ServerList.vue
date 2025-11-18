@@ -16,9 +16,9 @@
             <el-link type="info" :href="'https://' + scope.row.BMC_IP" target="_blank">{{ scope.row.BMC_IP }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column prop="owner" label="使用人"></el-table-column>
+        <el-table-column prop="owner" label="使用人" width="70"></el-table-column>
         <el-table-column prop="server_IP" label="server_IP" width="130"></el-table-column>
-        <el-table-column prop="iso_name" label="当前ISO"></el-table-column>
+        <el-table-column prop="iso_name" label="当前ISO"  width="220"></el-table-column>
         <el-table-column prop="link_status" label="连接状态">
           <template #default="scope">
             <el-button v-if="scope.row.link_status" :type="scope.row.link_status === '在线' ? 'success' : 'danger'">
@@ -26,8 +26,8 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="queue_user" label="队列"></el-table-column>
-        <el-table-column prop="update_time" label="更新时间" width="145"></el-table-column>
+        <el-table-column prop="queue_user" label="队列" width="70"></el-table-column>
+        <el-table-column prop="update_time" label="更新时间" width="165"></el-table-column>
         <el-table-column label="操作" width="300">
           <template #default="scope">
             <el-button type="primary" @click="modify(scope.row)" class="operate-button">编辑</el-button>
