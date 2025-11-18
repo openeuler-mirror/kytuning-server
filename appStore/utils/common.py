@@ -130,12 +130,17 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
     mv_ssh_keygen = "ssh-keygen -R " + test_ip
     subprocess.run(mv_ssh_keygen, shell=True)
 
-    # 如果是最小化安装的话没有wget和unzip所以需要下载这两个软件包。
-    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "yum install wget unzip make -y"'
-    wget_result = subprocess.run(wget_command, shell=True)
-    if wget_result.returncode:
-        wget_result.stderr = "执行" + wget_command + "失败"
-        return wget_result
+    # 检查 wget、unzip 和 make 是否已安装
+    check_yum_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rpm -q wget unzip make"'
+    check_yum_result = subprocess.run(check_yum_command, shell=True, capture_output=True, text=True)
+    if '未安装软件包' in check_yum_result.stdout:
+        # 如果是最小化安装的话没有wget和unzip所以需要下载这两个软件包。
+        yum_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "yum install wget unzip make -y"'
+        yum_result = subprocess.run(yum_command, shell=True)
+        if yum_result.returncode:
+            yum_result.stderr = "执行" + yum_command + "失败"
+            return yum_result
+
 
     # 下载run_kytuning代码
     wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (TOOLS_URL)
