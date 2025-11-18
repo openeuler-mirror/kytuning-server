@@ -141,6 +141,15 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
             yum_result.stderr = "执行" + yum_command + "失败"
             return yum_result
 
+    # openEuler22.03版本没有requests库
+    check_pip_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "pip3 list | grep requests"'
+    check_pip_result = subprocess.run(check_pip_command, shell=True, capture_output=True, text=True)
+    if not check_pip_result.stdout:
+        pip_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "pip3 install requests"'
+        pip_result = subprocess.run(pip_command, shell=True)
+        if pip_result.returncode:
+            pip_result.stderr = "执行" + pip_command + "失败"
+            return pip_result
 
     # 下载run_kytuning代码
     wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (TOOLS_URL)
