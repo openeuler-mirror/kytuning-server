@@ -1,3 +1,10 @@
+<!--
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Tue Mar 12 09:59:13 2024 +0800
+-->
 <template>
   <div>
     <div class="floating-buttons">
@@ -197,7 +204,7 @@
 import {ElMessage} from 'element-plus';
 import {project, getFilterName, mergeData} from "@/api/api.js";
 import utils from '@/utils/utils';
-import {getToken, setToken} from '@/utils/setToken.js'
+import {getToken, removeToken, setToken} from '@/utils/setToken.js'
 
 export default {
   name: 'ProjectTable',
@@ -232,7 +239,7 @@ export default {
       },
       //用户输入的数据
       user_filter: {
-        // projectData: "",
+        ProjectWeb: false,
         project_name: "",
         user_name: "",
         os_names: "",
@@ -263,23 +270,18 @@ export default {
     //获取页面数据
     getData() {
       const osession_filter = JSON.parse(getToken('filter', this.user_filter))
-      console.log(osession_filter,111)
-      console.log(typeof osession_filter,1122)
       let requestData;
       if (osession_filter) {
-        console.log(osession_filter.project_name,222)
-        console.log(osession_filter.user_name,333)
         requestData = {
           baseId: '',
           comparsionIds: '',
-          projectData: this.$route.path === '/projectData',
-          // projectData:this.user_filter.projectData,
+          ProjectWeb: this.$route.path === '/projectData',
           project_name: osession_filter.project_name,
           user_name: osession_filter.user_name,
           os_names: osession_filter.os_names,
           cpu_names: osession_filter.cpu_names,
         };
-         // 还原搜索栏信息
+        // 还原搜索栏信息
         this.user_filter.project_name = osession_filter.project_name
         this.user_filter.user_name = osession_filter.user_name
         this.user_filter.os_names = osession_filter.os_names
@@ -288,11 +290,9 @@ export default {
         requestData = {
           baseId: '',
           comparsionIds: '',
-          projectData: this.$route.path === '/projectData',
-          // projectData:this.user_filter.projectData,
+          ProjectWeb: this.$route.path === '/projectData',
         };
       }
-
       project('get', requestData).then((response) => {
         this.allDatas = response.data.data
         this.total = this.allDatas.length;
@@ -309,7 +309,7 @@ export default {
       });
     },
     search(){
-      this.user_filter.projectData = this.$route.path === '/projectData'
+      this.user_filter.ProjectWeb = this.$route.path === '/projectData'
       project('get', this.user_filter).then((response) => {
         this.allDatas = response.data.data
         this.total = this.allDatas.length;
@@ -317,18 +317,17 @@ export default {
     },
     filterReset() {
       this.user_filter = {
-        projectData:"",
+        ProjectWeb:"",
         project_name: "",
         user_name: "",
         os_names: "",
         cpu_names: "",
       }
+      removeToken('filter');
       this.getData()
     },
     //数据对比
     getComparativeData() {
-      console.log(this.user_filter,113331)
-      console.log(this.$route.fullPath,222)
       if (this.compars.length === 0) {
         ElMessage.error({message: '请选择一条基准数据和至少一条对比数据', duration: 1000});
         return;
@@ -342,7 +341,7 @@ export default {
       setToken('filter', JSON.stringify(this.user_filter))
       this.$router.push({
         name: selectedType,
-        "params": {baseId: comparsionIds[0], comparsionIds: comparsionIds.slice(1).join(', '), path: this.$route.fullPath, filter: this.user_filter}
+        "params": {baseId: comparsionIds[0], comparsionIds: comparsionIds.slice(1).join(', ')}
       });
     },
     //查看对比数据
@@ -453,7 +452,7 @@ export default {
       this.selectedType = List2[firstNonZeroIndex]
       this.$router.push({
         name: this.selectedType,
-        "params": {baseId: row.env_id, comparsionIds: '', path: this.$route.fullPath, filter: this.user_filter}
+        "params": {baseId: row.env_id, comparsionIds: ''}
       });
     },
 
