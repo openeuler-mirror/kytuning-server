@@ -427,11 +427,11 @@ def get_analyze_data(datas,test_type):
                     analyze += '\n'
 
                 Basic_float_list=compare_values[26:30]
-                Basic_float_value = get_range(Basic_float_list)
-                if Basic_float_value[0] or Basic_float_value[3]:
+                Basic_float_list = get_range(Basic_float_list)
+                if Basic_float_list[0] or Basic_float_list[3]:
                     analyze += '%d.大项Basic float operations中' % (number)
                     number += 1
-                    analyze = get_analyze_message(Basic_float_value, analyze)
+                    analyze = get_analyze_message(Basic_float_list, analyze)
                     analyze += '\n'
 
                 Basic_double_list=compare_values[30:34]
