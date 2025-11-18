@@ -15,6 +15,7 @@ import django.utils.timezone as timezone
 class Project(models.Model):
     """project表"""
     env_id = models.IntegerField(verbose_name='环境id')
+    merge_env_ids = models.CharField(max_length=255, verbose_name='合并的所有环境表id', null=True, blank=True)#为了数据的安全稳定就不删除环境表了。
     project_name = models.CharField(max_length=255, verbose_name='项目名称', null=True, blank=True)
     user_name = models.CharField(max_length=255, verbose_name='测试人员名称')
     os_version = models.CharField(max_length=255, verbose_name='操作系统版本', null=True, blank=True)

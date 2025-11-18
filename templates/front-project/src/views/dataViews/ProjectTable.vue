@@ -368,6 +368,8 @@ export default {
           ElMessage({message: response.data.message, type: 'success'})
           this.getData()
           this.dialogPutProject = false
+          //清空合并列表数据
+          this.compars = []
         }
       })
     },
