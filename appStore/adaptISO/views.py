@@ -34,7 +34,7 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
         data_iso['user_name'] = request.user.chinese_name
         data_iso['http_address'] = request.data.get('http_address')
         data_iso['arch_name'] = request.data.get('arch_name')
-        data_iso['ks_file_name'] = TOOLS_URL + '/auto-install/' + request.data.get('ks_file_name')
+        data_iso['ks_file_name'] = request.data.get('ks_file_name')
         data_iso['ISO_name'] = request.data.get('http_address').split('/')[-1]
         if data_iso['ISO_name'].endswith('iso'):
             config_serializer = AdaptISOListSerializer(data=data_iso)
@@ -56,7 +56,7 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             if iso_data.http_address != request.data.get('http_address'):
                 new_iso_name = request.data.get('http_address').split('/')[-1]
                 if iso_data.ISO_name != new_iso_name:
-                    if AdaptISO.objects.get(ISO_name=new_iso_name):
+                    if AdaptISO.objects.filter(ISO_name=new_iso_name):
                         return json_response({}, status.HTTP_205_RESET_CONTENT,'该ISO已经录入数据库，不可重复录入。')
             iso_data.http_address = request.data.get('http_address')
             iso_data.arch_name = request.data.get('arch_name')
