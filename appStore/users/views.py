@@ -30,7 +30,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             # 可以根据需要设置其他用户属性
             user.save()
             return json_response(serializer_user.data, status.HTTP_200_OK, '创建成功！')
-        log.info('user数据存储错误 ：%s，', serializer_user.errors)
+        log.info('user数据存储错误 ：%s，'%serializer_user.errors)
         return json_response(serializer_user.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_user))
 
 

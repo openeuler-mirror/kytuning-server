@@ -357,8 +357,8 @@ class IozoneViewSet(viewsets.ModelViewSet):
                 if serializer_iozone.is_valid():
                     self.perform_create(serializer_iozone)
                 else:
-                    log.info('iozone数据存储错误 ：%s，', serializer_iozone.errors)
-                    log.info('iozone存储数据为 ：%s，', data_iozone)
+                    log.info('iozone数据存储错误 ：%s，'%serializer_iozone.errors)
+                    log.info('iozone存储数据为 ：%s，'%data_iozone)
                     return json_response(serializer_iozone.errors, status.HTTP_400_BAD_REQUEST,
                                          get_error_message(serializer_iozone))
         if serializer_iozone_errors:

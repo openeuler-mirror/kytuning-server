@@ -164,10 +164,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         for id in env_ids:
             if Stream.objects.filter(env_id=id):
-                log.info('处理的stream的id是 %d，把stream_env = %d 改为 %d ,', Stream.objects.filter(env_id=id).first().id, id, env_id)
+                log.info('处理的stream的id是 %d，把stream_env = %d 改为 %d ,'%(Stream.objects.filter(env_id=id).first().id, id, env_id))
                 Stream.objects.filter(env_id=id).update(env_id=env_id)
             if Lmbench.objects.filter(env_id=id):
-                log.info('处理的lmbench的id是 %d，把lmbench_env = %d 改为 %d ,', Lmbench.objects.filter(env_id=id).first().id, id, env_id)
+                log.info('处理的lmbench的id是 %d，把lmbench_env = %d 改为 %d ,'%(Lmbench.objects.filter(env_id=id).first().id, id, env_id))
                 Lmbench.objects.filter(env_id=id).update(env_id=env_id)
             max_unixbench_number = 0
             if Unixbench.objects.filter(env_id=id):
@@ -177,7 +177,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_unixbench_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的unixbench的id是 %d，把unixbench_env = %d 改为 %d ,', obj.id, id, env_id)
+                    log.info('处理的unixbench的id是 %d，把unixbench_env = %d 改为 %d ,'%(obj.id, id, env_id))
                     obj.save()
                 unixbench_number = max_unixbench_number
             max_fio_number = 0
@@ -188,7 +188,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_fio_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的fio的id是 %d，把fio_env = %d 改为 %d ,', obj.id, id, env_id)
+                    log.info('处理的fio的id是 %d，把fio_env = %d 改为 %d ,'%(obj.id, id, env_id))
                     obj.save()
                 fio_number = max_fio_number
             max_iozone_number = 0
@@ -199,7 +199,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_iozone_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的iozone的id是 %d，把iozone_env = %d 改为 %d ,', obj.id, id, env_id)
+                    log.info('处理的iozone的id是 %d，把iozone_env = %d 改为 %d ,'%(obj.id, id, env_id))
                     obj.save()
                 iozone_number = max_iozone_number
             max_jvm2008_number = 0
@@ -210,7 +210,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_jvm2008_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的jvm2008的id是 %d，把jvm2008_env = %d 改为 %d ,', obj.id, id, env_id)
+                    log.info('处理的jvm2008的id是 %d，把jvm2008_env = %d 改为 %d ,'%(obj.id, id, env_id))
                     obj.save()
                 jvm2008_number = max_jvm2008_number
             max_cpu2006_number = 0
@@ -221,7 +221,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_cpu2006_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的cpu2006的id是 %d，把cpu2006_env = %d 改为 %d ,', obj.id, id, env_id)
+                    log.info('处理的cpu2006的id是 %d，把cpu2006_env = %d 改为 %d ,'%(obj.id, id, env_id))
                     obj.save()
                 cpu2006_number = max_cpu2006_number
             max_cpu2017_number = 0
@@ -232,7 +232,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_cpu2017_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的cpu2017的id是 %d，把cpu2017_env = %d 改为 %d ,', obj.id, id, env_id)
+                    log.info('处理的cpu2017的id是 %d，把cpu2017_env = %d 改为 %d ,'%(obj.id, id, env_id))
                     obj.save()
                 cpu2017_number = max_cpu2017_number
 
@@ -439,7 +439,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if serializer_project.is_valid():
             self.perform_create(serializer_project)
         else:
-            log.info('project数据存储失败：%s', serializer_project.errors)
+            log.info('project数据存储失败：%s'%serializer_project.errors)
             print(serializer_project.errors, "project")
             return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
                                  get_error_message(serializer_project))

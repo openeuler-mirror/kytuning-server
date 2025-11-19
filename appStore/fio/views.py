@@ -307,8 +307,8 @@ class FioViewSet(viewsets.ModelViewSet):
                 if serializer_fio.is_valid():
                     self.perform_create(serializer_fio)
                     continue
-                log.info('fio数据存储错误 ：%s，', serializer_fio.errors)
-                log.info('fio存储数据为 ：%s，', data_fio)
+                log.info('fio数据存储错误 ：%s，'%serializer_fio.errors)
+                log.info('fio存储数据为 ：%s，'%data_fio)
                 return json_response(serializer_fio.errors, status.HTTP_400_BAD_REQUEST,
                                      get_error_message(serializer_fio))
         if serializer_fio_errors:

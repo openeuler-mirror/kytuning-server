@@ -538,8 +538,8 @@ class LmbenchViewSet(viewsets.ModelViewSet):
                 comparsion_queryset = Lmbench.objects.filter(env_id=comparativeId).all()
                 datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
         analyze_data = get_analyze_data(datas, 'lmbench')
-        # all_datas = {'datas': datas, 'analyze_data': analyze_data}
-        return json_response(datas, status.HTTP_200_OK, '列表')
+        all_datas = {'datas': datas, 'analyze_data': analyze_data}
+        return json_response(all_datas, status.HTTP_200_OK, '列表')
 
     def create(self, request, *args, **kwargs):
         serializer_lmbench_error = []
@@ -645,8 +645,8 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             if serializer_lmbench.is_valid():
                 self.perform_create(serializer_lmbench)
             else:
-                log.info('lmbench数据存储错误 ：%s，', serializer_lmbench.errors)
-                log.info('lmbench存储数据为 ：%s，', data_lmbench)
+                log.info('lmbench数据存储错误 ：%s，'%serializer_lmbench.errors)
+                log.info('lmbench存储数据为 ：%s，'%data_lmbench)
                 serializer_lmbench_error.append(serializer_lmbench.errors)
                 error_message.append(get_error_message(serializer_lmbench))
         if serializer_lmbench_error:

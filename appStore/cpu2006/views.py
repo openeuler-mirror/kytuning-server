@@ -962,8 +962,8 @@ class Cpu2006ViewSet(viewsets.ModelViewSet):
                             if serializer_cpu2006.is_valid():
                                 self.perform_create(serializer_cpu2006)
                             else:
-                                log.info('cpu2006数据存储错误 ：%s，', serializer_cpu2006.errors)
-                                log.info('cpu2006存储数据为 ：%s，', data_cpu2006)
+                                log.info('cpu2006数据存储错误 ：%s，'%serializer_cpu2006.errors)
+                                log.info('cpu2006存储数据为 ：%s，'%data_cpu2006)
                                 serializer_cpu2006_errors.append(serializer_cpu2006.errors)
                                 error_message.append(get_error_message(serializer_cpu2006))
         if serializer_cpu2006_errors:

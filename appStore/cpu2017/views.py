@@ -811,8 +811,8 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
                             if serializer_cpu2017.is_valid():
                                 self.perform_create(serializer_cpu2017)
                             else:
-                                log.info('cpu2017数据存储错误 ：%s，', serializer_cpu2017.errors)
-                                log.info('cpu2017存储数据为 ：%s，', data_cpu2017)
+                                log.info('cpu2017数据存储错误 ：%s，'%serializer_cpu2017.errors)
+                                log.info('cpu2017存储数据为 ：%s，'%data_cpu2017)
                                 serializer_cpu2017_errors.append(serializer_cpu2017.errors)
                                 error_message.append(get_error_message(serializer_cpu2017))
         if serializer_cpu2017_errors:
