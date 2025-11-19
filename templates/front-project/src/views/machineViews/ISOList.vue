@@ -124,7 +124,6 @@ export default {
           adapt_ISO('post', machineData_).then((response) => {
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'});
-              this.getData();
               this.reset()
             }
           });
@@ -144,6 +143,7 @@ export default {
         BMC_user_name: '',
         BMC_password: '',
       }
+      this.$refs.machineForm.resetFields();
       this.getData()
     },
 
@@ -170,7 +170,7 @@ export default {
       adapt_ISO('put', machineData_).then(response => {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})
-          this.getData()
+          this.reset()
         }
       })
     },
