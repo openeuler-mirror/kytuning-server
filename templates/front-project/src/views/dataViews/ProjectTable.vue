@@ -269,23 +269,23 @@ export default {
   methods: {
     //获取页面数据
     getData() {
-      const osession_filter = JSON.parse(getToken('filter', this.user_filter))
+      const session_filter = JSON.parse(getToken('filter', this.user_filter))
       let requestData;
-      if (osession_filter) {
+      if (session_filter) {
         requestData = {
           baseId: '',
           comparsionIds: '',
           ProjectWeb: this.$route.path === '/projectData',
-          project_name: osession_filter.project_name,
-          user_name: osession_filter.user_name,
-          os_names: osession_filter.os_names,
-          cpu_names: osession_filter.cpu_names,
+          project_name: session_filter.project_name,
+          user_name: session_filter.user_name,
+          os_names: session_filter.os_names,
+          cpu_names: session_filter.cpu_names,
         };
         // 还原搜索栏信息
-        this.user_filter.project_name = osession_filter.project_name
-        this.user_filter.user_name = osession_filter.user_name
-        this.user_filter.os_names = osession_filter.os_names
-        this.user_filter.cpu_names = osession_filter.cpu_names
+        this.user_filter.project_name = session_filter.project_name
+        this.user_filter.user_name = session_filter.user_name
+        this.user_filter.os_names = session_filter.os_names
+        this.user_filter.cpu_names = session_filter.cpu_names
       } else {
         requestData = {
           baseId: '',
@@ -337,7 +337,6 @@ export default {
       const firstNonZeroIndex = List1.findIndex(num => num !== 0);
       const selectedType = List2[firstNonZeroIndex]
       const comparsionIds = Object.values(this.compars).map(item => item.env_id);
-      // setToken('filter',this.user_filter)
       setToken('filter', JSON.stringify(this.user_filter))
       this.$router.push({
         name: selectedType,
@@ -452,15 +451,11 @@ export default {
       const List2 = ['stream', 'lmbench', 'unixbench', 'fio', 'iozone', 'jvm2008', 'cpu2006', 'cpu2017']
       const firstNonZeroIndex = List1.findIndex(num => num !== 0);
       this.selectedType = List2[firstNonZeroIndex]
+      setToken('filter', JSON.stringify(this.user_filter))
       this.$router.push({
         name: this.selectedType,
         "params": {baseId: row.env_id, comparsionIds: ''}
       });
-    },
-
-    beforeDestroy() {
-      // 清除存储的搜索记录
-      sessionStorage.removeItem('searchParams');
     },
   }
 }
