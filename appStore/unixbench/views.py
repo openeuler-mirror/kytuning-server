@@ -413,8 +413,8 @@ class UnixbenchViewSet(viewsets.ModelViewSet):
                 if serializer_unixbench.is_valid():
                     self.perform_create(serializer_unixbench)
                 else:
-                    log.info('unixbench数据存储错误 ：%s，', serializer_unixbench.errors)
-                    log.info('unixbench存储数据为 ：%s，', data_unixbench)
+                    log.info('unixbench数据存储错误 ：%s，'%serializer_unixbench.errors)
+                    log.info('unixbench存储数据为 ：%s，'%data_unixbench)
                     serializer_unixbench_errors.append(serializer_unixbench.errors)
                     error_message.append(get_error_message(serializer_unixbench))
         if serializer_unixbench_errors:

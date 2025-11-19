@@ -196,8 +196,8 @@ class StreamViewSet(viewsets.ModelViewSet):
                 if serializer_stream.is_valid():
                     self.perform_create(serializer_stream)
                 else:
-                    log.info('stram数据存储错误 ：%s，', serializer_stream.errors)
-                    log.info('stream存储数据为 ：%s，', data_stream)
+                    log.info('stram数据存储错误 ：%s，'%serializer_stream.errors)
+                    log.info('stream存储数据为 ：%s，'%data_stream)
                     serializer_stream_errors.append(serializer_stream.errors)
                     error_message.append(get_error_message(serializer_stream))
 

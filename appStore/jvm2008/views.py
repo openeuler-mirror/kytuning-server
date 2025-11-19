@@ -310,8 +310,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
                 if serializer_jvm2008.is_valid():
                     self.perform_create(serializer_jvm2008)
                 else:
-                    log.info('jvm2008数据存储错误 ：%s，', serializer_jvm2008.errors)
-                    log.info('jvm2008存储数据为 ：%s，', data_jvm2008)
+                    log.info('jvm2008数据存储错误 ：%s，'%serializer_jvm2008.errors)
+                    log.info('jvm2008存储数据为 ：%s，'%data_jvm2008)
                     serializer_jvm2008_errors.append(serializer_jvm2008.errors)
                     errors_message.append(get_error_message(serializer_jvm2008))
         if serializer_jvm2008_errors:

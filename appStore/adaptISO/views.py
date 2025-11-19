@@ -41,8 +41,8 @@ class AdaptISOListViewSet(viewsets.ModelViewSet):
             if config_serializer.is_valid():
                 self.perform_create(config_serializer)
                 return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
-            log.info('Adaptiso数据存储错误 ：%s，', config_serializer.errors)
-            log.info('Adaptiso存储数据为 ：%s，', data_iso)
+            log.info('Adaptiso数据存储错误 ：%s，'%config_serializer.errors)
+            log.info('Adaptiso存储数据为 ：%s，'%data_iso)
             return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
         else:
             return json_response({}, status.HTTP_400_BAD_REQUEST, '请检查iso路径以iso结尾')

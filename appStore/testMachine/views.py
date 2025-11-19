@@ -44,8 +44,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
-        log.info('Machine数据存储错误 ：%s，', config_serializer.errors)
-        log.info('Machine存储数据为 ：%s，', data_machine)
+        log.info('Machine数据存储错误 ：%s，'%config_serializer.errors)
+        log.info('Machine存储数据为 ：%s，'%data_machine)
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
     def put(self, request, *args, **kwargs):

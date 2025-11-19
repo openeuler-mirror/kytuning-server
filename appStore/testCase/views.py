@@ -135,8 +135,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
                 configfile.write('test_case_id={}\n'.format(test_case_id))
         else:
-            log.info('testCase数据存储错误 ：%s，', serializer_test_case.errors)
-            log.info('testCase存储数据为 ：%s，', data_test_case)
+            log.info('testCase数据存储错误 ：%s，'%(serializer_test_case.errors))
+            log.info('testCase存储数据为 ：%s，'%data_test_case)
             return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_test_case))
 
         """保存至配置管理数据库"""
@@ -156,8 +156,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             return_result = test_case(data_test_case['ip'], TestMachine_.server_user_name, TestMachine_.server_password,
                                       test_case_names, user_config_path, data_test_case['result_log_name'])
             if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
-                log.info('测试的测试数据ID是：%s，测试的返回结果return_result是：%s', test_case_id, str(return_result))
-                log.info('测试的测试数据ID是：%s，测试的返回结果return_result.stderr是：%s', test_case_id, str(return_result.stderr))
+                log.info%('测试的测试数据ID是：%s，测试的返回结果return_result是：%s'%(test_case_id, str(return_result)))
+                log.info('测试的测试数据ID是：%s，测试的返回结果return_result.stderr是：%s'%(test_case_id, str(return_result.stderr)))
                 TestCase.objects.filter(id=test_case_id).update(test_result=return_result.stderr)
                 return json_response('', status.HTTP_204_NO_CONTENT, return_result.stderr)
             else:
