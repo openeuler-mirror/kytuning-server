@@ -134,7 +134,6 @@ export default {
           machine_list('post', machineData_).then((response) => {
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'});
-              this.getData();
               this.reset()
             }
           });
@@ -154,6 +153,7 @@ export default {
         BMC_user_name: '',
         BMC_password: '',
       }
+      this.$refs.machineForm.resetFields();
       this.getData()
     },
 
@@ -187,7 +187,9 @@ export default {
       machine_list('put', machineData_).then(response => {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})
-          this.getData()
+          this.reset()
+        } else {
+          ElMessage({message: response.data.messag, type: 'warning'})
         }
       })
     },
