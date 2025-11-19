@@ -113,7 +113,6 @@ export default {
           ksList('post', ksFileData_).then((response) => {
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'});
-              this.getData();
               this.reset()
             }
           });
@@ -156,7 +155,7 @@ export default {
       ksList('put', ksFileData_).then(response => {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})
-          this.getData()
+          this.reset()
         }
       })
     },

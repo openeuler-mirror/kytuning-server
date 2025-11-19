@@ -366,7 +366,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
         # 4、删除env_id的env表，删除env_id对应的project表
-        Env.objects.filter(id__in=env_ids).delete()
         Project.objects.filter(env_id__in=env_ids).delete()
         # 5、修改project表对应测试项目的值
         stream_number = len(Stream.objects.filter(env_id=env_id))
