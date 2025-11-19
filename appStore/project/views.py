@@ -391,8 +391,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if not data_project['os_version']:
             data_project['os_version'] = "未获取"
         data_project['cpu_module_name'] = request.__dict__['data_project']['envinfo']['hwinfo']['cpu']['model_name']
-        data_project['ip'] = \
-            request.__dict__['data_project']['envinfo']['nwinfo']['nic'][0]['ip']
+        # 可能存在失败，可能存在乱码，会导致失败。
+        try:
+            data_project['ip'] = request.__dict__['data_project']['envinfo']['nwinfo']['nic'][0]['ip']
+        except:
+            data_project['ip']= None
         # 获取所有文件名对应的key，判断每种测试迭代了几次
         data_project['cpu2006'] = -1
         data_project['cpu2017'] = -1

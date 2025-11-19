@@ -31,6 +31,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         return json_response(serializer.data, status.HTTP_200_OK, '查询完成')
 
     def create(self, request, *args, **kwargs):
+        if TestMachine.objects.get(BMC_IP=request.data.get('BMC_IP')):
+            return json_response({}, status.HTTP_205_RESET_CONTENT, 'BMC_IP重复，请修改BMC_IP')
         data_machine = {}
         data_machine['owner'] = request.user.chinese_name
         data_machine['creator'] = request.user.chinese_name
@@ -49,6 +51,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
     def put(self, request, *args, **kwargs):
+        if TestMachine.objects.get(BMC_IP=request.data.get('BMC_IP')):
+            return json_response({}, status.HTTP_205_RESET_CONTENT, 'BMC_IP重复，请修改BMC_IP')
         machine_id = request.data.get('id')
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
@@ -89,11 +93,12 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_200_OK, '不可取消别人的申请')
 
     def modify_server(self, request, *args, **kwargs):
+        if TestMachine.objects.get(BMC_IP=request.data.get('server_IP')):
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '有server_IP重复，请修改server_IP')
         machine_id = request.data.get('id')
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-        machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')
