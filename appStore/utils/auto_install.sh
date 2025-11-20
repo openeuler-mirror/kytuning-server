@@ -55,11 +55,31 @@ update_grub_cfg(){
   fi
 }
 
-get_logvol_name(){
-  # 指定 mapper 目录
-  mapper_dir="/dev/mapper"
-  # 获取 mapper 目录下已有kytuning逻辑卷名称中的数字
-  existing_numbers=$(ls $mapper_dir/kytuning*-root | sed -n 's/.*kytuning\([0-9][0-9]\)-root/\1/p' | sort -n)
+#get_logvol_name(){
+#  # 指定 mapper 目录
+#  mapper_dir="/dev/mapper"
+#  # 获取 mapper 目录下已有kytuning逻辑卷名称中的数字
+#  existing_numbers=$(ls $mapper_dir/kytuning*-root | sed -n 's/.*kytuning\([0-9][0-9]\)-root/\1/p' | sort -n)
+#  # 从0到20中选取不存在的值当后缀
+#  all_numbers=$(seq -f "%02g" 0 20)
+#  # 找到已有数字中的缺失值
+#  missing_numbers=$(comm -23 <(echo "$all_numbers") <(echo "$existing_numbers"))
+#  # 如果没有找到缺失值，则默认从 00 开始
+#  if [[ -z $missing_numbers ]]; then
+#      new_number="00"
+#  else
+#      # 获取缺失值列表中的第一个值作为新的数字
+#      new_number=$(echo "$missing_numbers" | head -n 1)
+#  fi
+#  # 返回新的逻辑卷名称
+#  echo "kytuning$new_number"
+#}
+
+mod_logvol_name(){
+  # 获取ks文件名称的前缀
+  prefix=$(echo "$KS_FILE_NAME" | awk -F '-' '{print $1}')
+  # 获取 mapper 目录下已有对应逻辑卷名称中的数字
+  existing_numbers=$(ls "/dev/mapper/$prefix"*-root 2>/dev/null | sed -n 's/.*'"$prefix"'\([0-9][0-9]\)-root/\1/p' | sort -n)
   # 从0到20中选取不存在的值当后缀
   all_numbers=$(seq -f "%02g" 0 20)
   # 找到已有数字中的缺失值
@@ -72,7 +92,7 @@ get_logvol_name(){
       new_number=$(echo "$missing_numbers" | head -n 1)
   fi
   # 返回新的逻辑卷名称
-  echo "kytuning$new_number"
+  sed -i "s/$prefix/$prefix$new_number/g" "$ISO_PATH/$KS_FILE_NAME"
 }
 
 update_efi_bootorder(){
@@ -133,9 +153,12 @@ main(){
   # 修改grub.cfg文件
   update_grub_cfg
   # 调用函数并获取新的逻辑卷名称
-  new_logvol_name=$(get_logvol_name)
-  # 替换 grub.cfg 文件中的旧逻辑卷名称为新逻辑卷名称
-  sed -i "s/kytuning/$new_logvol_name/g" "$ISO_PATH/$KS_FILE_NAME"
+#  new_logvol_name=$(get_logvol_name)
+#   替换 grub.cfg 文件中的旧逻辑卷名称为新逻辑卷名称
+#  sed -i "s/kytuning/$new_logvol_name/g" "$ISO_PATH/$KS_FILE_NAME"
+
+  # 替换逻辑卷名称
+  mod_logvol_name
 
   # 替换IP信息
   sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"

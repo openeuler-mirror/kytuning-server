@@ -291,7 +291,7 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
     result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result.returncode:
         return '文件复制出错'
-    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "sh /root/%s.sh"' % (str(user_name))
+    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "bash /root/%s.sh"' % (str(user_name))
     subprocess.Popen(ssh_command, shell=True)
     # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
     # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
