@@ -47,7 +47,8 @@ class FioViewSet(viewsets.ModelViewSet):
         groups = set([d.mark_name for d in serializer_])
         if not groups or len(groups) == 1:
             if not groups:
-                # 基准数据和对比数据的全部数据
+                # 当没有数据时
+                # 原始数据部分
                 datas[0]['column' + str(column_index)] = 'Fio#' + str(title_index)
                 datas[1]['column' + str(column_index)] = None
                 datas[2]['column' + str(column_index)] = None
@@ -58,7 +59,8 @@ class FioViewSet(viewsets.ModelViewSet):
                 column_index += 1
                 title_index += 1
             else:
-                # 基准数据和对比数据的全部数据
+                # 当只有一组数据时
+                # 原始数据部分
                 for data in serializer.data:
                     data = {'rw': data['rw'] + '(' + str(data['bs'] + ')'),
                             'bs': data['bs'],
@@ -66,13 +68,12 @@ class FioViewSet(viewsets.ModelViewSet):
                             'iops': data['iops'],
                             'bw': data['bw'], }
                     temp_datas.append(data)
-                # 先增加头部的内容
+                # 先增加表头的内容
                 datas[0]['column' + str(column_index)] = 'Fio#' + str(title_index)
                 datas[1]['column' + str(column_index)] = Project.objects.filter(env_id=serializer.data[0]['env_id']).first().project_name
                 datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
                 datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
-                # 增加数据部分
-                # 先初始化所有数据为空
+
                 for i in range(4,len(datas)):
                     datas[i]['column' + str(column_index)] = None
                 for value in temp_datas:
@@ -87,20 +88,26 @@ class FioViewSet(viewsets.ModelViewSet):
                             break
                 column_index += 1
                 title_index += 1
-            # 基准数据和对比数据的平均数据
+            # 平均数据
             title = '平均值(基准数据)' if not base_column_index else '平均值'
             datas[0]['column' + str(column_index)] = title
             datas[1]['column' + str(column_index)] = datas[1]['column' + str(column_index - 1)]
             datas[2]['column' + str(column_index)] = ''
             datas[3]['column' + str(column_index)] = ''
-            for index,data in enumerate(datas):
-                if index > 2:
-                    datas[index]['column' + str(column_index)] = datas[index]['column' + str(column_index - 1)]
+            for i in range(4, len(datas)):
+                datas[i]['column' + str(column_index)] = None
+            for value in temp_datas:
+                for index, data_ in enumerate(datas):
+                    if data_['column1'] == value['rw']:
+                        # 在datas中增加对比数据
+                        datas[index]['column' + str(column_index)] = None
+                        datas[index + 1]['column' + str(column_index)] = None
+                        datas[index + 2]['column' + str(column_index)] = value['iops']
+                        datas[index + 3]['column' + str(column_index)] = None
+                        break
             column_index += 1
-
         else:
-            # 计算平均值
-            # 判断bs的大小，方便按照bs的大小分组
+            # 多组数据
             bs_size = set([d['bs'] for d in serializer.data])
             rw_types = set([d['rw'] for d in serializer.data])
             new_datas = []
@@ -112,45 +119,22 @@ class FioViewSet(viewsets.ModelViewSet):
                         new_datas.append(data_)
             # new_datas是12组数据
             for data_ in new_datas:
-                bs_list = [d.bs for d in data_ if d.bs is not None]
-                io_list = [d.io for d in data_ if d.io is not None]
                 iops_list = [d.iops for d in data_ if d.iops is not None]
-                bw_list = [d.bw for d in data_ if d.bw is not None]
-                # 获取bs、io、iops的平均值
-                bs = 0
-                for bs_ in bs_list:
-                    value, bs_unit = self.get_unit(bs_)
-                    bs += float(value)
-                bs = "%.2f" % (bs / len(bs_list))
-                io = 0
-                for io_ in io_list:
-                    value, io_unit = self.get_unit(io_)
-                    io += float(value)
-                io = "%.2f" % (io / len(io_list))
+                # 计算iops的平均值
                 iops = 0
                 for iops_ in iops_list:
                     value, iops_unit = self.get_unit(iops_)
                     iops += float(value)
                 iops = "%.2f" % (iops / len(iops_list))
-                # 获取bw的平均值
-                value1 = 0
-                value2 = 0
-                for bw_ in bw_list:
-                    value1_, value2_, bw_unit1, bw_unit2 = self.get_bw_unit(bw_)
-                    value1 += float(value1_)
-                    value2 += float(value2_)
-                value1 = "%.2f" % (value1 / len(bw_list))
-                value2 = "%.2f" % (value2 / len(bw_list))
-                bw = str(value1) + bw_unit1 + '(' + str(value2) +bw_unit2
-
                 data = {'rw': data_[0].rw + '(' + str(data_[0].bs + ')'),
-                        'bs': str(bs) + bs_unit,
-                        'io': str(io) + io_unit,
-                        'iops': str(iops) + iops_unit,
-                        'bw': bw, }
+                        'bs': None,
+                        'io': None,
+                        'iops': iops,
+                        'bw': None, }
                 average_datas.append(data)
             # 基准数据和对比数据的全部数据
             for mark_name in groups:
+                # group_data找到属于同一组的数据在组装成json数据
                 group_data = []
                 temp_mark_datas = serializer_.filter(mark_name=mark_name)
                 # 先增加头部的内容
@@ -165,12 +149,12 @@ class FioViewSet(viewsets.ModelViewSet):
                             'iops': data.iops,
                             'bw': data.bw, }
                     group_data.append(data)
-                # 增加数据部分
-                # 先初始化所有数据为空
+                # 增加对比数据部分
+                # 先初始化所有对比数据为空
                 for i in range(4, len(datas)):
                     datas[i]['column' + str(column_index)] = None
                 for value in group_data:
-                    # 判断comparsion_datas数据中的rw字段和datas中的rw（column）字段相同，则在datas中增加值
+                    # 判断comparsion_datas数据中的rw字段和datas中的rw（column）字段相同，则在datas中增加值对比值
                     for index, data_ in enumerate(datas):
                         if index > 2:
                             if data_['column1'] == value['rw']:
@@ -206,24 +190,12 @@ class FioViewSet(viewsets.ModelViewSet):
         if not base_column_index:
             base_column_index = column_index - 1
         else:
-            # 对比数据的对比值
+            # 对比值
             datas[0]['column' + str(column_index)] = '对比值'
             datas[1]['column' + str(column_index)] = ''
             datas[2]['column' + str(column_index)] = ''
             datas[3]['column' + str(column_index)] = ''
             # 获取到最后一组数据、处理数据 #计算全部的对比值
-            # for i in range(4, len(datas)):
-            #     value = datas[i]['column' + str(column_index - 1)]  # 最后一组数据
-            #     base_value = datas[i]['column' + str(base_column_index)]  # base数据
-            #     if value is not None and base_value is not None:
-            #         print(value,base_value,11111)
-            #         value = float("".join(filter(lambda s: s in '0123456789.', value.split('(')[-1])))
-            #         base_value = float("".join(filter(lambda s: s in '0123456789.', base_value.split('(')[-1])))
-            #         print(value,base_value,22222)
-            #         datas[i]['column' + str(column_index)] = "%.2f%%" % ((value - base_value) / base_value * 100) if value is not None and base_value is not None else None
-            #     else:
-            #         datas[i]['column' + str(column_index)] = None
-
             # 只计算iops的对比值
             for i in range(4, len(datas)):
                 value = datas[i]['column' + str(column_index - 1)]  # 最后一组数据
