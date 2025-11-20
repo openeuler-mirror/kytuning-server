@@ -93,12 +93,13 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_200_OK, '不可取消别人的申请')
 
     def modify_server(self, request, *args, **kwargs):
-        if TestMachine.objects.get(BMC_IP=request.data.get('server_IP')):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '有server_IP重复，请修改server_IP')
         machine_id = request.data.get('id')
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+        if not machine_data.server_IP == request.data.get('server_IP'):
+            if TestMachine.objects.get(BMC_IP=request.data.get('server_IP')):
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '有server_IP重复，请修改server_IP')
         machine_data.server_IP = request.data.get('server_IP')
         machine_data.server_user_name = request.data.get('server_user_name')
         machine_data.server_password = request.data.get('server_password')

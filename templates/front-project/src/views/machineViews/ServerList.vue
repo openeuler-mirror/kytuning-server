@@ -76,7 +76,6 @@
         <el-form-item label="重构系统密码" prop="new_server_password" v-if="showNewServerPassword">
           <el-input v-model="machineData.new_server_password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-button type="success" @click="addiso('form')">新增ISO</el-button>
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
@@ -258,9 +257,6 @@ export default {
         ElMessage({message: '无人使用无需更新', type: 'success'})
       }
     },
-    addiso() {
-      ElMessage({message: '待开发', type: 'success'})
-    }
   }
 };
 </script>
