@@ -398,93 +398,29 @@ def get_analyze_data(datas,test_type):
                 for data in datas[4:]:
                     compare_values.append(data[matching_key])
 
-                Basic_system_list=compare_values[:5]
-                Basic_system_value = get_range(Basic_system_list)
-                if Basic_system_value[0] or Basic_system_value[3]:
-                    analyze += '%d.大项Basic system parameters中'%(number)
-                    number += 1
-                    analyze = get_analyze_message(Basic_system_value, analyze)
-                    analyze += '\n'
+                sections = [
+                    (0, 5, 'Basic system parameters'),
+                    (5, 16, 'Processor'),
+                    (16, 21, 'Basic integer operations'),
+                    (21, 26, 'Basic uint64 operations'),
+                    (26, 30, 'Basic float operations'),
+                    (30, 34, 'Basic double operations'),
+                    (34, 41, 'Context switching'),
+                    (41, 49, '*Local* Communication latencies'),
+                    (49, 57, 'File & VM system latencies in microseconds'),
+                    (57, 66, '*Local* Communication bandwidths in MB/s - bigger is better'),
+                    (66, 71, 'Memory latencies in nanoseconds')
+                ]
 
-                Processor_list=compare_values[5:16]
-                Processor_value = get_range(Processor_list)
-                if Processor_value[0] or Processor_value[3]:
-                    analyze += '%d.大项Processor中'%(number)
-                    number += 1
-                    analyze = get_analyze_message(Processor_value, analyze)
-                    analyze += '\n'
+                for start, end, name in sections:
+                    section_list = compare_values[start:end]
+                    section_value = get_range(section_list)
+                    if section_value[0] or section_value[3]:
+                        analyze += f'{number}.大项{name}中'
+                        number += 1
+                        analyze = get_analyze_message(section_value, analyze)
+                        analyze += '\n'
 
-                Basic_integer_list=compare_values[16:21]
-                Basic_integer_value = get_range(Basic_integer_list)
-                if Basic_integer_value[0] or Basic_integer_value[3]:
-                    analyze += '%d.大项Basic integer operations中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(Basic_integer_value, analyze)
-                    analyze += '\n'
-
-                Basic_uint64_list=compare_values[21:26]
-                Basic_uint64_value = get_range(Basic_uint64_list)
-                if Basic_uint64_value[0] or Basic_uint64_value[3]:
-                    analyze += '%d.大项Basic uint64 operations中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(Basic_uint64_value, analyze)
-                    analyze += '\n'
-
-                Basic_float_list=compare_values[26:30]
-                Basic_float_list = get_range(Basic_float_list)
-                if Basic_float_list[0] or Basic_float_list[3]:
-                    analyze += '%d.大项Basic float operations中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(Basic_float_list, analyze)
-                    analyze += '\n'
-
-                Basic_double_list=compare_values[30:34]
-                Basic_double_value = get_range(Basic_double_list)
-                if Basic_double_value[0] or Basic_double_value[3]:
-                    analyze += '%d.大项Basic double operations中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(Basic_double_value, analyze)
-                    analyze += '\n'
-
-                Context_switching_list=compare_values[34:41]
-                Context_switching_value = get_range(Context_switching_list)
-                if Context_switching_value[0] or Context_switching_value[3]:
-                    analyze += '%d.大项Context switching中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(Context_switching_value, analyze)
-                    analyze += '\n'
-
-                Communication_latencies_list=compare_values[41:49]
-                Communication_latencies_value = get_range(Communication_latencies_list)
-                if Communication_latencies_value[0] or Communication_latencies_value[3]:
-                    analyze += '%d.大项*Local* Communication latencies中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(Communication_latencies_value, analyze)
-                    analyze += '\n'
-
-                File_and_VM_list=compare_values[49:57]
-                File_and_VM_value = get_range(File_and_VM_list)
-                if File_and_VM_value[0] or File_and_VM_value[3]:
-                    analyze += '%d.大项File & VM system latencies in microseconds中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(File_and_VM_value, analyze)
-                    analyze += '\n'
-
-                Communication_bandwidths_list=compare_values[57:66]
-                Communication_bandwidths_value = get_range(Communication_bandwidths_list)
-                if Communication_bandwidths_value[0] or Communication_bandwidths_value[3]:
-                    analyze += '%d.大项*Local* Communication bandwidths in MB/s - bigger is better中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(Communication_bandwidths_value, analyze)
-                    analyze += '\n'
-
-                Memory_latencies_list=compare_values[66:71]
-                Memory_latencies_value = get_range(Memory_latencies_list)
-                if Memory_latencies_value[0] or Memory_latencies_value[3]:
-                    analyze += '%d.大项Memory latencies in nanoseconds中' % (number)
-                    number += 1
-                    analyze = get_analyze_message(Memory_latencies_value, analyze)
-                    analyze += '\n'
                 all_analyze += analyze + '\n'
         return all_analyze
     elif test_type == 'unixbench':
