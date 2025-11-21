@@ -19,6 +19,14 @@ BOOT_EFI=""
 DISK_COUNT=$(lsblk -d -o NAME | grep -c '^sd')
 # 系统安装盘
 SYSTEM_DISK=$(df -lh | grep /boot/efi | awk '{print substr($1,6,3)}')
+#/路径大小
+root_size=30
+#swap分区大小
+swap_size=4
+#/boot/efi分区大小
+efi_size=1
+#/boot分区大小
+boot_size=1
 # 所需要制作成启动盘的盘符
 STARTUP_DISK=$(ls /dev/sd[^"${SYSTEM_DISK: -1}"]* | head -n 1 | awk -F'/' '{print $3}')
 # ks文件中的加密密码
@@ -136,18 +144,19 @@ main(){
   cp $KS_FILE_NAME $ISO_PATH
   # 修改grub.cfg文件
   update_grub_cfg
-  # 调用函数并获取新的逻辑卷名称
-#  new_logvol_name=$(get_logvol_name)
-#   替换 grub.cfg 文件中的旧逻辑卷名称为新逻辑卷名称
-#  sed -i "s/kytuning/$new_logvol_name/g" "$ISO_PATH/$KS_FILE_NAME"
-
   # 替换逻辑卷名称
   mod_logvol_name
-
   # 替换IP信息
   sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
   # 替换ks文件中安装操作系统盘
   sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
+  # 更新 {/、swap、efi、boot}分区大小
+  sed -i "s/root_size/$(( $root_size * 1024 ))/g" "$ISO_PATH/$KS_FILE_NAME"
+  sed -i "s/swap_size/$(( $swap_size * 1024 ))/g" "$ISO_PATH/$KS_FILE_NAME"
+  sed -i "s/efi_size/$(( $efi_size * 1024 ))/g" "$ISO_PATH/$KS_FILE_NAME"
+  sed -i "s/boot_size/$(( $boot_size * 1024 ))/g" "$ISO_PATH/$KS_FILE_NAME"
+  total_size=$(( ($root_size + $swap_size + 1) * 1024 ))
+  sed -i "s/total_size/$total_size/g" "$ISO_PATH/$KS_FILE_NAME"
   # 增加用户密码传输
   sed -i "s/PASSWORD/$PASSWORD/g" "$ISO_PATH/$KS_FILE_NAME"
   clear_kytuning_efibootmgr
