@@ -73,8 +73,15 @@
             <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="重构系统密码" prop="new_server_password" v-if="showNewServerPassword">
+        <el-form-item label="重构系统密码" prop="new_server_password" v-if="create_new_system">
           <el-input v-model="machineData.new_server_password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="根文件系统大小" prop="root_size" v-if="create_new_system">
+          <el-input v-model.number="machineData.root_size" autocomplete="off" placeholder="建议50-300，单位为G" type="number" min="0" step="1"></el-input>
+        </el-form-item>
+
+        <el-form-item label="swap路径大小" prop="swap_size" v-if="create_new_system">
+          <el-input v-model.number="machineData.swap_size" autocomplete="off" placeholder="单位为G" type="number" min="0" step="0.1"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -117,13 +124,15 @@ export default {
         'iso_name': '',
         'new_iso_name': '',
         'new_server_password': '',
+        'root_size': '',
+        'swap_size': '',
       },
       isoList: [],
       dialogModify: false,
     };
   },
   computed: {
-    showNewServerPassword() {
+    create_new_system() {
       return this.machineData.new_iso_name && this.machineData.new_iso_name !== 'other(手动创建)';
     },
   },
@@ -153,6 +162,8 @@ export default {
           'server_password': row.server_password,
           'new_iso_name': row.new_iso_name,
           'new_server_password': row.new_server_password,
+          'root_size': row.root_size,
+          'swap_size': row.swap_size,
         }
       } else {
         ElMessage({message: '不可查看或修改他人机器详情', type: 'success'})
@@ -168,10 +179,21 @@ export default {
         server_password: this.machineData.server_password,
         new_iso_name: this.machineData.new_iso_name,
         new_server_password: this.machineData.new_server_password,
+        root_size: this.machineData.root_size,
+        swap_size: this.machineData.swap_size,
       }
       if (this.machineData.new_iso_name && this.machineData.new_iso_name !== "other(手动创建)") {
         if (!this.machineData.new_server_password) {
-          ElMessage({message: '重构系统请输入密码', type: 'success'})
+          ElMessage({message: '重构系统请输入密码', type: 'warning'})
+          return
+        }
+        console.log(this.machineData.root_size,typeof this.machineData.root_size )
+        if (!this.machineData.root_size || typeof this.machineData.root_size !== 'number') {
+          ElMessage({message: '请输入根路径大小并确保是number类型1111', type: 'warning'})
+          return
+        }
+        if (!this.machineData.swap_size || typeof this.machineData.swap_size !== 'number') {
+          ElMessage({message: '请输入swap路径大小并确保是number类型', type: 'warning'})
           return
         }
         const newData = this.isoList.find(item => item.ISO_name === this.machineData.new_iso_name)
