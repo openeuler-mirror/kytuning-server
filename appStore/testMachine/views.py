@@ -117,8 +117,9 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         else:
             # 检查磁盘空间是否充足
             remaining_disk_space = check_disk_size(machine_data.server_IP, machine_data.server_user_name,machine_data.server_password)
-            if int(remaining_disk_space) <= int(request.data.get('root_size')) + int(request.data.get('swap_size'))+1+1:
-                return json_response({}, status.HTTP_205_RESET_CONTENT,'磁盘空间不足请重新设置;当前磁盘空间为：%sG;'%(int(remaining_disk_space)-2))
+            if not request.data.get('clear_part'):
+                if int(remaining_disk_space) <= int(request.data.get('root_size')) + int(request.data.get('swap_size'))+1+1:
+                    return json_response({}, status.HTTP_205_RESET_CONTENT,'磁盘空间不足请重新设置;当前磁盘空间为：%sG;'%(int(remaining_disk_space)-2))
             if not request.data.get('root_size') or not isinstance(request.data.get('root_size'), (int, float)):
                 return json_response({}, status.HTTP_205_RESET_CONTENT,'请输入根文件路径大小')
             else:
@@ -141,6 +142,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
             replacements['clear_part'] = request.data.get('clear_part')
+            # replacements['kernel510'] = request.data.get('kernel510')
+            replacements['kernel510'] = True
         if machine_data.owner == request.user.chinese_name:
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
