@@ -63,13 +63,22 @@ class EnvViewSet(viewsets.ModelViewSet):
         # 处理多组nic数据
         nic_datas = []
         for value in eval(data_['nwinfo_nic']):
-            nic = [
-                {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'nicname', 'column4': value['nicname']},
-                {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'ip', 'column4': value['ip']},
-                {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'hwaddr', 'column4': value['hwaddr']},
-                {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'gateway', 'column4': value['gateway']},
-                {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'mtu', 'column4': value['mtu']},
-            ]
+            if isinstance(value, dict):
+                nic = [
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'nicname', 'column4': value['nicname']},
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'ip', 'column4': value['ip']},
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'hwaddr', 'column4': value['hwaddr']},
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'gateway', 'column4': value['gateway']},
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'mtu', 'column4': value['mtu']},
+                ]
+            else:
+                nic = [
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'nicname', 'column4': None},
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'ip', 'column4': None},
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'hwaddr', 'column4': None},
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'gateway', 'column4': None},
+                    {'column1': 'nwinfo', 'column2': 'nic', 'column3': 'mtu', 'column4': None},
+                ]
             nic_datas.extend(nic)
         datas = [{'column1': '项目名称','column2': '','column3': '','column4': Project.objects.filter(env_id=data_['id']).first().project_name},
                  {'column1': 'hwinfo','column2': 'machineinfo','column3': 'manufacturer','column4': data_['hwinfo_machineinfo_manufacturer']},
