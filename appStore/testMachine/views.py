@@ -113,6 +113,19 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if new_iso_name == 'other(手动创建)' or not new_iso_name:
             ISO = None
         else:
+            if not request.data.get('root_size') or not isinstance(request.data.get('root_size'), (int, float)):
+                return json_response({}, status.HTTP_205_RESET_CONTENT,'请输入根文件路径大小')
+            else:
+                replacements['root_size'] = request.data.get('root_size')
+            if not request.data.get('swap_size') or not isinstance(request.data.get('swap_size'), (int, float)):
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '请输入交换空间大小')
+            else:
+                replacements['swap_size'] = request.data.get('swap_size')
+            # ks文件中用户密码加密
+            if new_server_password:
+                replacements['PASSWORD'] = make_ks_password(new_server_password)
+            else:
+                return json_response({}, status.HTTP_205_RESET_CONTENT,'重构系统请输入密码')
             ISO = AdaptISO.objects.filter(ISO_name=new_iso_name).first()
             replacements['HTTP_ISO_PATH'] = ISO.http_address
             if ISO.arch_name == 'x86':
@@ -121,12 +134,6 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTAA64.EFI'
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
-            # ks文件中用户密码加密
-            if new_server_password:
-                replacements['PASSWORD'] = make_ks_password(new_server_password)
-            else:
-                return json_response({}, status.HTTP_200_OK,'重构系统请输入密码')
-
         if machine_data.owner == request.user.chinese_name:
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
