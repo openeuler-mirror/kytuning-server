@@ -1,10 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Feb 23 10:00:37 2024 +0800
-"""
 #!/usr/bin/env python
 # encoding: utf-8
 """
@@ -263,8 +256,8 @@ def update_auto_install(user_name, replacements):
     for variable, new_value in replacements.items():
         # 脚本中需要替换到的位置
         pattern = fr'({variable}=).*'
-        if variable in ['root_size', 'swap_size']:
-            # 这两个需要number类型
+        if variable in ['root_size', 'swap_size', 'clear_part']:
+            # 这三个不是str类型
             replacement = fr'\g<1>{new_value}'
         else:
             # \g < 1 > 表示对之前定义的第一个捕获组进行引用
