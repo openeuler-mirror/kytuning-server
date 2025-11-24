@@ -261,10 +261,15 @@ def update_auto_install(user_name, replacements):
         script_content = f.read()
     # 遍历替换字典中的每个键值对，将对应的变量行替换为新值
     for variable, new_value in replacements.items():
+        # 脚本中需要替换到的位置
         pattern = fr'({variable}=).*'
-        replacement = fr'\g<1>"{new_value}"'
+        if variable in ['root_size', 'swap_size']:
+            # 这两个需要number类型
+            replacement = fr'\g<1>{new_value}'
+        else:
+            # \g < 1 > 表示对之前定义的第一个捕获组进行引用
+            replacement = fr'\g<1>"{new_value}"'
         script_content = re.sub(pattern, replacement, script_content)
-
     # 将更新后的内容写回副本脚本文件
     with open(user_install_file, 'w') as f:
         f.write(script_content)
