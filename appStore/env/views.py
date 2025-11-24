@@ -53,11 +53,17 @@ class EnvViewSet(viewsets.ModelViewSet):
                     {'column1': 'hwinfo', 'column2': 'disk', 'column3': 'mntpoint=/home', 'column4': value['mntpoint=/home']},
                     ]
             disk_and_nicinfo_datas.extend(disk)
-
-        for value in eval(data_['hwinfo_nicinfo']):
-            nicinfo = [{'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'logicalname','column4': value['logicalname']},
-                       {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'product', 'column4': value['product']},
-                       {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'speed', 'column4': value['speed']},]
+        if eval(data_['hwinfo_nicinfo']):
+            for value in eval(data_['hwinfo_nicinfo']):
+                nicinfo = [{'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'logicalname','column4': value['logicalname']},
+                           {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'product', 'column4': value['product']},
+                           {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'speed', 'column4': value['speed']}]
+                disk_and_nicinfo_datas.extend(nicinfo)
+        else:
+            nicinfo = [
+                {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'logicalname', 'column4': None},
+                {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'product', 'column4': None},
+                {'column1': 'hwinfo', 'column2': 'nicinfo', 'column3': 'speed', 'column4': None}]
             disk_and_nicinfo_datas.extend(nicinfo)
 
         # 处理多组nic数据
@@ -212,11 +218,18 @@ class EnvViewSet(viewsets.ModelViewSet):
             datas[nic_number-2].update({'column%d'%(start_number):compar_data_['swinfo_software_ver_gfortranversion']})
             datas[nic_number-1].update({'column%d'%(start_number):compar_data_['swinfo_software_ver_pythonversion']})
             #nic数据，同disk一样也只显示一组数据
-            datas[nic_number].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['nicname']})
-            datas[nic_number+1].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['ip']})
-            datas[nic_number+2].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['hwaddr']})
-            datas[nic_number+3].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['gateway']})
-            datas[nic_number+4].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['mtu']})
+            if isinstance(eval(compar_data_['nwinfo_nic']), list):
+                datas[nic_number].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['nicname']})
+                datas[nic_number+1].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['ip']})
+                datas[nic_number+2].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['hwaddr']})
+                datas[nic_number+3].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['gateway']})
+                datas[nic_number+4].update({'column%d'%(start_number):eval(compar_data_['nwinfo_nic'])[0]['mtu']})
+            else:
+                datas[nic_number].update({'column%d' % (start_number): None})
+                datas[nic_number + 1].update({'column%d' % (start_number): None})
+                datas[nic_number + 2].update({'column%d' % (start_number): None})
+                datas[nic_number + 3].update({'column%d' % (start_number): None})
+                datas[nic_number + 4].update({'column%d' % (start_number): None})
             start_number += 1
         env_data = {'data': datas}
         return json_response(env_data, status.HTTP_200_OK, '列表')
