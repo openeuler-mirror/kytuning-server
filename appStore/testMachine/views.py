@@ -12,6 +12,7 @@ from appStore.adaptISO.models import AdaptISO
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
 from appStore.utils.common import json_response, get_link_status, update_system, update_auto_install, make_ks_password
+from appStore.utils.subprocess import check_disk_size
 
 log = logging.getLogger('kytuninglog')
 
@@ -110,9 +111,14 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                                                    machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
         replacements = {}
+        # 补充需要替换脚本文件的内容
         if new_iso_name == 'other(手动创建)' or not new_iso_name:
             ISO = None
         else:
+            # 检查磁盘空间是否充足
+            remaining_disk_space = check_disk_size(machine_data.server_IP, machine_data.server_user_name,machine_data.server_password)
+            if int(remaining_disk_space) <= int(request.data.get('root_size')) + int(request.data.get('swap_size'))+1+1:
+                return json_response({}, status.HTTP_205_RESET_CONTENT,'磁盘空间不足请重新设置;当前磁盘空间为：%sG;'%(int(remaining_disk_space)-2))
             if not request.data.get('root_size') or not isinstance(request.data.get('root_size'), (int, float)):
                 return json_response({}, status.HTTP_205_RESET_CONTENT,'请输入根文件路径大小')
             else:
@@ -139,6 +145,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
             if ISO:
+
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
                 machine_data.server_password = new_server_password
