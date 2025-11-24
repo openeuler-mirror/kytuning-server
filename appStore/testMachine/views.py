@@ -134,6 +134,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTAA64.EFI'
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
+            replacements['clear_part'] = request.data.get('clear_part')
         if machine_data.owner == request.user.chinese_name:
             if new_iso_name:
                 machine_data.iso_name = new_iso_name

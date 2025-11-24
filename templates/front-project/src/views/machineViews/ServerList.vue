@@ -79,9 +79,11 @@
         <el-form-item label="根文件系统大小" prop="root_size" v-if="create_new_system">
           <el-input v-model.number="machineData.root_size" autocomplete="off" placeholder="建议50-300，单位为G" type="number" min="0" step="1"></el-input>
         </el-form-item>
-
         <el-form-item label="swap路径大小" prop="swap_size" v-if="create_new_system">
           <el-input v-model.number="machineData.swap_size" autocomplete="off" placeholder="单位为G" type="number" min="0" step="0.1"></el-input>
+        </el-form-item>
+        <el-form-item label="是否清空系统盘" prop="root_size" v-if="create_new_system">
+          <el-switch style="display: block" v-model="machineData.clear_part" inactive-color="#13ce66" active-color="#ff4949" inactive-text="不清空" active-text="清空"></el-switch>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -126,6 +128,7 @@ export default {
         'new_server_password': '',
         'root_size': '',
         'swap_size': '',
+        'clear_part': false,
       },
       isoList: [],
       dialogModify: false,
@@ -164,6 +167,7 @@ export default {
           'new_server_password': row.new_server_password,
           'root_size': row.root_size,
           'swap_size': row.swap_size,
+          'clear_part': row.clear_part,
         }
       } else {
         ElMessage({message: '不可查看或修改他人机器详情', type: 'success'})
@@ -181,15 +185,15 @@ export default {
         new_server_password: this.machineData.new_server_password,
         root_size: this.machineData.root_size,
         swap_size: this.machineData.swap_size,
+        clear_part: this.machineData.clear_part,
       }
       if (this.machineData.new_iso_name && this.machineData.new_iso_name !== "other(手动创建)") {
         if (!this.machineData.new_server_password) {
           ElMessage({message: '重构系统请输入密码', type: 'warning'})
           return
         }
-        console.log(this.machineData.root_size,typeof this.machineData.root_size )
         if (!this.machineData.root_size || typeof this.machineData.root_size !== 'number') {
-          ElMessage({message: '请输入根路径大小并确保是number类型1111', type: 'warning'})
+          ElMessage({message: '请输入根路径大小并确保是number类型', type: 'warning'})
           return
         }
         if (!this.machineData.swap_size || typeof this.machineData.swap_size !== 'number') {

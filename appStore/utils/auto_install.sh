@@ -27,6 +27,8 @@ swap_size=4
 efi_size=1
 #/boot分区大小
 boot_size=1
+# 是否清空磁盘
+clear_part=True
 # 所需要制作成启动盘的盘符
 STARTUP_DISK=$(ls /dev/sd[^"${SYSTEM_DISK: -1}"]* | head -n 1 | awk -F'/' '{print $3}')
 # ks文件中的加密密码
@@ -148,6 +150,11 @@ main(){
   mod_logvol_name
   # 替换IP信息
   sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
+  # 清空磁盘
+  if [ "$clear_part" == "True" ]; then
+    echo >> "$ISO_PATH/$KS_FILE_NAME"
+    echo "clearpart --all --initlabel --drives=SYSTEM_DISK">> "$ISO_PATH/$KS_FILE_NAME"
+  fi
   # 替换ks文件中安装操作系统盘
   sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
   # 更新 {/、swap、efi、boot}分区大小
