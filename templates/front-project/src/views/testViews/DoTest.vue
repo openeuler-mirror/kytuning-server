@@ -17,28 +17,28 @@
         </el-form-item>
         <el-form-item label="测试项的迭代次数：">
           <el-form-item label="stream迭代次数：">
-            <el-input v-model="formData.iterations.stream"/>
+            <el-input v-model.number="formData.iterations.stream" autocomplete="off"  type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="lmbench迭代次数：">
-            <el-input v-model="formData.iterations.lmbench"/>
+            <el-input v-model.number="formData.iterations.lmbench" autocomplete="off"  type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="unixbench迭代次数：">
-            <el-input v-model="formData.iterations.unixbench"/>
+            <el-input v-model.number="formData.iterations.unixbench" autocomplete="off"  type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="fio迭代次数：">
-            <el-input v-model="formData.iterations.fio"/>
+            <el-input v-model.number="formData.iterations.fio" autocomplete="off"  type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="iozone迭代次数：">
-            <el-input v-model="formData.iterations.iozone"/>
+            <el-input v-model.number="formData.iterations.iozone" autocomplete="off"  type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="jvm2008迭代次数：">
-            <el-input v-model="formData.iterations.jvm2008"/>
+            <el-input v-model.number="formData.iterations.jvm2008" autocomplete="off"  type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="cpu2006迭代次数：">
-            <el-input v-model="formData.iterations.cpu2006"/>
+            <el-input v-model.number="formData.iterations.cpu2006" autocomplete="off"  type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="cpu2017迭代次数：">
-            <el-input v-model="formData.iterations.cpu2017"/>
+            <el-input v-model.number="formData.iterations.cpu2017" autocomplete="off"  type="number" min="0" step="1"/>
           </el-form-item>
         </el-form-item>
         <el-form-item label="编辑yaml配置文件：">
