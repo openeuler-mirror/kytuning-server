@@ -85,6 +85,9 @@
         <el-form-item label="是否清空系统盘" prop="root_size" v-if="create_new_system">
           <el-switch style="display: block" v-model="machineData.clear_part" inactive-color="#13ce66" active-color="#ff4949" inactive-text="不清空" active-text="清空"></el-switch>
         </el-form-item>
+        <el-form-item label="选择内核" prop="root_size" v-if="get_kernel">
+          <el-switch style="display: block" v-model="machineData.kernel_type" inactive-color="#13ce66" active-color="#ff4949" inactive-text="419" active-text="510"></el-switch>
+        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="closeInfo('form')">取 消</el-button>
@@ -129,6 +132,7 @@ export default {
         'root_size': '',
         'swap_size': '',
         'clear_part': false,
+        'kernel_type': false,
       },
       isoList: [],
       dialogModify: false,
@@ -137,6 +141,9 @@ export default {
   computed: {
     create_new_system() {
       return this.machineData.new_iso_name && this.machineData.new_iso_name !== 'other(手动创建)';
+    },
+    get_kernel() {
+      return ['uos-server-20-1060a-amd64.iso', 'uos-server-20-1060a-arm64.iso', 'uos-server-20-1060e-amd64.iso', 'uos-server-20-1060e-arm64.iso', 'uniontechos-server-20-1050a-amd64.iso', 'uniontechos-server-20-1050a-arm64.iso'].includes(this.machineData.new_iso_name);
     },
   },
   created() {
@@ -168,6 +175,7 @@ export default {
           'root_size': row.root_size,
           'swap_size': row.swap_size,
           'clear_part': row.clear_part,
+          'kernel_type': row.kernel_type,
         }
       } else {
         ElMessage({message: '不可查看或修改他人机器详情', type: 'success'})
@@ -186,6 +194,7 @@ export default {
         root_size: this.machineData.root_size,
         swap_size: this.machineData.swap_size,
         clear_part: this.machineData.clear_part,
+        kernel_type: this.machineData.kernel_type,
       }
       if (this.machineData.new_iso_name && this.machineData.new_iso_name !== "other(手动创建)") {
         if (!this.machineData.new_server_password) {

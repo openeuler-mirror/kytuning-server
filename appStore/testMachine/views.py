@@ -142,13 +142,11 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
             replacements['clear_part'] = request.data.get('clear_part')
-            # replacements['kernel510'] = request.data.get('kernel510')
-            replacements['kernel510'] = True
+            replacements['kernel510'] = request.data.get('kernel_type')
         if machine_data.owner == request.user.chinese_name:
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
             if ISO:
-
                 update_auto_install(request.user, replacements)
                 update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
                 machine_data.server_password = new_server_password
