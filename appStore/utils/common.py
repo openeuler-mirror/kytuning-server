@@ -263,7 +263,7 @@ def update_auto_install(user_name, replacements):
     for variable, new_value in replacements.items():
         # 脚本中需要替换到的位置
         pattern = fr'({variable}=).*'
-        if variable in ['root_size', 'swap_size', 'clear_part']:
+        if variable in ['root_size', 'swap_size', 'clear_part', 'kernel510']:
             # 这三个不是str类型
             replacement = fr'\g<1>{new_value}'
         else:

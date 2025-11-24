@@ -1,3 +1,4 @@
+#!/bin/bash
 disk_name=/dev/$(df -lh | grep /boot/efi | awk '{print substr($1,6,3)}')
 sizes=()
 

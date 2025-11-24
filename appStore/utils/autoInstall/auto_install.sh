@@ -34,6 +34,7 @@ STARTUP_DISK=$(ls /dev/sd[^"${SYSTEM_DISK: -1}"]* | head -n 1 | awk -F'/' '{prin
 # ks文件中的加密密码
 PASSWORD=''
 LOG_FILE='/var/log/kytuning-auto-install.log'
+kernel510=false
 
 init_file() {
   umount "/mnt"
@@ -154,6 +155,21 @@ main(){
   if [ "$clear_part" == "True" ]; then
     echo >> "$ISO_PATH/$KS_FILE_NAME"
     echo "clearpart --all --initlabel --drives=SYSTEM_DISK">> "$ISO_PATH/$KS_FILE_NAME"
+  fi
+  # 因为uos有双内核所以单独处理
+  # 判断是否需要安装5.10内核的系统
+  if [ "$kernel510" == "True" ]; then
+    # 判断是1050a增加内容
+    if [[ $ISO_NAME == *"1050a"* ]]; then
+      echo >> "$ISO_PATH/$KS_FILE_NAME"
+      sed -i '5i repo --name="AppStream" --baseurl=file:///run/install/sources/mount-0000-hdd-device/AppStream\
+repo --name="kernel510" --baseurl=file:///run/install/sources/mount-0000-hdd-device/kernel510' "$ISO_PATH/$KS_FILE_NAME"
+    else
+      # 1060a不能加AppStream
+#      echo >> "$ISO_PATH/$KS_FILE_NAME"
+#      echo 'repo --name="kernel510" --baseurl=file:///run/install/sources/mount-0000-hdd-device/kernel510'>> "$ISO_PATH/$KS_FILE_NAME"
+      sed -i '4i repo --name="kernel510" --baseurl=file:///run/install/sources/mount-0000-hdd-device/kernel510' "$ISO_PATH/$KS_FILE_NAME"
+    fi
   fi
   # 替换ks文件中安装操作系统盘
   sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
