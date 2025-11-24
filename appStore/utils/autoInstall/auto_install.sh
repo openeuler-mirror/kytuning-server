@@ -159,15 +159,12 @@ main(){
   # 因为uos有双内核所以单独处理
   # 判断是否需要安装5.10内核的系统
   if [ "$kernel510" == "True" ]; then
-    # 判断是1050a增加内容
     if [[ $ISO_NAME == *"1050a"* ]]; then
-      echo >> "$ISO_PATH/$KS_FILE_NAME"
-      sed -i '5i repo --name="AppStream" --baseurl=file:///run/install/sources/mount-0000-hdd-device/AppStream\
-repo --name="kernel510" --baseurl=file:///run/install/sources/mount-0000-hdd-device/kernel510' "$ISO_PATH/$KS_FILE_NAME"
+      # ""不能识别换行
+      sed -i "4i %pre " $ISO_PATH/$KS_FILE_NAME
+      sed -i "5i sed -i \"s/\'kernel419', 'kernel510'/'kernel510'/g\" /usr/lib64/python3.6/site-packages/pyanaconda/ui/gui/spokes/software_selection.py" $ISO_PATH/$KS_FILE_NAME
+      sed -i "6i %end" $ISO_PATH/$KS_FILE_NAME
     else
-      # 1060a不能加AppStream
-#      echo >> "$ISO_PATH/$KS_FILE_NAME"
-#      echo 'repo --name="kernel510" --baseurl=file:///run/install/sources/mount-0000-hdd-device/kernel510'>> "$ISO_PATH/$KS_FILE_NAME"
       sed -i '4i repo --name="kernel510" --baseurl=file:///run/install/sources/mount-0000-hdd-device/kernel510' "$ISO_PATH/$KS_FILE_NAME"
     fi
   fi
