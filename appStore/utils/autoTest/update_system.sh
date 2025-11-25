@@ -16,7 +16,7 @@ for package in $updates; do
 done
 echo $update
 if [ "$update" = true ];then
-  `cd run_kytuning-ffdev;sh run.sh`
+  `cd /root/run_kytuning-ffdev;sh run.sh`
   # 获取配置文件中的项目名称信息
-  python3 get_compar_url.py
+  python3 send_url_message.py
 fi
