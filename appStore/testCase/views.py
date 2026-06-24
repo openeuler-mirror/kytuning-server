@@ -16,8 +16,9 @@ from django.http import HttpResponse, FileResponse, HttpRequest
 from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
 from appStore.testMachine.models import TestMachine
-from appStore.utils.common import test_case, json_response, get_error_message
+from appStore.utils.common import json_response, get_error_message
 from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL
+from appStore.utils.subprocess import test_case
 
 log = logging.getLogger('kytuninglog')
 

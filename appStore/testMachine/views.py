@@ -11,8 +11,8 @@ from rest_framework import status, viewsets
 from appStore.adaptISO.models import AdaptISO
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
-from appStore.utils.common import json_response, get_link_status, update_system, update_auto_install, make_ks_password
-from appStore.utils.subprocess import check_disk_size
+from appStore.utils.common import json_response, make_ks_password
+from appStore.utils.subprocess import check_disk_size, get_link_status, update_system, update_auto_install
 
 log = logging.getLogger('kytuninglog')
 
