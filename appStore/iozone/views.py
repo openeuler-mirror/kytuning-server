@@ -12,7 +12,8 @@ from rest_framework import status, viewsets
 from appStore.iozone.models import Iozone
 from appStore.iozone.serializers import IozoneSerializer
 from appStore.project.models import Project
-from appStore.utils.common import json_response, get_error_message, get_analyze_data
+from appStore.utils.analyze import get_analyze_data
+from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 

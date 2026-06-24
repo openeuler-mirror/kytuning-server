@@ -12,7 +12,8 @@ from rest_framework import status, viewsets
 from appStore.cpu2006.models import Cpu2006
 from appStore.cpu2006.serializers import Cpu2006Serializer
 from appStore.project.models import Project
-from appStore.utils.common import json_response, get_error_message, get_analyze_data
+from appStore.utils.analyze import get_analyze_data
+from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 

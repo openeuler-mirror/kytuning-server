@@ -12,7 +12,8 @@ from rest_framework import status, viewsets
 from appStore.project.models import Project
 from appStore.stream.models import Stream
 from appStore.stream.serializers import StreamSerializer
-from appStore.utils.common import json_response, get_error_message, get_analyze_data
+from appStore.utils.analyze import get_analyze_data
+from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 
