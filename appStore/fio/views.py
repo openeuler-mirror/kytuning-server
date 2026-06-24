@@ -11,7 +11,8 @@ from rest_framework import status, viewsets
 from appStore.fio.models import Fio
 from appStore.fio.serializers import FioSerializer
 from appStore.project.models import Project
-from appStore.utils.common import json_response, get_error_message, get_analyze_data
+from appStore.utils.analyze import get_analyze_data
+from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 
