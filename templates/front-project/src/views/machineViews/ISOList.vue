@@ -99,21 +99,18 @@ export default {
         this.ksList = response.data.data.map(item => item.ks_name);
       });
     },
-
     //新增
     add() {
       this.dialogTitle = '新增ISO'
       this.reset()
       this.dialogAddMachine = true
     },
-
     //新增的取消
     closeInfo() {
       // 重置表单的验证状态
       this.dialogAddMachine = false
       this.reset()
     },
-
     addSure() {
       this.$refs.machineForm.validate((valid) => {
         if (valid) {
@@ -139,7 +136,6 @@ export default {
         }
       });
     },
-
     reset() {
       this.IsoData = {
         machine_name: '',
@@ -151,7 +147,6 @@ export default {
       }
       this.getData()
     },
-
     //修改数据
     modify(row) {
       this.dialogTitle = '修改ISO信息'
@@ -179,7 +174,6 @@ export default {
         }
       })
     },
-
     //删除数据
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
@@ -196,10 +190,8 @@ export default {
       })
     },
   }
-}
-;
+};
 </script>
-
 
 <style scoped>
 .parent-container {

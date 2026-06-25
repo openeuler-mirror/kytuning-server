@@ -127,8 +127,8 @@
     </el-dialog>
 
     <el-dialog :title="'选择测试数据'" v-model="dialogTest" width="800px">
-      <el-table ref="testTable" :data="testDatas" @selection-change="handleSelection"
-                tooltip-effect="dark" border height="500" style="width: 100%" class="tableHead">
+      <el-table ref="testTable" :data="testDatas" @selection-change="handleSelection" tooltip-effect="dark" border height="500" style="width: 100%"
+                class="tableHead">
         <el-table-column type="selection" width="55"/>
         <el-table-column prop="project_name" label="测试项目名称"/>
         <el-table-column prop="ip" label="测试机器ip"/>
@@ -145,7 +145,6 @@
   </div>
 </template>
 
-
 <script scoped>
 import {ElMessage} from 'element-plus';
 import {error_list, test_case} from "@/api/api";
@@ -154,10 +153,6 @@ import utils from '@/utils/utils';
 export default {
   name: 'errorList',
   mixins: [utils],
-  // components: {
-  //   AllHeader,
-  //   Menu,
-  // },
   data() {
     return {
       allDatas: [],
@@ -213,7 +208,6 @@ export default {
         }
       })
     },
-
     //新增
     add() {
       this.dialogErrorPost = true
@@ -250,7 +244,6 @@ export default {
     closeTest() {
       this.dialogTest = false
     },
-
     addSure() {
       //errorForm这个是上面form表单中的ref对应的标记
       this.$refs.errorForm.validate((valid) => {
@@ -276,7 +269,6 @@ export default {
         }
       });
     },
-
     reset() {
       this.errorData = {
         errType: '',
@@ -335,10 +327,8 @@ export default {
       })
     },
   }
-}
-;
+};
 </script>
-
 
 <style scoped>
 .parent-container {
