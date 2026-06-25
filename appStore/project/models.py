@@ -19,7 +19,6 @@ class Project(models.Model):
     user_name = models.CharField(max_length=255, verbose_name='测试人员名称')
     os_version = models.CharField(max_length=255, verbose_name='操作系统版本', null=True, blank=True)
     cpu_module_name = models.CharField(max_length=255, verbose_name='cpu型号', null=True, blank=True)
-    times = models.IntegerField(verbose_name='第几次测试')
     ip = models.CharField(max_length=50, verbose_name='测试机器ip', null=True, blank=True)
     stream = models.IntegerField(default=0, verbose_name='几组stream数据')
     lmbench = models.IntegerField(default=0, verbose_name='几组lmbench数据')
