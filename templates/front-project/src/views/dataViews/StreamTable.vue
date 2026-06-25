@@ -8,7 +8,7 @@
 <template>
   <div>
     <div id="fixed-top">
-      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"  @data-loaded="handleDataLoaded"/>
+      <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     </div>
     <div style="overflow-x: auto; display: flex; flex: 1;">
       <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" highlight-current-row>
@@ -81,7 +81,6 @@ export default {
 </script>
 
 <style scoped>
-
 .red-cell {
   color: red;
   background-color: pink;
