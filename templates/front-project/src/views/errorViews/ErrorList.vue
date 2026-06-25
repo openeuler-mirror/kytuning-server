@@ -1,3 +1,10 @@
+<!--
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wqz <wangqingzheng@kylinos.cn>
+ * Date: Wed Aug 21 10:54:14 2024 +0800
+-->
 <template>
   <div id="fixed-top">
     <!-- 搜索 -->
@@ -141,8 +148,6 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-// import AllHeader from "@/components/common/AllHeader";
-// import Menu from "@/components/common/AllMenu";
 import {error_list, test_case} from "@/api/api";
 import utils from '@/utils/utils';
 
@@ -266,7 +271,7 @@ export default {
             }
           });
         } else {
-          ElMessage({message: '请填写正确信息', type: 'success'})
+          ElMessage({message: '请填写正确信息', type: 'warning'})
           return false;
         }
       });

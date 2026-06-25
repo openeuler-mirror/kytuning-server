@@ -83,10 +83,10 @@ export default {
             }
           });
         } else {
-          ElMessage.error({message: '不可终止他人的测试任务', duration: 1000});
+          ElMessage({message: '不可终止他人的测试任务', type: 'error'});
         }
       } else {
-        ElMessage.error({message: '任务已完成，无需终止', duration: 1000});
+        ElMessage({message: '任务已完成，无需终止', type: 'warning'});
       }
 
     },

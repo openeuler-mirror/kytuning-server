@@ -178,7 +178,7 @@ export default {
           'kernel_type': row.kernel_type,
         }
       } else {
-        ElMessage({message: '不可查看或修改他人机器详情', type: 'success'})
+        ElMessage({message: '不可查看或修改他人机器详情', type: 'warning'})
       }
     },
 
@@ -198,15 +198,15 @@ export default {
       }
       if (this.serverData.new_iso_name && this.serverData.new_iso_name !== "other(手动创建)") {
         if (!this.serverData.new_server_password) {
-          ElMessage({message: '重构系统请输入密码', type: 'warning'})
+          ElMessage({message: '重构系统请输入密码', type: 'error'})
           return
         }
         if (!this.serverData.root_size || typeof this.serverData.root_size !== 'number') {
-          ElMessage({message: '请输入根路径大小并确保是number类型', type: 'warning'})
+          ElMessage({message: '请输入根路径大小并确保是number类型', type: 'error'})
           return
         }
         if (!this.serverData.swap_size || typeof this.serverData.swap_size !== 'number') {
-          ElMessage({message: '请输入swap路径大小并确保是number类型', type: 'warning'})
+          ElMessage({message: '请输入swap路径大小并确保是number类型', type: 'error'})
           return
         }
         const newData = this.isoList.find(item => item.ISO_name === this.serverData.new_iso_name)
@@ -219,7 +219,7 @@ export default {
             }
           })
         } else {
-          ElMessage({message: '你的机器架构和ISO类型不匹配', type: 'warning'})
+          ElMessage({message: '你的机器架构和ISO类型不匹配', type: 'error'})
         }
 
       } else {
@@ -249,7 +249,7 @@ export default {
           }
         })
       } else {
-        ElMessage({message: '目前机器无人使用', type: 'error'})
+        ElMessage({message: '目前机器无人使用', type: 'warning'})
       }
     },
     //申请使用
@@ -272,7 +272,7 @@ export default {
           }
         })
       } else {
-        ElMessage({message: '当前没有申请人员，无需取消申请', type: 'error'})
+        ElMessage({message: '当前没有申请人员，无需取消申请', type: 'warning'})
       }
     },
     updateStatus(row) {
@@ -284,7 +284,7 @@ export default {
           }
         })
       } else {
-        ElMessage({message: '无人使用无需更新', type: 'success'})
+        ElMessage({message: '无人使用无需更新', type: 'warning'})
       }
     },
   }
