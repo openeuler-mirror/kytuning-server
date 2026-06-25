@@ -181,7 +181,7 @@ export default {
       this.formData.iterations.cpu2017 = 0
       this.formData.yamlData = baseYamlData
     },
-    //换源上传测试数据
+    //还原上传测试数据
     lastTest() {
       user_config('get', {configID: 0}).then(response => {
         const config = response.data.data[0]

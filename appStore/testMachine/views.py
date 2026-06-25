@@ -11,6 +11,7 @@ from rest_framework import status, viewsets
 from appStore.adaptISO.models import AdaptISO
 from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
+from appStore.utils.autoTest.send_url_message import send_lanxin_message
 from appStore.utils.common import json_response, make_ks_password
 from appStore.utils.subprocess import check_disk_size, get_link_status, update_system, update_auto_install
 
@@ -117,6 +118,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         else:
             # 检查磁盘空间是否充足
             remaining_disk_space = check_disk_size(machine_data.server_IP, machine_data.server_user_name,machine_data.server_password)
+            if not remaining_disk_space:
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '请更新服务器状态，查看账号密码是否正确')
             if not request.data.get('clear_part'):
                 if int(remaining_disk_space) <= int(request.data.get('root_size')) + int(request.data.get('swap_size'))+1+1:
                     return json_response({}, status.HTTP_205_RESET_CONTENT,'磁盘空间不足请重新设置;当前磁盘空间为：%sG;'%(int(remaining_disk_space)-2))
@@ -179,9 +182,12 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             machine_data.link_status = None
             machine_data.task_status = None
             machine_data.save()
+            if machine_data.queue_user:
+                content = "BMC设备IP为：{} 的机器已完成使用，请您确认".format(machine_data.BMC_IP)
+                send_lanxin_message(machine_data.queue_user, content)
             return json_response({}, status.HTTP_200_OK, '使用完成状态修改成功')
         else:
-            return json_response({}, status.HTTP_200_OK, '不可更改别人的使用状态')
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '不可更改别人的使用状态')
 
     def update_status(self, request, *args, **kwargs):
         machine_id = request.data.get('id')
