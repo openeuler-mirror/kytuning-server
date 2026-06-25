@@ -1,10 +1,3 @@
-<!--
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Tue Mar 12 09:59:13 2024 +0800
--->
 <template>
   <div id="fixed-top">
     <el-button type="success" @click="add" style="float: right;">新增</el-button>
@@ -93,7 +86,7 @@ export default {
       archTypes: ['x86', 'aarch', 'mips', 'loongarch'],
       dialogAddMachine: false,
       modifyID: 0,
-      dialogTitle: '新增设备',
+      dialogTitle: '',
     };
   },
   created() {
@@ -109,12 +102,14 @@ export default {
 
     //新增
     add() {
+      this.dialogTitle = '新增设备'
+      this.reset()
       this.dialogAddMachine = true
     },
     //新增的取消
     closeInfo() {
       // 重置表单的验证状态
-      this.$refs.machineForm.resetFields();
+      this.reset()
       this.dialogAddMachine = false
     },
 
@@ -153,7 +148,6 @@ export default {
         BMC_user_name: '',
         BMC_password: '',
       }
-      this.$refs.machineForm.resetFields();
       this.getData()
     },
 
