@@ -29,8 +29,8 @@
     </el-card>
   </div>
   <el-dialog :title="'选择修改的数据'" v-model="selectDataDialog" width="1600px">
-    <el-table ref="refData" :data="selectDatas" @selection-change="handleSelection"
-              tooltip-effect="dark" border height="500" style="width: 100%" class="tableHead">
+    <el-table ref="refData" :data="selectDatas" @selection-change="handleSelection" tooltip-effect="dark" border height="500" style="width: 100%"
+              class="tableHead">
       <el-table-column type="selection" width="55"/>
       <el-table-column prop="single_array_size" label="单线程 Array size"/>
       <el-table-column prop="single_copy" label="单线程 Copy"/>
