@@ -17,7 +17,6 @@ import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 import {removeToken} from "@/utils/setToken";
 
-
 const app = createApp(App)
 //解决屏幕改变大小报错问题
 const debounce = (fn, delay) => {
@@ -31,6 +30,7 @@ const debounce = (fn, delay) => {
         }, delay);
     }
 }
+
 const _ResizeObserver = window.ResizeObserver;
 window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
     constructor(callback) {
@@ -57,7 +57,6 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
-
 
 app.config.globalProperties.$https = axios
 app.config.globalProperties.service = service
