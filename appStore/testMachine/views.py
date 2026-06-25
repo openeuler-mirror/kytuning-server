@@ -17,6 +17,7 @@ from appStore.utils.subprocess import check_disk_size, get_link_status, update_s
 
 log = logging.getLogger('kytuninglog')
 
+
 class TestMachineViewSet(viewsets.ModelViewSet):
     """
     测试机器数据管理
@@ -25,7 +26,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
     serializer_class = TestMachineSerializer
 
     def list(self, request, *args, **kwargs):
-        if (request.GET.get('search_by_name',None)):
+        if (request.GET.get('search_by_name', None)):
             queryset = TestMachine.objects.filter(owner=request.user.chinese_name).order_by('-id')
         else:
             queryset = TestMachine.objects.all().order_by('-id')
@@ -48,8 +49,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if config_serializer.is_valid():
             self.perform_create(config_serializer)
             return json_response(config_serializer.data, status.HTTP_200_OK, '创建成功！')
-        log.info('Machine数据存储错误 ：%s，'%config_serializer.errors)
-        log.info('Machine存储数据为 ：%s，'%data_machine)
+        log.info('Machine数据存储错误 ：%s，' % config_serializer.errors)
+        log.info('Machine存储数据为 ：%s，' % data_machine)
         return json_response(config_serializer.errors, status.HTTP_400_BAD_REQUEST, config_serializer.errors)
 
     def put(self, request, *args, **kwargs):
@@ -75,7 +76,15 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         if machine_data.queue_user:
-            return json_response({}, status.HTTP_200_OK, '当前已存在申请人，请稍后')
+            # 允许多人排队
+            if not request.user.chinese_name in machine_data.queue_user.split(','):
+                if len(machine_data.queue_user.split(',')) < 5:
+                    machine_data.queue_user = machine_data.queue_user + ',' + request.user.chinese_name
+                    machine_data.save()
+                    return json_response({}, status.HTTP_200_OK, '申请成功')
+                else:
+                    return json_response({}, status.HTTP_205_RESET_CONTENT, '当前已有5人排队，等待时间过长请更换机器')
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '您已经申请成功，无需重复申请')
         elif machine_data.owner == request.user.chinese_name:
             return json_response({}, status.HTTP_200_OK, '您正在使用无需申请')
         else:
@@ -88,8 +97,10 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-        if machine_data.queue_user == request.user.chinese_name:
-            machine_data.queue_user = None
+        if request.user.chinese_name in machine_data.queue_user.split(','):
+            # 删除当前人员
+            queue_names = [queue_name for queue_name in machine_data.queue_user.split(',') if queue_name != request.user.chinese_name]
+            machine_data.queue_user = ','.join(queue_names)
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '取消申请成功')
         else:
@@ -108,8 +119,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.server_password = request.data.get('server_password')
         new_server_password = request.data.get('new_server_password')
         new_iso_name = request.data.get('new_iso_name')
-        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
-                                                   machine_data.BMC_password, machine_data.server_IP,
+        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name, machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
         replacements = {}
         # 补充需要替换脚本文件的内容
@@ -117,14 +127,15 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             ISO = None
         else:
             # 检查磁盘空间是否充足
-            remaining_disk_space = check_disk_size(machine_data.server_IP, machine_data.server_user_name,machine_data.server_password)
+            remaining_disk_space = check_disk_size(machine_data.server_IP, machine_data.server_user_name, machine_data.server_password)
             if not remaining_disk_space:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '请更新服务器状态，查看账号密码是否正确')
             if not request.data.get('clear_part'):
-                if int(remaining_disk_space) <= int(request.data.get('root_size')) + int(request.data.get('swap_size'))+1+1:
-                    return json_response({}, status.HTTP_205_RESET_CONTENT,'磁盘空间不足请重新设置;当前磁盘空间为：%sG;'%(int(remaining_disk_space)-2))
+                if int(remaining_disk_space) <= int(request.data.get('root_size')) + int(request.data.get('swap_size')) + 1 + 1:
+                    return json_response({}, status.HTTP_205_RESET_CONTENT,
+                                         '磁盘空间不足请重新设置;当前磁盘空间为：%sG;' % (int(remaining_disk_space) - 2))
             if not request.data.get('root_size') or not isinstance(request.data.get('root_size'), (int, float)):
-                return json_response({}, status.HTTP_205_RESET_CONTENT,'请输入根文件路径大小')
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '请输入根文件路径大小')
             else:
                 replacements['root_size'] = request.data.get('root_size')
             if not request.data.get('swap_size') or not isinstance(request.data.get('swap_size'), (int, float)):
@@ -135,7 +146,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             if new_server_password:
                 replacements['PASSWORD'] = make_ks_password(new_server_password)
             else:
-                return json_response({}, status.HTTP_205_RESET_CONTENT,'重构系统请输入密码')
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '重构系统请输入密码')
             ISO = AdaptISO.objects.filter(ISO_name=new_iso_name).first()
             replacements['HTTP_ISO_PATH'] = ISO.http_address
             if ISO.arch_name == 'x86':
@@ -151,20 +162,25 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 machine_data.iso_name = new_iso_name
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password,
+                              machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
                 machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         elif not machine_data.owner:
-            if machine_data.queue_user and machine_data.queue_user != request.user.chinese_name:
-                return json_response({}, status.HTTP_200_OK, '当前申请人是 %s，请协商后在使用' % machine_data.queue_user)
+            # 判断是不是第一个申请人
+            if machine_data.queue_user and machine_data.queue_user.split(',')[0] != request.user.chinese_name:
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '当前申请人是 %s，请协商后在使用' % machine_data.queue_user)
             machine_data.owner = request.user.chinese_name
-            machine_data.queue_user = None
+            # 删除当前人员
+            queue_names = [queue_name for queue_name in machine_data.queue_user.split(',') if queue_name != request.user.chinese_name]
+            machine_data.queue_user = ','.join(queue_names)
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password, machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password,
+                              machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
                 machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
@@ -184,7 +200,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             machine_data.save()
             if machine_data.queue_user:
                 content = "BMC设备IP为：{} 的机器已完成使用，请您确认".format(machine_data.BMC_IP)
-                send_lanxin_message(machine_data.queue_user, content)
+                send_lanxin_message(machine_data.queue_user.split(',')[0], content)
             return json_response({}, status.HTTP_200_OK, '使用完成状态修改成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '不可更改别人的使用状态')
@@ -194,9 +210,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
-                                                   machine_data.BMC_password, machine_data.server_IP,
-                                                   machine_data.server_user_name, machine_data.server_password)
+        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name, machine_data.BMC_password,
+                                                   machine_data.server_IP, machine_data.server_user_name, machine_data.server_password)
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '更新状态完成')
 
