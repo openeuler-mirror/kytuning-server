@@ -1,9 +1,9 @@
 <!--
  * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2. 
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
- * Author: wqz <wangqingzheng@kylinos.cn>
- * Date: Tue May 14 15:20:21 2024 +0800
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Sat May 11 09:14:50 2024 +0800
 -->
 <template>
   <div>
@@ -65,14 +65,20 @@ export default {
   methods: {
     getData() {
       cpu2017(this.paramsData).then((response) => {
-        this.tableDatas = response.data.data.datas;
-        this.analyzeData = response.data.data.analyze_data;
-        this.showAllData = false; // 默认显示平均数据
-        const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
-          const value = this.tableDatas[0][key];
-          return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
-        });
-        this.keysToHide = keysToHide;
+        if (response.data.data.datas) {
+          this.tableDatas = response.data.data.datas;
+          this.analyzeData = response.data.data.analyze_data;
+          this.showAllData = false; // 默认显示平均数据
+          const keysToHide = Object.keys(this.tableDatas[0]).filter(key => {
+            const value = this.tableDatas[0][key];
+            return value.includes(this.dataName.charAt(0).toUpperCase() + this.dataName.slice(1) + "#");
+          });
+          this.keysToHide = keysToHide;
+        } else {
+          this.tableDatas = [];
+          this.analyzeData = '';
+          this.keysToHide = '';
+        }
       });
     },
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
