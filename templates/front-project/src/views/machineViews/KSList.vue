@@ -89,7 +89,6 @@ export default {
         this.total = this.allDatas.length;
       });
     },
-
     //新增
     add() {
       this.dialogTitle = '新增ks文件'
@@ -102,7 +101,6 @@ export default {
       this.reset()
       this.dialogAddKsFile = false
     },
-
     addSure() {
       this.$refs.ksFileForm.validate((valid) => {
         if (valid) {
@@ -124,7 +122,6 @@ export default {
         }
       });
     },
-
     reset() {
       this.ksFileData = {
         ks_name: '',
@@ -133,7 +130,6 @@ export default {
       }
       this.getData()
     },
-
     //修改数据
     modify(row) {
       this.dialogTitle = '修改ks文件按信息'
@@ -161,7 +157,6 @@ export default {
         }
       })
     },
-
     //删除数据
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
@@ -178,10 +173,8 @@ export default {
       })
     },
   }
-}
-;
+};
 </script>
-
 
 <style scoped>
 .parent-container {

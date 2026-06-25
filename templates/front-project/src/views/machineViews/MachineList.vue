@@ -106,7 +106,6 @@ export default {
         this.total = this.allDatas.length;
       });
     },
-
     //新增
     add() {
       this.dialogTitle = '新增设备'
@@ -119,7 +118,6 @@ export default {
       this.reset()
       this.dialogAddMachine = false
     },
-
     addSure() {
       //machineForm这个是上面form表单中的ref对应的标记
       this.$refs.machineForm.validate((valid) => {
@@ -145,7 +143,6 @@ export default {
         }
       });
     },
-
     reset() {
       this.machineData = {
         machine_name: '',
@@ -157,7 +154,6 @@ export default {
       }
       this.getData()
     },
-
     //修改数据
     modify(row) {
       this.dialogTitle = '修改设备信息'
@@ -184,7 +180,6 @@ export default {
         BMC_user_name: this.machineData.BMC_user_name,
         BMC_password: this.machineData.BMC_password,
       }
-
       machine_list('put', machineData_).then(response => {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})
@@ -194,7 +189,6 @@ export default {
         }
       })
     },
-
     //删除数据
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
@@ -211,10 +205,8 @@ export default {
       })
     },
   }
-}
-;
+};
 </script>
-
 
 <style scoped>
 .parent-container {

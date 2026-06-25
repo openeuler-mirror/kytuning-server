@@ -18,7 +18,7 @@
         </el-table-column>
         <el-table-column prop="owner" label="使用人" width="70"></el-table-column>
         <el-table-column prop="server_IP" label="server_IP" width="130"></el-table-column>
-        <el-table-column prop="iso_name" label="当前ISO"  width="220"></el-table-column>
+        <el-table-column prop="iso_name" label="当前ISO" width="220"></el-table-column>
         <el-table-column prop="link_status" label="连接状态">
           <template #default="scope">
             <el-button v-if="scope.row.link_status" :type="scope.row.link_status === '在线' ? 'success' : 'danger'">
@@ -77,16 +77,19 @@
           <el-input v-model="serverData.new_server_password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="根文件系统大小" prop="root_size" v-if="create_new_system">
-          <el-input v-model.number="serverData.root_size" autocomplete="off" placeholder="建议50-300，单位为G" type="number" min="0" step="1"></el-input>
+          <el-input v-model.number="serverData.root_size" autocomplete="off" placeholder="建议50-300，单位为G" type="number" min="0"
+                    step="1"></el-input>
         </el-form-item>
         <el-form-item label="swap路径大小" prop="swap_size" v-if="create_new_system">
           <el-input v-model.number="serverData.swap_size" autocomplete="off" placeholder="单位为G" type="number" min="0" step="0.1"></el-input>
         </el-form-item>
         <el-form-item label="是否清空系统盘" prop="root_size" v-if="create_new_system">
-          <el-switch style="display: block" v-model="serverData.clear_part" inactive-color="#13ce66" active-color="#ff4949" inactive-text="不清空" active-text="清空"></el-switch>
+          <el-switch style="display: block" v-model="serverData.clear_part" inactive-color="#13ce66" active-color="#ff4949" inactive-text="不清空"
+                     active-text="清空"></el-switch>
         </el-form-item>
         <el-form-item label="选择内核" prop="root_size" v-if="get_kernel">
-          <el-switch style="display: block" v-model="serverData.kernel_type" inactive-color="#13ce66" active-color="#ff4949" inactive-text="419" active-text="510"></el-switch>
+          <el-switch style="display: block" v-model="serverData.kernel_type" inactive-color="#13ce66" active-color="#ff4949" inactive-text="419"
+                     active-text="510"></el-switch>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -96,7 +99,6 @@
     </el-dialog>
   </div>
 </template>
-
 
 <script scoped>
 import {ElMessage} from 'element-plus';
@@ -111,7 +113,6 @@ import {
 } from "@/api/api";
 import utils from '@/utils/utils';
 import {getToken} from "@/utils/setToken";
-
 
 export default {
   name: 'serverList',
@@ -156,7 +157,6 @@ export default {
         this.total = this.allDatas.length;
       });
     },
-
     //修改数据
     modify(row) {
       if (row.owner === getToken('chinesename') || getToken('chinesename') === 'root' || !row.owner) {
@@ -181,7 +181,6 @@ export default {
         ElMessage({message: '不可查看或修改他人机器详情', type: 'warning'})
       }
     },
-
     //确定修改数据
     applyUseSure() {
       const serverData_ = {
@@ -221,7 +220,6 @@ export default {
         } else {
           ElMessage({message: '你的机器架构和ISO类型不匹配', type: 'error'})
         }
-
       } else {
         this.dialogModify = false;
         modify_server(serverData_).then(response => {
@@ -236,7 +234,6 @@ export default {
     closeInfo() {
       this.dialogModify = false
     },
-
     //使用完成
     finishedUsing(row) {
       if (row.owner) {
@@ -261,7 +258,6 @@ export default {
         }
       })
     },
-
     //取消申请 1、判断取消人员和申请人是否一致（前后端同时判断，保证数据可靠性）；2、是否存在申请人员（前端判断）
     cancelApplyUse(row) {
       if (row.queue_user) {
@@ -291,12 +287,12 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .operate-button {
   margin-left: 0;
   margin-right: 10px;
 }
+
 .parent-container {
   display: flex;
   justify-content: center;
