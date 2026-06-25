@@ -8,7 +8,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-公共函数
+网络相关的公共函数
 @author: Wqz
 @time: 15/4/24 03:04 PM
 """
