@@ -1,13 +1,5 @@
-<!--
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Tue Mar 12 09:59:13 2024 +0800
--->
 <template>
   <div id="fixed-top">
-    <!-- 搜索 -->
     <el-button type="success" @click="add" style="float: right;">新增</el-button>
     <div class="cont">
       <el-table :data="showData" :header-cell-style="{fontSize:'15px'}" tooltip-effect="dark" border style="width: 100%">
@@ -38,17 +30,17 @@
   </div>
   <div>
     <el-dialog :title="dialogTitle" v-model="dialogAddMachine" width="500px">
-      <el-form :model="machineData" ref="machineForm">
+      <el-form :model="IsoData" ref="machineForm">
         <el-form-item label="ISO下载地址" prop="http_address">
-          <el-input v-model="machineData.http_address" autocomplete="off"></el-input>
+          <el-input v-model="IsoData.http_address" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="架构" prop="arch_name">
-          <el-select v-model="machineData.arch_name" class="m-2" placeholder="请选择架构类型">
+          <el-select v-model="IsoData.arch_name" class="m-2" placeholder="请选择架构类型">
             <el-option v-for="item in archTypes" :key="item" :label="item" :value="item" placeholder="请选择架构类型"/>
           </el-select>
         </el-form-item>
         <el-form-item label="ks文件名称" prop="ks_file_name">
-          <el-select v-model="machineData.ks_file_name" class="m-2" placeholder="请选择ks文件">
+          <el-select v-model="IsoData.ks_file_name" class="m-2" placeholder="请选择ks文件">
             <el-option v-for="item in ksList" :key="item" :label="item" :value="item" placeholder="请选择ks文件"/>
           </el-select>
         </el-form-item>
@@ -73,7 +65,7 @@ export default {
   data() {
     return {
       allDatas: [],
-      machineData: {
+      IsoData: {
         'ISO_name': '',
         'http_address': '',
         'arch_name': '',
@@ -81,10 +73,10 @@ export default {
         'ks_file_name': '',
       },
       archTypes: ['x86', 'aarch', 'mips', 'loongarch'],
-      ksList:[],
+      ksList: [],
       dialogAddMachine: false,
       modifyID: 0,
-      dialogTitle: '新增ISO',
+      dialogTitle: '',
     };
   },
   created() {
@@ -103,25 +95,32 @@ export default {
 
     //新增
     add() {
+      this.dialogTitle = '新增ISO'
+      this.reset()
       this.dialogAddMachine = true
     },
+
     //新增的取消
     closeInfo() {
       // 重置表单的验证状态
-      this.$refs.machineForm.resetFields();
       this.dialogAddMachine = false
+      this.reset()
     },
 
     addSure() {
       this.$refs.machineForm.validate((valid) => {
         if (valid) {
+          if (!this.IsoData.http_address.endsWith('iso')) {
+            ElMessage({message: 'http地址需要以iso结尾', type: 'success'})
+            return false;
+          }
           this.dialogAddMachine = false;
-          const machineData_ = {
-            http_address: this.machineData.http_address,
-            arch_name: this.machineData.arch_name,
-            ks_file_name: this.machineData.ks_file_name,
+          const IsoData_ = {
+            http_address: this.IsoData.http_address,
+            arch_name: this.IsoData.arch_name,
+            ks_file_name: this.IsoData.ks_file_name,
           };
-          adapt_ISO('post', machineData_).then((response) => {
+          adapt_ISO('post', IsoData_).then((response) => {
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'});
               this.reset()
@@ -135,7 +134,7 @@ export default {
     },
 
     reset() {
-      this.machineData = {
+      this.IsoData = {
         machine_name: '',
         cpu_module_name: '',
         arch_name: '',
@@ -143,16 +142,15 @@ export default {
         BMC_user_name: '',
         BMC_password: '',
       }
-      this.$refs.machineForm.resetFields();
       this.getData()
     },
 
     //修改数据
     modify(row) {
-      this.dialogTitle = '修改设备信息'
+      this.dialogTitle = '修改ISO信息'
       this.dialogAddMachine = true
       this.modifyID = row.id
-      this.machineData = {
+      this.IsoData = {
         http_address: row.http_address,
         arch_name: row.arch_name,
         ks_file_name: row.ks_file_name
@@ -161,13 +159,13 @@ export default {
     //确定修改数据
     modifySure() {
       this.dialogAddMachine = false;
-      const machineData_ = {
+      const IsoData_ = {
         id: this.modifyID,
-        http_address: this.machineData.http_address,
-        arch_name: this.machineData.arch_name,
-        ks_file_name: this.machineData.ks_file_name,
+        http_address: this.IsoData.http_address,
+        arch_name: this.IsoData.arch_name,
+        ks_file_name: this.IsoData.ks_file_name,
       };
-      adapt_ISO('put', machineData_).then(response => {
+      adapt_ISO('put', IsoData_).then(response => {
         if (response.data.code === 200) {
           ElMessage({message: response.data.message, type: 'success'})
           this.reset()
