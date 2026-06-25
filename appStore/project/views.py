@@ -241,7 +241,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         json_file_path = '/var/www/html/all_json_data_file/'
         # 找到需要合并的全部数据
         base_env_time = Env.objects.filter(id=env_id).first().time
-        compar_env_times = list(set([d.time for d in Env.objects.filter(id__in=env_ids)]))
+        compar_env_time = list(set([d.time for d in Env.objects.filter(id__in=env_ids)]))
 
         if os.path.exists(json_file_path + base_env_time+'.json'):
             stream_max_number = -1
@@ -292,7 +292,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 cpu2006_max_number = max(cpu2006_keys_number) if cpu2006_keys_number else cpu2006_max_number
                 cpu2017_max_number = max(cpu2017_keys_number) if cpu2017_keys_number else cpu2017_max_number
 
-            for file_name in compar_env_times:
+            for file_name in compar_env_time:
                 if os.path.exists(json_file_path + file_name + '.json'):
                     with open(json_file_path + file_name + '.json', 'r') as f:
                         json_data = f.read()
@@ -360,7 +360,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                 json.dump(data_, f_new)
 
             # 5、删除旧的数据
-            for name in compar_env_times:
+            for name in compar_env_time:
                 os.rename(json_file_path + str(name)+'.json', json_file_path + str(name)+'.json-env_' + str(env_id) +'-compar-old')
                 log.info(new_json_file, '数据和', json_file_path + str(name) + '.json' + '数据合并完成')
 
@@ -431,13 +431,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         data_project['stream'] += 1
         data_project['unixbench'] += 1
 
-        # 查到serialnumber数据的次数后+1
-        queryset = Project.objects.filter(
-            ip=data_project['ip']).order_by('times').last()
-        if not queryset:
-            data_project['times'] = 1
-        else:
-            data_project['times'] = queryset.times + 1
         serializer_project = ProjectSerializer(data=data_project)
         if serializer_project.is_valid():
             self.perform_create(serializer_project)
