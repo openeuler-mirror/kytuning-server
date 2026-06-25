@@ -422,7 +422,8 @@ class EnvViewSet(viewsets.ModelViewSet):
         # 获取存储数据的url
         value_type = list(request.data.keys())[2].split('-')[0].lower()
         web_url = KYTUNING_WEB_URL+'/'+ str(value_type) + '/' + str(request.data['env_id'])
-        send_lanxin_message(request.user.chinese_name, web_url)
+        content = "您的测试已完成请及时查看：{}".format(web_url)
+        send_lanxin_message(request.user.chinese_name, content)
 
         return json_response({}, status.HTTP_200_OK, '创建成功！')
 

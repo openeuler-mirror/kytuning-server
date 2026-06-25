@@ -2,6 +2,9 @@
 
 # 第一步需要手动配置对应的kojifiles源
 
+# 需要配置否则定时任务是会导致获取环境信息失败
+export PATH=/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin
+
 # 使用yum获取更新列表，去除标题行，提取包名，然后去除最后一个点号及之后的内容
 updates=$(yum list updates | grep -v "Available" | grep -v "Last" | awk '{print $1}' | sed 's/\.[^.]*$//')
 
