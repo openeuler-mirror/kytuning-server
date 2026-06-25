@@ -8,22 +8,14 @@
 <template>
   <div class="menu">
     <el-aside width="200px">
-      <el-menu
-          router
-          :default-active="activePath"
-          class="el-menu-vertical-demo"
-          background-color="#2578b5"
-          text-color="#fff"
-          active-text-color="#ffd04b">
+      <el-menu router :default-active="activePath" class="el-menu-vertical-demo" background-color="#2578b5" text-color="#fff"
+               active-text-color="#ffd04b">
         <template v-for="(item, index) in menus">
           <el-sub-menu :index="index + ''" :key="index" v-if="!item.hidden">
             <template #title>
               <span @click="handleClick(item.path)">{{ item.name }}</span>
             </template>
-            <el-menu-item
-                :index="child.path"
-                v-for="(child, index) in item.children"
-                :key="index">
+            <el-menu-item :index="child.path" v-for="(child, index) in item.children" :key="index">
               <i :class="child.iconClass"></i>
               {{ child.name }}
             </el-menu-item>
@@ -33,7 +25,6 @@
     </el-aside>
   </div>
 </template>
-
 <script setup>
 import {useRouter} from 'vue-router'
 
@@ -44,7 +35,6 @@ const handleClick = (path) => {
   router.push(path)
 }
 </script>
-
 <style lang="less">
 .menu {
   .el-aside {
