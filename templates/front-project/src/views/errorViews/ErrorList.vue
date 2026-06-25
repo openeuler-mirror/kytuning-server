@@ -1,10 +1,3 @@
-<!--
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Mar 11 16:52:35 2024 +0800
--->
 <template>
   <div id="fixed-top">
     <!-- 搜索 -->
@@ -156,6 +149,10 @@ import utils from '@/utils/utils';
 export default {
   name: 'errorList',
   mixins: [utils],
+  // components: {
+  //   AllHeader,
+  //   Menu,
+  // },
   data() {
     return {
       allDatas: [],
@@ -175,6 +172,7 @@ export default {
         testType: [{required: true, message: '请选择测试类型', trigger: 'change'}],
         errorDescription: [{required: true, message: '请输入错误描述', trigger: 'blur'}],
         errorExport: [{required: true, message: '请输入错误日志节选', trigger: 'blur'}],
+        // errorLogPath: [{required: true, message: '请选中错误数据', trigger: 'blur'}],
         solution: [{required: true, message: '请输入解决方案', trigger: 'blur'}],
       },
       dialogErrorPost: false,
@@ -218,7 +216,7 @@ export default {
     //新增的取消
     closeInfo() {
       // 重置表单的验证状态
-      this.$refs.errorForm.resetFields();
+      this.reset()
       this.dialogErrorPost = false
       this.dialogErrorPut = false
     },
