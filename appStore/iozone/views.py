@@ -296,7 +296,7 @@ class IozoneViewSet(viewsets.ModelViewSet):
         comparsionIds = comparsionIds.split(',')
         base_queryset = Iozone.objects.filter(env_id=env_id).all()
         if not base_queryset:
-            return json_response({}, status.HTTP_200_OK, '未获取到数据')
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         datas = [
             {'column1': 'Iozone', 'column2': ''},
             {'column1': '项目名称', 'column2': ''},
@@ -360,8 +360,7 @@ class IozoneViewSet(viewsets.ModelViewSet):
                 else:
                     log.info('iozone数据存储错误 ：%s，'%serializer_iozone.errors)
                     log.info('iozone存储数据为 ：%s，'%data_iozone)
-                    return json_response(serializer_iozone.errors, status.HTTP_400_BAD_REQUEST,
-                                         get_error_message(serializer_iozone))
+                    return json_response(serializer_iozone.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_iozone))
         if serializer_iozone_errors:
             print(serializer_iozone_errors, "iozone")
             return json_response(serializer_iozone_errors, status.HTTP_400_BAD_REQUEST, error_message)

@@ -16,7 +16,6 @@ import base64
 import json
 import math
 import time
-
 import numpy
 import pandas as pd
 
@@ -43,8 +42,15 @@ user_data = {
     "cpu2017_end_number": 1,
 }
 
-
 def env_excel_to_json(file_path, sheet_name,disk_number,nic_number):
+    """
+    环境信息表转换成json数据
+    :param file_path:
+    :param sheet_name:
+    :param disk_number:
+    :param nic_number:
+    :return:
+    """
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
     data = {}
@@ -195,6 +201,13 @@ def env_excel_to_json(file_path, sheet_name,disk_number,nic_number):
     return data
 
 def stream_excel_to_json(file_path, sheet_name,end_number):
+    """
+    stream表格转json数据
+    :param file_path:
+    :param sheet_name:
+    :param end_number:
+    :return:
+    """
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
     data = {}
@@ -224,6 +237,13 @@ def stream_excel_to_json(file_path, sheet_name,end_number):
     return data
 
 def lmbench_excel_to_json(file_path, sheet_name, end_number):
+    """
+    lmbench表格转json数据
+    :param file_path:
+    :param sheet_name:
+    :param end_number:
+    :return:
+    """
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
     data = {}
@@ -354,6 +374,13 @@ def lmbench_excel_to_json(file_path, sheet_name, end_number):
     return data
 
 def unixbench_excel_to_json(file_path, sheet_name, end_number):
+    """
+    unixbench表格转json数据
+    :param file_path:
+    :param sheet_name:
+    :param end_number:
+    :return:
+    """
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
     data = {}
@@ -424,6 +451,13 @@ def unixbench_excel_to_json(file_path, sheet_name, end_number):
     return data
 
 def fio_excel_to_json(file_path, sheet_name, end_number):
+    """
+    fio表格转json数据
+    :param file_path:
+    :param sheet_name:
+    :param end_number:
+    :return:
+    """
     # for sheet_name in sheet_names:
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
@@ -452,6 +486,13 @@ def fio_excel_to_json(file_path, sheet_name, end_number):
     return data
 
 def iozone_excel_to_json(file_path, sheet_name, end_number):
+    """
+    iozone表格转json数据
+    :param file_path:
+    :param sheet_name:
+    :param end_number:
+    :return:
+    """
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
     data = {}
@@ -489,6 +530,13 @@ def iozone_excel_to_json(file_path, sheet_name, end_number):
     return data
 
 def jvm2008_excel_to_json(file_path, sheet_name, end_number):
+    """
+    jvm2008表格转json数据
+    :param file_path:
+    :param sheet_name:
+    :param end_number:
+    :return:
+    """
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
     data = {}
@@ -543,6 +591,13 @@ def jvm2008_excel_to_json(file_path, sheet_name, end_number):
     return data
 
 def cpu2006_excel_to_json(file_path, sheet_name, end_number):
+    """
+    cpu2006表格转json数据
+    :param file_path:
+    :param sheet_name:
+    :param end_number:
+    :return:
+    """
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
     data = {}
@@ -805,6 +860,13 @@ def cpu2006_excel_to_json(file_path, sheet_name, end_number):
     return data
 
 def cpu2017_excel_to_json(file_path, sheet_name, end_number):
+    """
+    cpu2017表格转json数据
+    :param file_path:
+    :param sheet_name:
+    :param end_number:
+    :return:
+    """
     df = pd.read_excel(file_path, sheet_name=sheet_name)
     columns = df.columns
     data = {}
@@ -1028,7 +1090,9 @@ def cpu2017_excel_to_json(file_path, sheet_name, end_number):
 
 def replace_nan_with_empty_string(data):
     """
-    递归函数，将字典中所有的 NaN 替换为一个空字符串
+     递归函数，将字典中所有的 NaN 替换为一个空字符串
+    :param data:
+    :return:
     """
     if isinstance(data, dict):
         for key, value in data.items():
@@ -1039,6 +1103,7 @@ def replace_nan_with_empty_string(data):
     elif pd.isna(data):
         data = ""
     return data
+
 
 env_data = env_excel_to_json(user_data['file_path'], "性能测试环境",user_data['disk_number'],user_data['nic_number'])
 all_json_data = {**env_data,**{"time": time.time()}}

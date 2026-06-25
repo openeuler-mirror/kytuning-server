@@ -50,7 +50,7 @@ class KsFileListViewSet(viewsets.ModelViewSet):
         ks_id = request.data.get('id')
         ks_data = KsFile.objects.get(id=ks_id)
         if not ks_id or not ks_data:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         if request.user.is_superuser or request.user.chinese_name == ks_data.user_name:
             ks_data.ks_name = request.data.get('ks_name')
             ks_data.message = request.data.get('message')
@@ -62,17 +62,18 @@ class KsFileListViewSet(viewsets.ModelViewSet):
             log.info('更新%s文件完成，'%ks_data.ks_name)
             return json_response('', status.HTTP_200_OK, '更新成功！')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员或者管理人员才能修改数据')
+            return json_response({}, status.HTTP_401_UNAUTHORIZED, '只有管理员或者管理人员才能修改数据')
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
         if not id or not KsFile.objects.filter(id=id):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请传递正确的测试id')
         ks_file_data = KsFile.objects.filter(id=id).first()
         if not ks_file_data:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         # 判断只有能删除自己的数据或者是管理员。
         if request.user.is_superuser or request.user.chinese_name == ks_file_data.user_name:
+            # todo 增加一个公共函数获取增加 装饰器 功能（因为有很多地方使用到了）
             KsFile.objects.filter(id=id).delete()
             try:
                 # 删除ks文件
@@ -82,7 +83,7 @@ class KsFileListViewSet(viewsets.ModelViewSet):
                 log.info('删除%s文件时发生错误：%s，'%(ks_file_data.ks_name, e))
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '只有管理员或者管理人员才能删除该数据')
+            return json_response({}, status.HTTP_401_UNAUTHORIZED, '只有管理员或者管理人员才能删除该数据')
 
 
 

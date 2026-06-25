@@ -211,13 +211,13 @@ class StreamViewSet(viewsets.ModelViewSet):
     def put(self, request, *args, **kwargs):
         id = request.data.get('id')
         if not id or not Stream.objects.filter(id=id):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请传递正确的测试id')
         env_id = Stream.objects.filter(id=id).first().env_id
         user_name = Project.objects.filter(env_id=env_id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
             stream_data = Stream.objects.get(id=id)
             if not stream_data:
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+                return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
             stream_data.single_array_size = request.data.get('single_array_size')
             stream_data.single_copy = request.data.get('single_copy')
             stream_data.single_scale = request.data.get('single_scale')
@@ -231,6 +231,6 @@ class StreamViewSet(viewsets.ModelViewSet):
             stream_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许修改该数据')
+            return json_response({}, status.HTTP_401_UNAUTHORIZED, '此用户不允许修改该数据')
 
 

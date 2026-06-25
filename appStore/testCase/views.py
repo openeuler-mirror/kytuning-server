@@ -32,7 +32,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = TestCase.objects.filter().all().order_by('-id')
         if not queryset:
-            return json_response({}, status.HTTP_200_OK, '没有对应数据')
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '获取列表完成')
 
@@ -152,7 +152,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         # 运行测试
         TestMachine_ = TestMachine.objects.filter(server_IP=data_test_case['ip']).first()
         if TestMachine_.owner != request.user.chinese_name:
-            return json_response('', status.HTTP_200_OK, '用户只能使用自己的机器测试')
+            return json_response('', status.HTTP_401_UNAUTHORIZED, '用户只能使用自己的机器测试')
         try:
             return_result = test_case(data_test_case['ip'], TestMachine_.server_user_name, TestMachine_.server_password,
                                       test_case_names, user_config_path, data_test_case['result_log_name'])
@@ -174,12 +174,12 @@ class TestCaseViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
         if not id or not TestCase.objects.filter(id=id):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请传递正确的测试id')
         user_name = TestCase.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
             test_case_data = TestCase.objects.filter(id=id).first()
             if not test_case_data:
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+                return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
             if not TestCase.objects.get(id=id).is_error:
                 # 删除日志文件
                 subprocess.run("rm -rf " + str(TestCase.objects.filter(id=id).first().result_log_name) + '.tar', shell=True)
@@ -187,7 +187,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             TestCase.objects.filter(id=id).delete()
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
+            return json_response({}, status.HTTP_401_UNAUTHORIZED, '此用户不允许删除该数据')
 
     def down_message(self, request, *args, **kwargs):
         result_log_name = request.GET.get('result_log_name')

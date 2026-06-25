@@ -25,7 +25,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         queryset = UserConfig.objects.filter(user_name=request.user.chinese_name).all().order_by('-id')
         id = request.GET.get('configID')
         if not queryset:
-            return json_response({}, status.HTTP_200_OK, '没有查到对应数据')
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         if id:
             if id == '0':  # 获取最后一条数据
                 queryset = [queryset.first()]
@@ -72,12 +72,12 @@ class UserConfigViewSet(viewsets.ModelViewSet):
     def put(self, request, *args, **kwargs):
         id = request.data.get('id')
         if not id or not UserConfig.objects.filter(id=id):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请传递正确的测试id')
         user_name = UserConfig.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
             config_data = UserConfig.objects.get(id=id)  # get=filter.first()
             if not config_data:
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+                return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
             config_data.config_name = request.data.get('config_name')
             # config_data.user_password = request.data.get('user_password')
             config_data.project_name = request.data.get('project_name')

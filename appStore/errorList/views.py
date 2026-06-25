@@ -53,7 +53,7 @@ class ErrorListViewSet(viewsets.ModelViewSet):
         serializer_error = ErroirListSerializer(data=error_data)
         if serializer_error.is_valid():
             self.perform_create(serializer_error)
-            return json_response(serializer_error.data, status.HTTP_200_OK, '创建成功！')
+            return json_response(serializer_error.data, status.HTTP_200_OK, '创建成功')
         log.info('errorList数据存储错误 ：%s，'%serializer_error.errors)
         log.info('errorList存储数据为 ：%s，'%error_data)
         return json_response(serializer_error.errors, status.HTTP_400_BAD_REQUEST, serializer_error.errors)
@@ -61,12 +61,12 @@ class ErrorListViewSet(viewsets.ModelViewSet):
     def put(self, request, *args, **kwargs):
         id = request.data.get('id')
         if not id or not KytuningError.objects.filter(id=id):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请传递正确的测试ID')
         user_name = KytuningError.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
             error_data = KytuningError.objects.get(id=id)
             if not error_data:
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+                return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
             error_data.error_type = request.data.get('error_type')
             error_data.test_type = request.data.get('test_type')
             error_data.error_description = request.data.get('error_description')
@@ -76,18 +76,18 @@ class ErrorListViewSet(viewsets.ModelViewSet):
             error_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许修改该数据')
+            return json_response({}, status.HTTP_401_UNAUTHORIZED, '此用户不允许修改该数据')
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
         if not id or not KytuningError.objects.filter(id=id):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请传递正确的测试id')
         user_name = KytuningError.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
             test_case_data = KytuningError.objects.filter(id=id).first()
             if not test_case_data:
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
+                return json_response({}, status.HTTP_204_NO_CONTENT, '没有该数据')
             KytuningError.objects.filter(id=id).delete()
             return json_response({}, status.HTTP_200_OK, '删除成功')
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '此用户不允许删除该数据')
+            return json_response({}, status.HTTP_401_UNAUTHORIZED, '此用户不允许删除该数据')
