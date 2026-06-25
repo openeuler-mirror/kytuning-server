@@ -44,8 +44,6 @@
       </div>
     </div>
   </div>
-
-
 </template>
 
 
@@ -88,7 +86,6 @@ export default {
       } else {
         ElMessage({message: '任务已完成，无需终止', type: 'warning'});
       }
-
     },
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
@@ -107,8 +104,6 @@ export default {
   }
 };
 </script>
-
-
 <style scoped>
 .parent-container {
   display: flex;

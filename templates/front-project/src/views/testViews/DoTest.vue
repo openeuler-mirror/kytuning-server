@@ -17,28 +17,28 @@
         </el-form-item>
         <el-form-item label="测试项的迭代次数：">
           <el-form-item label="stream迭代次数：">
-            <el-input v-model.number="formData.iterations.stream" autocomplete="off"  type="number" min="0" step="1"/>
+            <el-input v-model.number="formData.iterations.stream" autocomplete="off" type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="lmbench迭代次数：">
-            <el-input v-model.number="formData.iterations.lmbench" autocomplete="off"  type="number" min="0" step="1"/>
+            <el-input v-model.number="formData.iterations.lmbench" autocomplete="off" type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="unixbench迭代次数：">
-            <el-input v-model.number="formData.iterations.unixbench" autocomplete="off"  type="number" min="0" step="1"/>
+            <el-input v-model.number="formData.iterations.unixbench" autocomplete="off" type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="fio迭代次数：">
-            <el-input v-model.number="formData.iterations.fio" autocomplete="off"  type="number" min="0" step="1"/>
+            <el-input v-model.number="formData.iterations.fio" autocomplete="off" type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="iozone迭代次数：">
-            <el-input v-model.number="formData.iterations.iozone" autocomplete="off"  type="number" min="0" step="1"/>
+            <el-input v-model.number="formData.iterations.iozone" autocomplete="off" type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="jvm2008迭代次数：">
-            <el-input v-model.number="formData.iterations.jvm2008" autocomplete="off"  type="number" min="0" step="1"/>
+            <el-input v-model.number="formData.iterations.jvm2008" autocomplete="off" type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="cpu2006迭代次数：">
-            <el-input v-model.number="formData.iterations.cpu2006" autocomplete="off"  type="number" min="0" step="1"/>
+            <el-input v-model.number="formData.iterations.cpu2006" autocomplete="off" type="number" min="0" step="1"/>
           </el-form-item>
           <el-form-item label="cpu2017迭代次数：">
-            <el-input v-model.number="formData.iterations.cpu2017" autocomplete="off"  type="number" min="0" step="1"/>
+            <el-input v-model.number="formData.iterations.cpu2017" autocomplete="off" type="number" min="0" step="1"/>
           </el-form-item>
         </el-form-item>
         <el-form-item label="编辑yaml配置文件：">
@@ -81,15 +81,13 @@
         </span>
       </template>
     </el-dialog>
-
     <el-dialog :title="'选择个人配置'" v-model="configDialog" width="800px">
-      <el-table ref="configTable" :data="configDatas" @selection-change="handleSelection"
-                tooltip-effect="dark" border style="width: 100%" class="tableHead">
+      <el-table ref="configTable" :data="configDatas" @selection-change="handleSelection" tooltip-effect="dark" border style="width: 100%"
+                class="tableHead">
         <el-table-column type="selection" width="55"/>
         <el-table-column prop="config_name" label="配置文件名称"/>
         <el-table-column prop="project_message" label="描述"/>
       </el-table>
-
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="closeInfo">取 消</el-button>
@@ -99,7 +97,6 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
 import {ref} from 'vue'
 import baseYamlData from '@/utils/yaml.js';
@@ -129,7 +126,6 @@ export default {
           cpu2017: '',
         },
       },
-
       yamlDialog: false,
       configDialog: false,
       yamlType: '',
@@ -144,7 +140,6 @@ export default {
       },
     };
   },
-
   created() {
     this.selecp_IP()
   },
@@ -211,7 +206,6 @@ export default {
         this.formData.project_message = config.project_message
       })
     },
-
     //选中配置列表
     select() {
       user_config('get').then(response => {

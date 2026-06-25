@@ -8,8 +8,8 @@
 <template>
   <div id="fixed-top">
     <div class="cont">
-      <el-table ref="allDatas" :data="showData" tooltip-effect="dark" border style="width: 100%"
-                :key="itemKey" :header-cell-style="{fontSize:'15px'}" class="tableHead">
+      <el-table ref="allDatas" :data="showData" tooltip-effect="dark" border style="width: 100%" :key="itemKey" :header-cell-style="{fontSize:'15px'}"
+                class="tableHead">
         <el-table-column prop="config_name" label="配置文件名称"/>
         <el-table-column prop="message" label="描述"/>
         <el-table-column label="操作" width="90">
@@ -33,7 +33,6 @@
     </div>
   </div>
 </template>
-
 
 <script scoped>
 import {ElMessage} from 'element-plus';
@@ -76,7 +75,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 .parent-container {
