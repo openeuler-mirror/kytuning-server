@@ -69,7 +69,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             if projectData == 'true':
                 project_queryset = project_queryset.filter(project_data=True)
         if not project_queryset:
-            return json_response({}, status.HTTP_200_OK, '未查询到project数据')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '未获取到数据')
         serializer = self.get_serializer(project_queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, 'project数据获取完成')
 
@@ -79,12 +79,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project_message = request.data.get('project_message', None)
         project_data = request.data.get('project_data', None)
         if not project_name and not id:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递项目id和project_name')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请传递项目id和project_name')
         user_name = Project.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
             Project.objects.filter(id=id).update(id=id,project_name=project_name,project_message=project_message,project_data=project_data)
         else:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '该用户不允许修改此数据')
+            return json_response({}, status.HTTP_401_UNAUTHORIZED, '该用户不允许修改此数据')
         queryset = Project.objects.filter(id=id)
         serializer = self.get_serializer(queryset, many=True)
         return json_response(serializer.data, status.HTTP_200_OK, '修改project数据完成')
@@ -109,12 +109,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         env_id = request.data.get('env_id', None)
         env_ids = request.data.get('env_ids', None)
         if env_id in env_ids:
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '请清空合并数据后重试')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请清空合并数据后重试')
         if not (env_ids and Project.objects.filter(env_id__in=env_ids)):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '没有需要合并的数据')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '没有需要合并的数据')
         user_name = Project.objects.filter(env_id=env_id).first().user_name
         if not (request.user.is_superuser or request.user.chinese_name == user_name):
-            return json_response({}, status.HTTP_205_RESET_CONTENT, '只能合并自己管理的数据')
+            return json_response({}, status.HTTP_401_UNAUTHORIZED, '只能合并自己管理的数据')
 
         # 1、判断是否属于同一个项目等
         base_project = Project.objects.filter(env_id=env_id).first()
@@ -128,7 +128,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         all_cpu_module_names = all(name == base_project.cpu_module_name for name in cpu_module_names)
 
         if not all([all_project_names, all_user_names, all_os_versions, all_cpu_module_names]):
-            return json_response({}, status.HTTP_204_NO_CONTENT, '请确保所有的"项目名称"、"上传人员"、"系统版本"、"cpu型号都相同"')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '请确保所有的"项目名称"、"上传人员"、"系统版本"、"cpu型号都相同"')
 
         # 2、修改数据的env_id和mark_name
         unixbench_number = -1

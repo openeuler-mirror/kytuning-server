@@ -25,11 +25,9 @@ from django.conf.urls import include
 from django.conf.urls import url
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token, verify_jwt_token
 
-
-
 urlpatterns = [
+    # path('admin/', admin.site.urls),
     path('kytuning/', include('appStore.api.router')),
-
     # url(r'^kytuning/login/', include('rest_framework.urls', namespace='rest_framework')),
     # 登陆退出接口^api-auth/ ^login/$ [name='login']  #^api-auth/ ^logout/$ [name='logout']
     url(r'^kytuning/api-token-auth/', obtain_jwt_token),  # 生成token

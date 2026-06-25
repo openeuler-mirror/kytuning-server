@@ -47,4 +47,4 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             # 返回密码修改成功的响应
             return json_response({'new_password':new_password1}, status.HTTP_200_OK, '修改密码完成')
         else:
-            return json_response({}, status.HTTP_201_CREATED, '两次密码不一致')
+            return json_response({}, status.HTTP_400_BAD_REQUEST, '两次密码不一致')
