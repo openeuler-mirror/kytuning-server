@@ -68,11 +68,10 @@ def get_compar_url(CONFIF_FILE):
     # 输出服务器响应
     sorted_env_ids = sorted([entry['env_id'] for entry in json.loads(response.content.decode('utf-8'))['data']], reverse=True)
     compar_url = kytuning_web_url+'/stream/{}/{}'.format(sorted_env_ids[0],sorted_env_ids[1])
-    print(compar_url)
     return compar_url
 
 
-def send_lanxin_message(username, compar_url):
+def send_lanxin_message(username, content):
     timestamp = int(round(time.time()))
     string_to_sign = '{}@{}'.format(timestamp, secret)
     hmac_code = hmac.new(string_to_sign.encode("utf-8"), digestmod=hashlib.sha256).digest()
@@ -90,7 +89,7 @@ def send_lanxin_message(username, compar_url):
             "msgType": "text",
             "msgData": {
                 "text": {
-                    "content": "@{} 您的测试已完成请及时查看：{}".format(username, compar_url),
+                    "content": "@{} {}".format(username, content),
                 }
             }
         }
@@ -105,18 +104,22 @@ def send_lanxin_message(username, compar_url):
 【迭代测试发布通知】 
 数据对比地址：{}
 请及时协调人员排查
-(虚拟机测试阶段请不用理会)""".format(compar_url),
+(虚拟机测试阶段请不用理会)""".format(content),
                     "reminder": {
                         "all": True,
                     }
                 }
             }
         }
-    requests.post(lanxin_url, headers=headers, json=data, verify=False)
+    response = requests.post(lanxin_url, headers=headers, json=data, verify=False)
     # 输出服务器响应
-    # print(json.loads(response.content.decode('utf-8')))
+    #print(json.loads(response.content.decode('utf-8')))
     return
 
 # 在迭代更新的机器中打开
-# compar_url = get_compar_url(CONFIF_FILE)
-# send_lanxin_message(username, compar_url)
+# username=None
+# secret = "xxx"
+# lanxin_url = 'https://apigw-cec.cec.com.cn/v1/bot/hook/messages/create?hook_token=xxx'
+
+# content = get_compar_url(CONFIF_FILE)
+# send_lanxin_message(username, content)
