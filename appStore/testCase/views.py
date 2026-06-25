@@ -18,7 +18,7 @@ from appStore.testCase.serializers import TestCaseSerializer
 from appStore.testMachine.models import TestMachine
 from appStore.utils.common import json_response, get_error_message
 from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL
-from appStore.utils.subprocess import test_case
+from appStore.utils.subprocess import test_case, stop_test_task
 
 log = logging.getLogger('kytuninglog')
 
@@ -197,4 +197,21 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             return HttpResponse('文件不存在', status=404)
         # 使用FileResponse对象将文件作为HTTP响应发送回前端
         return FileResponse(open(log_file_path, 'rb'), as_attachment=True, status=200)
+
+    def stop_test(self, request, *args, **kwargs):
+        id = request.data.get('test_id', None)
+        if not id or not TestCase.objects.filter(id=id):
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '请传递正确的测试id')
+        user_name = TestCase.objects.filter(id=id).first().user_name
+        if request.user.chinese_name == user_name:
+            test_case_data = TestCase.objects.filter(id=id).first()
+            if not test_case_data:
+                return json_response({}, status.HTTP_205_RESET_CONTENT, '未查到对应的测试任务')
+            server_ip = TestCase.objects.get(id=id).ip
+            machine_data = TestMachine.objects.get(server_IP=server_ip)
+            stop_test_task(server_ip, machine_data.server_user_name, machine_data.server_password)
+            TestCase.objects.filter(id=id).update(test_result = '终止测试')
+            return json_response({}, status.HTTP_200_OK, '终止测试成功')
+        else:
+            return json_response({}, status.HTTP_205_RESET_CONTENT, '只能终止自己的测试任务')
 
