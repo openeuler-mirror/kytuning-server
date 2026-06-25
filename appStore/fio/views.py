@@ -16,6 +16,7 @@ from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 
+
 class FioViewSet(viewsets.ModelViewSet):
     """
     fio数据管理
@@ -32,7 +33,7 @@ class FioViewSet(viewsets.ModelViewSet):
             value = data
         return value, unit
 
-    def get_bw_unit(self,data):
+    def get_bw_unit(self, data):
         unit1 = data.split('(')[0].split(
             "".join(filter(lambda s: s in '0123456789.', data.split('(')[0])))[-1]
         # 这里是kB/s)，后面就不需要再次拼接了
@@ -75,7 +76,7 @@ class FioViewSet(viewsets.ModelViewSet):
                 datas[2]['column' + str(column_index)] = serializer.data[0]['execute_cmd']
                 datas[3]['column' + str(column_index)] = serializer.data[0]['modify_parameters']
 
-                for i in range(4,len(datas)):
+                for i in range(4, len(datas)):
                     datas[i]['column' + str(column_index)] = None
                 for value in temp_datas:
                     # 判断comparsion_datas数据中的rw字段和datas中的rw（column）字段相同，则在datas中增加值
@@ -204,14 +205,14 @@ class FioViewSet(viewsets.ModelViewSet):
                 if value is not None and base_value is not None:
                     import re
                     if bool(re.match(r'^[0-9.]+$', value)):
-                        datas[i]['column' + str(column_index)] = "%.2f%%" % ((float(value) - float(base_value)) / float(base_value) * 100) if value is not None and base_value is not None else None
+                        datas[i]['column' + str(column_index)] = "%.2f%%" % ((float(value) - float(base_value)) / float(
+                            base_value) * 100) if value is not None and base_value is not None else None
                     else:
                         datas[i]['column' + str(column_index)] = None
                 else:
                     datas[i]['column' + str(column_index)] = None
             column_index += 1
         return datas, title_index, column_index, base_column_index
-
 
     def get_left_data(self, serializer_):
         datas = []
@@ -221,10 +222,10 @@ class FioViewSet(viewsets.ModelViewSet):
         filter_datas = serializer_.filter(mark_name='0-0')
         for data in filter_datas:
             data_ = {'rw': data.rw + '(' + str(data.bs + ')'),
-                    'bs': data.bs,
-                    'io': data.io,
-                    'iops': data.iops,
-                    'bw': data.bw, }
+                     'bs': data.bs,
+                     'io': data.io,
+                     'iops': data.iops,
+                     'bw': data.bw, }
             datas.append(data_)
         temp_data = []
         for value in datas:
@@ -254,7 +255,8 @@ class FioViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Fio.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index,
+                                                                                    base_column_index)
         analyze_data = get_analyze_data(datas, 'fio')
         all_datas = {'datas': datas, 'analyze_data': analyze_data}
         return json_response(all_datas, status.HTTP_200_OK, '列表')
@@ -274,14 +276,13 @@ class FioViewSet(viewsets.ModelViewSet):
                 data_fio['io'] = fio_json['items']['io']
                 data_fio['iops'] = fio_json['items']['iops']
                 data_fio['bw'] = fio_json['items']['bw']
-                data_fio = {key: value if not isinstance(value, str) or value != '' else None for key, value in
-                               data_fio.items()}
+                data_fio = {key: value if not isinstance(value, str) or value != '' else None for key, value in data_fio.items()}
                 serializer_fio = FioSerializer(data=data_fio)
                 if serializer_fio.is_valid():
                     self.perform_create(serializer_fio)
                     continue
-                log.info('fio数据存储错误 ：%s，'%serializer_fio.errors)
-                log.info('fio存储数据为 ：%s，'%data_fio)
+                log.info('fio数据存储错误 ：%s，' % serializer_fio.errors)
+                log.info('fio存储数据为 ：%s，' % data_fio)
                 return json_response(serializer_fio.errors, status.HTTP_400_BAD_REQUEST,
                                      get_error_message(serializer_fio))
         if serializer_fio_errors:

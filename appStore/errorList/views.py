@@ -14,6 +14,7 @@ from appStore.utils.common import LimsPageSet, json_response
 
 log = logging.getLogger('kytuninglog')
 
+
 class ErrorListViewSet(viewsets.ModelViewSet):
     """
     错误收集数据管理
@@ -54,8 +55,8 @@ class ErrorListViewSet(viewsets.ModelViewSet):
         if serializer_error.is_valid():
             self.perform_create(serializer_error)
             return json_response(serializer_error.data, status.HTTP_200_OK, '创建成功')
-        log.info('errorList数据存储错误 ：%s，'%serializer_error.errors)
-        log.info('errorList存储数据为 ：%s，'%error_data)
+        log.info('errorList数据存储错误 ：%s，' % serializer_error.errors)
+        log.info('errorList存储数据为 ：%s，' % error_data)
         return json_response(serializer_error.errors, status.HTTP_400_BAD_REQUEST, serializer_error.errors)
 
     def put(self, request, *args, **kwargs):

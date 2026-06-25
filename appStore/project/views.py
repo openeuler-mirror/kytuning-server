@@ -30,6 +30,7 @@ from appStore.utils.export_excel import stream_excel, cpu2017_excel, cpu2006_exc
 
 log = logging.getLogger('kytuninglog')
 
+
 class ProjectViewSet(viewsets.ModelViewSet):
     """
     project数据管理
@@ -46,7 +47,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         """
         baseId = request.GET.get('baseId', None)
         comparsionIds = request.GET.get('comparsionIds', None)
-        projectData = request.GET.get('ProjectWeb',None)
+        projectData = request.GET.get('ProjectWeb', None)
         project_name = request.GET.get('project_name', None)
         user_name = request.GET.get('user_name', None)
         os_names = request.GET.get('os_names', None)
@@ -57,7 +58,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
             project_queryset = Project.objects.filter(env_id__in=(baseId.split(',')))
         else:
             project_queryset = Project.objects.all().order_by("-id")
-
             if project_name:
                 project_queryset = project_queryset.filter(project_name__icontains=project_name)
             if user_name:
@@ -82,7 +82,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_400_BAD_REQUEST, '请传递项目id和project_name')
         user_name = Project.objects.filter(id=id).first().user_name
         if request.user.is_superuser or request.user.chinese_name == user_name:
-            Project.objects.filter(id=id).update(id=id,project_name=project_name,project_message=project_message,project_data=project_data)
+            Project.objects.filter(id=id).update(id=id, project_name=project_name, project_message=project_message, project_data=project_data)
         else:
             return json_response({}, status.HTTP_401_UNAUTHORIZED, '该用户不允许修改此数据')
         queryset = Project.objects.filter(id=id)
@@ -164,10 +164,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
         for id in env_ids:
             if Stream.objects.filter(env_id=id):
-                log.info('处理的stream的id是 %d，把stream_env = %d 改为 %d ,'%(Stream.objects.filter(env_id=id).first().id, id, env_id))
+                log.info('处理的stream的id是 %d，把stream_env = %d 改为 %d ,' % (Stream.objects.filter(env_id=id).first().id, id, env_id))
                 Stream.objects.filter(env_id=id).update(env_id=env_id)
             if Lmbench.objects.filter(env_id=id):
-                log.info('处理的lmbench的id是 %d，把lmbench_env = %d 改为 %d ,'%(Lmbench.objects.filter(env_id=id).first().id, id, env_id))
+                log.info('处理的lmbench的id是 %d，把lmbench_env = %d 改为 %d ,' % (Lmbench.objects.filter(env_id=id).first().id, id, env_id))
                 Lmbench.objects.filter(env_id=id).update(env_id=env_id)
             max_unixbench_number = 0
             if Unixbench.objects.filter(env_id=id):
@@ -177,7 +177,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_unixbench_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的unixbench的id是 %d，把unixbench_env = %d 改为 %d ,'%(obj.id, id, env_id))
+                    log.info('处理的unixbench的id是 %d，把unixbench_env = %d 改为 %d ,' % (obj.id, id, env_id))
                     obj.save()
                 unixbench_number = max_unixbench_number
             max_fio_number = 0
@@ -188,7 +188,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_fio_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的fio的id是 %d，把fio_env = %d 改为 %d ,'%(obj.id, id, env_id))
+                    log.info('处理的fio的id是 %d，把fio_env = %d 改为 %d ,' % (obj.id, id, env_id))
                     obj.save()
                 fio_number = max_fio_number
             max_iozone_number = 0
@@ -199,7 +199,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_iozone_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的iozone的id是 %d，把iozone_env = %d 改为 %d ,'%(obj.id, id, env_id))
+                    log.info('处理的iozone的id是 %d，把iozone_env = %d 改为 %d ,' % (obj.id, id, env_id))
                     obj.save()
                 iozone_number = max_iozone_number
             max_jvm2008_number = 0
@@ -210,7 +210,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_jvm2008_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的jvm2008的id是 %d，把jvm2008_env = %d 改为 %d ,'%(obj.id, id, env_id))
+                    log.info('处理的jvm2008的id是 %d，把jvm2008_env = %d 改为 %d ,' % (obj.id, id, env_id))
                     obj.save()
                 jvm2008_number = max_jvm2008_number
             max_cpu2006_number = 0
@@ -221,7 +221,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_cpu2006_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的cpu2006的id是 %d，把cpu2006_env = %d 改为 %d ,'%(obj.id, id, env_id))
+                    log.info('处理的cpu2006的id是 %d，把cpu2006_env = %d 改为 %d ,' % (obj.id, id, env_id))
                     obj.save()
                 cpu2006_number = max_cpu2006_number
             max_cpu2017_number = 0
@@ -232,10 +232,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     new_mark_name = obj.mark_name[:-1] + str(new_cpu2017_number)
                     obj.env_id = env_id
                     obj.mark_name = new_mark_name
-                    log.info('处理的cpu2017的id是 %d，把cpu2017_env = %d 改为 %d ,'%(obj.id, id, env_id))
+                    log.info('处理的cpu2017的id是 %d，把cpu2017_env = %d 改为 %d ,' % (obj.id, id, env_id))
                     obj.save()
                 cpu2017_number = max_cpu2017_number
-
 
         # 3、合并all_json_data文件
         json_file_path = '/var/www/html/all_json_data_file/'
@@ -243,7 +242,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         base_env_time = Env.objects.filter(id=env_id).first().time
         compar_env_time = list(set([d.time for d in Env.objects.filter(id__in=env_ids)]))
 
-        if os.path.exists(json_file_path + base_env_time+'.json'):
+        if os.path.exists(json_file_path + base_env_time + '.json'):
             stream_max_number = -1
             unixbench_max_number = -1
             fio_max_number = -1
@@ -253,7 +252,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             cpu2017_max_number = -1
             data_ = None
             base_lmbench_keys = 'lmbench'
-            with open(json_file_path + base_env_time+'.json', 'r') as f:
+            with open(json_file_path + base_env_time + '.json', 'r') as f:
                 json_data = f.read()
                 # 将 JSON 字符串解析为 Python 对象
                 base_file_data = json.loads(json_data)
@@ -272,17 +271,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
                     if key.startswith('stream'):
                         stream_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('Unixbench'):
-                       unixbench_keys_number.append(int(key.split('-')[-1]))
+                        unixbench_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('fio'):
-                       fio_keys_number.append(int(key.split('-')[-1]))
+                        fio_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('iozone'):
-                       iozone_keys_number.append(int(key.split('-')[-1]))
+                        iozone_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('specjvm'):
                         jvm2008_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('cpu2006'):
-                       cpu2006_keys_number.append(int(key.split('-')[-1]))
+                        cpu2006_keys_number.append(int(key.split('-')[-1]))
                     elif key.startswith('cpu2017'):
-                       cpu2017_keys_number.append(int(key.split('-')[-1]))
+                        cpu2017_keys_number.append(int(key.split('-')[-1]))
 
                 stream_max_number = max(stream_keys_number) if stream_keys_number else stream_max_number
                 unixbench_max_number = max(unixbench_keys_number) if unixbench_keys_number else unixbench_max_number
@@ -302,9 +301,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
                         lmbench_keys = 'lmbench'
                         if [key for key in compar_file_data.keys() if key.startswith('lmbench')]:
                             lmbench_keys = sorted([key for key in compar_file_data.keys() if key.startswith('lmbench')])[-1]
-                        for key,value in compar_file_data.items():
+                        for key, value in compar_file_data.items():
                             if key.startswith('stream'):
-                                data_['stream-5.9-1-null-0-'+str(int(key.split('-')[-1]) + stream_max_number + 1)] = value
+                                data_['stream-5.9-1-null-0-' + str(int(key.split('-')[-1]) + stream_max_number + 1)] = value
                             elif key == lmbench_keys:
                                 # 因为lmbench的测试段数据存储是会保存上一条的测试数据，所以特殊处理。
                                 if base_lmbench_keys == 'lmbench':
@@ -312,17 +311,22 @@ class ProjectViewSet(viewsets.ModelViewSet):
                                 else:
                                     data_[base_lmbench_keys]['items'].extend(value['items'])
                             elif key.startswith('Unixbench'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + unixbench_max_number + 1)] = value
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(
+                                    int(key[-int(len(key.split('-')[-1]))]) + unixbench_max_number + 1)] = value
                             elif key.startswith('fio'):
                                 data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + fio_max_number + 1)] = value
                             elif key.startswith('iozone'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + iozone_max_number + 1)] = value
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(
+                                    int(key[-int(len(key.split('-')[-1]))]) + iozone_max_number + 1)] = value
                             elif key.startswith('specjvm'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + jvm2008_max_number + 1)] = value
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(
+                                    int(key[-int(len(key.split('-')[-1]))]) + jvm2008_max_number + 1)] = value
                             elif key.startswith('cpu2006'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(
+                                    int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
                             elif key.startswith('cpu2017'):
-                                data_[key[:-int(len(key.split('-')[-1]))] + str(int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
+                                data_[key[:-int(len(key.split('-')[-1]))] + str(
+                                    int(key[-int(len(key.split('-')[-1]))]) + cpu2006_max_number + 1)] = value
                         compar_stream_keys = []
                         compar_unixbench_keys = []
                         compar_fio_keys = []
@@ -346,14 +350,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
                             elif key.startswith('cpu2017'):
                                 compar_cpu2017_keys.append(int(key.split('-')[-1]))
                         stream_max_number = stream_max_number + max(compar_stream_keys) + 1 if compar_stream_keys else stream_max_number
-                        unixbench_max_number = unixbench_max_number + max(compar_unixbench_keys) + 1 if compar_unixbench_keys else unixbench_max_number
+                        unixbench_max_number = unixbench_max_number + max(
+                            compar_unixbench_keys) + 1 if compar_unixbench_keys else unixbench_max_number
                         fio_max_number = fio_max_number + max(compar_fio_keys) + 1 if compar_fio_keys else fio_max_number
                         iozone_max_number = iozone_max_number + max(compar_iozone_keys) + 1 if compar_iozone_keys else iozone_max_number
                         jvm2008_max_number = jvm2008_max_number + max(compar_jvm2008_keys) + 1 if compar_jvm2008_keys else jvm2008_max_number
                         cpu2006_max_number = cpu2006_max_number + max(compar_cpu2006_keys) + 1 if compar_cpu2006_keys else cpu2006_max_number
                         cpu2017_max_number = cpu2017_max_number + max(compar_cpu2017_keys) + 1 if compar_cpu2017_keys else cpu2017_max_number
 
-            new_json_file = json_file_path + str(base_env_time)+'.json'
+            new_json_file = json_file_path + str(base_env_time) + '.json'
             os.rename(new_json_file, new_json_file + '-env_' + str(env_id) + '-base-old')
 
             with open(new_json_file, 'w', encoding='utf-8') as f_new:
@@ -361,9 +366,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
             # 5、删除旧的数据
             for name in compar_env_time:
-                os.rename(json_file_path + str(name)+'.json', json_file_path + str(name)+'.json-env_' + str(env_id) +'-compar-old')
+                os.rename(json_file_path + str(name) + '.json', json_file_path + str(name) + '.json-env_' + str(env_id) + '-compar-old')
                 log.info(new_json_file, '数据和', json_file_path + str(name) + '.json' + '数据合并完成')
-
 
         # 4、删除env_id的env表，删除env_id对应的project表
         # Env.objects.filter(id__in=env_ids).delete()
@@ -372,10 +376,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         stream_number = len(Stream.objects.filter(env_id=env_id))
         lmbench_number = len(Lmbench.objects.filter(env_id=env_id))
         Project.objects.filter(env_id=env_id).update(stream=stream_number, lmbench=lmbench_number,
-                                                        unixbench=unixbench_number + 1, fio=fio_number + 1,
-                                                        iozone=iozone_number + 1, jvm2008=jvm2008_number + 1,
-                                                        cpu2006=cpu2006_number + 1, cpu2017=cpu2017_number + 1)
-
+                                                     unixbench=unixbench_number + 1, fio=fio_number + 1,
+                                                     iozone=iozone_number + 1, jvm2008=jvm2008_number + 1,
+                                                     cpu2006=cpu2006_number + 1, cpu2017=cpu2017_number + 1)
         return json_response({}, status.HTTP_200_OK, '合并数据成功')
 
     def create(self, request, *args, **kwargs):
@@ -395,7 +398,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         try:
             data_project['ip'] = request.__dict__['data_project']['envinfo']['nwinfo']['nic'][0]['ip']
         except:
-            data_project['ip']= None
+            data_project['ip'] = None
         # 获取所有文件名对应的key，判断每种测试迭代了几次
         data_project['cpu2006'] = -1
         data_project['cpu2017'] = -1
@@ -435,7 +438,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if serializer_project.is_valid():
             self.perform_create(serializer_project)
         else:
-            log.info('project数据存储失败：%s'%serializer_project.errors)
+            log.info('project数据存储失败：%s' % serializer_project.errors)
             print(serializer_project.errors, "project")
             return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_project))
 
@@ -488,7 +491,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
         view.kwargs = {}
         # 调用视图的方法，得到响应对象
         response = view.list(view.request, *view.args, **view.kwargs)
-
         # 返回响应内容
         return response.content
 
@@ -517,58 +519,57 @@ class ProjectViewSet(viewsets.ModelViewSet):
             from appStore.stream.views import StreamViewSet
             stream_data = self.simulate_request(StreamViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             stream_data = json.loads(stream_data)
-            stream_excel(request.user,{'data' : stream_data['data']['datas'],'analyze_data' : stream_data['data']['analyze_data']})
+            stream_excel(request.user, {'data': stream_data['data']['datas'], 'analyze_data': stream_data['data']['analyze_data']})
 
         """lmbench数据"""
         if Project.objects.filter(env_id=env_id).first().lmbench:
             from appStore.lmbench.views import LmbenchViewSet
             lmbench_data = self.simulate_request(LmbenchViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             lmbench_data = json.loads(lmbench_data)
-            lmbench_excel(request.user,{'data': lmbench_data['data']['datas'], 'analyze_data': lmbench_data['data']['analyze_data']})
+            lmbench_excel(request.user, {'data': lmbench_data['data']['datas'], 'analyze_data': lmbench_data['data']['analyze_data']})
 
         """unixbench数据"""
         if Project.objects.filter(env_id=env_id).first().unixbench:
             from appStore.unixbench.views import UnixbenchViewSet
             unixbench_data = self.simulate_request(UnixbenchViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             unixbench_data = json.loads(unixbench_data)
-            unixbench_excel(request.user,{'data': unixbench_data['data']['datas'], 'analyze_data': unixbench_data['data']['analyze_data']})
+            unixbench_excel(request.user, {'data': unixbench_data['data']['datas'], 'analyze_data': unixbench_data['data']['analyze_data']})
 
         """fio数据"""
         if Project.objects.filter(env_id=env_id).first().fio:
             from appStore.fio.views import FioViewSet
             fio_data = self.simulate_request(FioViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             fio_data = json.loads(fio_data)
-            fio_excel(request.user,{'data': fio_data['data']['datas'], 'analyze_data': fio_data['data']['analyze_data']})
+            fio_excel(request.user, {'data': fio_data['data']['datas'], 'analyze_data': fio_data['data']['analyze_data']})
 
         """iozone数据"""
-        if Project.objects.filter(env_id = env_id).first().iozone:
+        if Project.objects.filter(env_id=env_id).first().iozone:
             from appStore.iozone.views import IozoneViewSet
             iozone_data = self.simulate_request(IozoneViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             iozone_data = json.loads(iozone_data)
-            iozone_excel(request.user,{'data': iozone_data['data']['datas'], 'analyze_data': iozone_data['data']['analyze_data']})
+            iozone_excel(request.user, {'data': iozone_data['data']['datas'], 'analyze_data': iozone_data['data']['analyze_data']})
 
         """jvm2008数据"""
-        if Project.objects.filter(env_id = env_id).first().jvm2008:
+        if Project.objects.filter(env_id=env_id).first().jvm2008:
             from appStore.jvm2008.views import Jvm2008ViewSet
             jvm2008_data = self.simulate_request(Jvm2008ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
-            jvm2008_data  = json.loads(jvm2008_data)
-            jvm2008_excel(request.user,{'data': jvm2008_data['data']['datas'], 'analyze_data': jvm2008_data['data']['analyze_data']})
+            jvm2008_data = json.loads(jvm2008_data)
+            jvm2008_excel(request.user, {'data': jvm2008_data['data']['datas'], 'analyze_data': jvm2008_data['data']['analyze_data']})
 
         """speccpu2006数据"""
-        if Project.objects.filter(env_id = env_id).first().cpu2006:
+        if Project.objects.filter(env_id=env_id).first().cpu2006:
             from appStore.cpu2006.views import Cpu2006ViewSet
             cpu2006_data = self.simulate_request(Cpu2006ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             cpu2006_data = json.loads(cpu2006_data)
             cpu2006_data_base = {'data': cpu2006_data['data']['datas'][:66]}
             cpu2006_data_peak = {'data': cpu2006_data['data']['datas'][:4] + cpu2006_data['data']['datas'][66:]}
             sheetname = "Speccpu2006(base)"
-            cpu2006_excel(request.user,sheetname, {'data': cpu2006_data_base['data'], 'analyze_data': cpu2006_data['data']['analyze_data']})
+            cpu2006_excel(request.user, sheetname, {'data': cpu2006_data_base['data'], 'analyze_data': cpu2006_data['data']['analyze_data']})
             sheetname = "Speccpu2006(peak)"
-            cpu2006_excel(request.user,sheetname, {'data': cpu2006_data_peak['data'], 'analyze_data': ''})
-
+            cpu2006_excel(request.user, sheetname, {'data': cpu2006_data_peak['data'], 'analyze_data': ''})
 
         """speccpu2017数据"""
-        if Project.objects.filter(env_id = env_id).first().cpu2017:
+        if Project.objects.filter(env_id=env_id).first().cpu2017:
             from appStore.cpu2017.views import Cpu2017ViewSet
             cpu2017_data = self.simulate_request(Cpu2017ViewSet, {'env_id': env_id, 'comparsionIds': comparsionIds})
             cpu2017_data = json.loads(cpu2017_data)
@@ -576,13 +577,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
             cpu2017_data_peak = {'data': cpu2017_data['data']['datas'][:4] + cpu2017_data['data']['datas'][54:]}
             sheetname = "Speccpu2017(base)"
             # cpu2017_excel(request.user,sheetname, cpu2017_data_base)
-            cpu2017_excel(request.user,sheetname,{'data': cpu2017_data_base['data'], 'analyze_data': cpu2017_data['data']['analyze_data']})
+            cpu2017_excel(request.user, sheetname, {'data': cpu2017_data_base['data'], 'analyze_data': cpu2017_data['data']['analyze_data']})
             sheetname = "Speccpu2017(peak)"
-            cpu2017_excel(request.user,sheetname, {'data': cpu2017_data_peak['data'], 'analyze_data': ''})
+            cpu2017_excel(request.user, sheetname, {'data': cpu2017_data_peak['data'], 'analyze_data': ''})
 
         # 打开文件
-        file_path = os.path.join(EXCEL_TEMP, '%s.xlsx'%(request.user))
+        file_path = os.path.join(EXCEL_TEMP, '%s.xlsx' % (request.user))
         if os.path.exists(file_path):
-            return FileResponse(open(file_path, 'rb'), as_attachment=True,status=200)
+            return FileResponse(open(file_path, 'rb'), as_attachment=True, status=200)
         return HttpResponse('文件不存在', status=404)
-

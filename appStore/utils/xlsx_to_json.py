@@ -447,7 +447,6 @@ def unixbench_excel_to_json(file_path, sheet_name, end_number):
                                             "Shell Scripts (8 concurrent)(lpm)": multi_shell_scripts_8,
                                             "System Call Overhead(lps)": multi_system_call_overhead,
                                             "Index Score(sum)": multi_index_score}}
-
     return data
 
 def fio_excel_to_json(file_path, sheet_name, end_number):
@@ -470,7 +469,6 @@ def fio_excel_to_json(file_path, sheet_name, end_number):
             key1 = [item.split('(')[0] for item in key1_]
             key2 = df.iloc[:, 2].tolist()[2:][::4]
             name_list_ = ["fio-3.20-" + str(y) + "-" + str(x) + "-0-" for x, y in zip(key1, key2)]
-
 
         # 不需要处理index = 1 的情况全是"bs", "io", "iops", "bw",
         if 1 < index < end_number + 2:
@@ -856,7 +854,6 @@ def cpu2006_excel_to_json(file_path, sheet_name, end_number):
                                                    "470.lbm": multi_fp_470_lbm,
                                                    "481.wrf": multi_fp_481_wrf, "482.sphinx3": multi_fp_482_sphinx3,
                                                    "SPECfp_2006": multi_fp_SPECfp_2006}}}}
-
     return data
 
 def cpu2017_excel_to_json(file_path, sheet_name, end_number):

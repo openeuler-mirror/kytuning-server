@@ -22,6 +22,7 @@ from appStore.utils.subprocess import test_case, stop_test_task
 
 log = logging.getLogger('kytuninglog')
 
+
 class TestCaseViewSet(viewsets.ModelViewSet):
     """
     测试用例数据管理
@@ -93,7 +94,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             with open(user_config_path + '/yaml-base/lmbench-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(lmbench_yaml)
         if int(data_test_case['unixbench']):
-            unixbench_yaml = request.data.get('yaml')['unixbench'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['unixbench'])))
+            unixbench_yaml = request.data.get('yaml')['unixbench'].replace('maxiterations:  1',
+                                                                           'maxiterations: %d' % (int(data_test_case['unixbench'])))
             with open(user_config_path + '/yaml-base/unixbench-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(unixbench_yaml)
         if int(data_test_case['fio']):
@@ -113,7 +115,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             with open(user_config_path + '/yaml-base/cpu2006-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_yaml)
             cpu2006_loongarch64_yaml = (request.data.get('yaml')['cpu2006_loongarch64'].replace(
-                'maxiterations:  1','maxiterations: %d' % (int(data_test_case['cpu2006']))))
+                'maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['cpu2006']))))
             with open(user_config_path + '/yaml-base/cpu2006-loongarch64-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2006_loongarch64_yaml)
         if int(data_test_case['cpu2017']):
@@ -136,8 +138,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
                 configfile.write('test_case_id={}\n'.format(test_case_id))
         else:
-            log.info('testCase数据存储错误 ：%s，'%(serializer_test_case.errors))
-            log.info('testCase存储数据为 ：%s，'%data_test_case)
+            log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
+            log.info('testCase存储数据为 ：%s，' % data_test_case)
             return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_test_case))
 
         """保存至配置管理数据库"""
@@ -157,8 +159,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             return_result = test_case(data_test_case['ip'], TestMachine_.server_user_name, TestMachine_.server_password,
                                       test_case_names, user_config_path, data_test_case['result_log_name'])
             if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
-                log.info('测试的测试数据ID是：%s，测试的返回结果return_result是：%s'%(test_case_id, str(return_result)))
-                log.info('测试的测试数据ID是：%s，测试的返回结果return_result.stderr是：%s'%(test_case_id, str(return_result.stderr)))
+                log.info('测试的测试数据ID是：%s，测试的返回结果return_result是：%s' % (test_case_id, str(return_result)))
+                log.info('测试的测试数据ID是：%s，测试的返回结果return_result.stderr是：%s' % (test_case_id, str(return_result.stderr)))
                 TestCase.objects.filter(id=test_case_id).update(test_result=return_result.stderr)
                 return json_response('', status.HTTP_204_NO_CONTENT, return_result.stderr)
             else:
@@ -210,8 +212,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             server_ip = TestCase.objects.get(id=id).ip
             machine_data = TestMachine.objects.get(server_IP=server_ip)
             stop_test_task(server_ip, machine_data.server_user_name, machine_data.server_password)
-            TestCase.objects.filter(id=id).update(test_result = '终止测试')
+            TestCase.objects.filter(id=id).update(test_result='终止测试')
             return json_response({}, status.HTTP_200_OK, '终止测试成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '只能终止自己的测试任务')
-

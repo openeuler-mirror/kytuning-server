@@ -17,6 +17,7 @@ from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 
+
 class IozoneViewSet(viewsets.ModelViewSet):
     """
     iozone数据管理
@@ -57,7 +58,7 @@ class IozoneViewSet(viewsets.ModelViewSet):
                         'read_test': data['read_test'],
                         'reread_test': data['reread_test'],
                         'random_read_test': data['random_read_test'],
-                        'random_write_test': data['random_write_test'],}
+                        'random_write_test': data['random_write_test'], }
                 average_datas.append(data)
             # 每一次column_index改变都需初始化所有数据为None
             for i in range(4, 22):
@@ -110,7 +111,7 @@ class IozoneViewSet(viewsets.ModelViewSet):
                     datas[7]['column' + str(column_index)] = data['write_test']
                     datas[8]['column' + str(column_index)] = data['rewrite_test']
                     datas[9]['column' + str(column_index)] = data['random_write_test']
-                elif data['testcase_name']== 'full':
+                elif data['testcase_name'] == 'full':
                     # 增加full数据
                     datas[10]['column' + str(column_index)] = data['read_test']
                     datas[11]['column' + str(column_index)] = data['reread_test']
@@ -243,7 +244,7 @@ class IozoneViewSet(viewsets.ModelViewSet):
             datas[2]['column' + str(column_index)] = serializer_[0].execute_cmd
             datas[3]['column' + str(column_index)] = serializer_[0].modify_parameters
             # 因为当没有某种数据的时候会出现column为增加的情况，所以需要先初始化一下所有的column为空
-            for i in range(4,22):
+            for i in range(4, 22):
                 datas[i]['column' + str(column_index)] = None
             for data in average_datas:
                 if data['testcase_name'] == 'double':
@@ -272,7 +273,7 @@ class IozoneViewSet(viewsets.ModelViewSet):
                     datas[21]['column' + str(column_index)] = data['random_write_test']
             column_index += 1
         if not base_column_index:
-        # 记录基准数据
+            # 记录基准数据
             base_column_index = column_index - 1
         else:
             # 对比数据的对比值
@@ -284,11 +285,10 @@ class IozoneViewSet(viewsets.ModelViewSet):
                 datas[i]['column' + str(column_index)] = \
                     "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
                         'column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if \
-                    datas[i]['column' + str(column_index - 1)] is not None and datas[i][
-                        'column' + str(base_column_index)] is not None else None
+                        datas[i]['column' + str(column_index - 1)] is not None and datas[i][
+                            'column' + str(base_column_index)] is not None else None
             column_index += 1
         return datas, title_index, column_index, base_column_index
-
 
     def list(self, request, *args, **kwargs):
         env_id = request.GET.get('env_id')
@@ -329,7 +329,8 @@ class IozoneViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Iozone.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index,
+                                                                                    base_column_index)
         analyze_data = get_analyze_data(datas, 'iozone')
         all_datas = {'datas': datas, 'analyze_data': analyze_data}
         return json_response(all_datas, status.HTTP_200_OK, '列表')
@@ -358,8 +359,8 @@ class IozoneViewSet(viewsets.ModelViewSet):
                 if serializer_iozone.is_valid():
                     self.perform_create(serializer_iozone)
                 else:
-                    log.info('iozone数据存储错误 ：%s，'%serializer_iozone.errors)
-                    log.info('iozone存储数据为 ：%s，'%data_iozone)
+                    log.info('iozone数据存储错误 ：%s，' % serializer_iozone.errors)
+                    log.info('iozone存储数据为 ：%s，' % data_iozone)
                     return json_response(serializer_iozone.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_iozone))
         if serializer_iozone_errors:
             print(serializer_iozone_errors, "iozone")

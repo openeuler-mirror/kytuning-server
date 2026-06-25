@@ -17,6 +17,7 @@ from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 
+
 class StreamViewSet(viewsets.ModelViewSet):
     """
     stream数据管理
@@ -157,9 +158,10 @@ class StreamViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Stream.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index,
+                                                                                    base_column_index)
 
-        analyze_data = get_analyze_data(datas,'stream')
+        analyze_data = get_analyze_data(datas, 'stream')
         all_datas = {'datas': datas, 'analyze_data': analyze_data}
         return json_response(all_datas, status.HTTP_200_OK, '列表')
 
@@ -197,8 +199,8 @@ class StreamViewSet(viewsets.ModelViewSet):
                 if serializer_stream.is_valid():
                     self.perform_create(serializer_stream)
                 else:
-                    log.info('stram数据存储错误 ：%s，'%serializer_stream.errors)
-                    log.info('stream存储数据为 ：%s，'%data_stream)
+                    log.info('stram数据存储错误 ：%s，' % serializer_stream.errors)
+                    log.info('stream存储数据为 ：%s，' % data_stream)
                     serializer_stream_errors.append(serializer_stream.errors)
                     error_message.append(get_error_message(serializer_stream))
 
@@ -232,5 +234,3 @@ class StreamViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_200_OK, '修改成功')
         else:
             return json_response({}, status.HTTP_401_UNAUTHORIZED, '此用户不允许修改该数据')
-
-
