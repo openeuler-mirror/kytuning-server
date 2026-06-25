@@ -17,6 +17,7 @@ from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 
+
 class Cpu2017ViewSet(viewsets.ModelViewSet):
     """
     Cpu2017数据管理
@@ -276,106 +277,206 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
             peak_multi_fp_rate_PECrate2017_fp_list = [d.fp_PECrate2017_fp for d in peak_multi_data_ if d.fp_PECrate2017_fp is not None]
 
             # 计算每个数组的平均值
-            average_base_single_int_rate_500_perlbench_r = np.mean(base_single_int_rate_500_perlbench_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_500_perlbench_r_list)) else None
-            average_base_single_int_rate_502_gcc_r = np.mean(base_single_int_rate_502_gcc_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_502_gcc_r_list)) else None
-            average_base_single_int_rate_505_mcf_r = np.mean(base_single_int_rate_505_mcf_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_505_mcf_r_list)) else None
-            average_base_single_int_rate_520_omnetpp_r = np.mean(base_single_int_rate_520_omnetpp_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_520_omnetpp_r_list)) else None
-            average_base_single_int_rate_523_xalancbmk_r = np.mean(base_single_int_rate_523_xalancbmk_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_523_xalancbmk_r_list)) else None
-            average_base_single_int_rate_525_x264_r = np.mean(base_single_int_rate_525_x264_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_525_x264_r_list)) else None
-            average_base_single_int_rate_531_deepsjeng_r = np.mean(base_single_int_rate_531_deepsjeng_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_531_deepsjeng_r_list)) else None
-            average_base_single_int_rate_541_leela_r = np.mean(base_single_int_rate_541_leela_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_541_leela_r_list)) else None
-            average_base_single_int_rate_548_exchange2_r = np.mean(base_single_int_rate_548_exchange2_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_548_exchange2_r_list)) else None
-            average_base_single_int_rate_557_xz_r = np.mean(base_single_int_rate_557_xz_r_list).round(2) if not np.isnan(np.mean(base_single_int_rate_557_xz_r_list)) else None
-            average_base_single_int_rate_SPECrate2017_int = np.mean(base_single_int_rate_SPECrate2017_int_list).round(2) if not np.isnan(np.mean(base_single_int_rate_SPECrate2017_int_list)) else None
-            average_base_single_fp_rate_503_bwaves_r = np.mean(base_single_fp_rate_503_bwaves_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_503_bwaves_r_list)) else None
-            average_base_single_fp_rate_507_cactuBSSN_r = np.mean(base_single_fp_rate_507_cactuBSSN_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_507_cactuBSSN_r_list)) else None
-            average_base_single_fp_rate_508_namd_r = np.mean(base_single_fp_rate_508_namd_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_508_namd_r_list)) else None
-            average_base_single_fp_rate_510_parest_r = np.mean(base_single_fp_rate_510_parest_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_510_parest_r_list)) else None
-            average_base_single_fp_rate_511_povray_r = np.mean(base_single_fp_rate_511_povray_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_511_povray_r_list)) else None
-            average_base_single_fp_rate_519_lbm_r = np.mean(base_single_fp_rate_519_lbm_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_519_lbm_r_list)) else None
-            average_base_single_fp_rate_521_wrf_r = np.mean(base_single_fp_rate_521_wrf_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_521_wrf_r_list)) else None
-            average_base_single_fp_rate_526_blender_r = np.mean(base_single_fp_rate_526_blender_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_526_blender_r_list)) else None
-            average_base_single_fp_rate_527_cam4_r = np.mean(base_single_fp_rate_527_cam4_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_527_cam4_r_list)) else None
-            average_base_single_fp_rate_538_imagick_r = np.mean(base_single_fp_rate_538_imagick_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_538_imagick_r_list)) else None
-            average_base_single_fp_rate_544_nab_r = np.mean(base_single_fp_rate_544_nab_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_544_nab_r_list)) else None
-            average_base_single_fp_rate_549_fotonik3d_r = np.mean(base_single_fp_rate_549_fotonik3d_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_549_fotonik3d_r_list)) else None
-            average_base_single_fp_rate_554_roms_r = np.mean(base_single_fp_rate_554_roms_r_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_554_roms_r_list)) else None
-            average_base_single_fp_rate_PECrate2017_fp = np.mean(base_single_fp_rate_PECrate2017_fp_list).round(2) if not np.isnan(np.mean(base_single_fp_rate_PECrate2017_fp_list)) else None
-            average_base_multi_int_rate_500_perlbench_r = np.mean(base_multi_int_rate_500_perlbench_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_500_perlbench_r_list)) else None
-            average_base_multi_int_rate_502_gcc_r = np.mean(base_multi_int_rate_502_gcc_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_502_gcc_r_list)) else None
-            average_base_multi_int_rate_505_mcf_r = np.mean(base_multi_int_rate_505_mcf_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_505_mcf_r_list)) else None
-            average_base_multi_int_rate_520_omnetpp_r = np.mean(base_multi_int_rate_520_omnetpp_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_520_omnetpp_r_list)) else None
-            average_base_multi_int_rate_523_xalancbmk_r = np.mean(base_multi_int_rate_523_xalancbmk_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_523_xalancbmk_r_list)) else None
-            average_base_multi_int_rate_525_x264_r = np.mean(base_multi_int_rate_525_x264_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_525_x264_r_list)) else None
-            average_base_multi_int_rate_531_deepsjeng_r = np.mean(base_multi_int_rate_531_deepsjeng_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_531_deepsjeng_r_list)) else None
-            average_base_multi_int_rate_541_leela_r = np.mean(base_multi_int_rate_541_leela_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_541_leela_r_list)) else None
-            average_base_multi_int_rate_548_exchange2_r = np.mean(base_multi_int_rate_548_exchange2_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_548_exchange2_r_list)) else None
-            average_base_multi_int_rate_557_xz_r = np.mean(base_multi_int_rate_557_xz_r_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_557_xz_r_list)) else None
-            average_base_multi_int_rate_SPECrate2017_int = np.mean(base_multi_int_rate_SPECrate2017_int_list).round(2) if not np.isnan(np.mean(base_multi_int_rate_SPECrate2017_int_list)) else None
-            average_base_multi_fp_rate_503_bwaves_r = np.mean(base_multi_fp_rate_503_bwaves_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_503_bwaves_r_list)) else None
-            average_base_multi_fp_rate_507_cactuBSSN_r = np.mean(base_multi_fp_rate_507_cactuBSSN_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_507_cactuBSSN_r_list)) else None
-            average_base_multi_fp_rate_508_namd_r = np.mean(base_multi_fp_rate_508_namd_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_508_namd_r_list)) else None
-            average_base_multi_fp_rate_510_parest_r = np.mean(base_multi_fp_rate_510_parest_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_510_parest_r_list)) else None
-            average_base_multi_fp_rate_511_povray_r = np.mean(base_multi_fp_rate_511_povray_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_511_povray_r_list)) else None
-            average_base_multi_fp_rate_519_lbm_r = np.mean(base_multi_fp_rate_519_lbm_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_519_lbm_r_list)) else None
-            average_base_multi_fp_rate_521_wrf_r = np.mean(base_multi_fp_rate_521_wrf_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_521_wrf_r_list)) else None
-            average_base_multi_fp_rate_526_blender_r = np.mean(base_multi_fp_rate_526_blender_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_526_blender_r_list)) else None
-            average_base_multi_fp_rate_527_cam4_r = np.mean(base_multi_fp_rate_527_cam4_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_527_cam4_r_list)) else None
-            average_base_multi_fp_rate_538_imagick_r = np.mean(base_multi_fp_rate_538_imagick_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_538_imagick_r_list)) else None
-            average_base_multi_fp_rate_544_nab_r = np.mean(base_multi_fp_rate_544_nab_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_544_nab_r_list)) else None
-            average_base_multi_fp_rate_549_fotonik3d_r = np.mean(base_multi_fp_rate_549_fotonik3d_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_549_fotonik3d_r_list)) else None
-            average_base_multi_fp_rate_554_roms_r = np.mean(base_multi_fp_rate_554_roms_r_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_554_roms_r_list)) else None
-            average_base_multi_fp_rate_PECrate2017_fp = np.mean(base_multi_fp_rate_PECrate2017_fp_list).round(2) if not np.isnan(np.mean(base_multi_fp_rate_PECrate2017_fp_list)) else None
-            average_peak_single_int_rate_500_perlbench_r = np.mean(peak_single_int_rate_500_perlbench_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_500_perlbench_r_list)) else None
-            average_peak_single_int_rate_502_gcc_r = np.mean(peak_single_int_rate_502_gcc_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_502_gcc_r_list)) else None
-            average_peak_single_int_rate_505_mcf_r = np.mean(peak_single_int_rate_505_mcf_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_505_mcf_r_list)) else None
-            average_peak_single_int_rate_520_omnetpp_r = np.mean(peak_single_int_rate_520_omnetpp_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_520_omnetpp_r_list)) else None
-            average_peak_single_int_rate_523_xalancbmk_r = np.mean(peak_single_int_rate_523_xalancbmk_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_523_xalancbmk_r_list)) else None
-            average_peak_single_int_rate_525_x264_r = np.mean(peak_single_int_rate_525_x264_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_525_x264_r_list)) else None
-            average_peak_single_int_rate_531_deepsjeng_r = np.mean(peak_single_int_rate_531_deepsjeng_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_531_deepsjeng_r_list)) else None
-            average_peak_single_int_rate_541_leela_r = np.mean(peak_single_int_rate_541_leela_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_541_leela_r_list)) else None
-            average_peak_single_int_rate_548_exchange2_r = np.mean(peak_single_int_rate_548_exchange2_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_548_exchange2_r_list)) else None
-            average_peak_single_int_rate_557_xz_r = np.mean(peak_single_int_rate_557_xz_r_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_557_xz_r_list)) else None
-            average_peak_single_int_rate_SPECrate2017_int = np.mean(peak_single_int_rate_SPECrate2017_int_list).round(2) if not np.isnan(np.mean(peak_single_int_rate_SPECrate2017_int_list)) else None
-            average_peak_single_fp_rate_503_bwaves_r = np.mean(peak_single_fp_rate_503_bwaves_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_503_bwaves_r_list)) else None
-            average_peak_single_fp_rate_507_cactuBSSN_r = np.mean(peak_single_fp_rate_507_cactuBSSN_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_507_cactuBSSN_r_list)) else None
-            average_peak_single_fp_rate_508_namd_r = np.mean(peak_single_fp_rate_508_namd_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_508_namd_r_list)) else None
-            average_peak_single_fp_rate_510_parest_r = np.mean(peak_single_fp_rate_510_parest_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_510_parest_r_list)) else None
-            average_peak_single_fp_rate_511_povray_r = np.mean(peak_single_fp_rate_511_povray_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_511_povray_r_list)) else None
-            average_peak_single_fp_rate_519_lbm_r = np.mean(peak_single_fp_rate_519_lbm_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_519_lbm_r_list)) else None
-            average_peak_single_fp_rate_521_wrf_r = np.mean(peak_single_fp_rate_521_wrf_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_521_wrf_r_list)) else None
-            average_peak_single_fp_rate_526_blender_r = np.mean(peak_single_fp_rate_526_blender_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_526_blender_r_list)) else None
-            average_peak_single_fp_rate_527_cam4_r = np.mean(peak_single_fp_rate_527_cam4_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_527_cam4_r_list)) else None
-            average_peak_single_fp_rate_538_imagick_r = np.mean(peak_single_fp_rate_538_imagick_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_538_imagick_r_list)) else None
-            average_peak_single_fp_rate_544_nab_r = np.mean(peak_single_fp_rate_544_nab_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_544_nab_r_list)) else None
-            average_peak_single_fp_rate_549_fotonik3d_r = np.mean(peak_single_fp_rate_549_fotonik3d_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_549_fotonik3d_r_list)) else None
-            average_peak_single_fp_rate_554_roms_r = np.mean(peak_single_fp_rate_554_roms_r_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_554_roms_r_list)) else None
-            average_peak_single_fp_rate_PECrate2017_fp = np.mean(peak_single_fp_rate_PECrate2017_fp_list).round(2) if not np.isnan(np.mean(peak_single_fp_rate_PECrate2017_fp_list)) else None
-            average_peak_multi_int_rate_500_perlbench_r = np.mean(peak_multi_int_rate_500_perlbench_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_500_perlbench_r_list)) else None
-            average_peak_multi_int_rate_502_gcc_r = np.mean(peak_multi_int_rate_502_gcc_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_502_gcc_r_list)) else None
-            average_peak_multi_int_rate_505_mcf_r = np.mean(peak_multi_int_rate_505_mcf_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_505_mcf_r_list)) else None
-            average_peak_multi_int_rate_520_omnetpp_r = np.mean(peak_multi_int_rate_520_omnetpp_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_520_omnetpp_r_list)) else None
-            average_peak_multi_int_rate_523_xalancbmk_r = np.mean(peak_multi_int_rate_523_xalancbmk_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_523_xalancbmk_r_list)) else None
-            average_peak_multi_int_rate_525_x264_r = np.mean(peak_multi_int_rate_525_x264_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_525_x264_r_list)) else None
-            average_peak_multi_int_rate_531_deepsjeng_r = np.mean(peak_multi_int_rate_531_deepsjeng_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_531_deepsjeng_r_list)) else None
-            average_peak_multi_int_rate_541_leela_r = np.mean(peak_multi_int_rate_541_leela_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_541_leela_r_list)) else None
-            average_peak_multi_int_rate_548_exchange2_r = np.mean(peak_multi_int_rate_548_exchange2_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_548_exchange2_r_list)) else None
-            average_peak_multi_int_rate_557_xz_r = np.mean(peak_multi_int_rate_557_xz_r_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_557_xz_r_list)) else None
-            average_peak_multi_int_rate_SPECrate2017_int = np.mean(peak_multi_int_rate_SPECrate2017_int_list).round(2) if not np.isnan(np.mean(peak_multi_int_rate_SPECrate2017_int_list)) else None
-            average_peak_multi_fp_rate_503_bwaves_r = np.mean(peak_multi_fp_rate_503_bwaves_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_503_bwaves_r_list)) else None
-            average_peak_multi_fp_rate_507_cactuBSSN_r = np.mean(peak_multi_fp_rate_507_cactuBSSN_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_507_cactuBSSN_r_list)) else None
-            average_peak_multi_fp_rate_508_namd_r = np.mean(peak_multi_fp_rate_508_namd_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_508_namd_r_list)) else None
-            average_peak_multi_fp_rate_510_parest_r = np.mean(peak_multi_fp_rate_510_parest_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_510_parest_r_list)) else None
-            average_peak_multi_fp_rate_511_povray_r = np.mean(peak_multi_fp_rate_511_povray_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_511_povray_r_list)) else None
-            average_peak_multi_fp_rate_519_lbm_r = np.mean(peak_multi_fp_rate_519_lbm_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_519_lbm_r_list)) else None
-            average_peak_multi_fp_rate_521_wrf_r = np.mean(peak_multi_fp_rate_521_wrf_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_521_wrf_r_list)) else None
-            average_peak_multi_fp_rate_526_blender_r = np.mean(peak_multi_fp_rate_526_blender_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_526_blender_r_list)) else None
-            average_peak_multi_fp_rate_527_cam4_r = np.mean(peak_multi_fp_rate_527_cam4_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_527_cam4_r_list)) else None
-            average_peak_multi_fp_rate_538_imagick_r = np.mean(peak_multi_fp_rate_538_imagick_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_538_imagick_r_list)) else None
-            average_peak_multi_fp_rate_544_nab_r = np.mean(peak_multi_fp_rate_544_nab_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_544_nab_r_list)) else None
-            average_peak_multi_fp_rate_549_fotonik3d_r = np.mean(peak_multi_fp_rate_549_fotonik3d_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_549_fotonik3d_r_list)) else None
-            average_peak_multi_fp_rate_554_roms_r = np.mean(peak_multi_fp_rate_554_roms_r_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_554_roms_r_list)) else None
-            average_peak_multi_fp_rate_PECrate2017_fp = np.mean(peak_multi_fp_rate_PECrate2017_fp_list).round(2) if not np.isnan(np.mean(peak_multi_fp_rate_PECrate2017_fp_list)) else None
+            average_base_single_int_rate_500_perlbench_r = np.mean(base_single_int_rate_500_perlbench_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_500_perlbench_r_list)) else None
+            average_base_single_int_rate_502_gcc_r = np.mean(base_single_int_rate_502_gcc_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_502_gcc_r_list)) else None
+            average_base_single_int_rate_505_mcf_r = np.mean(base_single_int_rate_505_mcf_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_505_mcf_r_list)) else None
+            average_base_single_int_rate_520_omnetpp_r = np.mean(base_single_int_rate_520_omnetpp_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_520_omnetpp_r_list)) else None
+            average_base_single_int_rate_523_xalancbmk_r = np.mean(base_single_int_rate_523_xalancbmk_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_523_xalancbmk_r_list)) else None
+            average_base_single_int_rate_525_x264_r = np.mean(base_single_int_rate_525_x264_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_525_x264_r_list)) else None
+            average_base_single_int_rate_531_deepsjeng_r = np.mean(base_single_int_rate_531_deepsjeng_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_531_deepsjeng_r_list)) else None
+            average_base_single_int_rate_541_leela_r = np.mean(base_single_int_rate_541_leela_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_541_leela_r_list)) else None
+            average_base_single_int_rate_548_exchange2_r = np.mean(base_single_int_rate_548_exchange2_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_548_exchange2_r_list)) else None
+            average_base_single_int_rate_557_xz_r = np.mean(base_single_int_rate_557_xz_r_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_557_xz_r_list)) else None
+            average_base_single_int_rate_SPECrate2017_int = np.mean(base_single_int_rate_SPECrate2017_int_list).round(2) if not np.isnan(
+                np.mean(base_single_int_rate_SPECrate2017_int_list)) else None
+            average_base_single_fp_rate_503_bwaves_r = np.mean(base_single_fp_rate_503_bwaves_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_503_bwaves_r_list)) else None
+            average_base_single_fp_rate_507_cactuBSSN_r = np.mean(base_single_fp_rate_507_cactuBSSN_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_507_cactuBSSN_r_list)) else None
+            average_base_single_fp_rate_508_namd_r = np.mean(base_single_fp_rate_508_namd_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_508_namd_r_list)) else None
+            average_base_single_fp_rate_510_parest_r = np.mean(base_single_fp_rate_510_parest_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_510_parest_r_list)) else None
+            average_base_single_fp_rate_511_povray_r = np.mean(base_single_fp_rate_511_povray_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_511_povray_r_list)) else None
+            average_base_single_fp_rate_519_lbm_r = np.mean(base_single_fp_rate_519_lbm_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_519_lbm_r_list)) else None
+            average_base_single_fp_rate_521_wrf_r = np.mean(base_single_fp_rate_521_wrf_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_521_wrf_r_list)) else None
+            average_base_single_fp_rate_526_blender_r = np.mean(base_single_fp_rate_526_blender_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_526_blender_r_list)) else None
+            average_base_single_fp_rate_527_cam4_r = np.mean(base_single_fp_rate_527_cam4_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_527_cam4_r_list)) else None
+            average_base_single_fp_rate_538_imagick_r = np.mean(base_single_fp_rate_538_imagick_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_538_imagick_r_list)) else None
+            average_base_single_fp_rate_544_nab_r = np.mean(base_single_fp_rate_544_nab_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_544_nab_r_list)) else None
+            average_base_single_fp_rate_549_fotonik3d_r = np.mean(base_single_fp_rate_549_fotonik3d_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_549_fotonik3d_r_list)) else None
+            average_base_single_fp_rate_554_roms_r = np.mean(base_single_fp_rate_554_roms_r_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_554_roms_r_list)) else None
+            average_base_single_fp_rate_PECrate2017_fp = np.mean(base_single_fp_rate_PECrate2017_fp_list).round(2) if not np.isnan(
+                np.mean(base_single_fp_rate_PECrate2017_fp_list)) else None
+            average_base_multi_int_rate_500_perlbench_r = np.mean(base_multi_int_rate_500_perlbench_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_500_perlbench_r_list)) else None
+            average_base_multi_int_rate_502_gcc_r = np.mean(base_multi_int_rate_502_gcc_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_502_gcc_r_list)) else None
+            average_base_multi_int_rate_505_mcf_r = np.mean(base_multi_int_rate_505_mcf_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_505_mcf_r_list)) else None
+            average_base_multi_int_rate_520_omnetpp_r = np.mean(base_multi_int_rate_520_omnetpp_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_520_omnetpp_r_list)) else None
+            average_base_multi_int_rate_523_xalancbmk_r = np.mean(base_multi_int_rate_523_xalancbmk_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_523_xalancbmk_r_list)) else None
+            average_base_multi_int_rate_525_x264_r = np.mean(base_multi_int_rate_525_x264_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_525_x264_r_list)) else None
+            average_base_multi_int_rate_531_deepsjeng_r = np.mean(base_multi_int_rate_531_deepsjeng_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_531_deepsjeng_r_list)) else None
+            average_base_multi_int_rate_541_leela_r = np.mean(base_multi_int_rate_541_leela_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_541_leela_r_list)) else None
+            average_base_multi_int_rate_548_exchange2_r = np.mean(base_multi_int_rate_548_exchange2_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_548_exchange2_r_list)) else None
+            average_base_multi_int_rate_557_xz_r = np.mean(base_multi_int_rate_557_xz_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_557_xz_r_list)) else None
+            average_base_multi_int_rate_SPECrate2017_int = np.mean(base_multi_int_rate_SPECrate2017_int_list).round(2) if not np.isnan(
+                np.mean(base_multi_int_rate_SPECrate2017_int_list)) else None
+            average_base_multi_fp_rate_503_bwaves_r = np.mean(base_multi_fp_rate_503_bwaves_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_503_bwaves_r_list)) else None
+            average_base_multi_fp_rate_507_cactuBSSN_r = np.mean(base_multi_fp_rate_507_cactuBSSN_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_507_cactuBSSN_r_list)) else None
+            average_base_multi_fp_rate_508_namd_r = np.mean(base_multi_fp_rate_508_namd_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_508_namd_r_list)) else None
+            average_base_multi_fp_rate_510_parest_r = np.mean(base_multi_fp_rate_510_parest_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_510_parest_r_list)) else None
+            average_base_multi_fp_rate_511_povray_r = np.mean(base_multi_fp_rate_511_povray_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_511_povray_r_list)) else None
+            average_base_multi_fp_rate_519_lbm_r = np.mean(base_multi_fp_rate_519_lbm_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_519_lbm_r_list)) else None
+            average_base_multi_fp_rate_521_wrf_r = np.mean(base_multi_fp_rate_521_wrf_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_521_wrf_r_list)) else None
+            average_base_multi_fp_rate_526_blender_r = np.mean(base_multi_fp_rate_526_blender_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_526_blender_r_list)) else None
+            average_base_multi_fp_rate_527_cam4_r = np.mean(base_multi_fp_rate_527_cam4_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_527_cam4_r_list)) else None
+            average_base_multi_fp_rate_538_imagick_r = np.mean(base_multi_fp_rate_538_imagick_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_538_imagick_r_list)) else None
+            average_base_multi_fp_rate_544_nab_r = np.mean(base_multi_fp_rate_544_nab_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_544_nab_r_list)) else None
+            average_base_multi_fp_rate_549_fotonik3d_r = np.mean(base_multi_fp_rate_549_fotonik3d_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_549_fotonik3d_r_list)) else None
+            average_base_multi_fp_rate_554_roms_r = np.mean(base_multi_fp_rate_554_roms_r_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_554_roms_r_list)) else None
+            average_base_multi_fp_rate_PECrate2017_fp = np.mean(base_multi_fp_rate_PECrate2017_fp_list).round(2) if not np.isnan(
+                np.mean(base_multi_fp_rate_PECrate2017_fp_list)) else None
+            average_peak_single_int_rate_500_perlbench_r = np.mean(peak_single_int_rate_500_perlbench_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_500_perlbench_r_list)) else None
+            average_peak_single_int_rate_502_gcc_r = np.mean(peak_single_int_rate_502_gcc_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_502_gcc_r_list)) else None
+            average_peak_single_int_rate_505_mcf_r = np.mean(peak_single_int_rate_505_mcf_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_505_mcf_r_list)) else None
+            average_peak_single_int_rate_520_omnetpp_r = np.mean(peak_single_int_rate_520_omnetpp_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_520_omnetpp_r_list)) else None
+            average_peak_single_int_rate_523_xalancbmk_r = np.mean(peak_single_int_rate_523_xalancbmk_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_523_xalancbmk_r_list)) else None
+            average_peak_single_int_rate_525_x264_r = np.mean(peak_single_int_rate_525_x264_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_525_x264_r_list)) else None
+            average_peak_single_int_rate_531_deepsjeng_r = np.mean(peak_single_int_rate_531_deepsjeng_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_531_deepsjeng_r_list)) else None
+            average_peak_single_int_rate_541_leela_r = np.mean(peak_single_int_rate_541_leela_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_541_leela_r_list)) else None
+            average_peak_single_int_rate_548_exchange2_r = np.mean(peak_single_int_rate_548_exchange2_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_548_exchange2_r_list)) else None
+            average_peak_single_int_rate_557_xz_r = np.mean(peak_single_int_rate_557_xz_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_557_xz_r_list)) else None
+            average_peak_single_int_rate_SPECrate2017_int = np.mean(peak_single_int_rate_SPECrate2017_int_list).round(2) if not np.isnan(
+                np.mean(peak_single_int_rate_SPECrate2017_int_list)) else None
+            average_peak_single_fp_rate_503_bwaves_r = np.mean(peak_single_fp_rate_503_bwaves_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_503_bwaves_r_list)) else None
+            average_peak_single_fp_rate_507_cactuBSSN_r = np.mean(peak_single_fp_rate_507_cactuBSSN_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_507_cactuBSSN_r_list)) else None
+            average_peak_single_fp_rate_508_namd_r = np.mean(peak_single_fp_rate_508_namd_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_508_namd_r_list)) else None
+            average_peak_single_fp_rate_510_parest_r = np.mean(peak_single_fp_rate_510_parest_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_510_parest_r_list)) else None
+            average_peak_single_fp_rate_511_povray_r = np.mean(peak_single_fp_rate_511_povray_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_511_povray_r_list)) else None
+            average_peak_single_fp_rate_519_lbm_r = np.mean(peak_single_fp_rate_519_lbm_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_519_lbm_r_list)) else None
+            average_peak_single_fp_rate_521_wrf_r = np.mean(peak_single_fp_rate_521_wrf_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_521_wrf_r_list)) else None
+            average_peak_single_fp_rate_526_blender_r = np.mean(peak_single_fp_rate_526_blender_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_526_blender_r_list)) else None
+            average_peak_single_fp_rate_527_cam4_r = np.mean(peak_single_fp_rate_527_cam4_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_527_cam4_r_list)) else None
+            average_peak_single_fp_rate_538_imagick_r = np.mean(peak_single_fp_rate_538_imagick_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_538_imagick_r_list)) else None
+            average_peak_single_fp_rate_544_nab_r = np.mean(peak_single_fp_rate_544_nab_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_544_nab_r_list)) else None
+            average_peak_single_fp_rate_549_fotonik3d_r = np.mean(peak_single_fp_rate_549_fotonik3d_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_549_fotonik3d_r_list)) else None
+            average_peak_single_fp_rate_554_roms_r = np.mean(peak_single_fp_rate_554_roms_r_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_554_roms_r_list)) else None
+            average_peak_single_fp_rate_PECrate2017_fp = np.mean(peak_single_fp_rate_PECrate2017_fp_list).round(2) if not np.isnan(
+                np.mean(peak_single_fp_rate_PECrate2017_fp_list)) else None
+            average_peak_multi_int_rate_500_perlbench_r = np.mean(peak_multi_int_rate_500_perlbench_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_500_perlbench_r_list)) else None
+            average_peak_multi_int_rate_502_gcc_r = np.mean(peak_multi_int_rate_502_gcc_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_502_gcc_r_list)) else None
+            average_peak_multi_int_rate_505_mcf_r = np.mean(peak_multi_int_rate_505_mcf_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_505_mcf_r_list)) else None
+            average_peak_multi_int_rate_520_omnetpp_r = np.mean(peak_multi_int_rate_520_omnetpp_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_520_omnetpp_r_list)) else None
+            average_peak_multi_int_rate_523_xalancbmk_r = np.mean(peak_multi_int_rate_523_xalancbmk_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_523_xalancbmk_r_list)) else None
+            average_peak_multi_int_rate_525_x264_r = np.mean(peak_multi_int_rate_525_x264_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_525_x264_r_list)) else None
+            average_peak_multi_int_rate_531_deepsjeng_r = np.mean(peak_multi_int_rate_531_deepsjeng_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_531_deepsjeng_r_list)) else None
+            average_peak_multi_int_rate_541_leela_r = np.mean(peak_multi_int_rate_541_leela_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_541_leela_r_list)) else None
+            average_peak_multi_int_rate_548_exchange2_r = np.mean(peak_multi_int_rate_548_exchange2_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_548_exchange2_r_list)) else None
+            average_peak_multi_int_rate_557_xz_r = np.mean(peak_multi_int_rate_557_xz_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_557_xz_r_list)) else None
+            average_peak_multi_int_rate_SPECrate2017_int = np.mean(peak_multi_int_rate_SPECrate2017_int_list).round(2) if not np.isnan(
+                np.mean(peak_multi_int_rate_SPECrate2017_int_list)) else None
+            average_peak_multi_fp_rate_503_bwaves_r = np.mean(peak_multi_fp_rate_503_bwaves_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_503_bwaves_r_list)) else None
+            average_peak_multi_fp_rate_507_cactuBSSN_r = np.mean(peak_multi_fp_rate_507_cactuBSSN_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_507_cactuBSSN_r_list)) else None
+            average_peak_multi_fp_rate_508_namd_r = np.mean(peak_multi_fp_rate_508_namd_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_508_namd_r_list)) else None
+            average_peak_multi_fp_rate_510_parest_r = np.mean(peak_multi_fp_rate_510_parest_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_510_parest_r_list)) else None
+            average_peak_multi_fp_rate_511_povray_r = np.mean(peak_multi_fp_rate_511_povray_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_511_povray_r_list)) else None
+            average_peak_multi_fp_rate_519_lbm_r = np.mean(peak_multi_fp_rate_519_lbm_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_519_lbm_r_list)) else None
+            average_peak_multi_fp_rate_521_wrf_r = np.mean(peak_multi_fp_rate_521_wrf_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_521_wrf_r_list)) else None
+            average_peak_multi_fp_rate_526_blender_r = np.mean(peak_multi_fp_rate_526_blender_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_526_blender_r_list)) else None
+            average_peak_multi_fp_rate_527_cam4_r = np.mean(peak_multi_fp_rate_527_cam4_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_527_cam4_r_list)) else None
+            average_peak_multi_fp_rate_538_imagick_r = np.mean(peak_multi_fp_rate_538_imagick_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_538_imagick_r_list)) else None
+            average_peak_multi_fp_rate_544_nab_r = np.mean(peak_multi_fp_rate_544_nab_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_544_nab_r_list)) else None
+            average_peak_multi_fp_rate_549_fotonik3d_r = np.mean(peak_multi_fp_rate_549_fotonik3d_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_549_fotonik3d_r_list)) else None
+            average_peak_multi_fp_rate_554_roms_r = np.mean(peak_multi_fp_rate_554_roms_r_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_554_roms_r_list)) else None
+            average_peak_multi_fp_rate_PECrate2017_fp = np.mean(peak_multi_fp_rate_PECrate2017_fp_list).round(2) if not np.isnan(
+                np.mean(peak_multi_fp_rate_PECrate2017_fp_list)) else None
 
             # 查到mark-name相同的数据拼接为一组：serializer.data
             for mark_name in groups:
@@ -623,7 +724,9 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
             datas[3]['column' + str(column_index)] = ''
             for i in range(4, 104):
                 datas[i]['column' + str(column_index)] = \
-                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+                    "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i][
+                        'column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i][
+                        'column' + str(base_column_index)] is not None else None
             column_index += 1
         return datas, title_index, column_index, base_column_index
 
@@ -747,7 +850,8 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Cpu2017.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index,
+                                                                                    base_column_index)
         analyze_data = get_analyze_data(datas, 'cpu2017')
         all_datas = {'datas': datas, 'analyze_data': analyze_data}
         return json_response(all_datas, status.HTTP_200_OK, '列表')
@@ -812,8 +916,8 @@ class Cpu2017ViewSet(viewsets.ModelViewSet):
                             if serializer_cpu2017.is_valid():
                                 self.perform_create(serializer_cpu2017)
                             else:
-                                log.info('cpu2017数据存储错误 ：%s，'%serializer_cpu2017.errors)
-                                log.info('cpu2017存储数据为 ：%s，'%data_cpu2017)
+                                log.info('cpu2017数据存储错误 ：%s，' % serializer_cpu2017.errors)
+                                log.info('cpu2017存储数据为 ：%s，' % data_cpu2017)
                                 serializer_cpu2017_errors.append(serializer_cpu2017.errors)
                                 error_message.append(get_error_message(serializer_cpu2017))
         if serializer_cpu2017_errors:

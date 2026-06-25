@@ -17,6 +17,7 @@ from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 
+
 class LmbenchViewSet(viewsets.ModelViewSet):
     """
     Lmbench数据管理
@@ -181,10 +182,14 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             file_and_system_Prot_Fault_list = [d.file_and_system_Prot_Fault for d in serializer_ if d.file_and_system_Prot_Fault is not None]
             file_and_system_Page_Fault_list = [d.file_and_system_Page_Fault for d in serializer_ if d.file_and_system_Page_Fault is not None]
             file_and_system_100fd_selct_list = [d.file_and_system_100fd_selct for d in serializer_ if d.file_and_system_100fd_selct is not None]
-            file_and_system_0K_File_create_list = [d.file_and_system_0K_File_create for d in serializer_ if d.file_and_system_0K_File_create is not None]
-            file_and_system_0K_File_delete_list = [d.file_and_system_0K_File_delete for d in serializer_ if d.file_and_system_0K_File_delete is not None]
-            file_and_system_10K_File_create_list = [d.file_and_system_10K_File_create for d in serializer_ if d.file_and_system_10K_File_create is not None]
-            file_and_system_10K_File_delete_list = [d.file_and_system_10K_File_delete for d in serializer_ if d.file_and_system_10K_File_delete is not None]
+            file_and_system_0K_File_create_list = [d.file_and_system_0K_File_create for d in serializer_ if
+                                                   d.file_and_system_0K_File_create is not None]
+            file_and_system_0K_File_delete_list = [d.file_and_system_0K_File_delete for d in serializer_ if
+                                                   d.file_and_system_0K_File_delete is not None]
+            file_and_system_10K_File_create_list = [d.file_and_system_10K_File_create for d in serializer_ if
+                                                    d.file_and_system_10K_File_create is not None]
+            file_and_system_10K_File_delete_list = [d.file_and_system_10K_File_delete for d in serializer_ if
+                                                    d.file_and_system_10K_File_delete is not None]
             local_bigger_Pipe_list = [d.local_bigger_Pipe for d in serializer_ if d.local_bigger_Pipe is not None]
             local_bigger_AF_UNIX_list = [d.local_bigger_AF_UNIX for d in serializer_ if d.local_bigger_AF_UNIX is not None]
             local_bigger_TCP_list = [d.local_bigger_TCP for d in serializer_ if d.local_bigger_TCP is not None]
@@ -202,7 +207,8 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             # 计算每个数组的平均值
             average_basic_Mhz = np.mean(basic_Mhz_list).round(2) if not np.isnan(np.mean(basic_Mhz_list)) else None
             average_basic_tlb_pages = np.mean(basic_tlb_pages_list).round(2) if not np.isnan(np.mean(basic_tlb_pages_list)) else None
-            average_basic_cache_line_bytes = np.mean(basic_cache_line_bytes_list).round(2) if not np.isnan(np.mean(basic_cache_line_bytes_list)) else None
+            average_basic_cache_line_bytes = np.mean(basic_cache_line_bytes_list).round(2) if not np.isnan(
+                np.mean(basic_cache_line_bytes_list)) else None
             average_basic_mem_par = np.mean(basic_mem_par_list).round(2) if not np.isnan(np.mean(basic_mem_par_list)) else None
             average_basic_scal_load = np.mean(basic_scal_load_list).round(2) if not np.isnan(np.mean(basic_scal_load_list)) else None
             average_processor_Mhz = np.mean(processor_Mhz_list).round(2) if not np.isnan(np.mean(processor_Mhz_list)) else None
@@ -249,23 +255,37 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             average_local_TCP = np.mean(local_TCP_list).round(2) if not np.isnan(np.mean(local_TCP_list)) else None
             average_local_RPC_TCP = np.mean(local_RPC_TCP_list).round(2) if not np.isnan(np.mean(local_RPC_TCP_list)) else None
             average_local_TCP_conn = np.mean(local_TCP_conn_list).round(2) if not np.isnan(np.mean(local_TCP_conn_list)) else None
-            average_file_and_system_Mmap_Latency = np.mean(file_and_system_Mmap_Latency_list).round(2) if not np.isnan(np.mean(file_and_system_Mmap_Latency_list)) else None
-            average_file_and_system_Prot_Fault = np.mean(file_and_system_Prot_Fault_list).round(2) if not np.isnan(np.mean(file_and_system_Prot_Fault_list)) else None
-            average_file_and_system_Page_Fault = np.mean(file_and_system_Page_Fault_list).round(2) if not np.isnan(np.mean(file_and_system_Page_Fault_list)) else None
-            average_file_and_system_100fd_selct = np.mean(file_and_system_100fd_selct_list).round(2) if not np.isnan(np.mean(file_and_system_100fd_selct_list)) else None
-            average_file_and_system_0K_File_create = np.mean(file_and_system_0K_File_create_list).round(2) if not np.isnan(np.mean(file_and_system_0K_File_create_list)) else None
-            average_file_and_system_0K_File_delete = np.mean(file_and_system_0K_File_delete_list).round(2) if not np.isnan(np.mean(file_and_system_0K_File_delete_list)) else None
-            average_file_and_system_10K_File_create = np.mean(file_and_system_10K_File_create_list).round(2) if not np.isnan(np.mean(file_and_system_10K_File_create_list)) else None
-            average_file_and_system_10K_File_delete = np.mean(file_and_system_10K_File_delete_list).round(2) if not np.isnan(np.mean(file_and_system_10K_File_delete_list)) else None
+            average_file_and_system_Mmap_Latency = np.mean(file_and_system_Mmap_Latency_list).round(2) if not np.isnan(
+                np.mean(file_and_system_Mmap_Latency_list)) else None
+            average_file_and_system_Prot_Fault = np.mean(file_and_system_Prot_Fault_list).round(2) if not np.isnan(
+                np.mean(file_and_system_Prot_Fault_list)) else None
+            average_file_and_system_Page_Fault = np.mean(file_and_system_Page_Fault_list).round(2) if not np.isnan(
+                np.mean(file_and_system_Page_Fault_list)) else None
+            average_file_and_system_100fd_selct = np.mean(file_and_system_100fd_selct_list).round(2) if not np.isnan(
+                np.mean(file_and_system_100fd_selct_list)) else None
+            average_file_and_system_0K_File_create = np.mean(file_and_system_0K_File_create_list).round(2) if not np.isnan(
+                np.mean(file_and_system_0K_File_create_list)) else None
+            average_file_and_system_0K_File_delete = np.mean(file_and_system_0K_File_delete_list).round(2) if not np.isnan(
+                np.mean(file_and_system_0K_File_delete_list)) else None
+            average_file_and_system_10K_File_create = np.mean(file_and_system_10K_File_create_list).round(2) if not np.isnan(
+                np.mean(file_and_system_10K_File_create_list)) else None
+            average_file_and_system_10K_File_delete = np.mean(file_and_system_10K_File_delete_list).round(2) if not np.isnan(
+                np.mean(file_and_system_10K_File_delete_list)) else None
             average_local_bigger_Pipe = np.mean(local_bigger_Pipe_list).round(2) if not np.isnan(np.mean(local_bigger_Pipe_list)) else None
             average_local_bigger_AF_UNIX = np.mean(local_bigger_AF_UNIX_list).round(2) if not np.isnan(np.mean(local_bigger_AF_UNIX_list)) else None
             average_local_bigger_TCP = np.mean(local_bigger_TCP_list).round(2) if not np.isnan(np.mean(local_bigger_TCP_list)) else None
-            average_local_bigger_File_reread = np.mean(local_bigger_File_reread_list).round(2) if not np.isnan(np.mean(local_bigger_File_reread_list)) else None
-            average_local_bigger_Mmap_reread = np.mean(local_bigger_Mmap_reread_list).round(2) if not np.isnan(np.mean(local_bigger_Mmap_reread_list)) else None
-            average_local_bigger_Bcopy_libc = np.mean(local_bigger_Bcopy_libc_list).round(2) if not np.isnan(np.mean(local_bigger_Bcopy_libc_list)) else None
-            average_local_bigger_Bcopy_hand = np.mean(local_bigger_Bcopy_hand_list).round(2) if not np.isnan(np.mean(local_bigger_Bcopy_hand_list)) else None
-            average_local_bigger_Mem_read = np.mean(local_bigger_Mem_read_list).round(2) if not np.isnan(np.mean(local_bigger_Mem_read_list)) else None
-            average_local_bigger_Mem_write = np.mean(local_bigger_Mem_write_list).round(2) if not np.isnan(np.mean(local_bigger_Mem_write_list)) else None
+            average_local_bigger_File_reread = np.mean(local_bigger_File_reread_list).round(2) if not np.isnan(
+                np.mean(local_bigger_File_reread_list)) else None
+            average_local_bigger_Mmap_reread = np.mean(local_bigger_Mmap_reread_list).round(2) if not np.isnan(
+                np.mean(local_bigger_Mmap_reread_list)) else None
+            average_local_bigger_Bcopy_libc = np.mean(local_bigger_Bcopy_libc_list).round(2) if not np.isnan(
+                np.mean(local_bigger_Bcopy_libc_list)) else None
+            average_local_bigger_Bcopy_hand = np.mean(local_bigger_Bcopy_hand_list).round(2) if not np.isnan(
+                np.mean(local_bigger_Bcopy_hand_list)) else None
+            average_local_bigger_Mem_read = np.mean(local_bigger_Mem_read_list).round(2) if not np.isnan(
+                np.mean(local_bigger_Mem_read_list)) else None
+            average_local_bigger_Mem_write = np.mean(local_bigger_Mem_write_list).round(2) if not np.isnan(
+                np.mean(local_bigger_Mem_write_list)) else None
             average_memory_Mhz = np.mean(memory_Mhz_list).round(2) if not np.isnan(np.mean(memory_Mhz_list)) else None
             average_memory_L1 = np.mean(memory_L1_list).round(2) if not np.isnan(np.mean(memory_L1_list)) else None
             average_memory_L2 = np.mean(memory_L2_list).round(2) if not np.isnan(np.mean(memory_L2_list)) else None
@@ -439,9 +459,15 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             datas[3]['column' + str(column_index)] = ''
             for i in range(4, 75):
                 if 60 < i < 70:
-                    datas[i]['column' + str(column_index)] = "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+                    datas[i]['column' + str(column_index)] = "%.2f%%" % (
+                                (datas[i]['column' + str(column_index - 1)] - datas[i]['column' + str(base_column_index)]) / datas[i][
+                            'column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i][
+                        'column' + str(base_column_index)] is not None else None
                 else:
-                    datas[i]['column' + str(column_index)] = "%.2f%%" % ((datas[i]['column' + str(base_column_index)] - datas[i]['column' + str(column_index - 1)]) / datas[i]['column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i]['column' + str(base_column_index)] is not None else None
+                    datas[i]['column' + str(column_index)] = "%.2f%%" % (
+                                (datas[i]['column' + str(base_column_index)] - datas[i]['column' + str(column_index - 1)]) / datas[i][
+                            'column' + str(base_column_index)] * 100) if datas[i]['column' + str(column_index - 1)] is not None and datas[i][
+                        'column' + str(base_column_index)] is not None else None
             column_index += 1
         return datas, title_index, column_index, base_column_index
 
@@ -453,81 +479,81 @@ class LmbenchViewSet(viewsets.ModelViewSet):
         if not base_queryset:
             return json_response({}, status.HTTP_200_OK, '列表')
         datas = [
-        {'column1':'Lmbench','column2':''},
-        {'column1':'项目名称','column2':''},
-        {'column1': '执行命令','column2':''},
-        {'column1': '修改参数', 'column2':''},
-        {'column1':'Basic system parameters','column2':'Mhz'},
-        {'column1':'Basic system parameters','column2':'tlb pages'},
-        {'column1':'Basic system parameters','column2':'cache line bytes'},
-        {'column1':'Basic system parameters','column2':'mem par'},
-        {'column1':'Basic system parameters','column2':'scal load'},
-        {'column1':'Processor','column2':'Mhz'},
-        {'column1':'Processor','column2':'null call'},
-        {'column1':'Processor','column2':'null I/O'},
-        {'column1':'Processor','column2':'stat'},
-        {'column1':'Processor','column2':'open close'},
-        {'column1':'Processor','column2':'slct TCP'},
-        {'column1':'Processor','column2':'sig inst'},
-        {'column1':'Processor','column2':'sig hndl'},
-        {'column1':'Processor','column2':'fork proc'},
-        {'column1':'Processor','column2':'exec proc'},
-        {'column1':'Processor','column2':'sh proc'},
-        {'column1':'Basic integer operations','column2':'intgr bit'},
-        {'column1':'Basic integer operations','column2':'intgr add'},
-        {'column1':'Basic integer operations','column2':'intgr mul'},
-        {'column1':'Basic integer operations','column2':'intgr div'},
-        {'column1':'Basic integer operations','column2':'intgr mod'},
-        {'column1':'Basic uint64 operations','column2':'int64 bit'},
-        {'column1':'Basic uint64 operations','column2':'int64 add'},
-        {'column1':'Basic uint64 operations','column2':'int64 mul'},
-        {'column1':'Basic uint64 operations','column2':'int64 div'},
-        {'column1':'Basic uint64 operations','column2':'int64 mod'},
-        {'column1':'Basic float operations','column2':'float add'},
-        {'column1':'Basic float operations','column2':'float mul'},
-        {'column1':'Basic float operations','column2':'float div'},
-        {'column1':'Basic float operations','column2':'float bogo'},
-        {'column1':'Basic double operations','column2':'double add'},
-        {'column1':'Basic double operations','column2':'double mul'},
-        {'column1':'Basic double operations','column2':'double div'},
-        {'column1':'Basic double operations','column2':'double bogo'},
-        {'column1':'Context switching','column2':'2p/0K'},
-        {'column1':'Context switching','column2':'2p/16K'},
-        {'column1':'Context switching','column2':'2p/64K'},
-        {'column1':'Context switching','column2':'8p/16K'},
-        {'column1':'Context switching','column2':'8p/64K'},
-        {'column1':'Context switching','column2':'16p/16K'},
-        {'column1':'Context switching','column2':'16p/64K'},
-        {'column1':'*Local* Communication latencies','column2':'2p/0K'},
-        {'column1':'*Local* Communication latencies','column2':'Pipe'},
-        {'column1':'*Local* Communication latencies','column2':'AF UNIX'},
-        {'column1':'*Local* Communication latencies','column2':'UDP'},
-        {'column1': '*Local* Communication latencies', 'column2': 'RPC/UDP'},
-        {'column1':'*Local* Communication latencies','column2':'TCP'},
-        {'column1':'*Local* Communication latencies','column2':'RPC/TCP'},
-        {'column1': '*Local* Communication latencies', 'column2': 'TCP conn'},
-        {'column1':'File & VM system latencies in microseconds','column2':'0K File create'},
-        {'column1':'File & VM system latencies in microseconds','column2':'0K File delete'},
-        {'column1':'File & VM system latencies in microseconds','column2':'10K File create'},
-        {'column1':'File & VM system latencies in microseconds','column2':'10K File delete'},
-        {'column1':'File & VM system latencies in microseconds','column2':'Mmap Latency'},
-        {'column1':'File & VM system latencies in microseconds','column2':'Prot Fault'},
-        {'column1':'File & VM system latencies in microseconds','column2':'Page Fault'},
-        {'column1':'File & VM system latencies in microseconds','column2':'100fd selct'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Pipe'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'AF UNIX'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'TCP'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'File reread'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mmap reread'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Bcopy(libc)'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Bcopy(hand)'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mem read'},
-        {'column1':'*Local* Communication bandwidths in MB/s - bigger is better','column2':'Mem write'},
-        {'column1':'Memory latencies in nanoseconds','column2':'Mhz'},
-        {'column1':'Memory latencies in nanoseconds','column2':'L1 $'},
-        {'column1':'Memory latencies in nanoseconds','column2':'L2 $'},
-        {'column1':'Memory latencies in nanoseconds','column2':'Main mem'},
-        {'column1':'Memory latencies in nanoseconds','column2':'Rand mem'},
+            {'column1': 'Lmbench', 'column2': ''},
+            {'column1': '项目名称', 'column2': ''},
+            {'column1': '执行命令', 'column2': ''},
+            {'column1': '修改参数', 'column2': ''},
+            {'column1': 'Basic system parameters', 'column2': 'Mhz'},
+            {'column1': 'Basic system parameters', 'column2': 'tlb pages'},
+            {'column1': 'Basic system parameters', 'column2': 'cache line bytes'},
+            {'column1': 'Basic system parameters', 'column2': 'mem par'},
+            {'column1': 'Basic system parameters', 'column2': 'scal load'},
+            {'column1': 'Processor', 'column2': 'Mhz'},
+            {'column1': 'Processor', 'column2': 'null call'},
+            {'column1': 'Processor', 'column2': 'null I/O'},
+            {'column1': 'Processor', 'column2': 'stat'},
+            {'column1': 'Processor', 'column2': 'open close'},
+            {'column1': 'Processor', 'column2': 'slct TCP'},
+            {'column1': 'Processor', 'column2': 'sig inst'},
+            {'column1': 'Processor', 'column2': 'sig hndl'},
+            {'column1': 'Processor', 'column2': 'fork proc'},
+            {'column1': 'Processor', 'column2': 'exec proc'},
+            {'column1': 'Processor', 'column2': 'sh proc'},
+            {'column1': 'Basic integer operations', 'column2': 'intgr bit'},
+            {'column1': 'Basic integer operations', 'column2': 'intgr add'},
+            {'column1': 'Basic integer operations', 'column2': 'intgr mul'},
+            {'column1': 'Basic integer operations', 'column2': 'intgr div'},
+            {'column1': 'Basic integer operations', 'column2': 'intgr mod'},
+            {'column1': 'Basic uint64 operations', 'column2': 'int64 bit'},
+            {'column1': 'Basic uint64 operations', 'column2': 'int64 add'},
+            {'column1': 'Basic uint64 operations', 'column2': 'int64 mul'},
+            {'column1': 'Basic uint64 operations', 'column2': 'int64 div'},
+            {'column1': 'Basic uint64 operations', 'column2': 'int64 mod'},
+            {'column1': 'Basic float operations', 'column2': 'float add'},
+            {'column1': 'Basic float operations', 'column2': 'float mul'},
+            {'column1': 'Basic float operations', 'column2': 'float div'},
+            {'column1': 'Basic float operations', 'column2': 'float bogo'},
+            {'column1': 'Basic double operations', 'column2': 'double add'},
+            {'column1': 'Basic double operations', 'column2': 'double mul'},
+            {'column1': 'Basic double operations', 'column2': 'double div'},
+            {'column1': 'Basic double operations', 'column2': 'double bogo'},
+            {'column1': 'Context switching', 'column2': '2p/0K'},
+            {'column1': 'Context switching', 'column2': '2p/16K'},
+            {'column1': 'Context switching', 'column2': '2p/64K'},
+            {'column1': 'Context switching', 'column2': '8p/16K'},
+            {'column1': 'Context switching', 'column2': '8p/64K'},
+            {'column1': 'Context switching', 'column2': '16p/16K'},
+            {'column1': 'Context switching', 'column2': '16p/64K'},
+            {'column1': '*Local* Communication latencies', 'column2': '2p/0K'},
+            {'column1': '*Local* Communication latencies', 'column2': 'Pipe'},
+            {'column1': '*Local* Communication latencies', 'column2': 'AF UNIX'},
+            {'column1': '*Local* Communication latencies', 'column2': 'UDP'},
+            {'column1': '*Local* Communication latencies', 'column2': 'RPC/UDP'},
+            {'column1': '*Local* Communication latencies', 'column2': 'TCP'},
+            {'column1': '*Local* Communication latencies', 'column2': 'RPC/TCP'},
+            {'column1': '*Local* Communication latencies', 'column2': 'TCP conn'},
+            {'column1': 'File & VM system latencies in microseconds', 'column2': '0K File create'},
+            {'column1': 'File & VM system latencies in microseconds', 'column2': '0K File delete'},
+            {'column1': 'File & VM system latencies in microseconds', 'column2': '10K File create'},
+            {'column1': 'File & VM system latencies in microseconds', 'column2': '10K File delete'},
+            {'column1': 'File & VM system latencies in microseconds', 'column2': 'Mmap Latency'},
+            {'column1': 'File & VM system latencies in microseconds', 'column2': 'Prot Fault'},
+            {'column1': 'File & VM system latencies in microseconds', 'column2': 'Page Fault'},
+            {'column1': 'File & VM system latencies in microseconds', 'column2': '100fd selct'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'Pipe'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'AF UNIX'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'TCP'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'File reread'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'Mmap reread'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'Bcopy(libc)'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'Bcopy(hand)'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'Mem read'},
+            {'column1': '*Local* Communication bandwidths in MB/s - bigger is better', 'column2': 'Mem write'},
+            {'column1': 'Memory latencies in nanoseconds', 'column2': 'Mhz'},
+            {'column1': 'Memory latencies in nanoseconds', 'column2': 'L1 $'},
+            {'column1': 'Memory latencies in nanoseconds', 'column2': 'L2 $'},
+            {'column1': 'Memory latencies in nanoseconds', 'column2': 'Main mem'},
+            {'column1': 'Memory latencies in nanoseconds', 'column2': 'Rand mem'},
         ]
         title_index = 1
         column_index = 3
@@ -537,7 +563,8 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Lmbench.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index,
+                                                                                    base_column_index)
         analyze_data = get_analyze_data(datas, 'lmbench')
         all_datas = {'datas': datas, 'analyze_data': analyze_data}
         return json_response(all_datas, status.HTTP_200_OK, '列表')
@@ -646,8 +673,8 @@ class LmbenchViewSet(viewsets.ModelViewSet):
             if serializer_lmbench.is_valid():
                 self.perform_create(serializer_lmbench)
             else:
-                log.info('lmbench数据存储错误 ：%s，'%serializer_lmbench.errors)
-                log.info('lmbench存储数据为 ：%s，'%data_lmbench)
+                log.info('lmbench数据存储错误 ：%s，' % serializer_lmbench.errors)
+                log.info('lmbench存储数据为 ：%s，' % data_lmbench)
                 serializer_lmbench_error.append(serializer_lmbench.errors)
                 error_message.append(get_error_message(serializer_lmbench))
         if serializer_lmbench_error:

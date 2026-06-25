@@ -65,8 +65,8 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         if serializer_config.is_valid():
             self.perform_create(serializer_config)
             return json_response(serializer_config.data, status.HTTP_200_OK, '创建成功！')
-        log.info('userConfig数据存储错误 ：%s，'%serializer_config.errors)
-        log.info('userConfig存储数据为 ：%s，'%data_user_config)
+        log.info('userConfig数据存储错误 ：%s，' % serializer_config.errors)
+        log.info('userConfig存储数据为 ：%s，' % data_user_config)
         return json_response({}, status.HTTP_400_BAD_REQUEST, serializer_config.errors)
 
     def put(self, request, *args, **kwargs):

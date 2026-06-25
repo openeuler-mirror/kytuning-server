@@ -12,7 +12,6 @@ from rest_framework import status, viewsets
 from appStore.adaptISO.models import AdaptISO
 from appStore.adaptISO.serializers import AdaptISOListSerializer
 from appStore.utils.common import LimsPageSet, json_response
-from appStore.utils.constants import TOOLS_URL
 
 log = logging.getLogger('kytuninglog')
 

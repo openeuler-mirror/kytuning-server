@@ -30,9 +30,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             # 可以根据需要设置其他用户属性
             user.save()
             return json_response(serializer_user.data, status.HTTP_200_OK, '创建成功！')
-        log.info('user数据存储错误 ：%s，'%serializer_user.errors)
+        log.info('user数据存储错误 ：%s，' % serializer_user.errors)
         return json_response(serializer_user.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_user))
-
 
     def change_password(self, request, *args, **kwargs):
         # 获取当前用户
@@ -45,6 +44,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             user.set_password(new_password1)
             user.save()
             # 返回密码修改成功的响应
-            return json_response({'new_password':new_password1}, status.HTTP_200_OK, '修改密码完成')
+            return json_response({'new_password': new_password1}, status.HTTP_200_OK, '修改密码完成')
         else:
             return json_response({}, status.HTTP_400_BAD_REQUEST, '两次密码不一致')

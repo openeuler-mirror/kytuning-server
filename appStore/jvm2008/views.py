@@ -17,6 +17,7 @@ from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
 
+
 class Jvm2008ViewSet(viewsets.ModelViewSet):
     """
     stream数据管理
@@ -103,7 +104,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
             base_startup_list = [d.startup for d in base_data_ if d.startup is not None]
             base_sunflow_list = [d.sunflow for d in base_data_ if d.sunflow is not None]
             base_xml_list = [d.xml for d in base_data_ if d.xml is not None]
-            base_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in base_data_ if d.Noncompliant_pomposite_result is not None]
+            base_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in base_data_ if
+                                                       d.Noncompliant_pomposite_result is not None]
             # 计算每个数组的平均值
             average_base_compiler = np.mean(base_compiler_list).round(2) if not np.isnan(np.mean(base_compiler_list)) else None
             average_base_compress = np.mean(base_compress_list).round(2) if not np.isnan(np.mean(base_compress_list)) else None
@@ -116,7 +118,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
             average_base_startup = np.mean(base_startup_list).round(2) if not np.isnan(np.mean(base_startup_list)) else None
             average_base_sunflow = np.mean(base_sunflow_list).round(2) if not np.isnan(np.mean(base_sunflow_list)) else None
             average_base_xml = np.mean(base_xml_list).round(2) if not np.isnan(np.mean(base_xml_list)) else None
-            average_base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2) if not np.isnan(np.mean(base_Noncompliant_pomposite_result_list)) else None
+            average_base_Noncompliant_pomposite_result = np.mean(base_Noncompliant_pomposite_result_list).round(2) if not np.isnan(
+                np.mean(base_Noncompliant_pomposite_result_list)) else None
             peak_compiler_list = [d.compiler for d in peak_data_ if d.compiler is not None]
             peak_compress_list = [d.compress for d in peak_data_ if d.compress is not None]
             peak_crypto_list = [d.crypto for d in peak_data_ if d.crypto is not None]
@@ -128,7 +131,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
             peak_startup_list = [d.startup for d in peak_data_ if d.startup is not None]
             peak_sunflow_list = [d.sunflow for d in peak_data_ if d.sunflow is not None]
             peak_xml_list = [d.xml for d in peak_data_ if d.xml is not None]
-            peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_ if d.Noncompliant_pomposite_result is not None]
+            peak_Noncompliant_pomposite_result_list = [d.Noncompliant_pomposite_result for d in peak_data_ if
+                                                       d.Noncompliant_pomposite_result is not None]
             # 计算每个数组的平均值
             average_peak_compiler = np.mean(peak_compiler_list).round(2) if not np.isnan(np.mean(peak_compiler_list)) else None
             average_peak_compress = np.mean(peak_compress_list).round(2) if not np.isnan(np.mean(peak_compress_list)) else None
@@ -141,7 +145,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
             average_peak_startup = np.mean(peak_startup_list).round(2) if not np.isnan(np.mean(peak_startup_list)) else None
             average_peak_sunflow = np.mean(peak_sunflow_list).round(2) if not np.isnan(np.mean(peak_sunflow_list)) else None
             average_peak_xml = np.mean(peak_xml_list).round(2) if not np.isnan(np.mean(peak_xml_list)) else None
-            average_peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list).round(2) if not np.isnan(np.mean(peak_Noncompliant_pomposite_result_list)) else None
+            average_peak_Noncompliant_pomposite_result = np.mean(peak_Noncompliant_pomposite_result_list).round(2) if not np.isnan(
+                np.mean(peak_Noncompliant_pomposite_result_list)) else None
 
             # 查到mark-name相同的数据拼接为一组：serializer.data
             for mark_name in groups:
@@ -228,8 +233,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
                 datas[i]['column' + str(column_index)] = \
                     "%.2f%%" % ((datas[i]['column' + str(column_index - 1)] - datas[i][
                         'column' + str(base_column_index)]) / datas[i]['column' + str(base_column_index)] * 100) if \
-                    datas[i]['column' + str(column_index - 1)] is not None and datas[i][
-                        'column' + str(base_column_index)] is not None else None
+                        datas[i]['column' + str(column_index - 1)] is not None and datas[i][
+                            'column' + str(base_column_index)] is not None else None
             column_index += 1
         return datas, title_index, column_index, base_column_index
 
@@ -276,7 +281,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
             # 处理对比数据
             for comparativeId in comparsionIds:
                 comparsion_queryset = Jvm2008.objects.filter(env_id=comparativeId).all()
-                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index, base_column_index)
+                datas, title_index, column_index, base_column_index = self.get_data(comparsion_queryset, datas, title_index, column_index,
+                                                                                    base_column_index)
         analyze_data = get_analyze_data(datas, 'jvm2008')
         all_datas = {'datas': datas, 'analyze_data': analyze_data}
         return json_response(all_datas, status.HTTP_200_OK, '列表')
@@ -311,8 +317,8 @@ class Jvm2008ViewSet(viewsets.ModelViewSet):
                 if serializer_jvm2008.is_valid():
                     self.perform_create(serializer_jvm2008)
                 else:
-                    log.info('jvm2008数据存储错误 ：%s，'%serializer_jvm2008.errors)
-                    log.info('jvm2008存储数据为 ：%s，'%data_jvm2008)
+                    log.info('jvm2008数据存储错误 ：%s，' % serializer_jvm2008.errors)
+                    log.info('jvm2008存储数据为 ：%s，' % data_jvm2008)
                     serializer_jvm2008_errors.append(serializer_jvm2008.errors)
                     errors_message.append(get_error_message(serializer_jvm2008))
         if serializer_jvm2008_errors:
