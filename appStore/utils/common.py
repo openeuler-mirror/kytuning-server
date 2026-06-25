@@ -13,17 +13,9 @@
 @time: 11/6/19 4:33 PM
 """
 import crypt
-import glob
-import re
-import os
-import shutil
-import tarfile
-import subprocess
 from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse
 from rest_framework import pagination, status
-from appStore.utils.constants import RESULT_LOG_FILE, TOOLS_URL
-
 
 def json_response(data=None, code=None, message=None):
     """

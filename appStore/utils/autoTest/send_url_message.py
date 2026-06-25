@@ -1,3 +1,10 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Mon Feb 26 11:15:07 2024 +0800
+"""
 # -*- coding: utf-8 -*-
 import os
 import re
@@ -8,11 +15,10 @@ import base64
 import hmac
 import time
 
+from appStore.utils.constants import lanxin_url, secret
+
 # 需要修改kytuning.cfg中project_name为特殊的指定格式，目前定义为"定时任务-IP"
 CONFIF_FILE = '/root/run_kytuning-ffdev/conf/kytuning.cfg'
-username=''
-secret = "xxx"
-lanxin_url='https://apigw-cec.cec.com.cn/v1/bot/hook/messages/create?hook_token=xxx'
 
 def get_compar_url(CONFIF_FILE):
     if not os.path.exists(CONFIF_FILE):
@@ -44,7 +50,7 @@ def get_compar_url(CONFIF_FILE):
 
     if not token:
         login_url = kytuning_web_url + '/kytuning/api-token-auth/'
-        response = requests.post(login_url,data={'username':username,'password':password}, verify=False)
+        response = requests.post(login_url, data={'username': username, 'password': password}, verify=False)
         if response.status_code != 200:
             print("请确认账号密码正确！")
             exit(0)
@@ -52,11 +58,11 @@ def get_compar_url(CONFIF_FILE):
     # 发送 curl 请求
     get_compar_url = kytuning_web_url + '/kytuning/project/?ProjectWeb=false&project_name={}&user_name=&os_names=&cpu_names='.format(project_name)
     headers = {
-                'User-Agent': 'curl/7.58.0',
-                'Accept': '*/*',
-                'Content-Type': 'application/json',
-                'Authorization': token
-                }
+        'User-Agent': 'curl/7.58.0',
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+        'Authorization': token
+    }
 
     response = requests.get(get_compar_url, headers=headers, verify=False)
     # 输出服务器响应
@@ -66,25 +72,25 @@ def get_compar_url(CONFIF_FILE):
     return compar_url
 
 
-def send_lanxin_message(secret, compar_url,username):
+def send_lanxin_message(username, compar_url):
     timestamp = int(round(time.time()))
     string_to_sign = '{}@{}'.format(timestamp, secret)
     hmac_code = hmac.new(string_to_sign.encode("utf-8"), digestmod=hashlib.sha256).digest()
     sign = base64.b64encode(hmac_code).decode('utf-8')
 
     headers = {
-                'User-Agent': 'curl/7.58.0',
-                'Accept': '*/*',
-                'Content-Type': 'application/json',
-                }
+        'User-Agent': 'curl/7.58.0',
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+    }
     if username:
-        data={
+        data = {
             "timestamp": str(timestamp),
             "sign": sign,
-            "msgType":"text",
+            "msgType": "text",
             "msgData": {
                 "text": {
-                    "content": "@{} 您的测试已完成请及时查看：{}".format(username,compar_url),
+                    "content": "@{} 您的测试已完成请及时查看：{}".format(username, compar_url),
                 }
             }
         }
@@ -98,17 +104,19 @@ def send_lanxin_message(secret, compar_url,username):
                     "content": """
 【迭代测试发布通知】 
 数据对比地址：{}
-请及时协调人员排查""".format(compar_url),
+请及时协调人员排查
+(虚拟机测试阶段请不用理会)""".format(compar_url),
                     "reminder": {
-                       "all": True,
+                        "all": True,
                     }
                 }
             }
         }
-    response = requests.post(lanxin_url, headers=headers, json=data, verify=False)
+    requests.post(lanxin_url, headers=headers, json=data, verify=False)
     # 输出服务器响应
-    print(json.loads(response.content.decode('utf-8')))
+    # print(json.loads(response.content.decode('utf-8')))
     return
 
-compar_url = get_compar_url(CONFIF_FILE)
-send_lanxin_message(secret, compar_url,username)
+# 在迭代更新的机器中打开
+# compar_url = get_compar_url(CONFIF_FILE)
+# send_lanxin_message(username, compar_url)

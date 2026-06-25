@@ -16,7 +16,9 @@ from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
 from appStore.testCase.models import TestCase
+from appStore.utils.autoTest.send_url_message import send_lanxin_message
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
+from appStore.utils.constants import KYTUNING_WEB_URL
 
 log = logging.getLogger('kytuninglog')
 
@@ -301,7 +303,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         data_env['swinfo_software_ver_pythonversion'] = request.data['envinfo']['swinfo']['software_ver']['pythonversion']
         data_env['nwinfo_nic'] = str(request.data['envinfo']['nwinfo']['nic'])
         serializer_env = self.get_serializer(data=data_env)
-        request.data['env_id'] = '1'
+        request.data['env_id'] = None
         if serializer_env.is_valid():
             self.perform_create(serializer_env)
             request.data['env_id'] = serializer_env.data['id']
@@ -406,7 +408,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         from appStore.project.views import ProjectViewSet
         request_project = HttpRequest()
         request_project.method = 'POST'
-        request.data['chinese_name']=request.user.chinese_name
+        request.data['chinese_name'] = request.user.chinese_name
         request_project.data_project = request.data
         request_project.error_message = error_message
         ProjectViewSet = ProjectViewSet()
@@ -415,6 +417,12 @@ class EnvViewSet(viewsets.ModelViewSet):
         """修改测试列表的状态"""
         if request.data.get('test_case_id'):
             TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
+
+        """发送蓝信通知"""
+        # 获取存储数据的url
+        value_type = list(request.data.keys())[2].split('-')[0].lower()
+        web_url = KYTUNING_WEB_URL+'/'+ str(value_type) + '/' + str(request.data['env_id'])
+        send_lanxin_message(request.user.chinese_name, web_url)
 
         return json_response({}, status.HTTP_200_OK, '创建成功！')
 

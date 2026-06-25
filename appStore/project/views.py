@@ -366,6 +366,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 
         # 4、删除env_id的env表，删除env_id对应的project表
+        # Env.objects.filter(id__in=env_ids).delete()
         Project.objects.filter(env_id__in=env_ids).delete()
         # 5、修改project表对应测试项目的值
         stream_number = len(Stream.objects.filter(env_id=env_id))
@@ -443,8 +444,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             log.info('project数据存储失败：%s'%serializer_project.errors)
             print(serializer_project.errors, "project")
-            return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST,
-                                 get_error_message(serializer_project))
+            return json_response(serializer_project.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_project))
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
