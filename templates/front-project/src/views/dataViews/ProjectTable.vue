@@ -196,7 +196,6 @@
   </div>
 </template>
 
-
 <script>
 import {ElMessage} from 'element-plus';
 import {project, getFilterName, mergeData} from "@/api/api.js";
@@ -211,12 +210,10 @@ export default {
       boolCompar: false,
       allDatas: [], // 从后端获取的全部数据
       compars: [],
-
       projectNames: [],//筛选项目名称
       userNames: [],//筛选用户名称
       osNames: [],//筛选os版本
       cpuNames: [],//筛选cpu型号
-
       dialogPutProject: false,
       //用户修改后的数据
       form: {
@@ -244,7 +241,6 @@ export default {
       },
     }
   },
-
   watch: {
     $route(to) {
       // 路由变化时执行的逻辑
@@ -385,10 +381,10 @@ export default {
     //增加对比数据
     addCompar(row) {
       const compar_num = this.compars.filter(item => item && typeof item === 'object' && !Array.isArray(item)).length;
-      if (compar_num < 10){
+      if (compar_num < 10) {
         this.compars.push(row);
-      }else {
-         ElMessage({message: '对比数据不可以超过10个', type: 'warning'});
+      } else {
+        ElMessage({message: '对比数据不可以超过10个', type: 'warning'});
       }
     },
     //修改project数据

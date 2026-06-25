@@ -11,7 +11,8 @@
       <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"/>
     </div>
     <div style="overflow-x: auto;">
-      <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" :row-style="{ height: '50px' }">
+      <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false"
+                :row-style="{ height: '50px' }">
         <template v-for="i in numColumns" :key="i">
           <el-table-column :prop="`column${i}`" align="center" :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null">
             <template #default="{row}">
@@ -25,7 +26,6 @@
     </div>
   </div>
 </template>
-
 
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
@@ -60,7 +60,6 @@ export default {
         this.numColumns = Object.keys(this.tableDatas[0]).length
       });
     },
-
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
       //columnIndex 表示需要合并的列，多列时用 || 隔开
@@ -110,8 +109,6 @@ export default {
 </script>
 
 <style scoped>
-
-
 .red-cell {
   color: red;
   background-color: pink;

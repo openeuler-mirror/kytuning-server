@@ -31,7 +31,6 @@
   </div>
 </template>
 
-
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
 import TableHeader from "@/components/common/TableHeader.vue";
@@ -79,13 +78,10 @@ export default {
       });
     },
   }
-}
-;
+};
 </script>
 
 <style scoped>
-
-
 .red-cell {
   color: red;
   background-color: pink;

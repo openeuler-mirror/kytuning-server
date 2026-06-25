@@ -11,9 +11,11 @@
       <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData" @data-loaded="handleDataLoaded"/>
     </div>
     <div style="overflow-x: auto;">
-      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false" :row-class-name="tableRowClassName" highlight-current-row>
+      <el-table :data="displayTableData" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false"
+                :row-class-name="tableRowClassName" highlight-current-row>
         <template v-for="(value, key, index) in tableDatas[0]" :key="key">
-          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index === 0 ? '100' :(index === 1 ? '360' : '')" align="center">
+          <el-table-column v-if="showAllData || !keysToHide.includes(key)" :prop="key" :width="index === 0 ? '100' :(index === 1 ? '360' : '')"
+                           align="center">
             <template v-slot="{ row }">
               <div :class="getCellClassName(row, key)">
                 {{ row[key] }}
@@ -103,7 +105,6 @@ export default {
 .el-table .success-row {
   background: #f0f9eb;
 }
-
 
 .red-cell {
   color: red;

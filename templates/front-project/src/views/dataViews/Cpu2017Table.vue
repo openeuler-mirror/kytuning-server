@@ -31,7 +31,6 @@
   </div>
 </template>
 
-
 <script>
 import {ElTable, ElTableColumn} from 'element-plus';
 import TableHeader from "@/components/common/TableHeader.vue";
@@ -76,7 +75,6 @@ export default {
         this.keysToHide = keysToHide;
       });
     },
-
     // 单元格的处理方法 当前行row、当前列column、当前行号rowIndex、当前列号columnIndex
     objectSpanMethod({rowIndex, columnIndex}) {
       //columnIndex 表示需要合并的列，多列时用 || 隔开
@@ -137,11 +135,9 @@ export default {
       };
     }
   }
-}
-;
+};
 </script>
 <style scoped>
-
 .red-cell {
   color: red;
   background-color: pink;
