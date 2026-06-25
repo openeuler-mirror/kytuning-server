@@ -20,3 +20,8 @@ EXCEL_TEMP = '/opt/kytuning/excel_temp/'
 # 测试项目对应的tools包网址
 TOOLS_URL = 'http://localhost:9000/tools/run_kytuning-ffdev-94.zip'
 kytuning_web_url='https://localhost'
+
+# 蓝信机器人的密钥
+# 下面两个不要暴露出去，因为此处要测试暂时放这里！！！
+secret = "xxxxx"
+lanxin_url = 'https://apigw-cec.cec.com.cn/v1/bot/hook/messages/create?hook_token=xxxx'
