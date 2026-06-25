@@ -58,35 +58,35 @@
   </div>
   <div>
     <el-dialog :title="'编辑'" v-model="dialogModify" width="500px">
-      <el-form :model="machineData" ref="machineForm" :rules="rules">
+      <el-form :model="serverData" ref="machineForm" :rules="rules">
         <el-form-item label="服务器IP" prop="server_IP">
-          <el-input v-model="machineData.server_IP" autocomplete="off"></el-input>
+          <el-input v-model="serverData.server_IP" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="服务器用户名" prop="server_user_name">
-          <el-input v-model="machineData.server_user_name" autocomplete="off"></el-input>
+          <el-input v-model="serverData.server_user_name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="服务器密码" prop="server_password">
-          <el-input v-model="machineData.server_password" autocomplete="off"></el-input>
+          <el-input v-model="serverData.server_password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="重构ISO名称" prop="new_iso_name">
-          <el-select v-model="machineData.new_iso_name" placeholder="请选择ISO">
+          <el-select v-model="serverData.new_iso_name" placeholder="请选择ISO">
             <el-option v-for="item in isoList" :key="item.ISO_name" :label="item.ISO_name" :value="item.ISO_name"/>
           </el-select>
         </el-form-item>
         <el-form-item label="重构系统密码" prop="new_server_password" v-if="create_new_system">
-          <el-input v-model="machineData.new_server_password" autocomplete="off"></el-input>
+          <el-input v-model="serverData.new_server_password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="根文件系统大小" prop="root_size" v-if="create_new_system">
-          <el-input v-model.number="machineData.root_size" autocomplete="off" placeholder="建议50-300，单位为G" type="number" min="0" step="1"></el-input>
+          <el-input v-model.number="serverData.root_size" autocomplete="off" placeholder="建议50-300，单位为G" type="number" min="0" step="1"></el-input>
         </el-form-item>
         <el-form-item label="swap路径大小" prop="swap_size" v-if="create_new_system">
-          <el-input v-model.number="machineData.swap_size" autocomplete="off" placeholder="单位为G" type="number" min="0" step="0.1"></el-input>
+          <el-input v-model.number="serverData.swap_size" autocomplete="off" placeholder="单位为G" type="number" min="0" step="0.1"></el-input>
         </el-form-item>
         <el-form-item label="是否清空系统盘" prop="root_size" v-if="create_new_system">
-          <el-switch style="display: block" v-model="machineData.clear_part" inactive-color="#13ce66" active-color="#ff4949" inactive-text="不清空" active-text="清空"></el-switch>
+          <el-switch style="display: block" v-model="serverData.clear_part" inactive-color="#13ce66" active-color="#ff4949" inactive-text="不清空" active-text="清空"></el-switch>
         </el-form-item>
         <el-form-item label="选择内核" prop="root_size" v-if="get_kernel">
-          <el-switch style="display: block" v-model="machineData.kernel_type" inactive-color="#13ce66" active-color="#ff4949" inactive-text="419" active-text="510"></el-switch>
+          <el-switch style="display: block" v-model="serverData.kernel_type" inactive-color="#13ce66" active-color="#ff4949" inactive-text="419" active-text="510"></el-switch>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -122,7 +122,7 @@ export default {
       modifyID: 0,
       modifySystemArchName: NaN,
       modifyISOArchName: NaN,
-      machineData: {
+      serverData: {
         'server_IP': '',
         'server_user_name': '',
         'server_password': '',
@@ -140,10 +140,10 @@ export default {
   },
   computed: {
     create_new_system() {
-      return this.machineData.new_iso_name && this.machineData.new_iso_name !== 'other(手动创建)';
+      return this.serverData.new_iso_name && this.serverData.new_iso_name !== 'other(手动创建)';
     },
     get_kernel() {
-      return ['uos-server-20-1060a-amd64.iso', 'uos-server-20-1060a-arm64.iso', 'uos-server-20-1060e-amd64.iso', 'uos-server-20-1060e-arm64.iso', 'uniontechos-server-20-1050a-amd64.iso', 'uniontechos-server-20-1050a-arm64.iso'].includes(this.machineData.new_iso_name);
+      return ['uos-server-20-1060a-amd64.iso', 'uos-server-20-1060a-arm64.iso', 'uos-server-20-1060e-amd64.iso', 'uos-server-20-1060e-arm64.iso', 'uniontechos-server-20-1050a-amd64.iso', 'uniontechos-server-20-1050a-arm64.iso'].includes(this.serverData.new_iso_name);
     },
   },
   created() {
@@ -166,7 +166,7 @@ export default {
         this.dialogModify = true;
         this.modifyID = row.id
         this.modifySystemArchName = row.arch_name
-        this.machineData = {
+        this.serverData = {
           'server_IP': row.server_IP,
           'server_user_name': row.server_user_name,
           'server_password': row.server_password,
@@ -184,35 +184,35 @@ export default {
 
     //确定修改数据
     applyUseSure() {
-      const machineData_ = {
+      const serverData_ = {
         id: this.modifyID,
-        server_IP: this.machineData.server_IP,
-        server_user_name: this.machineData.server_user_name,
-        server_password: this.machineData.server_password,
-        new_iso_name: this.machineData.new_iso_name,
-        new_server_password: this.machineData.new_server_password,
-        root_size: this.machineData.root_size,
-        swap_size: this.machineData.swap_size,
-        clear_part: this.machineData.clear_part,
-        kernel_type: this.machineData.kernel_type,
+        server_IP: this.serverData.server_IP,
+        server_user_name: this.serverData.server_user_name,
+        server_password: this.serverData.server_password,
+        new_iso_name: this.serverData.new_iso_name,
+        new_server_password: this.serverData.new_server_password,
+        root_size: this.serverData.root_size,
+        swap_size: this.serverData.swap_size,
+        clear_part: this.serverData.clear_part,
+        kernel_type: this.serverData.kernel_type,
       }
-      if (this.machineData.new_iso_name && this.machineData.new_iso_name !== "other(手动创建)") {
-        if (!this.machineData.new_server_password) {
+      if (this.serverData.new_iso_name && this.serverData.new_iso_name !== "other(手动创建)") {
+        if (!this.serverData.new_server_password) {
           ElMessage({message: '重构系统请输入密码', type: 'warning'})
           return
         }
-        if (!this.machineData.root_size || typeof this.machineData.root_size !== 'number') {
+        if (!this.serverData.root_size || typeof this.serverData.root_size !== 'number') {
           ElMessage({message: '请输入根路径大小并确保是number类型', type: 'warning'})
           return
         }
-        if (!this.machineData.swap_size || typeof this.machineData.swap_size !== 'number') {
+        if (!this.serverData.swap_size || typeof this.serverData.swap_size !== 'number') {
           ElMessage({message: '请输入swap路径大小并确保是number类型', type: 'warning'})
           return
         }
-        const newData = this.isoList.find(item => item.ISO_name === this.machineData.new_iso_name)
+        const newData = this.isoList.find(item => item.ISO_name === this.serverData.new_iso_name)
         if (newData.arch_name === this.modifySystemArchName) {
           this.dialogModify = false;
-          modify_server(machineData_).then(response => {
+          modify_server(serverData_).then(response => {
             if (response.data.code === 200) {
               ElMessage({message: response.data.message, type: 'success'})
               this.getData()
@@ -224,7 +224,7 @@ export default {
 
       } else {
         this.dialogModify = false;
-        modify_server(machineData_).then(response => {
+        modify_server(serverData_).then(response => {
           if (response.data.code === 200) {
             ElMessage({message: response.data.message, type: 'success'})
             this.getData()
