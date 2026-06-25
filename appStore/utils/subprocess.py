@@ -212,3 +212,16 @@ def check_disk_size(test_ip, test_username, test_password):
     check_yum_result = subprocess.run(check_yum_command, shell=True, capture_output=True, text=True)
     remaining_disk_space = check_yum_result.stdout.strip()
     return remaining_disk_space
+
+
+def stop_test_task(test_ip, test_username, test_password):
+    """
+    终止测似任务
+    :param test_ip:机器IP
+    :param test_username:机器用户名
+    :param test_password:机器密码
+    :return: 停止测试结果。
+    """
+    stop_test_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "pkill -f kytuning -9"'
+    stop_test_result = subprocess.run(stop_test_command, shell=True, capture_output=True, text=True)
+    return stop_test_result
