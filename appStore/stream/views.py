@@ -3,7 +3,7 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Feb 26 11:15:07 2024 +0800
+ * Date: Fri Mar 1 10:09:12 2024 +0800
 """
 import logging
 import numpy as np
@@ -142,7 +142,7 @@ class StreamViewSet(viewsets.ModelViewSet):
         comparsionIds = comparsionIds.split(',')
         base_queryset = Stream.objects.filter(env_id=env_id).all()
         if not base_queryset:
-            return json_response({}, status.HTTP_200_OK, '列表')
+            return json_response({'datas': '', 'analyze_data': ''}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         datas = [{'column1': 'Stream', 'column2': ''}, {'column1': '项目名称', 'column2': ''},
                  {'column1': '执行命令', 'column2': ''}, {'column1': '修改参数', 'column2': ''},
                  {'column1': '单线程', 'column2': 'Array size'}, {'column1': '单线程', 'column2': 'Copy'},
