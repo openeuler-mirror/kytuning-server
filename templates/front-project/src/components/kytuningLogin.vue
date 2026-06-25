@@ -64,7 +64,7 @@ export default {
         // 捕获错误
         if (error.response) {
           // 请求已发送，并且服务器返回非 2xx 响应
-          ElMessage.error({message: '用户名或密码错误', duration: 1000});
+          ElMessage({message: '用户名或密码错误', type: 'error'});
         }
       })
     },

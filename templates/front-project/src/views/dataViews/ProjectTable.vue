@@ -326,7 +326,7 @@ export default {
     //数据对比
     getComparativeData() {
       if (this.compars.length === 0) {
-        ElMessage.error({message: '请选择一条基准数据和至少一条对比数据'});
+        ElMessage({message: '请选择一条基准数据和至少一条对比数据', type: 'warning'});
         return;
       }
       const List1 = [this.compars[0].stream, this.compars[0].lmbench, this.compars[0].unixbench, this.compars[0].fio, this.compars[0].iozone, this.compars[0].jvm2008, this.compars[0].cpu2006, this.compars[0].cpu2017]
@@ -355,7 +355,7 @@ export default {
     //合并数据
     mergeData() {
       if (this.compars.length < 2) {
-        ElMessage.error({message: '至少选择两条数据进行合并'});
+        ElMessage({message: '至少选择两条数据进行合并', type: 'warning'});
         return;
       }
       const env_ids = Object.values(this.compars).map(item => item.env_id);
@@ -388,7 +388,7 @@ export default {
       if (compar_num < 10){
         this.compars.push(row);
       }else {
-         ElMessage({message: '对比数据不可以超过10个', type: 'success'});
+         ElMessage({message: '对比数据不可以超过10个', type: 'warning'});
       }
     },
     //修改project数据
@@ -431,7 +431,7 @@ export default {
           })
         })
       } else {
-        ElMessage.error({message: '不可以在临时数据表中删除已入库的数据'});
+        ElMessage({message: '不可以在临时数据表中删除已入库的数据', type: 'warning'});
       }
     },
     //查询
