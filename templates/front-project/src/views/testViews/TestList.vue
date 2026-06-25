@@ -12,19 +12,20 @@
         <el-table-column prop="project_name" label="项目名称"></el-table-column>
         <el-table-column prop="user_name" label="测试人员" width="90"></el-table-column>
         <el-table-column prop="ip" label="ip" width="125"></el-table-column>
-        <el-table-column prop="stream" label="stream" width="70"></el-table-column>
-        <el-table-column prop="lmbench" label="lmbench" width="80"></el-table-column>
-        <el-table-column prop="unixbench" label="unixbench" width="90"></el-table-column>
+        <el-table-column prop="stream" label="stream" width="80"></el-table-column>
+        <el-table-column prop="lmbench" label="lmbench" width="95"></el-table-column>
+        <el-table-column prop="unixbench" label="unixbench" width="105"></el-table-column>
         <el-table-column prop="fio" label="fio" width="50"></el-table-column>
-        <el-table-column prop="iozone" label="iozone" width="70"></el-table-column>
-        <el-table-column prop="jvm2008" label="jvm2008" width="80"></el-table-column>
-        <el-table-column prop="cpu2006" label="cpu2006" width="80"></el-table-column>
-        <el-table-column prop="cpu2017" label="cpu2017" width="80"></el-table-column>
+        <el-table-column prop="iozone" label="iozone" width="80"></el-table-column>
+        <el-table-column prop="jvm2008" label="jvm2008" width="100"></el-table-column>
+        <el-table-column prop="cpu2006" label="cpu2006" width="90"></el-table-column>
+        <el-table-column prop="cpu2017" label="cpu2017" width="90"></el-table-column>
         <el-table-column prop="test_time" label="测试开始时间" width="150"></el-table-column>
         <el-table-column prop="test_result" label="运行结果"></el-table-column>
-        <el-table-column label="操作" width="180">
+        <el-table-column label="操作" width="280">
           <template #default="scope">
             <el-button type="primary" @click="downLog(scope.row)">日志</el-button>
+            <el-button type="danger" @click="stop_test(scope.row)">终止测试</el-button>
             <el-button type="danger" @click="del(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -50,8 +51,9 @@
 
 <script scoped>
 import {ElMessage} from 'element-plus';
-import {test_case} from "@/api/api";
+import {test_case, stop_test} from "@/api/api";
 import utils from '@/utils/utils';
+import {getToken} from "@/utils/setToken";
 
 export default {
   name: 'testList',
@@ -71,6 +73,23 @@ export default {
         this.total = this.allDatas.length;
       });
     },
+    stop_test(row) {
+      if (row.test_result === '运行中') {
+        if (row.user_name === getToken('chinesename')) {
+          stop_test({test_id: row.id}).then((response) => {
+            if (response.data.code === 200) {
+              ElMessage({message: response.data.message, type: 'success'})
+              this.getData()
+            }
+          });
+        } else {
+          ElMessage.error({message: '不可终止他人的测试任务', duration: 1000});
+        }
+      } else {
+        ElMessage.error({message: '任务已完成，无需终止', duration: 1000});
+      }
+
+    },
     del(row) {
       this.$confirm(`确认删除此行数据吗？`, '提示', {
         confirmButtonText: '确定',
@@ -80,7 +99,6 @@ export default {
         test_case('delete', {id: row.id}).then(response => {
           if (response.data.code === 200) {
             ElMessage({message: response.data.message, type: 'success'})
-            //更新页面数据，绑定key，每次key改变后就会刷新数据
             this.getData()
           }
         })

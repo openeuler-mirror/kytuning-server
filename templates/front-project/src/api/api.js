@@ -22,6 +22,15 @@ export function test_case(type,data) {
     })
 }
 
+// 测试管理列表，因为这个get请求不需要参数所以可以
+export function stop_test(data) {
+    return service({
+        method: 'post',
+        url: '/stop_test/',
+        data
+    })
+}
+
 //测试日志导出
 export function down_message(params) {
     return service({
