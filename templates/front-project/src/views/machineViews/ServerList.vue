@@ -26,7 +26,7 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="queue_user" label="队列" width="70"></el-table-column>
+        <el-table-column prop="queue_user" label="队列"></el-table-column>
         <el-table-column prop="update_time" label="更新时间" width="165"></el-table-column>
         <el-table-column label="操作" width="300">
           <template #default="scope">
@@ -252,19 +252,14 @@ export default {
         ElMessage({message: '目前机器无人使用', type: 'error'})
       }
     },
-
     //申请使用
     applyUse(row) {
-      if (row.queue_user) {
-        ElMessage({message: '已存在申请人员，请稍后再试', type: 'error'})
-      } else {
-        apply_use_machine({id: row.id}).then(response => {
-          if (response.data.code === 200) {
-            ElMessage({message: response.data.message, type: 'success'})
-            this.getData()
-          }
-        })
-      }
+      apply_use_machine({id: row.id}).then(response => {
+        if (response.data.code === 200) {
+          ElMessage({message: response.data.message, type: 'success'})
+          this.getData()
+        }
+      })
     },
 
     //取消申请 1、判断取消人员和申请人是否一致（前后端同时判断，保证数据可靠性）；2、是否存在申请人员（前端判断）

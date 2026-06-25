@@ -87,6 +87,7 @@ def get_analyze_data(datas, test_type):
         base_name = datas[1]['column3']
         all_analyze = ''
         for matching_key in matching_keys:
+            analyze = ''
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
             if compar_name:
                 analyze = compar_name + '对比' + base_name + '\n'
@@ -107,6 +108,7 @@ def get_analyze_data(datas, test_type):
         base_name = datas[1]['column3']
         all_analyze = ''
         for matching_key in matching_keys:
+            analyze = ''
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
             if compar_name:
                 analyze = compar_name + '对比' + base_name + '\n'
@@ -211,6 +213,7 @@ def get_analyze_data(datas, test_type):
         base_name = datas[1]['column3']
         all_analyze = ''
         for matching_key in matching_keys:
+            analyze = ''
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
             if compar_name:
                 analyze = compar_name + '对比' + base_name + '\n'
@@ -264,6 +267,7 @@ def get_analyze_data(datas, test_type):
         base_name = datas[1]['column3']
         all_analyze = ''
         for matching_key in matching_keys:
+            analyze = ''
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
             if compar_name:
                 analyze = compar_name + '对比' + base_name + '\n'
@@ -284,6 +288,7 @@ def get_analyze_data(datas, test_type):
         base_name = datas[1]['column3']
         all_analyze = ''
         for matching_key in matching_keys:
+            analyze = ''
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
             if compar_name:
                 analyze = compar_name + '对比' + base_name + '\n'
@@ -307,6 +312,7 @@ def get_analyze_data(datas, test_type):
         base_name = datas[1]['column3']
         all_analyze = ''
         for matching_key in matching_keys:
+            analyze = ''
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
             if compar_name:
                 analyze = compar_name + '对比' + base_name + '\n'
@@ -356,6 +362,7 @@ def get_analyze_data(datas, test_type):
         base_name = datas[1]['column5']
         all_analyze = ''
         for matching_key in matching_keys:
+            analyze = ''
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
             if compar_name:
                 analyze = compar_name + '对比' + base_name + '\n'
@@ -440,6 +447,7 @@ def get_analyze_data(datas, test_type):
         base_name = datas[1]['column6']
         all_analyze = ''
         for matching_key in matching_keys:
+            analyze = ''
             compar_name = datas[1]['column' + str(int(matching_key.split('column')[-1]) - 1)]
             if compar_name:
                 analyze = compar_name + '对比' + base_name + '\n'
