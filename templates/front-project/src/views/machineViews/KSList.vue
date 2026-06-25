@@ -1,10 +1,3 @@
-<!--
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Mar 11 16:52:35 2024 +0800
--->
 <template>
   <div id="fixed-top">
     <!-- 搜索 -->
@@ -76,7 +69,7 @@ export default {
       },
       dialogAddKsFile: false,
       modifyID: 0,
-      dialogTitle: '新增ks文件',
+      dialogTitle: '',
     };
   },
   created() {
@@ -92,12 +85,14 @@ export default {
 
     //新增
     add() {
+      this.dialogTitle = '新增ks文件'
+      this.reset()
       this.dialogAddKsFile = true
     },
     //新增的取消
     closeInfo() {
       // 重置表单的验证状态
-      this.$refs.ksFileForm.resetFields();
+      this.reset()
       this.dialogAddKsFile = false
     },
 
@@ -134,7 +129,7 @@ export default {
 
     //修改数据
     modify(row) {
-      this.dialogTitle = '修改设备信息'
+      this.dialogTitle = '修改ks文件按信息'
       this.dialogAddKsFile = true
       this.modifyID = row.id
       this.ksFileData = {
