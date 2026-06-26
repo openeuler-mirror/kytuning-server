@@ -5,6 +5,7 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Sat May 11 09:14:50 2024 +0800
 -->
+
 <template>
   <div id="fixed-top">
     <div class="form-container">
@@ -201,6 +202,7 @@ export default {
       user_config('get', {configID: 0}).then(response => {
         const config = response.data.data[0]
         this.configID = config.id
+        this.formData.kojifileAddr = config.kojifile_addr
         this.formData.configName = config.config_name
         this.formData.projectName = config.project_name
         this.formData.iterations.stream = config.stream_number
@@ -244,6 +246,7 @@ export default {
     //选中配置
     selectConfig() {
       this.configID = this.configData.id
+      this.formData.kojifileAddr = this.configData.kojifile_addr
       this.formData.configName = this.configData.config_name
       this.formData.projectName = this.configData.project_name
       this.formData.iterations.stream = this.configData.stream_number
@@ -272,6 +275,7 @@ export default {
         if (this.configID) {
           const formData = {
             id: this.configID,
+            kojifile_addr: this.formData.kojifileAddr,
             config_name: this.formData.configName,
             project_name: this.formData.projectName,
             // test_ip: this.formData.testIP,
@@ -296,6 +300,7 @@ export default {
     add() {
       if (this.check()) {
         const formData = {
+          kojifile_addr: this.formData.kojifileAddr,
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
           // test_ip: this.formData.testIP,

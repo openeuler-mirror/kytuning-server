@@ -10,6 +10,7 @@ updates=$(yum list updates | grep -v "Available" | grep -v "Last" | awk '{print 
 
 rm -rf package_list.txt
 update=false
+echo '开始时间----->'`date` >> package_list.txt
 for package in $updates; do
     update=true
     echo "rpm包版本记录-----" >> package_list.txt

@@ -3,8 +3,9 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Feb 26 11:15:07 2024 +0800
+ * Date: Fri Mar 1 10:09:12 2024 +0800
 """
+
 # -*- coding: utf-8 -*-
 import os
 import re
@@ -20,10 +21,10 @@ from appStore.utils.constants import LANXIN_URL, SECRET
 # 需要修改kytuning.cfg中project_name为特殊的指定格式，目前定义为"定时任务-IP"
 CONFIF_FILE = '/root/run_kytuning-ffdev/conf/kytuning.cfg'
 
-def get_compar_url(CONFIF_FILE):
+def get_compar_url_function(CONFIF_FILE):
     if not os.path.exists(CONFIF_FILE):
         # 这里还需要验证用户账号密码，设备权限等，所以直接让用户再页面提交一次测试
-        print("没有初始化，请现在页面提交一次测试并配置好需要测试的项目")
+        print("没有初始化，请先在页面提交一次测试并配置好需要测试的项目")
         exit(0)
 
     # 读取文件内容
@@ -121,5 +122,5 @@ def send_lanxin_message(username, content):
 # SECRET = "xxx"
 # LANXIN_URL = 'https://apigw-cec.cec.com.cn/v1/bot/hook/messages/create?hook_token=xxx'
 
-# content = get_compar_url(CONFIF_FILE)
+# content = get_compar_url_function(CONFIF_FILE)
 # send_lanxin_message(username, content)

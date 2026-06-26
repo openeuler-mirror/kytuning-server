@@ -3,8 +3,9 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Feb 26 11:15:07 2024 +0800
+ * Date: Fri Mar 1 10:09:12 2024 +0800
 """
+
 import logging
 from rest_framework import status, viewsets
 # Create your views here.
@@ -37,6 +38,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data_user_config = {}
         data_user_config['user_name'] = request.user.chinese_name
+        data_user_config['kojifile_addr'] = request.data.get('kojifile_addr')
         data_user_config['config_name'] = request.data.get('config_name')
         data_user_config['project_name'] = request.data.get('project_name')
         data_user_config['stream_number'] = request.data.get('stream')
