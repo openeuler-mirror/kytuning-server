@@ -109,6 +109,8 @@ export default {
     return {
       labelPosition: ref('right'),
       formData: {
+        test_type: '日常测试',
+        is_monitor_test: false,
         configName: '',
         projectName: '',
         yamlData: baseYamlData,
@@ -299,6 +301,8 @@ export default {
     sendTest() {
       if (this.check()) {
         const formData = {
+          test_type: this.formData.test_type,
+          is_monitor_test: this.formData.is_monitor_test,
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
@@ -315,6 +319,8 @@ export default {
         }
         do_test_case(formData).then(response => {
           console.log(response.data.code)
+          this.formData.test_type = '日常测试'
+          this.formData.is_monitor_test = false
           this.formData.configName = ''
           this.formData.projectName = ''
           this.formData.testIP = ''
