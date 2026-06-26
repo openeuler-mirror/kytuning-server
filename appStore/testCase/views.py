@@ -19,7 +19,7 @@ from appStore.testCase.serializers import TestCaseSerializer
 from appStore.testMachine.models import TestMachine
 from appStore.utils.timed_tasks import auto_install_system
 from appStore.utils.common import json_response
-from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL
+from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL, SECRET, LANXIN_URL
 from appStore.utils.subprocess import test_case, stop_test_task
 
 log = logging.getLogger('kytuninglog')
@@ -137,8 +137,20 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 fp.write(cpu2017_yaml)
 
         if data_test_case['test_type'] == '监控测试':
+            # 监控测试
+            # 修改 conf/kytuning.cfg文件
+            with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
+                configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
+                configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
+                configfile.write('project_name={}\n'.format(data_test_case['project_name']))
+                configfile.write('project_message={}\n'.format(request.data.get('project_message')))
+                configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
+                configfile.write('upload=true\n')
+                configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
+                configfile.write('SECRET={}\n'.format(SECRET))
+                configfile.write('LANXIN_URL={}\n'.format(LANXIN_URL))
+            # todo 一条监控测试对应多条测试数据
             if request.user.is_staff:
-                # 监控测试
                 data_test_case['kojifile_addr'] = request.data.get('kojifile_addr')
                 data_test_case['iso_name'] = request.data.get('iso_name')
                 for ip in data_test_case['ip']:
@@ -149,12 +161,21 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                     if TestMachine_.owner or TestMachine_.queue_user:
                         TestMachine_.queue_user = TestMachine_.queue_user + ',' + request.user.chinese_name
                         # TestMachine_.save()
-                        # todo 在使用完成后增加调用自动化安装的api接口，传递对应参数
                     else:
-                        # 自动化安装所需操作系统
-                        auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'])
+                        # 创建测试数据
+                        serializer_test_case = TestCaseSerializer(data=data_test_case)
+                        if serializer_test_case.is_valid():
+                            self.perform_create(serializer_test_case)
+                            test_case_id = serializer_test_case.data['id']
+                            # 增加测试ID数据
+                            with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
+                                configfile.write('test_case_id={}\n'.format(test_case_id))
+                        # 自动化安装所需操作系统，监控系统是否安装完成，及自动化测试
+                        auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'], user_config_path)
                         # return test_machine_message
-            return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
+                return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
+            else:
+                return json_response('', status.HTTP_401_UNAUTHORIZED, '只有管理员才能创建作监控')
         else:
             # 其它测试
             # 创建请求测试数据
