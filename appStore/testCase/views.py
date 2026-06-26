@@ -128,11 +128,10 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             with open(user_config_path + '/yaml-base/cpu2017-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2017_yaml)
 
-        if data_test_case['is_monitor_test']:
+        if data_test_case['test_type'] == '监控测试':
             if request.user.is_staff:
                 # 监控测试
                 data_test_case['kojifileAddr'] = request.data.get('kojifileAddr')
-                data_test_case['is_monitor_test'] = request.data.get('is_monitor_test')
                 data_test_case['iso'] = request.data.get('iso')
                 for ip in data_test_case['ip']:
                     # 判断是否存在owner，如果存在则增加queue_user
