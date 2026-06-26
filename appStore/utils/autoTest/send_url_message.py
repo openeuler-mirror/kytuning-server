@@ -15,7 +15,7 @@ import base64
 import hmac
 import time
 
-from appStore.utils.constants import lanxin_url, secret
+from appStore.utils.constants import LANXIN_URL, SECRET
 
 # 需要修改kytuning.cfg中project_name为特殊的指定格式，目前定义为"定时任务-IP"
 CONFIF_FILE = '/root/run_kytuning-ffdev/conf/kytuning.cfg'
@@ -73,7 +73,7 @@ def get_compar_url(CONFIF_FILE):
 
 def send_lanxin_message(username, content):
     timestamp = int(round(time.time()))
-    string_to_sign = '{}@{}'.format(timestamp, secret)
+    string_to_sign = '{}@{}'.format(timestamp, SECRET)
     hmac_code = hmac.new(string_to_sign.encode("utf-8"), digestmod=hashlib.sha256).digest()
     sign = base64.b64encode(hmac_code).decode('utf-8')
 
@@ -111,15 +111,15 @@ def send_lanxin_message(username, content):
                 }
             }
         }
-    response = requests.post(lanxin_url, headers=headers, json=data, verify=False)
+    response = requests.post(LANXIN_URL, headers=headers, json=data, verify=False)
     # 输出服务器响应
     #print(json.loads(response.content.decode('utf-8')))
     return
 
 # 在迭代更新的机器中打开
 # username=None
-# secret = "xxx"
-# lanxin_url = 'https://apigw-cec.cec.com.cn/v1/bot/hook/messages/create?hook_token=xxx'
+# SECRET = "xxx"
+# LANXIN_URL = 'https://apigw-cec.cec.com.cn/v1/bot/hook/messages/create?hook_token=xxx'
 
 # content = get_compar_url(CONFIF_FILE)
 # send_lanxin_message(username, content)
