@@ -319,7 +319,7 @@ export default {
     sendTest() {
       if (this.check()) {
         const formData = {
-          kojifileAddr: this.formData.kojifileAddr,
+          kojifile_addr: this.formData.kojifileAddr,
           test_type: this.formData.test_type,
           iso_name: this.formData.isoName,
           config_name: this.formData.configName,
