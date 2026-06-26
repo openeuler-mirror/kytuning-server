@@ -5,6 +5,7 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
+
 import os
 import time
 import shutil
@@ -151,7 +152,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                         # todo 在使用完成后增加调用自动化安装的api接口，传递对应参数
                     else:
                         # 自动化安装所需操作系统
-                        auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'])
+                        auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'])
                         # return test_machine_message
             return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
         else:
