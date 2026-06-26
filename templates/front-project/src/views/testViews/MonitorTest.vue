@@ -12,6 +12,11 @@
         <el-form-item label="kojifiles地址：">
           <el-input v-model="formData.kojifileAddr"/>
         </el-form-item>
+        <el-form-item label="iso：">
+          <el-select v-model="formData.testIP" placeholder="选择一个即可，不同架构后端自动识别" class="m-2" style="width: 400px;">
+            <el-option v-for="option in isoList" :key="option.ISO_name" :label="option.ISO_name" :value="option.ISO_name"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="配置文件名称：">
           <el-input v-model="formData.configName"/>
         </el-form-item>
@@ -58,7 +63,7 @@
           <el-button type="primary" class="test-button" @click="lastTest">还原上次测试</el-button>
         </el-form-item>
         <el-form-item label="测试机器IP：">
-          <el-select v-model="formData.testIP" placeholder="请选择测试机器IP" class="m-2">
+          <el-select v-model="formData.testIP" placeholder="请选择测试机器IP" class="m-2" multiple>
             <el-option v-for="option in machineOptions" :key="option.server_IP" :label="option.server_IP" :value="option.server_IP"/>
           </el-select>
         </el-form-item>
@@ -104,15 +109,17 @@
 import {ref} from 'vue'
 import baseYamlData from '@/utils/yaml.js';
 import {ElMessage} from 'element-plus'
-import {do_test_case, user_config, machine_list} from "@/api/api";
+import {do_test_case, user_config, machine_list, adapt_ISO} from "@/api/api";
 
 export default {
-  name: 'doTest',
+  name: 'monitorTest',
   data() {
     return {
       labelPosition: ref('right'),
       formData: {
         kojifileAddr: '',
+        is_monitor_test: true,
+        test_type: '监控测试',
         configName: '',
         projectName: '',
         yamlData: baseYamlData,
@@ -138,6 +145,7 @@ export default {
       configData: '',
       configDatas: [],
       machineOptions: [],
+      isoList: [],
       rules: {
         kojifileAddr: [{required: true, message: 'kojifile地址不能为空', trigger: 'blur'}],
         configName: [{required: true, message: '配置文件名称不能为空', trigger: 'blur'}],
@@ -148,14 +156,18 @@ export default {
     };
   },
   created() {
+    this.selecp_ISO()
     this.selecp_IP()
   },
   methods: {
+    selecp_ISO() {
+      adapt_ISO('get', {}).then((response) => {
+        this.isoList = response.data.data
+      });
+    },
     selecp_IP() {
-      machine_list('get', {'search_by_name': true}).then((response) => {
+      machine_list('get', {}).then((response) => {
         this.machineOptions = response.data.data
-        const addAutoIP = { server_IP: '自动识别' };
-        this.machineOptions.push(addAutoIP);
       });
     },
     //展示yaml文件
@@ -232,7 +244,6 @@ export default {
     },
     //选中配置
     selectConfig() {
-
       this.configID = this.configData.id
       this.formData.configName = this.configData.config_name
       this.formData.projectName = this.configData.project_name
@@ -310,6 +321,8 @@ export default {
       if (this.check()) {
         const formData = {
           kojifileAddr: this.formData.kojifileAddr,
+          is_monitor_test: this.formData.is_monitor_test,
+          test_type: this.formData.test_type,
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
@@ -328,6 +341,8 @@ export default {
         do_test_case(formData).then(response => {
           console.log(response.data.code)
           this.formData.kojifileAddr = ''
+          this.formData.is_monitor_test = true
+          this.formData.test_type = '监控测试'
           this.formData.configName = ''
           this.formData.projectName = ''
           this.formData.testIP = ''
