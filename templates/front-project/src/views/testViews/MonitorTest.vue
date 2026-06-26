@@ -13,7 +13,7 @@
           <el-input v-model="formData.kojifileAddr"/>
         </el-form-item>
         <el-form-item label="iso：">
-          <el-select v-model="formData.ISO_name" placeholder="选择一个即可，不同架构后端自动识别" class="m-2" style="width: 400px;">
+          <el-select v-model="formData.isoName" placeholder="选择一个即可，不同架构后端自动识别" class="m-2" style="width: 400px;">
             <el-option v-for="option in isoList" :key="option.ISO_name" :label="option.ISO_name" :value="option.ISO_name"/>
           </el-select>
         </el-form-item>
@@ -122,8 +122,8 @@ export default {
         configName: '',
         projectName: '',
         yamlData: baseYamlData,
+        isoName: '',
         testIP: '',
-        autoIP: false,
         project_message: '',
         iterations: {
           stream: '',
@@ -321,10 +321,10 @@ export default {
         const formData = {
           kojifileAddr: this.formData.kojifileAddr,
           test_type: this.formData.test_type,
+          iso_name: this.formData.isoName,
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
-          auto_ip: this.formData.autoIP,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
           unixbench: this.formData.iterations.unixbench,
@@ -339,10 +339,10 @@ export default {
         do_test_case(formData).then(response => {
           this.formData.kojifileAddr = ''
           this.formData.test_type = '监控测试'
+          this.formData.isoName = ''
           this.formData.configName = ''
           this.formData.projectName = ''
           this.formData.testIP = ''
-          this.formData.autoIP = ''
           this.formData.iterations.stream = ''
           this.formData.iterations.lmbench = ''
           this.formData.iterations.unixbench = ''
