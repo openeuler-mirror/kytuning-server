@@ -21,9 +21,6 @@
         <el-form-item label="配置文件名称：">
           <el-input v-model="formData.configName"/>
         </el-form-item>
-        <el-form-item label="项目名称：">
-          <el-input v-model="formData.projectName"/>
-        </el-form-item>
         <el-form-item label="测试项的迭代次数：">
           <el-form-item label="stream迭代次数：">
             <el-input v-model.number="formData.iterations.stream" autocomplete="off" type="number" min="0" step="1"/>
@@ -121,7 +118,6 @@ export default {
         kojifileAddr: '',
         test_type: '监控测试',
         configName: '',
-        projectName: '',
         yamlData: baseYamlData,
         isoName: '',
         testIP: '',
@@ -149,7 +145,6 @@ export default {
       rules: {
         kojifileAddr: [{required: true, message: 'kojifile地址不能为空', trigger: 'blur'}],
         configName: [{required: true, message: '配置文件名称不能为空', trigger: 'blur'}],
-        projectName: [{required: true, message: '项目名称不能为空', trigger: 'blur'}],
         yamlData: [{required: true, message: 'yaml配置文件不能为空', trigger: 'blur'}],
       },
 
@@ -204,7 +199,6 @@ export default {
         this.configID = config.id
         this.formData.kojifileAddr = config.kojifile_addr
         this.formData.configName = config.config_name
-        this.formData.projectName = config.project_name
         this.formData.iterations.stream = config.stream_number
         this.formData.iterations.lmbench = config.lmbench_number
         this.formData.iterations.unixbench = config.unixbench_number
@@ -248,7 +242,6 @@ export default {
       this.configID = this.configData.id
       this.formData.kojifileAddr = this.configData.kojifile_addr
       this.formData.configName = this.configData.config_name
-      this.formData.projectName = this.configData.project_name
       this.formData.iterations.stream = this.configData.stream_number
       this.formData.iterations.lmbench = this.configData.lmbench_number
       this.formData.iterations.unixbench = this.configData.unixbench_number
@@ -277,8 +270,6 @@ export default {
             id: this.configID,
             kojifile_addr: this.formData.kojifileAddr,
             config_name: this.formData.configName,
-            project_name: this.formData.projectName,
-            // test_ip: this.formData.testIP,
             stream: this.formData.iterations.stream,
             lmbench: this.formData.iterations.lmbench,
             unixbench: this.formData.iterations.unixbench,
@@ -302,8 +293,6 @@ export default {
         const formData = {
           kojifile_addr: this.formData.kojifileAddr,
           config_name: this.formData.configName,
-          project_name: this.formData.projectName,
-          // test_ip: this.formData.testIP,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
           unixbench: this.formData.iterations.unixbench,
@@ -328,7 +317,6 @@ export default {
           test_type: this.formData.test_type,
           iso_name: this.formData.isoName,
           config_name: this.formData.configName,
-          project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
@@ -346,7 +334,6 @@ export default {
           this.formData.test_type = '监控测试'
           this.formData.isoName = ''
           this.formData.configName = ''
-          this.formData.projectName = ''
           this.formData.testIP = ''
           this.formData.iterations.stream = ''
           this.formData.iterations.lmbench = ''
@@ -364,10 +351,6 @@ export default {
     },
     //验证数据
     check() {
-      if (!this.formData.projectName) {
-        ElMessage({message: "项目名称不能为空", type: 'error'});
-        return false;
-      }
       const iterations = {
         stream: this.formData.iterations.stream !== '' ? parseInt(this.formData.iterations.stream) : 0,
         lmbench: this.formData.iterations.lmbench !== '' ? parseInt(this.formData.iterations.lmbench) : 0,
