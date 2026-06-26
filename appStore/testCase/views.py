@@ -3,7 +3,7 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Feb 26 11:15:07 2024 +0800
+ * Date: Fri Mar 1 10:09:12 2024 +0800
 """
 import os
 import time
@@ -51,16 +51,12 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         data_test_case['cpu2006'] = request.data.get('cpu2006')
         data_test_case['cpu2017'] = request.data.get('cpu2017')
         data_test_case['test_result'] = '运行中'
+        data_test_case['test_type'] = request.data.get('test_type')
         data_test_case['result_log_name'] = RESULT_LOG_FILE + str(request.user) + '_' + str(time.time())
 
         if not data_test_case['ip']:
             return json_response({}, status.HTTP_204_NO_CONTENT, '未填写IP信息')
-        if data_test_case['ip'] == '自动识别':
-            # 自动获取空闲机器owner、queue_user都为空的
-            for machine in TestMachine.objects.all():
-                if not machine.owner and not machine.queue_user:
-                    machine.owner = request.user.chinese_name
-                    machine.save()
+
         if not request.data.get('yaml'):
             return json_response({}, status.HTTP_204_NO_CONTENT, '请刷新页面重试')
 
@@ -93,7 +89,6 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             shutil.rmtree(user_config_path)
             os.makedirs(os.path.join(user_config_path, "conf"))
             os.makedirs(os.path.join(user_config_path, "yaml-base"))
-
         # 将配置数据写入YAML文件
         if int(data_test_case['stream']):
             stream_yaml = request.data.get('yaml')['stream'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['stream'])))
@@ -132,56 +127,130 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             cpu2017_yaml = request.data.get('yaml')['cpu2017'].replace('maxiterations:  1', 'maxiterations: %d' % (int(data_test_case['cpu2017'])))
             with open(user_config_path + '/yaml-base/cpu2017-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2017_yaml)
-        # 创建请求测试数据
-        serializer_test_case = TestCaseSerializer(data=data_test_case)
-        if serializer_test_case.is_valid():
-            self.perform_create(serializer_test_case)
-            test_case_id = serializer_test_case.data['id']
-            # 修改 conf/kytuning.cfg文件
-            with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
-                configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
-                configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
-                configfile.write('project_name={}\n'.format(data_test_case['project_name']))
-                configfile.write('project_message={}\n'.format(request.data.get('project_message')))
-                configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
-                configfile.write('upload=true\n')
-                configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
-                configfile.write('test_case_id={}\n'.format(test_case_id))
-        else:
-            log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
-            log.info('testCase存储数据为 ：%s，' % data_test_case)
-            return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
 
-        """保存至配置管理数据库"""
-        from appStore.userConfig.views import UserConfigViewSet
-        request_user_config = HttpRequest()
-        request_user_config.method = 'POST'
-        request.data['is_send_config'] = True
-        request_user_config = request
-        UserConfigViewSet = UserConfigViewSet()
-        UserConfigViewSet.create(request=request_user_config, *args, **kwargs)
+        if data_test_case['is_monitor_test']:
+            if request.user.is_staff:
+                # 监控测试
+                data_test_case['kojifileAddr'] = request.data.get('kojifileAddr')
+                data_test_case['is_monitor_test'] = request.data.get('is_monitor_test')
+                data_test_case['iso'] = request.data.get('iso')
+                for ip in data_test_case['ip']:
+                    # 判断是否存在owner，如果存在则增加queue_user
+                    TestMachine_ = TestMachine.objects.filter(server_IP=ip).first()
+                    if TestMachine_.owner:
+                        TestMachine_.queue_user = TestMachine_.queue_user + ',' + request.user.chinese_name
+                        # TestMachine_.save()
+                        # todo 后期当有机器完成使用后执行自动化安装操作系统脚本
+                    else:
+                        # todo 1、执行自动化安装操作系统脚本
+                        pass
 
-        # 运行测试
-        TestMachine_ = TestMachine.objects.filter(server_IP=data_test_case['ip']).first()
-        if TestMachine_.owner != request.user.chinese_name:
-            return json_response('', status.HTTP_401_UNAUTHORIZED, '用户只能使用自己的机器测试')
-        try:
-            return_result = test_case(data_test_case['ip'], TestMachine_.server_user_name, TestMachine_.server_password,
-                                      test_case_names, user_config_path, data_test_case['result_log_name'])
-            if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
-                log.info('测试的测试数据ID是：%s，测试的返回结果return_result是：%s' % (test_case_id, str(return_result)))
-                log.info('测试的测试数据ID是：%s，测试的返回结果return_result.stderr是：%s' % (test_case_id, str(return_result.stderr)))
-                TestCase.objects.filter(id=test_case_id).update(test_result=return_result.stderr)
-                return json_response('', status.HTTP_204_NO_CONTENT, return_result.stderr)
+
+                    # 2、执行自动化测试脚本
+                    # 创建请求测试数据
+                    serializer_test_case = TestCaseSerializer(data=data_test_case)
+                    if serializer_test_case.is_valid():
+                        self.perform_create(serializer_test_case)
+                        test_case_id = serializer_test_case.data['id']
+                        # 修改 conf/kytuning.cfg文件
+                        with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
+                            configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
+                            configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
+                            configfile.write('project_name={}\n'.format(data_test_case['project_name']))
+                            configfile.write('project_message={}\n'.format(request.data.get('project_message')))
+                            configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
+                            configfile.write('upload=true\n')
+                            configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
+                            configfile.write('test_case_id={}\n'.format(test_case_id))
+                    else:
+                        log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
+                        log.info('testCase存储数据为 ：%s，' % data_test_case)
+                        return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
+
+                    """保存至配置管理数据库"""
+                    from appStore.userConfig.views import UserConfigViewSet
+                    request_user_config = HttpRequest()
+                    request_user_config.method = 'POST'
+                    request.data['is_send_config'] = True
+                    request_user_config = request
+                    UserConfigViewSet = UserConfigViewSet()
+                    UserConfigViewSet.create(request=request_user_config, *args, **kwargs)
+
+                    # 运行测试
+                    TestMachine_ = TestMachine.objects.filter(server_IP=ip).first()
+                    if TestMachine_.owner != request.user.chinese_name:
+                        return json_response('', status.HTTP_401_UNAUTHORIZED, '用户只能使用自己的机器测试')
+                    try:
+                        return_result = test_case(ip, TestMachine_.server_user_name, TestMachine_.server_password,
+                                                  test_case_names, user_config_path, data_test_case['result_log_name'])
+                        if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
+                            log.info('测试的测试数据ID是：%s，测试的返回结果return_result是：%s' % (test_case_id, str(return_result)))
+                            log.info('测试的测试数据ID是：%s，测试的返回结果return_result.stderr是：%s' % (test_case_id, str(return_result.stderr)))
+                            TestCase.objects.filter(id=test_case_id).update(test_result=return_result.stderr)
+                            return json_response('', status.HTTP_204_NO_CONTENT, return_result.stderr)
+                        else:
+                            # 因为上传数据是测试脚本的一部分，如果成功就已经修改过状态了。
+                            if TestCase.objects.filter(id=test_case_id).first().test_result != '测试完成':
+                                TestCase.objects.filter(id=test_case_id).update(test_result='测试异常')
+                            return json_response('', status.HTTP_200_OK, '测试完成')
+                    except Exception as e:
+                        log.error('测试的测试数据ID是：%s，发生的异常是：%s', test_case_id, str(e))
+                        TestCase.objects.filter(id=test_case_id).update(test_result='测试异常')
+                        return json_response('', status.HTTP_500_INTERNAL_SERVER_ERROR, '发生异常，详细信息请查看日志')
             else:
-                # 因为上传数据是测试脚本的一部分，如果成功就已经修改过状态了。
-                if TestCase.objects.filter(id=test_case_id).first().test_result != '测试完成':
-                    TestCase.objects.filter(id=test_case_id).update(test_result='测试异常')
-                return json_response('', status.HTTP_200_OK, '测试完成')
-        except Exception as e:
-            log.error('测试的测试数据ID是：%s，发生的异常是：%s', test_case_id, str(e))
-            TestCase.objects.filter(id=test_case_id).update(test_result='测试异常')
-            return json_response('', status.HTTP_500_INTERNAL_SERVER_ERROR, '发生异常，详细信息请查看日志')
+                return json_response('', status.HTTP_401_UNAUTHORIZED, '只有管理员才能执行监控测试')
+        else:
+            # 其它测试
+            # 创建请求测试数据
+            serializer_test_case = TestCaseSerializer(data=data_test_case)
+            if serializer_test_case.is_valid():
+                self.perform_create(serializer_test_case)
+                test_case_id = serializer_test_case.data['id']
+                # 修改 conf/kytuning.cfg文件
+                with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
+                    configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
+                    configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
+                    configfile.write('project_name={}\n'.format(data_test_case['project_name']))
+                    configfile.write('project_message={}\n'.format(request.data.get('project_message')))
+                    configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
+                    configfile.write('upload=true\n')
+                    configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
+                    configfile.write('test_case_id={}\n'.format(test_case_id))
+            else:
+                log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
+                log.info('testCase存储数据为 ：%s，' % data_test_case)
+                return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
+
+            """保存至配置管理数据库"""
+            from appStore.userConfig.views import UserConfigViewSet
+            request_user_config = HttpRequest()
+            request_user_config.method = 'POST'
+            request.data['is_send_config'] = True
+            request_user_config = request
+            UserConfigViewSet = UserConfigViewSet()
+            UserConfigViewSet.create(request=request_user_config, *args, **kwargs)
+
+            # 运行测试
+            TestMachine_ = TestMachine.objects.filter(server_IP=data_test_case['ip']).first()
+            if TestMachine_.owner != request.user.chinese_name:
+                return json_response('', status.HTTP_401_UNAUTHORIZED, '用户只能使用自己的机器测试')
+            try:
+                return_result = test_case(data_test_case['ip'], TestMachine_.server_user_name, TestMachine_.server_password,
+                                          test_case_names, user_config_path, data_test_case['result_log_name'])
+                if return_result.stderr and return_result.stderr != '\nAuthorized users only. All activities may be monitored and reported.\n':
+                    log.info('测试的测试数据ID是：%s，测试的返回结果return_result是：%s' % (test_case_id, str(return_result)))
+                    log.info('测试的测试数据ID是：%s，测试的返回结果return_result.stderr是：%s' % (test_case_id, str(return_result.stderr)))
+                    TestCase.objects.filter(id=test_case_id).update(test_result=return_result.stderr)
+                    return json_response('', status.HTTP_204_NO_CONTENT, return_result.stderr)
+                else:
+                    # 因为上传数据是测试脚本的一部分，如果成功就已经修改过状态了。
+                    if TestCase.objects.filter(id=test_case_id).first().test_result != '测试完成':
+                        TestCase.objects.filter(id=test_case_id).update(test_result='测试异常')
+                    return json_response('', status.HTTP_200_OK, '测试完成')
+            except Exception as e:
+                log.error('测试的测试数据ID是：%s，发生的异常是：%s', test_case_id, str(e))
+                TestCase.objects.filter(id=test_case_id).update(test_result='测试异常')
+                return json_response('', status.HTTP_500_INTERNAL_SERVER_ERROR, '发生异常，详细信息请查看日志')
 
     def delete(self, request, *args, **kwargs):
         id = request.data.get('id', None)
