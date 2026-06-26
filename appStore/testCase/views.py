@@ -38,7 +38,6 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         return json_response(serializer.data, status.HTTP_200_OK, '获取列表完成')
 
     def do_test_case(self, request, *args, **kwargs):
-        # 创建对应数据库
         data_test_case = {}
         data_test_case['user_name'] = request.user.chinese_name
         data_test_case['ip'] = request.data.get('test_ip')
@@ -53,6 +52,17 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         data_test_case['cpu2017'] = request.data.get('cpu2017')
         data_test_case['test_result'] = '运行中'
         data_test_case['result_log_name'] = RESULT_LOG_FILE + str(request.user) + '_' + str(time.time())
+
+        if not data_test_case['ip']:
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未填写IP信息')
+        if data_test_case['ip'] == '自动识别':
+            # 自动获取空闲机器owner、queue_user都为空的
+            for machine in TestMachine.objects.all():
+                if not machine.owner and not machine.queue_user:
+                    machine.owner = request.user.chinese_name
+                    machine.save()
+        if not request.data.get('yaml'):
+            return json_response({}, status.HTTP_204_NO_CONTENT, '请刷新页面重试')
 
         test_case_names = []
         if int(data_test_case['stream']):
@@ -140,7 +150,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         else:
             log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
             log.info('testCase存储数据为 ：%s，' % data_test_case)
-            return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, get_error_message(serializer_test_case))
+            return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
 
         """保存至配置管理数据库"""
         from appStore.userConfig.views import UserConfigViewSet

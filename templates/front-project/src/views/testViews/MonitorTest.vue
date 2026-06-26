@@ -1,3 +1,10 @@
+<!--
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Sat May 11 09:14:50 2024 +0800
+-->
 <template>
   <div id="fixed-top">
     <div class="form-container">
@@ -54,7 +61,6 @@
           <el-select v-model="formData.testIP" placeholder="请选择测试机器IP" class="m-2">
             <el-option v-for="option in machineOptions" :key="option.server_IP" :label="option.server_IP" :value="option.server_IP"/>
           </el-select>
-          <el-button type="primary" class="test-button" @click="autoGetIP" style="margin-left: 10px;">自动识别</el-button>
         </el-form-item>
         <el-form-item label="描述：">
           <el-input v-model="formData.project_message"/>
@@ -148,7 +154,8 @@ export default {
     selecp_IP() {
       machine_list('get', {'search_by_name': true}).then((response) => {
         this.machineOptions = response.data.data
-
+        const addAutoIP = { server_IP: '自动识别' };
+        this.machineOptions.push(addAutoIP);
       });
     },
     //展示yaml文件
@@ -207,10 +214,6 @@ export default {
         // this.formData.testIP = config.test_ip
         this.formData.project_message = config.project_message
       })
-    },
-    //自动化获取可用服务器
-    autoGetIP() {
-      this.autoIP = true
     },
     //选择配置列表
     select() {
@@ -370,8 +373,6 @@ export default {
       //处理可迭代次数
       this.formData.iterations = iterations
       return result;
-    },
-    testlink() {
     },
   }
 };

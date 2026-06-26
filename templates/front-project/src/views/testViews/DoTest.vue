@@ -3,7 +3,7 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Tue Mar 12 09:59:13 2024 +0800
+ * Date: Sat May 11 09:14:50 2024 +0800
 -->
 <template>
   <div id="fixed-top">
@@ -329,7 +329,7 @@ export default {
           this.formData.yamlData = ''
           this.formData.project_message = ''
         });
-        ElMessage({message: '发起测试完成', type: 'success'});
+        ElMessage({message: '向后端发起测试完成', type: 'success'});
       }
     },
     //验证数据
