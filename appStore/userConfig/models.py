@@ -1,15 +1,9 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:10:52 2024 +0800
-"""
 from django.db import models
 
 # Create your models here.
 class UserConfig(models.Model):
     """用户配置表"""
+    kojifile_addr = models.CharField(max_length=500, verbose_name='kojifile地址', null=True, blank=True)
     config_name = models.CharField(max_length=50, verbose_name='配置文件名称')
     user_name = models.CharField(max_length=50, verbose_name='用户名称')
     project_name = models.CharField(max_length=50, verbose_name='测试项目名称')
