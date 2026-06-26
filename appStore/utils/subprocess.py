@@ -48,7 +48,8 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
             return yum_result
 
     # 下载run_kytuning代码
-    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (TOOLS_URL)
+    wget_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (
+        TOOLS_URL)
     wget_result = subprocess.run(wget_command, shell=True)
     if wget_result.returncode:
         wget_result.stderr = "测试端下载run_kytuning代码出错,请检查账号、密码是否正确，网络是否可用\n请在其它机器中测试：\"" + wget_command
@@ -61,7 +62,7 @@ def test_case(test_ip, test_username, test_password, test_case_names, user_confi
         unzip_result.stderr = "unzip解压失败，请查看是否有unzip命令，以及run_kytuning-ffdev.zip是否下载成功"
         return unzip_result
 
-    # # 复制配置文件conf文件和yaml文件
+    # 复制配置文件conf文件和yaml文件
     scp_command = f'sshpass -p {test_password} scp -r {user_config_path}/conf {user_config_path}/yaml-base {test_username}@{test_ip}:/root/run_kytuning-ffdev/'
     scp_result = subprocess.run(scp_command, shell=True)
 
@@ -138,6 +139,7 @@ def get_link_status(BMC_IP, BMC_user_name, BMC_password, server_IP, server_user_
         return '用户名或密码错误'
     return '在线'
 
+
 def update_auto_install(user_name, replacements):
     """
     更新自动化安装脚本
@@ -169,6 +171,7 @@ def update_auto_install(user_name, replacements):
     with open(user_install_file, 'w') as f:
         f.write(script_content)
 
+
 def update_system(user_name, server_IP, server_user_name, server_password, machine_name, ISO_name, ks_name):
     """
     执行自动化安装系统的脚本
@@ -186,9 +189,11 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
         # 先删除可能存在的旧的ifcfg-enP1p3s0f0文件
         rm_networkcfg_command = f'sshpass -p {server_password} ssh -o StrictHostKeyChecking=no {server_user_name}@{server_IP} "rm -rf /root/ifcfg-enP1p3s0f0"'
         subprocess.run(rm_networkcfg_command, shell=True)
-        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (str(user_name), ks_name)
+        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh ./appStore/utils/autoInstall/ifcfg-enP1p3s0f0 {server_user_name}@{server_IP}:/root/' % (
+            str(user_name), ks_name)
     else:
-        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh {server_user_name}@{server_IP}:/root/' % (str(user_name), ks_name)
+        scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh {server_user_name}@{server_IP}:/root/' % (
+            str(user_name), ks_name)
     result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result.returncode:
         return '文件复制出错'
@@ -225,3 +230,129 @@ def stop_test_task(test_ip, test_username, test_password):
     stop_test_command = f'sshpass -p {test_password} ssh -o StrictHostKeyChecking=no {test_username}@{test_ip} "pkill -f kytuning -9"'
     stop_test_result = subprocess.run(stop_test_command, shell=True, capture_output=True, text=True)
     return stop_test_result
+
+
+def check_system_success(ip, server_name, password):
+    """
+    检查操作系统是否安装完成
+    :param ip: 设备ip
+    :param server_name: 设备用户名
+    :param password: 设备密码
+    :return: 安装操作系统是否成功
+    """
+    print(f"--------------------检查系统是否安装成功 (IP: {ip})-----------------")
+    try:
+        result = subprocess.run(f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'echo success'", shell=True,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        if "success" in result.stdout:
+            print('系统安装成功========')
+            return True
+    except Exception as e:
+        print(f"系统安装失败============: {e}")
+    return False
+
+
+def update_rpm(ip, server_name, password, koji_addr, user_config_path):
+    """
+    更新rpm包
+    :param ip: 设备ip
+    :param server_name: 设备用户名
+    :param password: 设备密码
+    :param koji_addr: koji仓库地址
+    :return: 是否更新rpm包完成
+    """
+    mv_ssh_keygen = "ssh-keygen -R " + ip
+    subprocess.run(mv_ssh_keygen, shell=True)
+
+    # 配置yum源
+    # 重命名 /etc/yum.repos.d/ 目录下所有 .repo 文件为 .repo-bak
+    command_list_files = (
+        f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
+        "'sudo ls /etc/yum.repos.d/*.repo'"
+    )
+    result_list_files = subprocess.run(command_list_files, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result_list_files.returncode != 0:
+        print("Error listing .repo files:", result_list_files.stderr)
+        return
+
+    repo_files = result_list_files.stdout.splitlines()
+    for repo_file in repo_files:
+        repo_file = repo_file.strip()
+        command_rename_file = (
+            f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
+            f"'sudo mv {repo_file} {repo_file}-bak'"
+        )
+        result_rename_file = subprocess.run(command_rename_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        if result_rename_file.returncode != 0:
+            print(f"Error renaming {repo_file}:", result_rename_file.stderr)
+            return
+
+    # 新增 kojifile.repo 文件并写入指定的内容
+    print(koji_addr, 'koji_addr地址是--------------------------')
+    kojifiles_repo = f"""[kojifiles]
+name = kojifiles
+baseurl = {koji_addr}
+gpgcheck = 0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
+enabled = 1
+"""
+    print(kojifiles_repo)
+    command_add_repo = (
+        f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
+        f"\"echo '{kojifiles_repo}' | sudo tee /etc/yum.repos.d/kojifile.repo\""
+    )
+    result_add_repo = subprocess.run(command_add_repo, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result_add_repo.returncode != 0:
+        print("Error adding kojifiles repo:", result_add_repo.stderr)
+        return
+    print("---------------------kojifiles的repo源配置成功.")
+
+    # 检查 wget、unzip 和 make 是否已安装
+    check_yum_command = f'sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "rpm -q wget unzip make"'
+    check_yum_result = subprocess.run(check_yum_command, shell=True, capture_output=True, text=True)
+    if '未安装软件包' in check_yum_result.stdout:
+        # 如果是最小化安装的话没有wget和unzip所以需要下载这两个软件包。
+        yum_command = f'sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "yum install wget unzip make -y"'
+        yum_result = subprocess.run(yum_command, shell=True)
+        if yum_result.returncode:
+            yum_result.stderr = "执行" + yum_command + "失败"
+            return yum_result
+
+    # 下载run_kytuning代码
+    wget_command = f'sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "rm -rf /root/run_kytuning-ffdev/;wget -O /root/run_kytuning-ffdev.zip %srun_kytuning-ffdev.zip"' % (
+        TOOLS_URL)
+    wget_result = subprocess.run(wget_command, shell=True)
+    if wget_result.returncode:
+        wget_result.stderr = "测试端下载run_kytuning代码出错,请检查账号、密码是否正确，网络是否可用\n请在其它机器中测试：\"" + wget_command
+        return wget_result
+
+    # 解压
+    unzip_command = f'sshpass -p {password} ssh {server_name}@{ip} "unzip /root/run_kytuning-ffdev.zip -d /root/;rm -rf /root/run_kytuning-ffdev/conf/kytuning.cfg;"'
+    unzip_result = subprocess.run(unzip_command, shell=True)
+    if unzip_result.returncode:
+        unzip_result.stderr = "unzip解压失败，请查看是否有unzip命令，以及run_kytuning-ffdev.zip是否下载成功"
+        return unzip_result
+
+    print("---------------------软件包下载并解压完成.")
+
+    # 复制配置文件conf文件和yaml文件
+    scp_command = f'sshpass -p {password} scp -r {user_config_path}/conf {user_config_path}/yaml-base {server_name}@{ip}:/root/run_kytuning-ffdev/'
+    scp_result = subprocess.run(scp_command, shell=True)
+
+    if scp_result.returncode:
+        scp_result.stderr = "复制配置文件出错"
+        return scp_result
+
+    # 执行rpm更新脚本
+    try:
+        result = subprocess.run(
+            f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'bash /root/run_kytuning-ffdev/monitor_test/update_system.sh'",
+            shell=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        print(result, 111)
+        if "success" in result.stdout:
+            print('系统安装成功========')
+            return True
+    except Exception as e:
+        print(f"系统安装失败============: {e}")
+    return False
