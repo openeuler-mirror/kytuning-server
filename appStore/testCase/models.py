@@ -17,8 +17,7 @@ class TestCase(models.Model):
         ("自动化分析测试", "自动化测试"),
     )
     test_type = models.CharField(max_length=50, verbose_name='测试类型', choices=testType)
-    compar_data = models.TextField(verbose_name='对比数据，用于自动化分析测试', null=True, blank=True)
-    is_monitor_test = models.BooleanField(default=False, verbose_name='是否监控')
+    compar_data = models.TextField(verbose_name='对比数据，用于自动化分析测试')
     kojifile_addr = models.TextField(verbose_name='kojifei地址，用于自动化监控测试', null=True, blank=True)
     iso = models.TextField(verbose_name='用于自动化监控测试自动化安装操作系统', null=True, blank=True)
     project_name = models.CharField(max_length=50, verbose_name='项目名称')

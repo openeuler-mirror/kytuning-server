@@ -1,10 +1,3 @@
-<!--
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Sat May 11 09:14:50 2024 +0800
--->
 <template>
   <div id="fixed-top">
     <div class="form-container">
@@ -110,7 +103,6 @@ export default {
       labelPosition: ref('right'),
       formData: {
         test_type: '日常测试',
-        is_monitor_test: false,
         configName: '',
         projectName: '',
         yamlData: baseYamlData,
@@ -302,7 +294,6 @@ export default {
       if (this.check()) {
         const formData = {
           test_type: this.formData.test_type,
-          is_monitor_test: this.formData.is_monitor_test,
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
@@ -320,7 +311,6 @@ export default {
         do_test_case(formData).then(response => {
           console.log(response.data.code)
           this.formData.test_type = '日常测试'
-          this.formData.is_monitor_test = false
           this.formData.configName = ''
           this.formData.projectName = ''
           this.formData.testIP = ''
