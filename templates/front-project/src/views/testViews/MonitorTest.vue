@@ -9,6 +9,9 @@
   <div id="fixed-top">
     <div class="form-container">
       <el-form :label-position="labelPosition" label-width="300px" :model="formData" ref="dataForm" :rules="rules">
+        <el-form-item label="kojifiles地址：">
+          <el-input v-model="formData.kojifileAddr"/>
+        </el-form-item>
         <el-form-item label="配置文件名称：">
           <el-input v-model="formData.configName"/>
         </el-form-item>
@@ -109,10 +112,12 @@ export default {
     return {
       labelPosition: ref('right'),
       formData: {
+        kojifileAddr: '',
         configName: '',
         projectName: '',
         yamlData: baseYamlData,
         testIP: '',
+        autoIP: false,
         project_message: '',
         iterations: {
           stream: '',
@@ -134,10 +139,12 @@ export default {
       configDatas: [],
       machineOptions: [],
       rules: {
-        configName: [{required: true, message: 'configName不能为空', trigger: 'blur'}],
-        projectName: [{required: true, message: 'projectName不能为空', trigger: 'blur'}],
-        yamlData: [{required: true, message: 'yamlData不能为空', trigger: 'blur'}],
+        kojifileAddr: [{required: true, message: 'kojifile地址不能为空', trigger: 'blur'}],
+        configName: [{required: true, message: '配置文件名称不能为空', trigger: 'blur'}],
+        projectName: [{required: true, message: '项目名称不能为空', trigger: 'blur'}],
+        yamlData: [{required: true, message: 'yaml配置文件不能为空', trigger: 'blur'}],
       },
+
     };
   },
   created() {
@@ -147,6 +154,8 @@ export default {
     selecp_IP() {
       machine_list('get', {'search_by_name': true}).then((response) => {
         this.machineOptions = response.data.data
+        const addAutoIP = { server_IP: '自动识别' };
+        this.machineOptions.push(addAutoIP);
       });
     },
     //展示yaml文件
@@ -202,11 +211,11 @@ export default {
           cpu2006_loongarch64: config.cpu2006_loongarch64_config,
           cpu2017: config.cpu2017_config,
         }
-        this.formData.testIP = config.test_ip
+        // this.formData.testIP = config.test_ip
         this.formData.project_message = config.project_message
       })
     },
-    //选中配置列表
+    //选择配置列表
     select() {
       user_config('get').then(response => {
         this.configDatas = response.data.data
@@ -223,6 +232,7 @@ export default {
     },
     //选中配置
     selectConfig() {
+
       this.configID = this.configData.id
       this.formData.configName = this.configData.config_name
       this.formData.projectName = this.configData.project_name
@@ -242,7 +252,7 @@ export default {
       this.formData.yamlData.cpu2006 = this.configData.cpu2006_config
       this.formData.yamlData.cpu2006_loongarch64_config = this.configData.cpu2006_loongarch64_config_config
       this.formData.yamlData.cpu2017 = this.configData.cpu2017_config
-      this.formData.testIP = this.configData.test_ip
+      // this.formData.testIP = this.configData.test_ip
       this.formData.project_message = this.configData.project_message
       this.configDialog = false
     },
@@ -254,7 +264,7 @@ export default {
             id: this.configID,
             config_name: this.formData.configName,
             project_name: this.formData.projectName,
-            test_ip: this.formData.testIP,
+            // test_ip: this.formData.testIP,
             stream: this.formData.iterations.stream,
             lmbench: this.formData.iterations.lmbench,
             unixbench: this.formData.iterations.unixbench,
@@ -278,7 +288,7 @@ export default {
         const formData = {
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
-          test_ip: this.formData.testIP,
+          // test_ip: this.formData.testIP,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
           unixbench: this.formData.iterations.unixbench,
@@ -299,9 +309,11 @@ export default {
     sendTest() {
       if (this.check()) {
         const formData = {
+          kojifileAddr: this.formData.kojifileAddr,
           config_name: this.formData.configName,
           project_name: this.formData.projectName,
           test_ip: this.formData.testIP,
+          auto_ip: this.formData.autoIP,
           stream: this.formData.iterations.stream,
           lmbench: this.formData.iterations.lmbench,
           unixbench: this.formData.iterations.unixbench,
@@ -315,9 +327,11 @@ export default {
         }
         do_test_case(formData).then(response => {
           console.log(response.data.code)
+          this.formData.kojifileAddr = ''
           this.formData.configName = ''
           this.formData.projectName = ''
           this.formData.testIP = ''
+          this.formData.autoIP = ''
           this.formData.iterations.stream = ''
           this.formData.iterations.lmbench = ''
           this.formData.iterations.unixbench = ''
@@ -359,8 +373,6 @@ export default {
       //处理可迭代次数
       this.formData.iterations = iterations
       return result;
-    },
-    testlink() {
     },
   }
 };
