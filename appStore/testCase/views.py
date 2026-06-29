@@ -182,7 +182,6 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                         else:
                             # 自动化安装所需操作系统，监控系统是否安装完成，及自动化测试
                             auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'], user_config_path)
-                            # pass
                     else:
                         log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
                         log.info('testCase存储数据为 ：%s，' % data_test_case)
