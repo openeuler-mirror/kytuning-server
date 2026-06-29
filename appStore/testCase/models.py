@@ -1,3 +1,10 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Fri Mar 1 10:09:12 2024 +0800
+"""
 import django.utils.timezone as timezone
 from django.db import models
 
@@ -12,7 +19,7 @@ class TestCase(models.Model):
     test_type = models.CharField(max_length=50, verbose_name='测试类型', choices=testType)
     compar_data = models.TextField(verbose_name='对比数据，用于自动化分析测试', null=True, blank=True)
     kojifile_addr = models.TextField(verbose_name='kojifei地址，用于自动化监控测试', null=True, blank=True)
-    iso = models.TextField(verbose_name='用于自动化监控测试自动化安装操作系统', null=True, blank=True)
+    iso_name = models.TextField(verbose_name='用于自动化监控测试自动化安装操作系统', null=True, blank=True)
     project_name = models.CharField(max_length=200, verbose_name='项目名称')
     ip = models.CharField(max_length=50, verbose_name='IP地址')
     stream = models.IntegerField(default=0, verbose_name='几组stream数据')

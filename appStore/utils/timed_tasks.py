@@ -27,8 +27,6 @@ def auto_install_system(test_machine_data, request, ip, iso_name, koji_addr, use
     :return: 安装操作系统是否成功
     """
     test_machine_data.owner = request.user.chinese_name
-    # todo 放开
-    test_machine_data.save()
 
     # 自动化安装
     from appStore.testMachine.views import TestMachineViewSet
