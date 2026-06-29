@@ -6,6 +6,7 @@
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
 
+import ast
 import time
 import schedule
 import threading
@@ -13,6 +14,7 @@ from django.http import HttpRequest
 
 from appStore.testCase.models import TestCase
 from appStore.testMachine.models import TestMachine
+from appStore.userConfig.models import UserConfig
 from appStore.utils.constants import NEW_SERVER_PASSWORD, ROOT_SIZE, SWAP_SIZE, INTERVAL, START_TIME, CHECK_TIMEOUT, MONITOR_KOJIFILES_TIME, \
     KOJIFILES_MD5
 from appStore.utils.subprocess import check_system_success, update_rpm, get_kojifiles_md5
@@ -104,25 +106,29 @@ def start_scheduler():
 
 def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
     new_koji_md5_hash = get_kojifiles_md5(kojifile_addr)
-    # todo
     koji_md5_hash = None
     print("old的MD5哈希值:", koji_md5_hash)
     print("新的MD5哈希值:", new_koji_md5_hash)
     if new_koji_md5_hash == koji_md5_hash:
         print("kojifiles未发生改变，无需处理")
     else:
-        print("kojifiles地址发生改变,执行自动化性能测试")
-        # 修改test_case的测试状态为排队中并获取测试数据的IP
-        # todo test_result取消时需要改变状态信息
-        test_cases = TestCase.objects.filter(test_type='监控测试', kojifile_addr=kojifile_addr, test_result='测试完成').last()
-        # test_cases = TestCase.objects.filter(test_type='监控测试', kojifile_addr=kojifile_addr)
         KOJIFILES_MD5[kojifile_addr] = new_koji_md5_hash
-
-        for test_case in test_cases:
-            machine_data = TestMachine.objects.get(server_IP=test_case.ip)
-            auto_install_system(machine_data, request, test_case.ip, test_case.iso_name, kojifile_addr, user_config_path)
-
-
+        print("kojifiles地址发生改变,执行自动化性能测试")
+        # 获取监控测试的ip信息
+        ip_list = ast.literal_eval('[' + UserConfig.objects.filter(kojifile_addr=kojifile_addr).last().ip + ']')
+        for ip in ip_list:
+            machine_data = TestMachine.objects.get(server_IP=ip)
+            # 判断机器是否有人使用或者是否有排队人员
+            if machine_data.owner or machine_data.queue_user:
+                machine_data.queue_user = machine_data.queue_user + ',' + request.user.chinese_name if machine_data.queue_user else request.user.chinese_name
+                machine_data.save()
+            else:
+                test_case = TestCase.objects.filter(test_type='监控测试', kojifile_addr=kojifile_addr).order_by('-id').last()
+                test_case.test_result = '排队中'
+                test_case.save()
+                print('----测试任务修改测试状态------')
+                auto_install_system(machine_data, request, ip, test_case.iso_name, kojifile_addr, user_config_path)
+                # pass
 
 def monitor_kojifiles(kojifile_addr, koji_md5_hash, request, user_config_path):
     """
@@ -133,8 +139,8 @@ def monitor_kojifiles(kojifile_addr, koji_md5_hash, request, user_config_path):
     """
     # 设置定时任务，监控kojifiles地址
     print('---------启动监控测试-----------------')
-    # schedule.every(MONITOR_KOJIFILES_TIME).days.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
-    schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
+    schedule.every(MONITOR_KOJIFILES_TIME).days.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
+    # schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
     # install_system(kojifile_addr, koji_md5_hash, request, user_config_path)
     # 启动定时任务调度器
     start_scheduler()
