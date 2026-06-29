@@ -16,6 +16,7 @@ from appStore.env.models import Env
 from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
 from appStore.testCase.models import TestCase
+from appStore.testMachine.models import TestMachine
 from appStore.utils.autoTest.send_url_message import send_lanxin_message
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 from appStore.utils.constants import KYTUNING_WEB_URL
@@ -419,11 +420,17 @@ class EnvViewSet(viewsets.ModelViewSet):
         ProjectViewSet = ProjectViewSet()
         ProjectViewSet.create(request=request_project, *args, **kwargs)
 
-        """修改测试列表的状态"""
+        # 修改测试列表的状态
         if request.data.get('test_case_id'):
             TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
+            # 如果是定时任务则返还设备
+            if TestCase.objects.get(id=request.data['test_case_id']).test_type == '监控测试':
+                machine_ip = TestCase.objects.get(id=request.data['test_case_id']).ip
+                test_machine = TestMachine.objects.get(server_IP=machine_ip)
+                test_machine.owner = None
+                test_machine.save()
 
-        """发送蓝信通知"""
+        # 发送蓝信通知
         # 获取存储数据的url
         value_type = list(request.data.keys())[2].split('-')[0].lower()
         web_url = KYTUNING_WEB_URL + '/' + str(value_type) + '/' + str(request.data['env_id'])

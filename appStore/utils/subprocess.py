@@ -343,13 +343,12 @@ enabled = 1
         scp_result.stderr = "复制配置文件出错"
         return scp_result
 
-    # 执行rpm更新脚本
+    # 执行rpm更新脚本，更新完成后执行自动测试
     try:
         result = subprocess.run(
             f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'bash /root/run_kytuning-ffdev/monitor_test/update_system.sh'",
             shell=True,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        print(result, 111)
         if "success" in result.stdout:
             print('系统安装成功========')
             return True
