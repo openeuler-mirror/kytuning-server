@@ -21,6 +21,7 @@ from appStore.utils.timed_tasks import auto_install_system
 from appStore.utils.common import json_response
 from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL, SECRET, LANXIN_URL
 from appStore.utils.subprocess import test_case, stop_test_task
+from appStore.adaptISO.models import AdaptISO
 
 log = logging.getLogger('kytuninglog')
 
@@ -140,18 +141,25 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             # todo 一条监控测试对应多条测试数据
             if request.user.is_staff:
                 data_test_case['kojifile_addr'] = request.data.get('kojifile_addr')
-                data_test_case['iso_name'] = request.data.get('iso_name')
+                all_iso_name = request.data.get('iso_name')
                 ip_list = data_test_case['ip']
                 for ip in ip_list:
                     data_test_case['ip'] = ip
-                    data_test_case['project_name'] = '定时任务-{}-{}'.format(ip, request.data.get('iso_name'))
-                    # 判断是否存在owner，如果存在则增加queue_user
+                    # 获取iso公共名称
+                    iso_name_ = '-'.join(all_iso_name.rsplit('.', 1)[0].split('-')[:-1])
                     TestMachine_ = TestMachine.objects.filter(server_IP=ip).first()
+                    # 通过测试机器的架构类型，查找对应的iso名称
+                    adapt_ISO = AdaptISO.objects.filter(arch_name=TestMachine_.arch_name).filter(ISO_name__icontains=iso_name_).first()
+                    if not adapt_ISO:
+                        return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到不同版本的iso架构')
+                    data_test_case['iso_name'] = adapt_ISO.ISO_name
+                    data_test_case['project_name'] = '定时任务-{}-{}'.format(ip, data_test_case['iso_name'])
                     if TestMachine_.owner == request.user.chinese_name:
                         return json_response('', status.HTTP_401_UNAUTHORIZED, '您正在使用请排查')
+                    # 判断是否存在owner，如果存在则增加queue_user
                     if TestMachine_.owner or TestMachine_.queue_user:
                         TestMachine_.queue_user = TestMachine_.queue_user + ',' + request.user.chinese_name
-                        # TestMachine_.save()
+                        TestMachine_.save()
                     else:
                         # 创建测试数据
                         serializer_test_case = TestCaseSerializer(data=data_test_case)
