@@ -13,6 +13,8 @@ HTTP_ISO_PATH=""
 ISO_NAME=$(basename "$HTTP_ISO_PATH")
 # 静态IP地址
 NETWORK_IP=""
+# DNS地址
+DNS=""
 # efibootmgr对应的文件
 BOOT_EFI=""
 # 磁盘个数
@@ -151,6 +153,7 @@ main(){
   mod_logvol_name
   # 替换IP信息
   sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
+  sed -i "s/DNS/$DNS/g" "$ISO_PATH/$KS_FILE_NAME"
   # 清空磁盘
   if [ "$clear_part" == "True" ]; then
     echo >> "$ISO_PATH/$KS_FILE_NAME"
@@ -168,6 +171,7 @@ main(){
       sed -i '4i repo --name="kernel510" --baseurl=file:///run/install/sources/mount-0000-hdd-device/kernel510' "$ISO_PATH/$KS_FILE_NAME"
     fi
   fi
+  # todo 这里不行可能会改变盘符导致系统安装失败
   # 替换ks文件中安装操作系统盘
   sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
   # 更新 {/、swap、efi、boot}分区大小
@@ -175,6 +179,7 @@ main(){
   sed -i "s/swap_size/$(( $swap_size * 1024 ))/g" "$ISO_PATH/$KS_FILE_NAME"
   sed -i "s/efi_size/$(( $efi_size * 1024 ))/g" "$ISO_PATH/$KS_FILE_NAME"
   sed -i "s/boot_size/$(( $boot_size * 1024 ))/g" "$ISO_PATH/$KS_FILE_NAME"
+  # todo 待定这里要不要+1
   total_size=$(( ($root_size + $swap_size + 1) * 1024 ))
   sed -i "s/total_size/$total_size/g" "$ISO_PATH/$KS_FILE_NAME"
   # 增加用户密码传输
@@ -185,6 +190,7 @@ main(){
   if [ -e "ifcfg-enP1p3s0f0" ]; then
       cp ifcfg-enP1p3s0f0 "$ISO_PATH"
       sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/ifcfg-enP1p3s0f0"
+      sed -i "s/DNS/$DNS/g" "$ISO_PATH/ifcfg-enP1p3s0f0"
   fi
   # 创建efi引导向
   efibootmgr --create --disk /dev/$STARTUP_DISK --part 1 --loader $BOOT_EFI --label "Kytuning"

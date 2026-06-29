@@ -5,6 +5,7 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
+
 import logging
 from rest_framework import status, viewsets
 # Create your views here.
@@ -13,6 +14,7 @@ from appStore.testMachine.models import TestMachine
 from appStore.testMachine.serializers import TestMachineSerializer
 from appStore.utils.autoTest.send_url_message import send_lanxin_message
 from appStore.utils.common import json_response, make_ks_password
+from appStore.utils.constants import DNS
 from appStore.utils.subprocess import check_disk_size, get_link_status, update_system, update_auto_install
 
 log = logging.getLogger('kytuninglog')
@@ -155,6 +157,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 replacements['BOOT_EFI'] = '/EFI/BOOT/BOOTAA64.EFI'
             replacements['KS_FILE_NAME'] = ISO.ks_file_name
             replacements['NETWORK_IP'] = machine_data.server_IP
+            replacements['DNS'] = DNS
             replacements['clear_part'] = request.data.get('clear_part')
             replacements['kernel510'] = request.data.get('kernel_type')
         if machine_data.owner == request.user.chinese_name:
