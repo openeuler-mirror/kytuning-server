@@ -5,7 +5,6 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
-
 import logging
 from rest_framework import status, viewsets
 # Create your views here.
@@ -174,7 +173,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_200_OK, '修改成功')
         elif not machine_data.owner:
             # 判断是不是第一个申请人
-            if machine_data.queue_user and machine_data.queue_user.split(',')[0] != request.user.chinese_name:
+            if machine_data.queue_user and (machine_data.queue_user.split(',')[0] != request.user.chinese_name and machine_data.queue_user.split(',')[0] != 'root'):
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '当前申请人是 %s，请协商后在使用' % machine_data.queue_user)
             machine_data.owner = request.user.chinese_name
             # 删除当前人员
@@ -207,11 +206,11 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             if machine_data.queue_user:
                 if machine_data.queue_user.split(',')[0] == 'root':
                     # 执行自动化安装操作系统，自动化测试等。
-                    user_config_path = RUN_KYTUNING_CONFIG_TEMP + str(request.user)
+                    user_config_path = RUN_KYTUNING_CONFIG_TEMP + 'root'
                     test_case = TestCase.objects.filter(ip=machine_data.server_IP).filter(test_type='监控测试').filter(test_result='排队中').last()
                     auto_install_system(machine_data, request, machine_data.server_IP, test_case.iso_name, test_case.kojifile_addr, user_config_path)
                 content = "BMC设备IP为：{} 的机器已完成使用，请您确认".format(machine_data.BMC_IP)
-                send_lanxin_message(machine_data.queue_user.split(',')[0], content)
+                # send_lanxin_message(machine_data.queue_user.split(',')[0], content)
             return json_response({}, status.HTTP_200_OK, '使用完成状态修改成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '不可更改别人的使用状态')
