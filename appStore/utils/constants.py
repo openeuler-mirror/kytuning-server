@@ -35,11 +35,15 @@ NEW_SERVER_NAME = 'root'
 NEW_SERVER_PASSWORD = 'xxxxx'
 ROOT_SIZE = 300
 SWAP_SIZE = 4
+DNS = '8.8.8.8'
 
 # 检查2小时超时代表安装失败
 CHECK_TIMEOUT = 7200
-INTERVAL = 1200  # 每20分钟检查一次
-# INTERVAL = 30  # 每20分钟检查一次
+# INTERVAL = 1200  # 每20分钟检查一次
+INTERVAL = 30  # 每20分钟检查一次
+# {ip:开始时间}
 START_TIME = {}
 
-DNS = '8.8.8.8'
+KOJIFILES_MD5 = {}
+# 3天一次
+MONITOR_KOJIFILES_TIME = 30
