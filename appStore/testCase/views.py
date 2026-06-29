@@ -137,14 +137,14 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 fp.write(cpu2017_yaml)
 
         if data_test_case['test_type'] == '监控测试':
-            # 监控测试
-            # todo 一条监控测试对应多条测试数据
+            # 监控测试,一条监控测试对应多条测试数据
             if request.user.is_staff:
                 data_test_case['kojifile_addr'] = request.data.get('kojifile_addr')
                 all_iso_name = request.data.get('iso_name')
                 ip_list = data_test_case['ip']
                 for ip in ip_list:
                     data_test_case['ip'] = ip
+                    data_test_case['test_result'] = '排队中'
                     # 获取iso公共名称
                     iso_name_ = '-'.join(all_iso_name.rsplit('.', 1)[0].split('-')[:-1])
                     TestMachine_ = TestMachine.objects.filter(server_IP=ip).first()
@@ -154,38 +154,39 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                         return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到不同版本的iso架构')
                     data_test_case['iso_name'] = adapt_ISO.ISO_name
                     data_test_case['project_name'] = '定时任务-{}-{}'.format(ip, data_test_case['iso_name'])
-                    if TestMachine_.owner == request.user.chinese_name:
-                        return json_response('', status.HTTP_401_UNAUTHORIZED, '您正在使用请排查')
-                    # 判断是否存在owner，如果存在则增加queue_user
-                    if TestMachine_.owner or TestMachine_.queue_user:
-                        TestMachine_.queue_user = TestMachine_.queue_user + ',' + request.user.chinese_name
-                        TestMachine_.save()
-                    else:
-                        # 创建测试数据
-                        serializer_test_case = TestCaseSerializer(data=data_test_case)
-                        if serializer_test_case.is_valid():
-                            self.perform_create(serializer_test_case)
-                            test_case_id = serializer_test_case.data['id']
-                            # 增加测试ID数据
-                            # 修改 conf/kytuning.cfg文件
-                            with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
-                                configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
-                                configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
-                                configfile.write('project_name={}\n'.format(data_test_case['project_name']))
-                                configfile.write('project_message={}\n'.format(request.data.get('project_message')))
-                                configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
-                                configfile.write('upload=true\n')
-                                configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
-                                configfile.write('SECRET={}\n'.format(SECRET))
-                                configfile.write('LANXIN_URL={}\n'.format(LANXIN_URL))
-                                configfile.write('test_case_id={}\n'.format(test_case_id))
+                    # 创建测试数据
+                    serializer_test_case = TestCaseSerializer(data=data_test_case)
+                    if serializer_test_case.is_valid():
+                        self.perform_create(serializer_test_case)
+                        test_case_id = serializer_test_case.data['id']
+                        # 增加测试ID数据
+                        # 修改 conf/kytuning.cfg文件
+                        with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
+                            configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
+                            configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
+                            configfile.write('project_name={}\n'.format(data_test_case['project_name']))
+                            configfile.write('project_message={}\n'.format(request.data.get('project_message')))
+                            configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
+                            configfile.write('upload=true\n')
+                            configfile.write('token={}\n'.format(request.META.get('HTTP_AUTHORIZATION')))
+                            configfile.write('SECRET={}\n'.format(SECRET))
+                            configfile.write('LANXIN_URL={}\n'.format(LANXIN_URL))
+                            configfile.write('test_case_id={}\n'.format(test_case_id))
+                        if TestMachine_.owner == request.user.chinese_name:
+                            return json_response('', status.HTTP_401_UNAUTHORIZED, '您正在使用请排查')
+                        # 判断是否存在owner，如果存在则增加queue_user
+
+                        if TestMachine_.owner or TestMachine_.queue_user:
+                            TestMachine_.queue_user = TestMachine_.queue_user + ',' + request.user.chinese_name if TestMachine_.queue_user else request.user.chinese_name
+                            TestMachine_.save()
+                        else:
                             # 自动化安装所需操作系统，监控系统是否安装完成，及自动化测试
                             auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'],
                                                 user_config_path)
-                        else:
-                            log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
-                            log.info('testCase存储数据为 ：%s，' % data_test_case)
-                            return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
+                    else:
+                        log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
+                        log.info('testCase存储数据为 ：%s，' % data_test_case)
+                        return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
                 return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
             else:
                 return json_response('', status.HTTP_401_UNAUTHORIZED, '只有管理员才能创建作监控')
