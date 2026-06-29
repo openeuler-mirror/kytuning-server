@@ -279,6 +279,7 @@ export default {
             cpu2006: this.formData.iterations.cpu2006,
             cpu2017: this.formData.iterations.cpu2017,
             yaml: this.formData.yamlData,
+            test_ip: this.formData.testIP,
             project_message: this.formData.project_message,
           }
           user_config('put', formData).then(response => {
@@ -302,6 +303,7 @@ export default {
           cpu2006: this.formData.iterations.cpu2006,
           cpu2017: this.formData.iterations.cpu2017,
           yaml: this.formData.yamlData,
+          test_ip: this.formData.testIP,
           project_message: this.formData.project_message
         }
         user_config('post', formData).then(response => {
