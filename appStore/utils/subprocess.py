@@ -1,10 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Feb 23 11:15:41 2024 +0800
-"""
 #!/usr/bin/env python
 # encoding: utf-8
 """
@@ -292,7 +285,6 @@ def update_rpm(ip, server_name, password, koji_addr, user_config_path):
             return
 
     # 新增 kojifile.repo 文件并写入指定的内容
-    print(koji_addr, 'koji_addr地址是--------------------------')
     kojifiles_repo = f"""[kojifiles]
 name = kojifiles
 baseurl = {koji_addr}
@@ -300,7 +292,6 @@ gpgcheck = 0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-kylin
 enabled = 1
 """
-    print(kojifiles_repo)
     command_add_repo = (
         f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
         f"\"echo '{kojifiles_repo}' | sudo tee /etc/yum.repos.d/kojifile.repo\""
@@ -341,6 +332,7 @@ enabled = 1
 
     # 复制配置文件conf文件和yaml文件
     scp_command = f'sshpass -p {password} scp -r {user_config_path}/conf {user_config_path}/yaml-base {server_name}@{ip}:/root/run_kytuning-ffdev/'
+    print(scp_command,'-------------个人配置文件获取失败问题排查------------')
     scp_result = subprocess.run(scp_command, shell=True)
 
     if scp_result.returncode:
@@ -351,11 +343,34 @@ enabled = 1
     try:
         result = subprocess.run(
             f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'bash /root/run_kytuning-ffdev/monitor_test/update_system.sh'",
-            shell=True,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if "success" in result.stdout:
             print('系统安装成功========')
             return True
     except Exception as e:
         print(f"系统安装失败============: {e}")
     return False
+
+
+def get_kojifiles_md5(kojifile_addr):
+    """
+    监控kojifile地址是否改变
+    :param kojifile_addr: kojifiles地址
+    :return: koji_md5: kojifiles地址生成的md5值
+    """
+    # 去除latest后面的架构内容
+    keyword = "latest"
+    index = kojifile_addr.find(keyword)
+    if index != -1:
+        koji_base_url = kojifile_addr[:index + len(keyword)]
+        koji_md5_command = 'curl -s {} | md5sum | awk "{{ print $1 }}"'.format(koji_base_url)
+        koji_md5_result = subprocess.run(koji_md5_command, shell=True, capture_output=True, text=True)
+        # 获取返回的MD5哈希值
+        koji_md5_hash = koji_md5_result.stdout.strip()
+        return koji_md5_hash
+    else:
+        print("关键词 'latest' 未找到")
+        return None
+
+
+

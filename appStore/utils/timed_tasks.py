@@ -11,8 +11,35 @@ import schedule
 import threading
 from django.http import HttpRequest
 
-from appStore.utils.constants import NEW_SERVER_PASSWORD, ROOT_SIZE, SWAP_SIZE, INTERVAL, START_TIME, CHECK_TIMEOUT
-from appStore.utils.subprocess import check_system_success, update_rpm
+from appStore.testCase.models import TestCase
+from appStore.testMachine.models import TestMachine
+from appStore.users.models import UserProfile
+from appStore.utils.constants import NEW_SERVER_PASSWORD, ROOT_SIZE, SWAP_SIZE, INTERVAL, START_TIME, CHECK_TIMEOUT, MONITOR_KOJIFILES_TIME, \
+    KOJIFILES_MD5
+from appStore.utils.subprocess import check_system_success, update_rpm, get_kojifiles_md5
+
+
+def test_tasks(ip, username, password, koji_addr, user_config_path):
+    """
+    执行测试任务
+    :param ip: 设备ip
+    :param server_name: 设备用户名
+    :param password: 设备密码
+    :param koji_addr: kojifile地址
+    :param user_config_path：用户配置地址
+    :return:
+    """
+    print(f"-----------自动化安装操作系统-----------")
+    if check_system_success(ip, username, password):
+        print(f"任务 {ip} 的系统安装成功")
+        update_rpm(ip, username, password, koji_addr, user_config_path)
+        return schedule.CancelJob
+    if time.time() - START_TIME[ip] > CHECK_TIMEOUT:
+        print(f"任务 {ip} 安装失败：超时未检测到系统安装成功")
+        # todo 页面提示报错
+        return schedule.CancelJob
+    print(f"{INTERVAL} 秒后重试任务 {ip}...")
+    return False
 
 
 def auto_install_system(test_machine_data, request, ip, iso_name, koji_addr, user_config_path):
@@ -49,6 +76,7 @@ def auto_install_system(test_machine_data, request, ip, iso_name, koji_addr, use
     request_test_machine.user = request.user
     TestMachineViewSet = TestMachineViewSet()
     # todo 放开
+    print('-----------执行自动化安装--------------')
     TestMachineViewSet.modify_server(request=request_test_machine)
 
     # 设置任务起始时间
@@ -59,29 +87,6 @@ def auto_install_system(test_machine_data, request, ip, iso_name, koji_addr, use
     # 启动定时任务调度器
     start_scheduler()
     return None
-
-
-def test_tasks(ip, username, password, koji_addr, user_config_path):
-    """
-    执行测试任务
-    :param ip: 设备ip
-    :param server_name: 设备用户名
-    :param password: 设备密码
-    :param koji_addr: kojifile地址
-    :param user_config_path：用户配置地址
-    :return:
-    """
-    print(f"-----------自动化安装操作系统-----------")
-    if check_system_success(ip, username, password):
-        print(f"任务 {ip} 的系统安装成功")
-        update_rpm(ip, username, password, koji_addr, user_config_path)
-        return schedule.CancelJob
-    if time.time() - START_TIME[ip] > CHECK_TIMEOUT:
-        print(f"任务 {ip} 安装失败：超时未检测到系统安装成功")
-        # todo 页面提示报错
-        return schedule.CancelJob
-    print(f"{INTERVAL} 秒后重试任务 {ip}...")
-    return False
 
 
 def start_scheduler():
@@ -97,3 +102,78 @@ def start_scheduler():
     scheduler_thread = threading.Thread(target=run_scheduler)
     scheduler_thread.daemon = True
     scheduler_thread.start()
+
+
+def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
+    new_koji_md5_hash = get_kojifiles_md5(kojifile_addr)
+    # koji_md5_hash = None
+    print("old的MD5哈希值:", koji_md5_hash)
+    print("新的MD5哈希值:", new_koji_md5_hash)
+    if new_koji_md5_hash == koji_md5_hash:
+        print("kojifiles未发生改变，无需处理")
+    else:
+        print("kojifiles地址发生改变,执行自动化性能测试")
+        # 修改test_case的测试状态为排队中并获取测试数据的IP
+        # todo test_result取消时需要改变状态信息
+        test_cases = TestCase.objects.filter(test_type='监控测试', kojifile_addr=kojifile_addr, test_result='测试完成')
+        # test_cases = TestCase.objects.filter(test_type='监控测试', kojifile_addr=kojifile_addr)
+        KOJIFILES_MD5[kojifile_addr] = new_koji_md5_hash
+
+        for test_case in test_cases:
+            machine_data = TestMachine.objects.get(server_IP=test_case.ip)
+
+            test_case.test_result = '排队中'
+            test_case.save()
+
+            # 申请机器或直接测试
+
+            # 判断是否存在owner，如果存在则增加queue_user
+            TestMachine_ = TestMachine.objects.get(server_IP=test_case.ip)
+            # 获取设置定时任务人员的中文名称
+            user_chinese_name = UserProfile.objects.filter(username=(user_config_path.split('/')[-1])).first().chinese_name
+            # 增加排队
+            if TestMachine_.owner or TestMachine_.queue_user:
+                TestMachine_.queue_user = TestMachine_.queue_user + ',' + user_chinese_name if TestMachine_.queue_user else user_chinese_name
+                TestMachine_.save()
+            else:
+                # 直接调用机器使用完成接口,前面做过机器使用完成后如果时root用户则执行监控测试流程
+                TestMachine_.owner = 'root'
+                TestMachine_.queue_user = 'root'
+                TestMachine_.save()
+
+                # 自动化安装
+                from appStore.testMachine.views import TestMachineViewSet
+                request_test_machine = HttpRequest()
+                request_test_machine.method = 'POST'
+                # 获取设备信息
+                machine_data = {'id': TestMachine_.id,
+                                'server_IP': TestMachine_.server_IP,
+                                'server_user_name': TestMachine_.server_user_name,
+                                'server_password': TestMachine_.server_password,
+                                'new_server_password': NEW_SERVER_PASSWORD,
+                                'new_iso_name': test_case.iso_name,
+                                'root_size': ROOT_SIZE,
+                                'swap_size': SWAP_SIZE,
+                                'clear_part': True,
+                                'kernel_type': None
+                                }
+
+                request_test_machine.data = machine_data
+                request_test_machine.user = request.user
+                TestMachineViewSet = TestMachineViewSet()
+                TestMachineViewSet.finished_using(request=request_test_machine)
+
+
+def monitor_kojifiles(kojifile_addr, koji_md5_hash, request, user_config_path):
+    """
+    监控kojifile地址的定时任务
+    :param kojifile_addr: kojifiles地址
+    :param koji_md5_hash: kojifiles地址生成的md5值
+    :return:
+    """
+    # 设置定时任务，监控kojifiles地址
+    schedule.every(MONITOR_KOJIFILES_TIME).seconds.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
+    # install_system(kojifile_addr, koji_md5_hash, request, user_config_path)
+    # 启动定时任务调度器
+    start_scheduler()
+    return None
