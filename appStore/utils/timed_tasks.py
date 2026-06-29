@@ -40,7 +40,9 @@ def test_tasks(ip, username, password, koji_addr, user_config_path):
         return schedule.CancelJob
     if time.time() - START_TIME[ip] > CHECK_TIMEOUT:
         log.info(f"任务 {ip} 安装失败：超时未检测到系统安装成功")
-        # todo 页面提示报错
+        test_case = TestCase.objects.filter(ip=ip).last()
+        test_case.test_result = '系统安装失败'
+        test_case.save()
         return schedule.CancelJob
     return False
 

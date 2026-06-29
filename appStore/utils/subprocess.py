@@ -1,11 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
-"""
-
 #!/usr/bin/env python
 # encoding: utf-8
 """
@@ -204,8 +196,7 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
     ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "bash /root/%s.sh"' % (str(user_name))
     subprocess.Popen(ssh_command, shell=True)
     # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
-    # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-    #                                stderr=subprocess.DEVNULL, text=True)
+    # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
     return
 
 
@@ -337,7 +328,6 @@ enabled = 1
         unzip_result.stderr = "unzip解压失败，请查看是否有unzip命令，以及run_kytuning-ffdev.zip是否下载成功"
         return unzip_result
 
-
     # 复制配置文件conf文件和yaml文件
     scp_command = f'sshpass -p {password} scp -r {user_config_path}/conf {user_config_path}/yaml-base {server_name}@{ip}:/root/run_kytuning-ffdev/'
     scp_result = subprocess.run(scp_command, shell=True)
@@ -378,6 +368,3 @@ def get_kojifiles_md5(kojifile_addr):
     else:
         log.info("关键词 'latest' 未找到")
         return None
-
-
-
