@@ -5,6 +5,7 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
+
 # 后端项目运行日志存放路径
 LOGGING_DIR = '/var/log/kytuning/'
 
@@ -17,6 +18,7 @@ RUN_KYTUNING_CONFIG_TEMP = '/opt/kytuning/run_kytuning_config_temp/'
 # 制作用户所需表格路径
 EXCEL_TEMP = '/opt/kytuning/excel_temp/'
 
+# todo 这个地方因为要发送请求所以IP是不可避免的，或者申请一个域名。
 # 测试项目对应的tools包网址
 TOOLS_URL = 'http://localhost:9000/tools/'
 
@@ -28,6 +30,16 @@ KYTUNING_WEB_URL = 'https://localhost'
 SECRET = "xxxxx"
 LANXIN_URL = 'https://apigw-cec.cec.com.cn/v1/bot/hook/messages/create?hook_token=xxxx'
 
+# 自动化安装时的变量
+NEW_SERVER_NAME = 'root'
 NEW_SERVER_PASSWORD = 'xxxxx'
 ROOT_SIZE = 300
 SWAP_SIZE = 4
+
+# 检查2小时超时代表安装失败
+CHECK_TIMEOUT = 7200
+INTERVAL = 1200  # 每20分钟检查一次
+# INTERVAL = 30  # 每20分钟检查一次
+START_TIME = {}
+
+DNS = '8.8.8.8'

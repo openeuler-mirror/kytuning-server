@@ -241,6 +241,10 @@ def check_system_success(ip, server_name, password):
     :return: 安装操作系统是否成功
     """
     print(f"--------------------检查系统是否安装成功 (IP: {ip})-----------------")
+    # 去除旧的连接记录
+    mv_ssh_keygen = "ssh-keygen -R " + ip
+    subprocess.run(mv_ssh_keygen, shell=True)
+    print(f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'echo success'")
     try:
         result = subprocess.run(f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'echo success'", shell=True,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
