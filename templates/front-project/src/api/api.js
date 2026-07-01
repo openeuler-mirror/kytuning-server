@@ -15,12 +15,18 @@ export function login(data) {
 
 // 测试管理列表，因为这个get请求不需要参数所以可以
 export function test_case(type,data) {
-    return service({
-        method: type,
-        url: '/test_case/',
-        data
-    })
+    const commonTestCase = {
+    method: type,
+    url: '/test_case/',
+  };
+  if (type === 'get') {
+    commonTestCase.params = data;
+  } else {
+    commonTestCase.data = data;
+  }
+  return service(commonTestCase);
 }
+
 
 // 测试管理列表，因为这个get请求不需要参数所以可以
 export function stop_test(data) {
@@ -66,16 +72,16 @@ export function user_config(type, paramsOrData) {
 
 //配置管理
 export function project(type, paramsOrData) {
-  const commonConfig = {
+  const commonProject = {
     method: type,
     url: '/project/',
   };
   if (type === 'get') {
-    commonConfig.params = paramsOrData;
+    commonProject.params = paramsOrData;
   } else {
-    commonConfig.data = paramsOrData;
+    commonProject.data = paramsOrData;
   }
-  return service(commonConfig);
+  return service(commonProject);
 }
 
 // project 合并数据接口
@@ -106,16 +112,16 @@ export function env(params) {
 
 //stream数据
 export function stream(type, paramsOrData) {
-  const commonConfig = {
+  const commonStream = {
     method: type,
     url: '/stream/',
   };
   if (type === 'get') {
-    commonConfig.params = paramsOrData;
+    commonStream.params = paramsOrData;
   } else {
-    commonConfig.data = paramsOrData;
+    commonStream.data = paramsOrData;
   }
-  return service(commonConfig);
+  return service(commonStream);
 }
 
 //修改stream数据
@@ -202,30 +208,30 @@ export function download_excel(params) {
 
 //错误数据管理
 export function error_list(type, paramsOrData) {
-  const commonConfig = {
+  const commonError = {
     method: type,
     url: '/error_list/',
   };
   if (type === 'get') {
-    commonConfig.params = paramsOrData;
+    commonError.params = paramsOrData;
   } else {
-    commonConfig.data = paramsOrData;
+    commonError.data = paramsOrData;
   }
-  return service(commonConfig);
+  return service(commonError);
 }
 
 //设备管理
 export function machine_list(type, paramsOrData) {
-  const commonConfig = {
+  const commonMachine = {
     method: type,
     url: '/machine_list/',
   };
   if (type === 'get') {
-    commonConfig.params = paramsOrData;
+    commonMachine.params = paramsOrData;
   } else {
-    commonConfig.data = paramsOrData;
+    commonMachine.data = paramsOrData;
   }
-  return service(commonConfig);
+  return service(commonMachine);
 }
 
 //修改服务器系统信息
@@ -275,30 +281,30 @@ export function cancel_apply_use_machine(data) {
 
 //适配的iso列表
 export function adapt_ISO(type, paramsOrData) {
-  const commonConfig = {
+  const commonIso = {
     method: type,
     url: '/adapt_ISO/',
   };
   if (type === 'get') {
-    commonConfig.params = paramsOrData;
+    commonIso.params = paramsOrData;
   } else {
-    commonConfig.data = paramsOrData;
+    commonIso.data = paramsOrData;
   }
-  return service(commonConfig);
+  return service(commonIso);
 }
 
 
 //ks文件列表管理
 export function ksList(type, paramsOrData) {
-  const commonConfig = {
+  const commonKS = {
     method: type,
     url: '/ks_file/',
   };
   if (type === 'get') {
-    commonConfig.params = paramsOrData;
+    commonKS.params = paramsOrData;
   } else {
-    commonConfig.data = paramsOrData;
+    commonKS.data = paramsOrData;
   }
-  return service(commonConfig);
+  return service(commonKS);
 }
 

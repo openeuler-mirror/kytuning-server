@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     getData() {
-      test_case('get', {}).then((response) => {
+      test_case('get', {test_type:'日常测试'}).then((response) => {
         this.allDatas = response.data.data;
         this.total = this.allDatas.length;
       });

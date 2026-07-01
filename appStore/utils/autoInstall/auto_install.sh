@@ -17,6 +17,8 @@ NETWORK_IP=""
 DNS=""
 # efibootmgr对应的文件
 BOOT_EFI=""
+# 当前使用网卡名称
+NETWORK_NAME=$(ip route get 8.8.8.8 | awk 'NR==1 {print $5}')
 # 磁盘个数
 DISK_COUNT=$(lsblk -d -o NAME | grep -c '^sd')
 # 系统安装盘
@@ -151,9 +153,7 @@ main(){
   update_grub_cfg
   # 替换逻辑卷名称
   mod_logvol_name
-  # 替换IP信息
-  sed -i "s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
-  sed -i "s/DNS/$DNS/g" "$ISO_PATH/$KS_FILE_NAME"
+
   # 清空磁盘
   if [ "$clear_part" == "True" ]; then
     echo >> "$ISO_PATH/$KS_FILE_NAME"
@@ -173,6 +173,9 @@ main(){
   fi
   # todo 这里不行可能会改变盘符导致系统安装失败
   # 替换ks文件中安装操作系统盘
+  # 替换IP信息
+  sed -i "s/NETWORK_NAME/$NETWORK_NAME/g; s/NETWORK_IP/$NETWORK_IP/g" "$ISO_PATH/$KS_FILE_NAME"
+  sed -i "s/DNS/$DNS/g" "$ISO_PATH/$KS_FILE_NAME"
   sed -i "s/SYSTEM_DISK/$SYSTEM_DISK/g" "$ISO_PATH/$KS_FILE_NAME"
   # 更新 {/、swap、efi、boot}分区大小
   sed -i "s/root_size/$(( $root_size * 1024 ))/g" "$ISO_PATH/$KS_FILE_NAME"
