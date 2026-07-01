@@ -9,9 +9,12 @@ import glob
 import re
 import os
 import shutil
+import logging
 import tarfile
 import subprocess
 from appStore.utils.constants import RESULT_LOG_FILE, TOOLS_URL
+
+log = logging.getLogger('kytuninglog')
 
 
 def test_case(test_ip, test_username, test_password, test_case_names, user_config_path, result_log_name):
@@ -193,8 +196,7 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
     ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "bash /root/%s.sh"' % (str(user_name))
     subprocess.Popen(ssh_command, shell=True)
     # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
-    # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-    #                                stderr=subprocess.DEVNULL, text=True)
+    # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
     return
 
 
@@ -233,19 +235,17 @@ def check_system_success(ip, server_name, password):
     :param password: 设备密码
     :return: 安装操作系统是否成功
     """
-    print(f"--------------------检查系统是否安装成功 (IP: {ip})-----------------")
     # 去除旧的连接记录
     mv_ssh_keygen = "ssh-keygen -R " + ip
     subprocess.run(mv_ssh_keygen, shell=True)
-    print(f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'echo success'")
     try:
         result = subprocess.run(f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'echo success'", shell=True,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if "success" in result.stdout:
-            print('系统安装成功========')
+            log.info(f'系统安装成功(IP: {ip})')
             return True
     except Exception as e:
-        print(f"系统安装失败============: {e}")
+        log.info(f"系统安装失败: {e}")
     return False
 
 
@@ -269,7 +269,7 @@ def update_rpm(ip, server_name, password, koji_addr, user_config_path):
     )
     result_list_files = subprocess.run(command_list_files, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result_list_files.returncode != 0:
-        print("Error listing .repo files:", result_list_files.stderr)
+        log.info("Error listing .repo files:", result_list_files.stderr)
         return
 
     repo_files = result_list_files.stdout.splitlines()
@@ -281,7 +281,7 @@ def update_rpm(ip, server_name, password, koji_addr, user_config_path):
         )
         result_rename_file = subprocess.run(command_rename_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if result_rename_file.returncode != 0:
-            print(f"Error renaming {repo_file}:", result_rename_file.stderr)
+            log.info(f"Error renaming {repo_file}:", result_rename_file.stderr)
             return
 
     # 新增 kojifile.repo 文件并写入指定的内容
@@ -298,9 +298,9 @@ enabled = 1
     )
     result_add_repo = subprocess.run(command_add_repo, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if result_add_repo.returncode != 0:
-        print("Error adding kojifiles repo:", result_add_repo.stderr)
+        log.info("Error adding kojifiles repo:", result_add_repo.stderr)
         return
-    print("---------------------kojifiles的repo源配置成功.")
+    log.info("kojifiles的repo源配置成功.")
 
     # 检查 wget、unzip 和 make 是否已安装
     check_yum_command = f'sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "rpm -q wget unzip make"'
@@ -328,8 +328,6 @@ enabled = 1
         unzip_result.stderr = "unzip解压失败，请查看是否有unzip命令，以及run_kytuning-ffdev.zip是否下载成功"
         return unzip_result
 
-    print("---------------------软件包下载并解压完成.")
-
     # 复制配置文件conf文件和yaml文件
     scp_command = f'sshpass -p {password} scp -r {user_config_path}/conf {user_config_path}/yaml-base {server_name}@{ip}:/root/run_kytuning-ffdev/'
     scp_result = subprocess.run(scp_command, shell=True)
@@ -342,11 +340,31 @@ enabled = 1
     try:
         result = subprocess.run(
             f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'bash /root/run_kytuning-ffdev/monitor_test/update_system.sh'",
-            shell=True,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if "success" in result.stdout:
-            print('系统安装成功========')
+            log.info('执行监控测试脚本完成')
             return True
     except Exception as e:
-        print(f"系统安装失败============: {e}")
+        log.info(f"执行监控测试脚本失败: {e}")
     return False
+
+
+def get_kojifiles_md5(kojifile_addr):
+    """
+    监控kojifile地址是否改变
+    :param kojifile_addr: kojifiles地址
+    :return: koji_md5: kojifiles地址生成的md5值
+    """
+    # 去除latest后面的架构内容
+    keyword = "latest"
+    index = kojifile_addr.find(keyword)
+    if index != -1:
+        koji_base_url = kojifile_addr[:index + len(keyword)]
+        koji_md5_command = 'curl -s {} | md5sum | awk "{{ print $1 }}"'.format(koji_base_url)
+        koji_md5_result = subprocess.run(koji_md5_command, shell=True, capture_output=True, text=True)
+        # 获取返回的MD5哈希值
+        koji_md5_hash = koji_md5_result.stdout.strip()
+        return koji_md5_hash
+    else:
+        log.info("关键词 'latest' 未找到")
+        return None

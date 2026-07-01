@@ -68,13 +68,10 @@ export default {
                 link.setAttribute('download', 'log.tar')
                 document.body.appendChild(link)
                 link.click()
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(link);
             }).catch(error => {
                 if (error.code === "ERR_BAD_REQUEST") {
                     ElMessage({message: "下载失败没有找到对应日志", type: 'warning'})
                 }
-                console.log(error)
             }).finally(() => {
                 // excelDisabled 将被设置为 true，然后立即被设置为 false,禁用的时间非常短，不足以被用户察觉到。
                 this.excelDisabled = false;

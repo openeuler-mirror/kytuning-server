@@ -1,3 +1,11 @@
+<!--
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Sat May 11 09:14:50 2024 +0800
+-->
+
 <template>
   <div id="fixed-top">
     <div class="form-container">
@@ -308,8 +316,7 @@ export default {
           yaml: this.formData.yamlData,
           project_message: this.formData.project_message
         }
-        do_test_case(formData).then(response => {
-          console.log(response.data.code)
+        do_test_case(formData).then(() => {
           this.formData.test_type = '日常测试'
           this.formData.configName = ''
           this.formData.projectName = ''

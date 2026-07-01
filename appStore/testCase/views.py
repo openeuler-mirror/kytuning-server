@@ -17,10 +17,10 @@ from django.http import HttpResponse, FileResponse, HttpRequest
 from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
 from appStore.testMachine.models import TestMachine
-from appStore.utils.timed_tasks import auto_install_system
+from appStore.utils.timed_tasks import auto_install_system, monitor_kojifiles
 from appStore.utils.common import json_response
-from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL, SECRET, LANXIN_URL
-from appStore.utils.subprocess import test_case, stop_test_task
+from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL, SECRET, LANXIN_URL, KOJIFILES_MD5
+from appStore.utils.subprocess import test_case, stop_test_task, get_kojifiles_md5
 from appStore.adaptISO.models import AdaptISO
 
 log = logging.getLogger('kytuninglog')
@@ -37,7 +37,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         """
         测试列表展示功能
         """
-        queryset = TestCase.objects.filter().all().order_by('-id')
+        queryset = TestCase.objects.all().order_by('-id')
         if not queryset:
             return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         serializer = self.get_serializer(queryset, many=True)
@@ -64,10 +64,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         data_test_case['result_log_name'] = RESULT_LOG_FILE + str(request.user) + '_' + str(time.time())
         if not data_test_case['ip']:
             return json_response({}, status.HTTP_204_NO_CONTENT, '未填写IP信息')
-
         if not request.data.get('yaml'):
             return json_response({}, status.HTTP_204_NO_CONTENT, '请刷新页面重试')
-
         test_case_names = []
         if int(data_test_case['stream']):
             test_case_names.append('stream')
@@ -142,6 +140,9 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 data_test_case['kojifile_addr'] = request.data.get('kojifile_addr')
                 all_iso_name = request.data.get('iso_name')
                 ip_list = data_test_case['ip']
+                # 获取kojifiles地址的md5值
+                koji_md5_hash = get_kojifiles_md5(data_test_case['kojifile_addr'])
+                KOJIFILES_MD5[data_test_case['kojifile_addr']] = koji_md5_hash
                 for ip in ip_list:
                     data_test_case['ip'] = ip
                     data_test_case['test_result'] = '排队中'
@@ -175,18 +176,17 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                         if TestMachine_.owner == request.user.chinese_name:
                             return json_response('', status.HTTP_401_UNAUTHORIZED, '您正在使用请排查')
                         # 判断是否存在owner，如果存在则增加queue_user
-
                         if TestMachine_.owner or TestMachine_.queue_user:
                             TestMachine_.queue_user = TestMachine_.queue_user + ',' + request.user.chinese_name if TestMachine_.queue_user else request.user.chinese_name
                             TestMachine_.save()
                         else:
                             # 自动化安装所需操作系统，监控系统是否安装完成，及自动化测试
-                            auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'],
-                                                user_config_path)
+                            auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'], user_config_path)
                     else:
                         log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
                         log.info('testCase存储数据为 ：%s，' % data_test_case)
                         return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
+                monitor_kojifiles(data_test_case['kojifile_addr'], koji_md5_hash, request, user_config_path)
                 return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
             else:
                 return json_response('', status.HTTP_401_UNAUTHORIZED, '只有管理员才能创建作监控')

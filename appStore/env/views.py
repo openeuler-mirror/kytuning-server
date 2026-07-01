@@ -17,7 +17,7 @@ from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
 from appStore.testCase.models import TestCase
 from appStore.testMachine.models import TestMachine
-from appStore.utils.autoTest.send_url_message import send_lanxin_message
+from appStore.utils.send_url_message import send_lanxin_message
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 from appStore.utils.constants import KYTUNING_WEB_URL
 
