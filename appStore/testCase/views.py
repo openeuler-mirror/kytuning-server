@@ -64,8 +64,10 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         data_test_case['result_log_name'] = RESULT_LOG_FILE + str(request.user) + '_' + str(time.time())
         if not data_test_case['ip']:
             return json_response({}, status.HTTP_204_NO_CONTENT, '未填写IP信息')
+
         if not request.data.get('yaml'):
             return json_response({}, status.HTTP_204_NO_CONTENT, '请刷新页面重试')
+
         test_case_names = []
         if int(data_test_case['stream']):
             test_case_names.append('stream')
@@ -143,6 +145,9 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 # 获取kojifiles地址的md5值
                 koji_md5_hash = get_kojifiles_md5(data_test_case['kojifile_addr'])
                 KOJIFILES_MD5[data_test_case['kojifile_addr']] = koji_md5_hash
+                # todo 放下面创建test_case后,增加定时监控kojifiles地址功能
+                # monitor_kojifiles(data_test_case['kojifile_addr'], koji_md5_hash,request,user_config_path)
+                # return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到不同版本的iso架构')
                 for ip in ip_list:
                     data_test_case['ip'] = ip
                     data_test_case['test_result'] = '排队中'
@@ -186,7 +191,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                         log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
                         log.info('testCase存储数据为 ：%s，' % data_test_case)
                         return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
-                monitor_kojifiles(data_test_case['kojifile_addr'], koji_md5_hash, request, user_config_path)
+                if TestMachine_.owner != 'root' and 'root' not in TestMachine_.queue_user.split(','):
+                    monitor_kojifiles(data_test_case['kojifile_addr'], koji_md5_hash,request,user_config_path)
                 return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
             else:
                 return json_response('', status.HTTP_401_UNAUTHORIZED, '只有管理员才能创建作监控')
