@@ -1,3 +1,11 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Fri Mar 1 10:09:12 2024 +0800
+"""
+
 import os
 import time
 import shutil
@@ -185,7 +193,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 monitor_kojifiles(data_test_case['kojifile_addr'], koji_md5_hash, request, user_config_path)
                 return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
             else:
-                return json_response('', status.HTTP_401_UNAUTHORIZED, '只有管理员才能创建作监控')
+                return json_response('', status.HTTP_401_UNAUTHORIZED, '只有root用户才能创建监控测试')
         else:
             # 其它测试
             # 创建请求测试数据

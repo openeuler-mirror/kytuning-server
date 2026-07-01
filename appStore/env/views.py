@@ -3,8 +3,9 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Feb 26 11:15:07 2024 +0800
+ * Date: Fri Mar 1 10:09:12 2024 +0800
 """
+
 import os
 import json
 import logging
@@ -17,9 +18,9 @@ from appStore.env.serializers import EnvSerializer
 from appStore.project.models import Project
 from appStore.testCase.models import TestCase
 from appStore.testMachine.models import TestMachine
-from appStore.utils.send_url_message import send_lanxin_message
 from appStore.utils.common import LimsPageSet, json_response, get_error_message
 from appStore.utils.constants import KYTUNING_WEB_URL
+from appStore.utils.send_lanxin_url import send_lanxin_message
 
 log = logging.getLogger('kytuninglog')
 
