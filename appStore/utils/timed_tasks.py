@@ -6,6 +6,7 @@
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
 
+import ast
 import time
 import schedule
 import threading
@@ -92,7 +93,6 @@ def start_scheduler():
     """
     启动定时任务调度器
     """
-    print('---------启动定时任务调度器------------')
     def run_scheduler():
         while True:
             schedule.run_pending()
@@ -117,15 +117,16 @@ def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
         ip_list = ast.literal_eval('[' + UserConfig.objects.filter(kojifile_addr=kojifile_addr).last().ip + ']')
         for ip in ip_list:
             machine_data = TestMachine.objects.get(server_IP=ip)
+            test_case = TestCase.objects.filter(test_type='监控测试', kojifile_addr=kojifile_addr).order_by('-id').last()
+            test_case.test_result = '排队中'
+            test_case.save()
             # 判断机器是否有人使用或者是否有排队人员
             if machine_data.owner or machine_data.queue_user:
                 machine_data.queue_user = machine_data.queue_user + ',' + request.user.chinese_name if machine_data.queue_user else request.user.chinese_name
                 machine_data.save()
             else:
-                test_case = TestCase.objects.filter(test_type='监控测试', kojifile_addr=kojifile_addr).order_by('-id').last()
-                test_case.test_result = '排队中'
-                test_case.save()
                 auto_install_system(machine_data, request, ip, test_case.iso_name, kojifile_addr, user_config_path)
+                # pass
 
 def monitor_kojifiles(kojifile_addr, koji_md5_hash, request, user_config_path):
     """
@@ -136,8 +137,7 @@ def monitor_kojifiles(kojifile_addr, koji_md5_hash, request, user_config_path):
     """
     # 设置定时任务，监控kojifiles地址
     print('---------启动监控测试-----------------')
-    schedule.every(MONITOR_KOJIFILES_TIME).days.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
-    # schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
+    schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
     # install_system(kojifile_addr, koji_md5_hash, request, user_config_path)
     # 启动定时任务调度器
     start_scheduler()

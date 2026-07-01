@@ -218,7 +218,7 @@ export default {
           cpu2006_loongarch64: config.cpu2006_loongarch64_config,
           cpu2017: config.cpu2017_config,
         }
-        // this.formData.testIP = config.test_ip
+        this.formData.testIP = config.ip.split(',').map(item => item.trim().replace(/['"]/g, ''))
         this.formData.project_message = config.project_message
       })
     },
