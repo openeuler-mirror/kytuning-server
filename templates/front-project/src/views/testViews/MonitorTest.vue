@@ -218,7 +218,7 @@ export default {
           cpu2006_loongarch64: config.cpu2006_loongarch64_config,
           cpu2017: config.cpu2017_config,
         }
-        // this.formData.testIP = config.test_ip
+        this.formData.testIP = config.ip.split(',').map(item => item.trim().replace(/['"]/g, ''))
         this.formData.project_message = config.project_message
       })
     },
@@ -279,6 +279,7 @@ export default {
             cpu2006: this.formData.iterations.cpu2006,
             cpu2017: this.formData.iterations.cpu2017,
             yaml: this.formData.yamlData,
+            test_ip: this.formData.testIP,
             project_message: this.formData.project_message,
           }
           user_config('put', formData).then(response => {
@@ -302,6 +303,7 @@ export default {
           cpu2006: this.formData.iterations.cpu2006,
           cpu2017: this.formData.iterations.cpu2017,
           yaml: this.formData.yamlData,
+          test_ip: this.formData.testIP,
           project_message: this.formData.project_message
         }
         user_config('post', formData).then(response => {
@@ -329,8 +331,7 @@ export default {
           yaml: this.formData.yamlData,
           project_message: this.formData.project_message
         }
-        do_test_case(formData).then(response => {
-          console.log(response.data.code)
+        do_test_case(formData).then(() => {
           this.formData.kojifileAddr = ''
           this.formData.test_type = '监控测试'
           this.formData.isoName = ''
