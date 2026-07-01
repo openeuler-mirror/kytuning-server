@@ -5,6 +5,7 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Sat May 11 09:14:50 2024 +0800
 -->
+
 <template>
   <div id="fixed-top">
     <div class="form-container">
@@ -217,7 +218,7 @@ export default {
           cpu2006_loongarch64: config.cpu2006_loongarch64_config,
           cpu2017: config.cpu2017_config,
         }
-        this.formData.testIP = config.ip.split(',').map(item => item.trim().replace(/['"]/g, ''))
+        // this.formData.testIP = config.test_ip
         this.formData.project_message = config.project_message
       })
     },
@@ -331,7 +332,6 @@ export default {
           project_message: this.formData.project_message
         }
         do_test_case(formData).then(response => {
-          console.log(response.data.code)
           this.formData.kojifileAddr = ''
           this.formData.test_type = '监控测试'
           this.formData.isoName = ''
