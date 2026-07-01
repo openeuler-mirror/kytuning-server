@@ -1,11 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
-"""
-
 import os
 import time
 import shutil
@@ -37,7 +29,11 @@ class TestCaseViewSet(viewsets.ModelViewSet):
         """
         测试列表展示功能
         """
-        queryset = TestCase.objects.all().order_by('-id')
+        test_type = request.GET.get('test_type', None)
+        if test_type:
+            queryset = TestCase.objects.filter(test_type=test_type).order_by('-id')
+        else:
+            return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         if not queryset:
             return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         serializer = self.get_serializer(queryset, many=True)

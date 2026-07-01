@@ -52,12 +52,6 @@ const routes = [
         component: () => import('@/components/KytuningHome'),
         children: [
             {
-                path: '/test/list',
-                name: '测试列表',
-                meta: { requiresAuth: true },
-                component: () => import('@/views/testViews/TestList')
-            },
-            {
                 path: '/test/do_test',
                 name: '日常测试',
                 meta: { requiresAuth: true },
@@ -65,11 +59,23 @@ const routes = [
                 // props:true  // 如果props设置为true，$route.params将被设置为组件属性记对象
             },
             {
+                path: '/test/list',
+                name: '日常测试列表',
+                meta: { requiresAuth: true },
+                component: () => import('@/views/testViews/DailyTestList.vue')
+            },
+            {
                 path: '/test/monitor_test',
                 name: '监控测试',
                 meta: { requiresAuth: true },
                 component: () => import('@/views/testViews/MonitorTest'),
                 // props:true  // 如果props设置为true，$route.params将被设置为组件属性记对象
+            },
+            {
+                path: '/test/monitor_list',
+                name: '监控测试列表',
+                meta: { requiresAuth: true },
+                component: () => import('@/views/testViews/MinitorTestList')
             },
             // {
             //     path: '/test/do_test_yaml',
