@@ -332,7 +332,6 @@ enabled = 1
 
     # 复制配置文件conf文件和yaml文件
     scp_command = f'sshpass -p {password} scp -r {user_config_path}/conf {user_config_path}/yaml-base {server_name}@{ip}:/root/run_kytuning-ffdev/'
-    print(scp_command,'-------------个人配置文件获取失败问题排查------------')
     scp_result = subprocess.run(scp_command, shell=True)
 
     if scp_result.returncode:
@@ -343,34 +342,11 @@ enabled = 1
     try:
         result = subprocess.run(
             f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'bash /root/run_kytuning-ffdev/monitor_test/update_system.sh'",
-            shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            shell=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if "success" in result.stdout:
             print('系统安装成功========')
             return True
     except Exception as e:
         print(f"系统安装失败============: {e}")
     return False
-
-
-def get_kojifiles_md5(kojifile_addr):
-    """
-    监控kojifile地址是否改变
-    :param kojifile_addr: kojifiles地址
-    :return: koji_md5: kojifiles地址生成的md5值
-    """
-    # 去除latest后面的架构内容
-    keyword = "latest"
-    index = kojifile_addr.find(keyword)
-    if index != -1:
-        koji_base_url = kojifile_addr[:index + len(keyword)]
-        koji_md5_command = 'curl -s {} | md5sum | awk "{{ print $1 }}"'.format(koji_base_url)
-        koji_md5_result = subprocess.run(koji_md5_command, shell=True, capture_output=True, text=True)
-        # 获取返回的MD5哈希值
-        koji_md5_hash = koji_md5_result.stdout.strip()
-        return koji_md5_hash
-    else:
-        print("关键词 'latest' 未找到")
-        return None
-
-
-

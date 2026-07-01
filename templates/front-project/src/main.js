@@ -16,6 +16,8 @@ import echarts from 'echarts'
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 import {removeToken} from "@/utils/setToken";
+import VueClipboard from 'vue3-clipboard'
+
 
 const app = createApp(App)
 //解决屏幕改变大小报错问题
@@ -61,6 +63,11 @@ router.beforeEach((to, from, next) => {
 app.config.globalProperties.$https = axios
 app.config.globalProperties.service = service
 app.config.globalProperties.$echarts = echarts
+
+app.use(VueClipboard, {
+    autoSetContainer: true,
+    appendToBody: true,
+})
 // 使用ElementPlus和Vue Router
 app.use(ElementPlus).use(router).mount('#app')
 
