@@ -17,9 +17,11 @@ class TestCase(models.Model):
         ("自动化分析测试", "自动化测试"),
     )
     test_type = models.CharField(max_length=50, verbose_name='测试类型', choices=testType)
-    compar_data = models.TextField(verbose_name='对比数据，用于自动化分析测试', null=True, blank=True)
     kojifile_addr = models.TextField(verbose_name='kojifei地址，用于自动化迭代测试', null=True, blank=True)
+    is_it_monitored = models.BooleanField(default=False, verbose_name="是否监控")
+    kojifile_md5 = models.CharField(max_length=250,verbose_name='kojifei内容的md5值',default=None)
     iso_name = models.TextField(verbose_name='用于自动化迭代测试自动化安装操作系统', null=True, blank=True)
+    compar_data = models.TextField(verbose_name='对比数据，用于自动化分析测试', null=True, blank=True)
     project_name = models.CharField(max_length=200, verbose_name='项目名称')
     ip = models.CharField(max_length=50, verbose_name='IP地址')
     stream = models.IntegerField(default=0, verbose_name='几组stream数据')
