@@ -66,14 +66,14 @@ const routes = [
             },
             {
                 path: '/test/monitor_test',
-                name: '监控测试',
+                name: '迭代测试',
                 meta: {requiresAuth: true},
                 component: () => import('@/views/testViews/MonitorTest'),
                 // props:true  // 如果props设置为true，$route.params将被设置为组件属性记对象
             },
             {
                 path: '/test/monitor_list',
-                name: '监控测试列表',
+                name: '迭代测试列表',
                 meta: {requiresAuth: true},
                 component: () => import('@/views/testViews/MinitorTestList')
             },

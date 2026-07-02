@@ -138,8 +138,8 @@ class TestCaseViewSet(viewsets.ModelViewSet):
             with open(user_config_path + '/yaml-base/cpu2017-base.yaml', 'w', encoding='UTF-8') as fp:
                 fp.write(cpu2017_yaml)
 
-        if data_test_case['test_type'] == '监控测试':
-            # 监控测试,一条监控测试对应多条测试数据
+        if data_test_case['test_type'] == '迭代测试':
+            # 迭代测试,一条迭代测试对应多条测试数据
             if request.user.is_staff:
                 data_test_case['kojifile_addr'] = request.data.get('kojifile_addr')
                 all_iso_name = request.data.get('iso_name')
@@ -194,7 +194,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 monitor_kojifiles(data_test_case['kojifile_addr'], koji_md5_hash, request, user_config_path)
                 return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
             else:
-                return json_response('', status.HTTP_401_UNAUTHORIZED, '只有root用户才能创建监控测试')
+                return json_response('', status.HTTP_401_UNAUTHORIZED, '只有root用户才能创建迭代测试')
         else:
             # 其它测试
             # 创建请求测试数据

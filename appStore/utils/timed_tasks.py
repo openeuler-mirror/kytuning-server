@@ -115,11 +115,11 @@ def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
     else:
         KOJIFILES_MD5[kojifile_addr] = new_koji_md5_hash
         log.info("kojifiles地址发生改变,执行自动化性能测试")
-        # 获取监控测试的ip信息
+        # 获取迭代测试的ip信息
         ip_list = ast.literal_eval('[' + UserConfig.objects.filter(kojifile_addr=kojifile_addr).last().ip + ']')
         for ip in ip_list:
             machine_data = TestMachine.objects.get(server_IP=ip)
-            test_case = TestCase.objects.filter(test_type='监控测试', kojifile_addr=kojifile_addr).order_by('-id').last()
+            test_case = TestCase.objects.filter(test_type='迭代测试', kojifile_addr=kojifile_addr).order_by('-id').last()
             test_case.test_result = '排队中'
             test_case.save()
             # 判断机器是否有人使用或者是否有排队人员
@@ -138,7 +138,7 @@ def monitor_kojifiles(kojifile_addr, koji_md5_hash, request, user_config_path):
     :return:
     """
     # 设置定时任务，监控kojifiles地址
-    log.info('---------启动监控测试-----------------')
+    log.info('---------启动迭代测试-----------------')
     schedule.every(MONITOR_KOJIFILES_TIME).days.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
     # install_system(kojifile_addr, koji_md5_hash, request, user_config_path)
     # 启动定时任务调度器

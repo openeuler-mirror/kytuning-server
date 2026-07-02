@@ -425,7 +425,7 @@ class EnvViewSet(viewsets.ModelViewSet):
         if request.data.get('test_case_id'):
             TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
             # 如果是定时任务则返还设备
-            if TestCase.objects.get(id=request.data['test_case_id']).test_type == '监控测试':
+            if TestCase.objects.get(id=request.data['test_case_id']).test_type == '迭代测试':
                 machine_ip = TestCase.objects.get(id=request.data['test_case_id']).ip
                 test_machine = TestMachine.objects.get(server_IP=machine_ip)
                 test_machine.owner = None

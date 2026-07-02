@@ -342,10 +342,10 @@ enabled = 1
             f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'bash /root/run_kytuning-ffdev/monitor_test/update_system.sh'",
             shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if "success" in result.stdout:
-            log.info('执行监控测试脚本完成')
+            log.info('执行迭代测试脚本完成')
             return True
     except Exception as e:
-        log.info(f"执行监控测试脚本失败: {e}")
+        log.info(f"执行迭代测试脚本失败: {e}")
     return False
 
 
