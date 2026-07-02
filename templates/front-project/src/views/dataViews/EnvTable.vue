@@ -17,9 +17,23 @@
         <template v-for="i in numColumns" :key="i">
           <el-table-column :prop="`column${i}`" align="center" :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null">
             <template #default="{row}">
-              <el-tooltip :content="row[`column${i}`]" effect="light">
-                <div style="height: 30px">{{ row[`column${i}`] && row[`column${i}`].toString() || '' }}</div>
-              </el-tooltip>
+              <span v-if="row[`column${i}`]?.length <= 200">
+                {{ row[`column${i}`] && row[`column${i}`].toString() || '' }}
+              </span>
+              <span v-else-if="!row[`column${i}`]?.length"> --- </span>
+              <span v-else>
+                <el-popover
+                    effect="light"
+                    placement="bottom"
+                    :width="400"
+                    trigger="hover"
+                >
+                    <div @click="popovertextcopy" v-html="processConfigString(row[`column${i}`])"></div>
+                  <template #reference>
+                    {{ row[`column${i}`]?.slice(0, 200) }}...
+                  </template>
+                </el-popover>
+              </span>
             </template>
           </el-table-column>
         </template>
@@ -29,9 +43,10 @@
 </template>
 
 <script>
-import {ElTable, ElTableColumn} from 'element-plus';
+import {ElTable, ElTableColumn, ElMessage} from 'element-plus';
 import {env} from "@/api/api";
 import TableHeader from "@/components/common/TableHeader";
+import useClipboard from "vue-clipboard3";
 
 export default {
   name: 'envTable',
@@ -55,6 +70,35 @@ export default {
     this.getData()
   },
   methods: {
+    async popovertextcopy(event) {
+      const text = event.target.innerText;
+      if (text === undefined || text.length < 1) return;
+      const {toClipboard} = useClipboard();
+      try {
+        await toClipboard(text);
+        ElMessage({
+          message: "复制成功",
+          type: "success",
+        });
+        console.log("复制成功");
+      } catch (e) {
+        ElMessage({
+          message: "复制失败，请手动复制",
+          type: "error",
+        });
+      }
+    },
+    processConfigString(inputString) {
+      // 使用正则表达式将 = 左右的空格删除
+      let processedString = inputString.replace(/\s*=\s*/g, "=");
+
+      // 将处理后的字符串按空格分割成数组
+      let lines = processedString.split(/\s+/);
+
+      // 将数组中的元素用换行符连接成新的字符串
+      let result = lines.join("<br/>");
+      return result;
+    },
     getData() {
       env(this.paramsData).then((response) => {
         this.tableDatas = response.data.data.data

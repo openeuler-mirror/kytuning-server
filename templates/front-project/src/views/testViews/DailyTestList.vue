@@ -3,8 +3,9 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Tue Mar 12 09:59:13 2024 +0800
+ * Date: Sat May 11 09:14:50 2024 +0800
 -->
+
 <template>
   <div id="fixed-top">
     <div class="cont">
@@ -66,7 +67,7 @@ export default {
   },
   methods: {
     getData() {
-      test_case('get', {test_type:'日常测试'}).then((response) => {
+      test_case('get', {test_type: '日常测试'}).then((response) => {
         this.allDatas = response.data.data;
         this.total = this.allDatas.length;
       });

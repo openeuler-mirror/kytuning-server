@@ -16,6 +16,8 @@ import echarts from 'echarts'
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 import {removeToken} from "@/utils/setToken";
+import VueClipboard from 'vue3-clipboard'
+
 
 const app = createApp(App)
 //解决屏幕改变大小报错问题
@@ -41,9 +43,9 @@ window.ResizeObserver = class ResizeObserver extends _ResizeObserver {
 
 // 在你的Vue组件中或者你的入口文件中，监听window.onbeforeunload事件
 // onbeforeunload事件是一个在即将离开当前页面（或关闭当前窗口）时触发的事件
-window.onbeforeunload = function() {
-  // 清除session
-  removeToken('filter');
+window.onbeforeunload = function () {
+    // 清除session
+    removeToken('filter');
 };
 
 // 导航守卫
@@ -61,6 +63,11 @@ router.beforeEach((to, from, next) => {
 app.config.globalProperties.$https = axios
 app.config.globalProperties.service = service
 app.config.globalProperties.$echarts = echarts
+
+app.use(VueClipboard, {
+    autoSetContainer: true,
+    appendToBody: true,
+})
 // 使用ElementPlus和Vue Router
 app.use(ElementPlus).use(router).mount('#app')
 

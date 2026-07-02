@@ -3,8 +3,9 @@
  * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
  * See LICENSE file for more details.
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Mon Feb 26 11:15:07 2024 +0800
+ * Date: Fri Mar 1 10:09:12 2024 +0800
 """
+
 import logging
 import numpy as np
 from rest_framework import status, viewsets
@@ -16,6 +17,7 @@ from appStore.utils.analyze import get_analyze_data
 from appStore.utils.common import json_response, get_error_message
 
 log = logging.getLogger('kytuninglog')
+
 
 class UnixbenchViewSet(viewsets.ModelViewSet):
     """
