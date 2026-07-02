@@ -12,23 +12,34 @@
       <TableHeader :tableDatas="tableDatas" :dataName="dataName" :showAllData="showAllData"/>
     </div>
     <div style="overflow-x: auto;">
-      <el-table :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false"
+      <el-table v-loading="loading" :data="tableDatas" border :span-method="objectSpanMethod" style="overflow-x: auto;" :show-header="false"
                 :row-style="{ height: '50px' }">
         <template v-for="i in numColumns" :key="i">
           <el-table-column :prop="`column${i}`" align="center" :width="i === 1 ? '100px' : i === 2 ? '150px' : i === 3 ? '250px' : null">
             <template #default="{row}">
               <span v-if="row[`column${i}`]?.length <= 200">
-                {{ row[`column${i}`] && row[`column${i}`].toString() || '' }}
+                {{ row[`column${i}`] && row[`column${i}`].toString() || ''  }}
               </span>
               <span v-else-if="!row[`column${i}`]?.length"> --- </span>
               <span v-else>
                 <el-popover
-                    effect="light"
-                    placement="bottom"
-                    :width="400"
-                    trigger="hover"
+                  effect="light"
+                  placement="bottom"
+                  :width="800"
+                  trigger="hover"
                 >
-                    <div @click="popovertextcopy" v-html="processConfigString(row[`column${i}`])"></div>
+                <span v-if="i> 4">
+                  <div>
+                    <CodeDiff
+                      :old-string="processConfigString(row[`column${4}`],'\n',i)"
+                      :new-string="processConfigString(row[`column${i}`],'\n',i)"
+                      output-format="side-by-side"
+                    />
+                  </div>
+                </span>
+                <span v-else>
+                    <div @click="popovertextcopy" v-html="processConfigString(row[`column${i}`],'<br/>',i)"></div>
+                </span>
                   <template #reference>
                     {{ row[`column${i}`]?.slice(0, 200) }}...
                   </template>
@@ -43,10 +54,13 @@
 </template>
 
 <script>
-import {ElTable, ElTableColumn, ElMessage} from 'element-plus';
+import {ElTable, ElTableColumn,ElMessage} from 'element-plus';
 import {env} from "@/api/api";
 import TableHeader from "@/components/common/TableHeader";
 import useClipboard from "vue-clipboard3";
+import { CodeDiff } from 'v-code-diff';
+
+
 
 export default {
   name: 'envTable',
@@ -54,6 +68,7 @@ export default {
     ElTable,
     ElTableColumn,
     TableHeader,
+    CodeDiff,
   },
   data() {
     return {
@@ -64,16 +79,20 @@ export default {
         env_id: this.$route.params.baseId,
         comparsionIds: this.$route.params.comparsionIds,
       },
+      loading:true,
     }
   },
   created() {
-    this.getData()
+    this.getData();
   },
   methods: {
-    async popovertextcopy(event) {
+    diffcompare(columnIndex){
+      console.log(columnIndex);
+    },
+    async popovertextcopy(event){
       const text = event.target.innerText;
       if (text === undefined || text.length < 1) return;
-      const {toClipboard} = useClipboard();
+      const { toClipboard } = useClipboard();
       try {
         await toClipboard(text);
         ElMessage({
@@ -88,7 +107,8 @@ export default {
         });
       }
     },
-    processConfigString(inputString) {
+    processConfigString(inputString,separator,count) {
+
       // 使用正则表达式将 = 左右的空格删除
       let processedString = inputString.replace(/\s*=\s*/g, "=");
 
@@ -96,7 +116,13 @@ export default {
       let lines = processedString.split(/\s+/);
 
       // 将数组中的元素用换行符连接成新的字符串
-      let result = lines.join("<br/>");
+      let result = lines.join(separator);
+
+      // 表格列表遍历完成之后，关闭 loading 动画
+      if(count == this.numColumns)
+      {
+        this.loading = false;
+      }
       return result;
     },
     getData() {
