@@ -17,6 +17,7 @@ from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse
 from rest_framework import pagination, status
 
+
 def json_response(data=None, code=None, message=None):
     """
     返回自定义格式数据
@@ -106,6 +107,7 @@ def get_page(data, objs):
         list = paginator.page(1)  # 当输入的page是不存在的时候就会报错
     return list
 
+
 def make_ks_password(new_server_password):
     """
     制作ks文件中的密码加密
@@ -116,4 +118,3 @@ def make_ks_password(new_server_password):
     if '/' in PASSWORD or '$' in PASSWORD:
         PASSWORD = PASSWORD.replace('/', r'\/').replace('$', r'\$')
     return PASSWORD
-

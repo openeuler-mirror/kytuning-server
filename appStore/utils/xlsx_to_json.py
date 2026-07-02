@@ -23,7 +23,7 @@ user_data = {
     # 替换为实际的文件路径
     "file_path": "./kytuning-result.xlsx",
     # 替换为要读取的工作表名称列表
-    "sheet_names": ["Stream","Lmbench","Unixbench","Fio","Specjvm2008","Speccpu2006(base)","Speccpu2017(base)"],
+    "sheet_names": ["Stream", "Lmbench", "Unixbench", "Fio", "Specjvm2008", "Speccpu2006(base)", "Speccpu2017(base)"],
     # "sheet_names": ["Stream","Lmbench","Unixbench","Fio","Iozone","Specjvm2008","Speccpu2006(base)","Speccpu2017(base)"],
     # 保存数据的文件名
     "all_json_file": "./all_json_file.json",
@@ -42,7 +42,8 @@ user_data = {
     "cpu2017_end_number": 1,
 }
 
-def env_excel_to_json(file_path, sheet_name,disk_number,nic_number):
+
+def env_excel_to_json(file_path, sheet_name, disk_number, nic_number):
     """
     环境信息表转换成json数据
     :param file_path:
@@ -110,15 +111,15 @@ def env_excel_to_json(file_path, sheet_name,disk_number,nic_number):
                     swinfo_runtime_systemctlinfo = str(base64.b64encode(column_data[new_number + 8].encode("ascii")))[2:-1]
                 else:
                     swinfo_runtime_systemctlinfo = ''
-                if column_data[new_number + 9]== numpy.nan:
+                if column_data[new_number + 9] == numpy.nan:
                     swinfo_runtime_driverinfo = str(base64.b64encode(column_data[new_number + 9].encode("ascii")))[2:-1]
                 else:
                     swinfo_runtime_driverinfo = ''
-                if column_data[new_number + 10]== numpy.nan:
+                if column_data[new_number + 10] == numpy.nan:
                     swinfo_runtime_rpmlist = str(base64.b64encode(column_data[new_number + 10].encode("ascii")))[2:-1]
                 else:
                     swinfo_runtime_rpmlist = ''
-                if column_data[new_number + 11]== numpy.nan:
+                if column_data[new_number + 11] == numpy.nan:
                     swinfo_runtime_ipclist = str(base64.b64encode(column_data[new_number + 11].encode("ascii")))[2:-1]
                 else:
                     swinfo_runtime_ipclist = ''
@@ -200,7 +201,8 @@ def env_excel_to_json(file_path, sheet_name,disk_number,nic_number):
                                  "pythonversion": swinfo_software_ver_pythonversion}}, "nwinfo": {"nic": nic}}}
     return data
 
-def stream_excel_to_json(file_path, sheet_name,end_number):
+
+def stream_excel_to_json(file_path, sheet_name, end_number):
     """
     stream表格转json数据
     :param file_path:
@@ -231,10 +233,11 @@ def stream_excel_to_json(file_path, sheet_name,end_number):
                 "execute_cmd": execute_cmd, "modify_parameters": modify_parameters,
                 "tool_name": "stream",
                 "单线程": {"Array size": single_array_size, "Copy": single_copy, "Scale": single_scale, "Add": single_add,
-                        "Triad": single_triad},
+                           "Triad": single_triad},
                 "多线程": {"Array size": multi_array_size, "Copy": multi_copy, "Scale": multi_scale, "Add": multi_add,
-                        "Triad": multi_triad}}
+                           "Triad": multi_triad}}
     return data
+
 
 def lmbench_excel_to_json(file_path, sheet_name, end_number):
     """
@@ -373,6 +376,7 @@ def lmbench_excel_to_json(file_path, sheet_name, end_number):
                                                          "Main mem": memory_Main_mem, "Rand mem": memory_Rand_mem}}]]}
     return data
 
+
 def unixbench_excel_to_json(file_path, sheet_name, end_number):
     """
     unixbench表格转json数据
@@ -420,34 +424,35 @@ def unixbench_excel_to_json(file_path, sheet_name, end_number):
             data[single_key_name] = {"execute_cmd": execute_cmd, "modify_parameters": modify_parameters,
                                      "tool_name": "unixbench",
                                      "单线程": {"Dhrystone 2 using register variables(lps)": single_Dhrystone,
-                                             "Double-Precision Whetstone(MWIPS)": single_Double_Precision,
-                                             "Execl Throughput(lps)": single_execl_throughput,
-                                             "File Copy 1024 bufsize 2000 maxblocks(KBps)": single_file_copy_1024,
-                                             "File Copy 256 bufsize 500 maxblocks(KBps)": single_file_copy_256,
-                                             "File Copy 4096 bufsize 8000 maxblocks(KBps)": single_file_copy_4096,
-                                             "Pipe Throughput(lps)": single_pipe_throughput,
-                                             "Pipe-based Context Switching(lps)": single_pipe_based,
-                                             "Process Creation(lps)": single_process_creation,
-                                             "Shell Scripts (1 concurrent)(lpm)": single_shell_scripts_1,
-                                             "Shell Scripts (8 concurrent)(lpm)": single_shell_scripts_8,
-                                             "System Call Overhead(lps)": single_system_call_overhead,
-                                             "Index Score(sum)": single_index_score}}
+                                                "Double-Precision Whetstone(MWIPS)": single_Double_Precision,
+                                                "Execl Throughput(lps)": single_execl_throughput,
+                                                "File Copy 1024 bufsize 2000 maxblocks(KBps)": single_file_copy_1024,
+                                                "File Copy 256 bufsize 500 maxblocks(KBps)": single_file_copy_256,
+                                                "File Copy 4096 bufsize 8000 maxblocks(KBps)": single_file_copy_4096,
+                                                "Pipe Throughput(lps)": single_pipe_throughput,
+                                                "Pipe-based Context Switching(lps)": single_pipe_based,
+                                                "Process Creation(lps)": single_process_creation,
+                                                "Shell Scripts (1 concurrent)(lpm)": single_shell_scripts_1,
+                                                "Shell Scripts (8 concurrent)(lpm)": single_shell_scripts_8,
+                                                "System Call Overhead(lps)": single_system_call_overhead,
+                                                "Index Score(sum)": single_index_score}}
             data[multi_key_name] = {"execute_cmd": execute_cmd, "modify_parameters": modify_parameters,
                                     "tool_name": "unixbench",
                                     "多线程": {"Dhrystone 2 using register variables(lps)": multi_Dhrystone,
-                                            "Double-Precision Whetstone(MWIPS)": multi_Double_Precision,
-                                            "Execl Throughput(lps)": multi_execl_throughput,
-                                            "File Copy 1024 bufsize 2000 maxblocks(KBps)": multi_file_copy_1024,
-                                            "File Copy 256 bufsize 500 maxblocks(KBps)": multi_file_copy_256,
-                                            "File Copy 4096 bufsize 8000 maxblocks(KBps)": multi_file_copy_4096,
-                                            "Pipe Throughput(lps)": multi_pipe_throughput,
-                                            "Pipe-based Context Switching(lps)": multi_pipe_based,
-                                            "Process Creation(lps)": multi_process_creation,
-                                            "Shell Scripts (1 concurrent)(lpm)": multi_shell_scripts_1,
-                                            "Shell Scripts (8 concurrent)(lpm)": multi_shell_scripts_8,
-                                            "System Call Overhead(lps)": multi_system_call_overhead,
-                                            "Index Score(sum)": multi_index_score}}
+                                               "Double-Precision Whetstone(MWIPS)": multi_Double_Precision,
+                                               "Execl Throughput(lps)": multi_execl_throughput,
+                                               "File Copy 1024 bufsize 2000 maxblocks(KBps)": multi_file_copy_1024,
+                                               "File Copy 256 bufsize 500 maxblocks(KBps)": multi_file_copy_256,
+                                               "File Copy 4096 bufsize 8000 maxblocks(KBps)": multi_file_copy_4096,
+                                               "Pipe Throughput(lps)": multi_pipe_throughput,
+                                               "Pipe-based Context Switching(lps)": multi_pipe_based,
+                                               "Process Creation(lps)": multi_process_creation,
+                                               "Shell Scripts (1 concurrent)(lpm)": multi_shell_scripts_1,
+                                               "Shell Scripts (8 concurrent)(lpm)": multi_shell_scripts_8,
+                                               "System Call Overhead(lps)": multi_system_call_overhead,
+                                               "Index Score(sum)": multi_index_score}}
     return data
+
 
 def fio_excel_to_json(file_path, sheet_name, end_number):
     """
@@ -475,13 +480,15 @@ def fio_excel_to_json(file_path, sheet_name, end_number):
             column_data = df[column].tolist()
             name_list = [value + str(int(index) - 2) for value in name_list_]
             for i in range(len(name_list)):
-                iops_data = float(column_data[2:][i * 4 + 2][:-1]) * 1000 if str(column_data[2:][i * 4 + 2]).endswith("k") else float(column_data[2:][i * 4 + 2])
+                iops_data = float(column_data[2:][i * 4 + 2][:-1]) * 1000 if str(column_data[2:][i * 4 + 2]).endswith("k") else float(
+                    column_data[2:][i * 4 + 2])
                 data[name_list[i]] = {"tool_name": "fio", "rw": name_list[i].split("-")[-3],
                                       "items": {"bs": column_data[2:][i * 4],
                                                 "io": column_data[2:][i * 4 + 1],
                                                 "iops": iops_data,
                                                 "bw": column_data[2:][i * 4 + 3]}}
     return data
+
 
 def iozone_excel_to_json(file_path, sheet_name, end_number):
     """
@@ -526,6 +533,7 @@ def iozone_excel_to_json(file_path, sheet_name, end_number):
                 key = "iozone3_430-%s-0-%d" % (double_or_half[i], index - 2)
                 data[key] = {"tool_name": "iozone", "测试记录": {**{"文件大小": file_size_list[i], "块大小": 0}, **d}}
     return data
+
 
 def jvm2008_excel_to_json(file_path, sheet_name, end_number):
     """
@@ -587,6 +595,7 @@ def jvm2008_excel_to_json(file_path, sheet_name, end_number):
                              "serial": peak_serial, "startup": peak_startup, "sunflow": peak_sunflow, "xml": peak_xml,
                              "Noncompliant composite result:": peak_Noncompliant_pomposite_result}}}
     return data
+
 
 def cpu2006_excel_to_json(file_path, sheet_name, end_number):
     """
@@ -737,29 +746,29 @@ def cpu2006_excel_to_json(file_path, sheet_name, end_number):
                     {"execute_cmd": execute_cmd, "modify_parameters": modify_parameters, "tool_name": "speccpu2006",
                      "items": {
                          "多线程_fp": {"base": {"410.bwaves": multi_fp_410_bwaves, "416.gamess": multi_fp_416_gamess,
-                                             "433.milc": multi_fp_433_milc,
-                                             "434.zeusmp": multi_fp_434_zeusmp, "435.gromacs": multi_fp_435_gromacs,
-                                             "436.cactusADM": multi_fp_436_cactusADM,
-                                             "437.leslie3d": multi_fp_437_leslie3d,
-                                             "444.namd": multi_fp_444_namd, "447.dealII": multi_fp_447_dealII,
-                                             "450.soplex": multi_fp_450_soplex,
-                                             "453.povray": multi_fp_453_povray, "454.calculix": multi_fp_454_calculix,
-                                             "459.GemsFDTD": multi_fp_459_GemsFDTD, "465.tonto": multi_fp_465_tonto,
-                                             "470.lbm": multi_fp_470_lbm,
-                                             "481.wrf": multi_fp_481_wrf, "482.sphinx3": multi_fp_482_sphinx3,
-                                             "SPECfp_2006": multi_fp_SPECfp_2006},
-                                    "peak": {"410.bwaves": "", "416.gamess": "",
-                                             "433.milc": "", "434.zeusmp": "",
-                                             "435.gromacs": "",
-                                             "436.cactusADM": "",
-                                             "437.leslie3d": "",
-                                             "444.namd": "", "447.dealII": "",
-                                             "450.soplex": "", "453.povray": "",
-                                             "454.calculix": "",
-                                             "459.GemsFDTD": "", "465.tonto": "",
-                                             "470.lbm": "",
-                                             "481.wrf": "", "482.sphinx3": "",
-                                             "SPECfp_2006": ""}}}}
+                                                "433.milc": multi_fp_433_milc,
+                                                "434.zeusmp": multi_fp_434_zeusmp, "435.gromacs": multi_fp_435_gromacs,
+                                                "436.cactusADM": multi_fp_436_cactusADM,
+                                                "437.leslie3d": multi_fp_437_leslie3d,
+                                                "444.namd": multi_fp_444_namd, "447.dealII": multi_fp_447_dealII,
+                                                "450.soplex": multi_fp_450_soplex,
+                                                "453.povray": multi_fp_453_povray, "454.calculix": multi_fp_454_calculix,
+                                                "459.GemsFDTD": multi_fp_459_GemsFDTD, "465.tonto": multi_fp_465_tonto,
+                                                "470.lbm": multi_fp_470_lbm,
+                                                "481.wrf": multi_fp_481_wrf, "482.sphinx3": multi_fp_482_sphinx3,
+                                                "SPECfp_2006": multi_fp_SPECfp_2006},
+                                       "peak": {"410.bwaves": "", "416.gamess": "",
+                                                "433.milc": "", "434.zeusmp": "",
+                                                "435.gromacs": "",
+                                                "436.cactusADM": "",
+                                                "437.leslie3d": "",
+                                                "444.namd": "", "447.dealII": "",
+                                                "450.soplex": "", "453.povray": "",
+                                                "454.calculix": "",
+                                                "459.GemsFDTD": "", "465.tonto": "",
+                                                "470.lbm": "",
+                                                "481.wrf": "", "482.sphinx3": "",
+                                                "SPECfp_2006": ""}}}}
             elif sheet_name[12:16] == "peak":
                 data["cpu2006-1.2-%s-single-int-0-" % (sheet_name[12:16]) + str(index - 3)] = \
                     {"execute_cmd": execute_cmd, "modify_parameters": modify_parameters, "tool_name": "speccpu2006",
@@ -830,31 +839,32 @@ def cpu2006_excel_to_json(file_path, sheet_name, end_number):
                 data["cpu2006-1.2-%s-multi-fp-0-" % (sheet_name[12:16]) + str(index - 3)] = \
                     {"execute_cmd": execute_cmd, "modify_parameters": modify_parameters, "tool_name": "speccpu2006",
                      "items": {"多线程_fp": {"base": {"410.bwaves": "", "416.gamess": "",
-                                                   "433.milc": "",
-                                                   "434.zeusmp": "", "435.gromacs": "",
-                                                   "436.cactusADM": "",
-                                                   "437.leslie3d": "",
-                                                   "444.namd": "", "447.dealII": "",
-                                                   "450.soplex": "",
-                                                   "453.povray": "", "454.calculix": "",
-                                                   "459.GemsFDTD": "", "465.tonto": "",
-                                                   "470.lbm": "",
-                                                   "481.wrf": "", "482.sphinx3": "",
-                                                   "SPECfp_2006": single_fp_SPECfp_2006},
-                                          "peak": {"410.bwaves": multi_fp_410_bwaves, "416.gamess": multi_fp_416_gamess,
-                                                   "433.milc": multi_fp_433_milc, "434.zeusmp": multi_fp_434_zeusmp,
-                                                   "435.gromacs": multi_fp_435_gromacs,
-                                                   "436.cactusADM": multi_fp_436_cactusADM,
-                                                   "437.leslie3d": multi_fp_437_leslie3d,
-                                                   "444.namd": multi_fp_444_namd, "447.dealII": multi_fp_447_dealII,
-                                                   "450.soplex": multi_fp_450_soplex, "453.povray": multi_fp_453_povray,
-                                                   "454.calculix": multi_fp_454_calculix,
-                                                   "459.GemsFDTD": multi_fp_459_GemsFDTD,
-                                                   "465.tonto": multi_fp_465_tonto,
-                                                   "470.lbm": multi_fp_470_lbm,
-                                                   "481.wrf": multi_fp_481_wrf, "482.sphinx3": multi_fp_482_sphinx3,
-                                                   "SPECfp_2006": multi_fp_SPECfp_2006}}}}
+                                                      "433.milc": "",
+                                                      "434.zeusmp": "", "435.gromacs": "",
+                                                      "436.cactusADM": "",
+                                                      "437.leslie3d": "",
+                                                      "444.namd": "", "447.dealII": "",
+                                                      "450.soplex": "",
+                                                      "453.povray": "", "454.calculix": "",
+                                                      "459.GemsFDTD": "", "465.tonto": "",
+                                                      "470.lbm": "",
+                                                      "481.wrf": "", "482.sphinx3": "",
+                                                      "SPECfp_2006": single_fp_SPECfp_2006},
+                                             "peak": {"410.bwaves": multi_fp_410_bwaves, "416.gamess": multi_fp_416_gamess,
+                                                      "433.milc": multi_fp_433_milc, "434.zeusmp": multi_fp_434_zeusmp,
+                                                      "435.gromacs": multi_fp_435_gromacs,
+                                                      "436.cactusADM": multi_fp_436_cactusADM,
+                                                      "437.leslie3d": multi_fp_437_leslie3d,
+                                                      "444.namd": multi_fp_444_namd, "447.dealII": multi_fp_447_dealII,
+                                                      "450.soplex": multi_fp_450_soplex, "453.povray": multi_fp_453_povray,
+                                                      "454.calculix": multi_fp_454_calculix,
+                                                      "459.GemsFDTD": multi_fp_459_GemsFDTD,
+                                                      "465.tonto": multi_fp_465_tonto,
+                                                      "470.lbm": multi_fp_470_lbm,
+                                                      "481.wrf": multi_fp_481_wrf, "482.sphinx3": multi_fp_482_sphinx3,
+                                                      "SPECfp_2006": multi_fp_SPECfp_2006}}}}
     return data
+
 
 def cpu2017_excel_to_json(file_path, sheet_name, end_number):
     """
@@ -987,24 +997,24 @@ def cpu2017_excel_to_json(file_path, sheet_name, end_number):
                 data["cpu2017-%s-multi-fprate-0-" % (sheet_name[12:16]) + str(index - 3)] = \
                     {"execute_cmd": execute_cmd, "modify_parameters": modify_parameters, "tool_name": "speccpu2006",
                      "items": {"多线程_fp_rate": {"base": {"503.bwaves_r": multi_fp_rate_503_bwaves_r,
-                                                   "507.cactuBSSN_r": multi_fp_rate_507_cactuBSSN_r,
-                                                   "508.namd_r": multi_fp_rate_508_namd_r,
-                                                   "510.parest_r": multi_fp_rate_510_parest_r,
-                                                   "511.povray_r": multi_fp_rate_511_povray_r,
-                                                   "519.lbm_r": multi_fp_rate_519_lbm_r,
-                                                   "521.wrf_r": multi_fp_rate_521_wrf_r,
-                                                   "526.blender_r": multi_fp_rate_526_blender_r,
-                                                   "527.cam4_r": multi_fp_rate_527_cam4_r,
-                                                   "538.imagick_r": multi_fp_rate_538_imagick_r,
-                                                   "544.nab_r": multi_fp_rate_544_nab_r,
-                                                   "549.fotonik3d_r": multi_fp_rate_549_fotonik3d_r,
-                                                   "554.roms_r": multi_fp_rate_554_roms_r,
-                                                   "SPECrate2017_fp": multi_fp_rate_PECrate2017_fp},
-                                          "peak": {"503.bwaves_r": "", "507.cactuBSSN_r": "", "508.namd_r": "",
-                                                   "510.parest_r": "", "511.povray_r": "", "519.lbm_r": "",
-                                                   "521.wrf_r": "", "526.blender_r": "", "527.cam4_r": "",
-                                                   "538.imagick_r": "", "544.nab_r": "", "549.fotonik3d_r": "",
-                                                   "554.roms_r": "", "SPECrate2017_fp": ""}}}}
+                                                           "507.cactuBSSN_r": multi_fp_rate_507_cactuBSSN_r,
+                                                           "508.namd_r": multi_fp_rate_508_namd_r,
+                                                           "510.parest_r": multi_fp_rate_510_parest_r,
+                                                           "511.povray_r": multi_fp_rate_511_povray_r,
+                                                           "519.lbm_r": multi_fp_rate_519_lbm_r,
+                                                           "521.wrf_r": multi_fp_rate_521_wrf_r,
+                                                           "526.blender_r": multi_fp_rate_526_blender_r,
+                                                           "527.cam4_r": multi_fp_rate_527_cam4_r,
+                                                           "538.imagick_r": multi_fp_rate_538_imagick_r,
+                                                           "544.nab_r": multi_fp_rate_544_nab_r,
+                                                           "549.fotonik3d_r": multi_fp_rate_549_fotonik3d_r,
+                                                           "554.roms_r": multi_fp_rate_554_roms_r,
+                                                           "SPECrate2017_fp": multi_fp_rate_PECrate2017_fp},
+                                                  "peak": {"503.bwaves_r": "", "507.cactuBSSN_r": "", "508.namd_r": "",
+                                                           "510.parest_r": "", "511.povray_r": "", "519.lbm_r": "",
+                                                           "521.wrf_r": "", "526.blender_r": "", "527.cam4_r": "",
+                                                           "538.imagick_r": "", "544.nab_r": "", "549.fotonik3d_r": "",
+                                                           "554.roms_r": "", "SPECrate2017_fp": ""}}}}
             elif sheet_name[12:16] == "peak":
                 data["cpu2017-%s-single-intrate-0-" % (sheet_name[12:16]) + str(index - 3)] = \
                     {"execute_cmd": execute_cmd, "modify_parameters": modify_parameters, "tool_name": "speccpu2006",
@@ -1085,6 +1095,7 @@ def cpu2017_excel_to_json(file_path, sheet_name, end_number):
                                   "SPECrate2017_fp": multi_fp_rate_PECrate2017_fp}}}}
     return data
 
+
 def replace_nan_with_empty_string(data):
     """
      递归函数，将字典中所有的 NaN 替换为一个空字符串
@@ -1102,8 +1113,8 @@ def replace_nan_with_empty_string(data):
     return data
 
 
-env_data = env_excel_to_json(user_data['file_path'], "性能测试环境",user_data['disk_number'],user_data['nic_number'])
-all_json_data = {**env_data,**{"time": time.time()}}
+env_data = env_excel_to_json(user_data['file_path'], "性能测试环境", user_data['disk_number'], user_data['nic_number'])
+all_json_data = {**env_data, **{"time": time.time()}}
 
 for sheet_name in user_data['sheet_names']:
     if sheet_name == "Stream":

@@ -38,7 +38,7 @@ class Config():
 
         # 表头的其它颜色
         self.color_col_top = PatternFill("solid", fgColor="99CCFF")
-        self. font_col_top = Font(name="宋体", size=18, color="000000")
+        self.font_col_top = Font(name="宋体", size=18, color="000000")
 
         # cmd的颜色
         self.color_cmd = PatternFill("solid", fgColor="CCFFFF")
@@ -62,15 +62,16 @@ class Config():
 
         # 对比上升内容
         self.color_compar_down = PatternFill("solid", fgColor="ffc7ce")
-        self.font_compar_down = Font(name="宋体",color="9c0006")
+        self.font_compar_down = Font(name="宋体", color="9c0006")
         # 左侧的列宽，按照顺序计算
         self.sheetname_width = {"Stream": [10, 20], "Lmbench": [30, 20], "Unixbench": [10, 30], "Fio": [15, 10],
-                                "Iozone": [30, 10], "Specjvm2008": [10, 20], "Speccpu2006(base)": [10,20],
+                                "Iozone": [30, 10], "Specjvm2008": [10, 20], "Speccpu2006(base)": [10, 20],
                                 "Speccpu2006(peak)": [10, 20], "Speccpu2017(base)": [10, 20],
                                 "Speccpu2017(peak)": [10, 20]}
 
+
 # 参数是{单元格位置(1,1),填充颜色(color),字体样式(font)}
-def set_cell_style(worksheet, row, column,color, font):
+def set_cell_style(worksheet, row, column, color, font):
     """
     设置指定工作表中指定单元格的样式。
     Args:
@@ -85,9 +86,10 @@ def set_cell_style(worksheet, row, column,color, font):
     cell.fill = color
     cell.font = font
 
-def create_base_export(user_name,sheetname,data):
-    if os.path.exists(EXCEL_TEMP + '%s.xlsx'%(user_name)):
-        workbook = openpyxl.open(EXCEL_TEMP + '%s.xlsx'%(user_name))
+
+def create_base_export(user_name, sheetname, data):
+    if os.path.exists(EXCEL_TEMP + '%s.xlsx' % (user_name)):
+        workbook = openpyxl.open(EXCEL_TEMP + '%s.xlsx' % (user_name))
     else:
         workbook = openpyxl.Workbook()
     # 获取默认的工作表对象
@@ -113,12 +115,12 @@ def create_base_export(user_name,sheetname,data):
     worksheet.delete_rows(1)
 
     # 合并表头中的行
-    if sheetname in ["Stream", "Lmbench","Unixbench","Fio","Specjvm2008"]:
+    if sheetname in ["Stream", "Lmbench", "Unixbench", "Fio", "Specjvm2008"]:
         worksheet.merge_cells('A1:B1')
         worksheet.merge_cells('A2:B2')
         worksheet.merge_cells('A3:B3')
         worksheet.merge_cells('A4:B4')
-    elif sheetname in ["Speccpu2006(base)","Speccpu2006(peak)"]:
+    elif sheetname in ["Speccpu2006(base)", "Speccpu2006(peak)"]:
         # 复制前四行的第一列数据到第二列
         for row_number in range(1, 5):
             cell_value = worksheet.cell(row=row_number, column=1).value
@@ -129,7 +131,7 @@ def create_base_export(user_name,sheetname,data):
         worksheet.merge_cells('A2:C2')
         worksheet.merge_cells('A3:C3')
         worksheet.merge_cells('A4:C4')
-    elif sheetname in ["Speccpu2017(base)","Speccpu2017(peak)"]:
+    elif sheetname in ["Speccpu2017(base)", "Speccpu2017(peak)"]:
         # 复制前四行的第一列数据到第二列
         for row_number in range(1, 5):
             cell_value = worksheet.cell(row=row_number, column=1).value
@@ -141,9 +143,10 @@ def create_base_export(user_name,sheetname,data):
         worksheet.merge_cells('A2:D2')
         worksheet.merge_cells('A3:D3')
         worksheet.merge_cells('A4:D4')
-    return worksheet,workbook
+    return worksheet, workbook
 
-def set_base_export_style(worksheet,config,sheetname):
+
+def set_base_export_style(worksheet, config, sheetname):
     """
     设置表格头样式
     :param worksheet:
@@ -168,14 +171,14 @@ def set_base_export_style(worksheet,config,sheetname):
         # 设置列宽
         column_letter = get_column_letter(i)
         if sheetname in ["Speccpu2006(base)", "Speccpu2006(peak)"]:
-            if i in [1,2,3]:
+            if i in [1, 2, 3]:
                 worksheet.column_dimensions[column_letter].width = config.sheetname_width[sheetname][0]
             elif i == 4:
                 worksheet.column_dimensions[column_letter].width = config.sheetname_width[sheetname][1]
             else:
                 worksheet.column_dimensions[column_letter].width = 15
         elif sheetname in ["Speccpu2017(base)", "Speccpu2017(peak)"]:
-            if i in [1,2,3,4]:
+            if i in [1, 2, 3, 4]:
                 worksheet.column_dimensions[column_letter].width = config.sheetname_width[sheetname][0]
             elif i == 5:
                 worksheet.column_dimensions[column_letter].width = config.sheetname_width[sheetname][1]
@@ -213,7 +216,8 @@ def set_base_export_style(worksheet,config,sheetname):
             cell.alignment = config.alignment_center
     return worksheet
 
-def env_excel(user_name,data,compar_num):
+
+def env_excel(user_name, data, compar_num):
     """
     设置环境表格的样式
     :param user_name:
@@ -222,8 +226,8 @@ def env_excel(user_name,data,compar_num):
     """
     if not os.path.exists(EXCEL_TEMP):
         os.makedirs(EXCEL_TEMP)
-    if os.path.exists(EXCEL_TEMP + '%s.xlsx'%(user_name)):
-        os.remove(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    if os.path.exists(EXCEL_TEMP + '%s.xlsx' % (user_name)):
+        os.remove(EXCEL_TEMP + '%s.xlsx' % (user_name))
     config = Config()
     workbook = openpyxl.Workbook()
     # 获取默认的工作表对象
@@ -244,7 +248,7 @@ def env_excel(user_name,data,compar_num):
         for key in header:
             row.append(row_data.get(key, ''))
         worksheet.append(row)
-    worksheet.delete_rows(1,2)
+    worksheet.delete_rows(1, 2)
     worksheet.insert_rows(1, 5)
 
     # 设置第一列的样式
@@ -288,8 +292,8 @@ def env_excel(user_name,data,compar_num):
     d_n_row_nu = disk_row_nu + nic_row_nu
     # 合并列
     # 第一列
-    worksheet.merge_cells(start_row=6, start_column=1, end_row=35+d_n_row_nu, end_column=1)
-    worksheet.merge_cells(start_row=36+d_n_row_nu, start_column=1, end_row=worksheet.max_row, end_column=1)
+    worksheet.merge_cells(start_row=6, start_column=1, end_row=35 + d_n_row_nu, end_column=1)
+    worksheet.merge_cells(start_row=36 + d_n_row_nu, start_column=1, end_row=worksheet.max_row, end_column=1)
     # 第二列
     worksheet.merge_cells(start_row=6, start_column=2, end_row=8, end_column=2)
     worksheet.merge_cells(start_row=9, start_column=2, end_row=10, end_column=2)
@@ -330,9 +334,10 @@ def env_excel(user_name,data,compar_num):
 
     worksheet.cell(row=1, column=1).value = "性能测试环境统计表"
     # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))
 
-def stream_excel(user_name,data):
+
+def stream_excel(user_name, data):
     """
     设置stream表格样式
     :param user_name:
@@ -341,7 +346,7 @@ def stream_excel(user_name,data):
     """
     sheetname = "Stream"
     config = Config()
-    worksheet,workbook = create_base_export(user_name, sheetname,data)
+    worksheet, workbook = create_base_export(user_name, sheetname, data)
 
     # 设置第一列的样式
     column_letter = get_column_letter(1)
@@ -356,7 +361,7 @@ def stream_excel(user_name,data):
         cell.font = config.font_item_2
 
     # 设置其它的表格样式
-    worksheet = set_base_export_style(worksheet,config,sheetname)
+    worksheet = set_base_export_style(worksheet, config, sheetname)
 
     # 合并列
     worksheet.merge_cells(start_row=5, start_column=1, end_row=9, end_column=1)
@@ -365,12 +370,13 @@ def stream_excel(user_name,data):
     # 在最下方增加一行，设置单元格内容并合并
     new_row = worksheet.max_row + 1
     worksheet.cell(row=new_row, column=1, value=data['analyze_data'])
-    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row+1, end_column=len(data['data'][0]))
+    worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))
 
-def lmbench_excel(user_name,data):
+
+def lmbench_excel(user_name, data):
     """
     设置lmbench表格样式
     :param user_name:
@@ -379,7 +385,7 @@ def lmbench_excel(user_name,data):
     """
     sheetname = "Lmbench"
     config = Config()
-    worksheet, workbook = create_base_export(user_name,sheetname, data)
+    worksheet, workbook = create_base_export(user_name, sheetname, data)
 
     # 设置第一列的样式
     column_letter = get_column_letter(1)
@@ -394,7 +400,7 @@ def lmbench_excel(user_name,data):
         cell.font = config.font_item_2
 
     # 设置其它的表格样式
-    worksheet = set_base_export_style(worksheet, config,sheetname)
+    worksheet = set_base_export_style(worksheet, config, sheetname)
 
     # 合并列
     worksheet.merge_cells(start_row=5, start_column=1, end_row=9, end_column=1)
@@ -415,9 +421,10 @@ def lmbench_excel(user_name,data):
     worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))
 
-def unixbench_excel(user_name,data):
+
+def unixbench_excel(user_name, data):
     """
     设置unixbench表格样式
     :param user_name:
@@ -426,7 +433,7 @@ def unixbench_excel(user_name,data):
     """
     sheetname = "Unixbench"
     config = Config()
-    worksheet, workbook = create_base_export(user_name,sheetname, data)
+    worksheet, workbook = create_base_export(user_name, sheetname, data)
 
     # 设置第一列的样式
     column_letter = get_column_letter(1)
@@ -441,7 +448,7 @@ def unixbench_excel(user_name,data):
         cell.font = config.font_item_2
 
     # 设置其它的表格样式
-    worksheet = set_base_export_style(worksheet, config,sheetname)
+    worksheet = set_base_export_style(worksheet, config, sheetname)
 
     # 合并列
     worksheet.merge_cells(start_row=5, start_column=1, end_row=17, end_column=1)
@@ -457,9 +464,10 @@ def unixbench_excel(user_name,data):
     worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))
 
-def fio_excel(user_name,data):
+
+def fio_excel(user_name, data):
     """
     设置fio表格样式
     :param user_name:
@@ -468,7 +476,7 @@ def fio_excel(user_name,data):
     """
     sheetname = "Fio"
     config = Config()
-    worksheet, workbook = create_base_export(user_name,sheetname, data)
+    worksheet, workbook = create_base_export(user_name, sheetname, data)
 
     # 设置第一列的样式
     column_letter = get_column_letter(1)
@@ -483,13 +491,13 @@ def fio_excel(user_name,data):
         cell.font = config.font_item_2
 
     # 设置其它的表格样式
-    worksheet = set_base_export_style(worksheet, config,sheetname)
+    worksheet = set_base_export_style(worksheet, config, sheetname)
 
     # 合并列
     bw_row = []
-    for i in range(int((worksheet.max_row-4)/4)):
-        bw_row.append(4*i + 8)
-        worksheet.merge_cells(start_row=5+4*i, start_column=1, end_row=8+4*i, end_column=1)
+    for i in range(int((worksheet.max_row - 4) / 4)):
+        bw_row.append(4 * i + 8)
+        worksheet.merge_cells(start_row=5 + 4 * i, start_column=1, end_row=8 + 4 * i, end_column=1)
 
     # 在最下方增加一行，设置单元格内容并合并
     new_row = worksheet.max_row + 1
@@ -497,9 +505,10 @@ def fio_excel(user_name,data):
     worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))
 
-def iozone_excel(user_name,data):
+
+def iozone_excel(user_name, data):
     """
     设置iozone表格样式
     :param user_name:
@@ -508,7 +517,7 @@ def iozone_excel(user_name,data):
     """
     sheetname = "Iozone"
     config = Config()
-    worksheet, workbook = create_base_export(user_name,sheetname, data)
+    worksheet, workbook = create_base_export(user_name, sheetname, data)
 
     # 设置第一列的样式
     column_letter = get_column_letter(1)
@@ -523,7 +532,7 @@ def iozone_excel(user_name,data):
         cell.font = config.font_item_2
 
     # 设置其它的表格样式
-    worksheet = set_base_export_style(worksheet, config,sheetname)
+    worksheet = set_base_export_style(worksheet, config, sheetname)
 
     # 合并列
 
@@ -533,9 +542,10 @@ def iozone_excel(user_name,data):
     worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))
 
-def jvm2008_excel(user_name,data):
+
+def jvm2008_excel(user_name, data):
     """
     设置jvm2008表格样式
     :param user_name:
@@ -544,7 +554,7 @@ def jvm2008_excel(user_name,data):
     """
     sheetname = "Specjvm2008"
     config = Config()
-    worksheet,workbook = create_base_export(user_name,sheetname,data)
+    worksheet, workbook = create_base_export(user_name, sheetname, data)
 
     # 设置第一列的样式
     column_letter = get_column_letter(1)
@@ -559,7 +569,7 @@ def jvm2008_excel(user_name,data):
         cell.font = config.font_item_2
 
     # 设置其它的表格样式
-    worksheet = set_base_export_style(worksheet,config,sheetname)
+    worksheet = set_base_export_style(worksheet, config, sheetname)
 
     # 合并列
     worksheet.merge_cells(start_row=5, start_column=1, end_row=16, end_column=1)
@@ -571,9 +581,10 @@ def jvm2008_excel(user_name,data):
     worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))
 
-def cpu2006_excel(user_name,sheetname, data):
+
+def cpu2006_excel(user_name, sheetname, data):
     """
     设置cpu2006表格样式
     :param user_name:
@@ -582,7 +593,7 @@ def cpu2006_excel(user_name,sheetname, data):
     :return:
     """
     config = Config()
-    worksheet,workbook = create_base_export(user_name,sheetname,data)
+    worksheet, workbook = create_base_export(user_name, sheetname, data)
 
     # 设置第一列的样式
     column_letter = get_column_letter(1)
@@ -601,7 +612,7 @@ def cpu2006_excel(user_name,sheetname, data):
         cell.font = config.font_item_2
 
     # 设置其它的表格样式
-    worksheet = set_base_export_style(worksheet,config,sheetname)
+    worksheet = set_base_export_style(worksheet, config, sheetname)
 
     # 合并列
     # 第一列
@@ -619,9 +630,10 @@ def cpu2006_excel(user_name,sheetname, data):
     worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))
 
-def cpu2017_excel(user_name,sheetname, data):
+
+def cpu2017_excel(user_name, sheetname, data):
     """
     设置cpu2017表格样式
     :param user_name:
@@ -630,7 +642,7 @@ def cpu2017_excel(user_name,sheetname, data):
     :return:
     """
     config = Config()
-    worksheet,workbook = create_base_export(user_name,sheetname,data)
+    worksheet, workbook = create_base_export(user_name, sheetname, data)
 
     # 设置第一列的样式
     column_letter = get_column_letter(1)
@@ -654,7 +666,7 @@ def cpu2017_excel(user_name,sheetname, data):
         cell.font = config.font_item_2
 
     # 设置其它的表格样式
-    worksheet = set_base_export_style(worksheet,config,sheetname)
+    worksheet = set_base_export_style(worksheet, config, sheetname)
 
     # 合并列
     # 第一列
@@ -674,4 +686,4 @@ def cpu2017_excel(user_name,sheetname, data):
     worksheet.merge_cells(start_row=new_row, start_column=1, end_row=new_row + 1, end_column=len(data['data'][0]))
 
     # # 保存工作簿到文件
-    workbook.save(EXCEL_TEMP + '%s.xlsx'%(user_name))
+    workbook.save(EXCEL_TEMP + '%s.xlsx' % (user_name))

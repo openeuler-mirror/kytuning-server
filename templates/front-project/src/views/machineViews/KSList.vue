@@ -12,8 +12,8 @@
     <div class="cont">
       <el-table :data="showData" :header-cell-style="{fontSize:'15px'}" tooltip-effect="dark" border style="width: 100%">
         <el-table-column prop="ks_name" label="ks文件名称"></el-table-column>
-        <el-table-column prop="message" label="备注信息" ></el-table-column>
-<!--        <el-table-column prop="ks_content" label="ks文件内容"></el-table-column>-->
+        <el-table-column prop="message" label="备注信息"></el-table-column>
+        <!--        <el-table-column prop="ks_content" label="ks文件内容"></el-table-column>-->
         <el-table-column prop="user_name" label="管理人员"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
@@ -38,7 +38,7 @@
   </div>
   <div>
     <el-dialog :title="dialogTitle" v-model="dialogAddKsFile" width="1000px">
-      <el-form :model="ksFileData" ref="ksFileForm"  label-width="100px">
+      <el-form :model="ksFileData" ref="ksFileForm" label-width="100px">
         <el-form-item label="ks文件名称" prop="http_address">
           <el-input v-model="ksFileData.ks_name" autocomplete="off"></el-input>
         </el-form-item>
@@ -46,7 +46,7 @@
           <el-input v-model="ksFileData.message" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="ks文件内容" prop="http_address">
-          <el-input type="textarea" :rows="20"  placeholder="请输入内容" v-model="ksFileData.ks_content"></el-input>
+          <el-input type="textarea" :rows="20" placeholder="请输入内容" v-model="ksFileData.ks_content"></el-input>
         </el-form-item>
       </el-form>
       <template #footer>
