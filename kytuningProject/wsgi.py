@@ -15,9 +15,13 @@ https://docs.djangoproject.com/en/4.1/howto/deployment/wsgi/
 """
 
 import os
-
 from django.core.wsgi import get_wsgi_application
+# 自定义启动定时监控任务
+from appStore.utils.timed_tasks import new_monitor_kojifiles
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'kytuningProject.settings')
 
+new_monitor_kojifiles()
+
 application = get_wsgi_application()
+

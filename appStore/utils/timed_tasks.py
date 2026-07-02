@@ -16,8 +16,9 @@ from django.http import HttpRequest
 from appStore.testCase.models import TestCase
 from appStore.testMachine.models import TestMachine
 from appStore.userConfig.models import UserConfig
+from appStore.users.models import UserProfile
 from appStore.utils.constants import NEW_SERVER_PASSWORD, ROOT_SIZE, SWAP_SIZE, INTERVAL, START_TIME, CHECK_TIMEOUT, MONITOR_KOJIFILES_TIME, \
-    KOJIFILES_MD5
+    KOJIFILES_MD5, RUN_KYTUNING_CONFIG_TEMP
 from appStore.utils.subprocess import check_system_success, update_rpm, get_kojifiles_md5
 
 log = logging.getLogger('kytuninglog')
@@ -44,6 +45,9 @@ def test_tasks(ip, username, password, koji_addr, user_config_path):
         test_case.test_result = '系统安装失败'
         test_case.save()
         return schedule.CancelJob
+    jobs = schedule.jobs
+    for job in jobs:
+        print(f'当前环境中还存在的任务有：{job}')
     return False
 
 
@@ -109,6 +113,7 @@ def start_scheduler():
 
 
 def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
+    koji_md5_hash = None
     new_koji_md5_hash = get_kojifiles_md5(kojifile_addr)
     if new_koji_md5_hash == koji_md5_hash:
         log.info("kojifiles未发生改变，无需处理")
@@ -124,8 +129,10 @@ def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
             test_case.save()
             # 判断机器是否有人使用或者是否有排队人员
             if machine_data.owner or machine_data.queue_user:
-                machine_data.queue_user = machine_data.queue_user + ',' + request.user.chinese_name if machine_data.queue_user else request.user.chinese_name
-                machine_data.save()
+                # 判断排队列表中是否存在root用户
+                if 'root' not in machine_data.queue_user.split(','):
+                    machine_data.queue_user = machine_data.queue_user + ',' + request.user.chinese_name if machine_data.queue_user else request.user.chinese_name
+                    machine_data.save()
             else:
                 auto_install_system(machine_data, request, ip, test_case.iso_name, kojifile_addr, user_config_path)
 
@@ -139,8 +146,36 @@ def monitor_kojifiles(kojifile_addr, koji_md5_hash, request, user_config_path):
     """
     # 设置定时任务，监控kojifiles地址
     log.info('---------启动迭代测试-----------------')
-    schedule.every(MONITOR_KOJIFILES_TIME).days.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
+    schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
     # install_system(kojifile_addr, koji_md5_hash, request, user_config_path)
     # 启动定时任务调度器
     start_scheduler()
+    return None
+
+
+def new_monitor_kojifiles():
+    """
+    重启服务拉起所有监控kojifile地址的定时任务
+    :return:
+    """
+    # 获取所有监控任务
+    monitor_test_list = TestCase.objects.filter(is_it_monitored=True).order_by('-id')
+
+    # 创建一个root的request对象
+    from django.test import RequestFactory
+    # 创建一个 RequestFactory 实例
+    request_factory = RequestFactory()
+    # 查找root用户对象
+    root_user = UserProfile.objects.get(username='root')
+    # 使用 RequestFactory 创建一个 GET 请求对象，并设置用户信息
+    request = request_factory.get('/')
+    request.user = root_user
+
+    for monitor_test in monitor_test_list:
+        user_config_path = RUN_KYTUNING_CONFIG_TEMP + monitor_test.user_name
+        # 创建对应的定时任务
+        # install_system(monitor_test.kojifile_addr, monitor_test.kojifile_md5, request, user_config_path)
+        schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, monitor_test.kojifile_addr, monitor_test.kojifile_md5, request, user_config_path)
+        # 启动定时任务调度器
+        start_scheduler()
     return None
