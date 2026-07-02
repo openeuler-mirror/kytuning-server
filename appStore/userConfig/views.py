@@ -15,6 +15,7 @@ from appStore.utils.common import json_response
 
 log = logging.getLogger('kytuninglog')
 
+
 class UserConfigViewSet(viewsets.ModelViewSet):
     """
     用户配置数据管理
@@ -41,7 +42,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
         data_user_config['kojifile_addr'] = request.data.get('kojifile_addr')
         data_user_config['config_name'] = request.data.get('config_name')
         if not request.data.get('project_name'):
-            data_user_config['project_name'] = request.user.chinese_name + '监控测试数据'
+            data_user_config['project_name'] = request.user.chinese_name + '迭代测试数据'
         else:
             data_user_config['project_name'] = request.data.get('project_name')
         data_user_config['stream_number'] = request.data.get('stream')
@@ -87,7 +88,7 @@ class UserConfigViewSet(viewsets.ModelViewSet):
             config_data.config_name = request.data.get('config_name')
             config_data.project_name = request.data.get('project_name')
             if not request.data.get('project_name'):
-                config_data.project_name = request.user.chinese_name + '监控测试数据'
+                config_data.project_name = request.user.chinese_name + '迭代测试数据'
             else:
                 config_data.project_name = request.data.get('project_name')
             config_data.stream_number = request.data.get('stream')

@@ -13,13 +13,13 @@ class TestCase(models.Model):
     """测试案例表"""
     testType = (
         ("日常测试", "日常测试"),
-        ("监控测试", "监控测试"),
+        ("迭代测试", "迭代测试"),
         ("自动化分析测试", "自动化测试"),
     )
     test_type = models.CharField(max_length=50, verbose_name='测试类型', choices=testType)
     compar_data = models.TextField(verbose_name='对比数据，用于自动化分析测试', null=True, blank=True)
-    kojifile_addr = models.TextField(verbose_name='kojifei地址，用于自动化监控测试', null=True, blank=True)
-    iso_name = models.TextField(verbose_name='用于自动化监控测试自动化安装操作系统', null=True, blank=True)
+    kojifile_addr = models.TextField(verbose_name='kojifei地址，用于自动化迭代测试', null=True, blank=True)
+    iso_name = models.TextField(verbose_name='用于自动化迭代测试自动化安装操作系统', null=True, blank=True)
     project_name = models.CharField(max_length=200, verbose_name='项目名称')
     ip = models.CharField(max_length=50, verbose_name='IP地址')
     stream = models.IntegerField(default=0, verbose_name='几组stream数据')

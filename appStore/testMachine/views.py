@@ -210,7 +210,7 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 if machine_data.queue_user.split(',')[0] == 'root':
                     # 执行自动化安装操作系统，自动化测试等。
                     user_config_path = RUN_KYTUNING_CONFIG_TEMP + 'root'
-                    test_case = TestCase.objects.filter(ip=machine_data.server_IP).filter(test_type='监控测试').filter(test_result='排队中').last()
+                    test_case = TestCase.objects.filter(ip=machine_data.server_IP).filter(test_type='迭代测试').filter(test_result='排队中').last()
                     # 需要把request替换成root对象
                     request.user = UserProfile.objects.get(username='root')
                     auto_install_system(machine_data, request, machine_data.server_IP, test_case.iso_name, test_case.kojifile_addr, user_config_path)

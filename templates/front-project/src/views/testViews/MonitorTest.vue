@@ -116,7 +116,7 @@ export default {
       labelPosition: ref('right'),
       formData: {
         kojifileAddr: '',
-        test_type: '监控测试',
+        test_type: '迭代测试',
         configName: '',
         yamlData: baseYamlData,
         isoName: '',
@@ -333,7 +333,7 @@ export default {
         }
         do_test_case(formData).then(() => {
           this.formData.kojifileAddr = ''
-          this.formData.test_type = '监控测试'
+          this.formData.test_type = '迭代测试'
           this.formData.isoName = ''
           this.formData.configName = ''
           this.formData.testIP = ''
