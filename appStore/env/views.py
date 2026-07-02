@@ -1,11 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
-"""
-
 import os
 import json
 import logging
@@ -431,10 +423,11 @@ class EnvViewSet(viewsets.ModelViewSet):
                 test_machine.owner = None
                 test_machine.save()
 
-        # 发送蓝信通知
-        # 获取存储数据的url
-        value_type = list(request.data.keys())[2].split('-')[0].lower()
-        web_url = KYTUNING_WEB_URL + '/' + str(value_type) + '/' + str(request.data['env_id'])
-        content = "您的测试已完成请及时查看：{}".format(web_url)
-        send_lanxin_message(request.user.chinese_name, content)
+        # todo 因为切换内网无法使用蓝信，暂时注释
+        # # 发送蓝信通知
+        # # 获取存储数据的url
+        # value_type = list(request.data.keys())[2].split('-')[0].lower()
+        # web_url = KYTUNING_WEB_URL + '/' + str(value_type) + '/' + str(request.data['env_id'])
+        # content = "您的测试已完成请及时查看：{}".format(web_url)
+        # send_lanxin_message(request.user.chinese_name, content)
         return json_response({}, status.HTTP_200_OK, '创建成功！')

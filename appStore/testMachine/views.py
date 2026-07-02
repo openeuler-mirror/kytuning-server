@@ -1,11 +1,3 @@
-"""
- * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
- * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
- * See LICENSE file for more details.
- * Author: wangqingzheng <wangqingzheng@kylinos.cn>
- * Date: Fri Mar 1 10:09:12 2024 +0800
-"""
-
 import logging
 from rest_framework import status, viewsets
 # Create your views here.
@@ -214,8 +206,9 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                     # 需要把request替换成root对象
                     request.user = UserProfile.objects.get(username='root')
                     auto_install_system(machine_data, request, machine_data.server_IP, test_case.iso_name, test_case.kojifile_addr, user_config_path)
-                content = "BMC设备IP为：{} 的机器已完成使用，请您确认".format(machine_data.BMC_IP)
-                send_lanxin_message(machine_data.queue_user.split(',')[0], content)
+                # todo 因为切换内网无法使用蓝信，暂时注释
+                # content = "BMC设备IP为：{} 的机器已完成使用，请您确认".format(machine_data.BMC_IP)
+                # send_lanxin_message(machine_data.queue_user.split(',')[0], content)
             return json_response({}, status.HTTP_200_OK, '使用完成状态修改成功')
         else:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '不可更改别人的使用状态')
