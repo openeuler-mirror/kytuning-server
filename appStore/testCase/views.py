@@ -149,7 +149,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 KOJIFILES_MD5[data_test_case['kojifile_addr']] = koji_md5_hash
                 for ip in ip_list:
                     data_test_case['ip'] = ip
-                    data_test_case['test_result'] = '排队中'
+                    data_test_case['test_result'] = '等待中'
                     # 获取iso公共名称
                     iso_name_ = '-'.join(all_iso_name.rsplit('.', 1)[0].split('-')[:-1])
                     TestMachine_ = TestMachine.objects.filter(server_IP=ip).first()
@@ -159,6 +159,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                         return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到不同版本的iso架构')
                     data_test_case['iso_name'] = adapt_ISO.ISO_name
                     data_test_case['project_name'] = '定时任务-{}-{}'.format(ip, data_test_case['iso_name'])
+                    data_test_case['is_it_monitored'] = True
                     # 创建测试数据
                     serializer_test_case = TestCaseSerializer(data=data_test_case)
                     if serializer_test_case.is_valid():
@@ -185,9 +186,10 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                             TestMachine_.queue_user = TestMachine_.queue_user + ',' + request.user.chinese_name if TestMachine_.queue_user else request.user.chinese_name
                             TestMachine_.save()
                         else:
+                            # 执行自动化安装时直接修改测试数据的结果状态
+                            TestCase.objects.filter(id=test_case_id).update(test_result='运行中')
                             # 自动化安装所需操作系统，监控系统是否安装完成，及自动化测试
-                            auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'],
-                                                user_config_path)
+                            auto_install_system(TestMachine_, request, ip, data_test_case['iso_name'], data_test_case['kojifile_addr'], user_config_path)
                     else:
                         log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
                         log.info('testCase存储数据为 ：%s，' % data_test_case)

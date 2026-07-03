@@ -415,19 +415,23 @@ class EnvViewSet(viewsets.ModelViewSet):
 
         # 修改测试列表的状态
         if request.data.get('test_case_id'):
-            TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
             # 如果是定时任务则返还设备
             if TestCase.objects.get(id=request.data['test_case_id']).test_type == '迭代测试':
+                TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='等待中')
+                # 不考虑当前机器使用人员是root且排队用户依然是root用户，所以可以直接修改数据库状态
                 machine_ip = TestCase.objects.get(id=request.data['test_case_id']).ip
                 test_machine = TestMachine.objects.get(server_IP=machine_ip)
                 test_machine.owner = None
                 test_machine.save()
+            else:
+                TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
 
-        # todo 因为切换内网无法使用蓝信，暂时注释
+        # todo 因切换内网无法使用蓝信，暂时注释
         # # 发送蓝信通知
         # # 获取存储数据的url
         # value_type = list(request.data.keys())[2].split('-')[0].lower()
         # web_url = KYTUNING_WEB_URL + '/' + str(value_type) + '/' + str(request.data['env_id'])
         # content = "您的测试已完成请及时查看：{}".format(web_url)
         # send_lanxin_message(request.user.chinese_name, content)
+
         return json_response({}, status.HTTP_200_OK, '创建成功！')
