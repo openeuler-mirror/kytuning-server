@@ -1,8 +1,17 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Fri Mar 1 10:09:12 2024 +0800
+"""
+
 import os
 import json
 import logging
 from base64 import b64decode
 from django.http import HttpRequest
+from django.core.mail import send_mail
 from rest_framework import status, viewsets
 # Create your views here.
 from appStore.env.models import Env
@@ -426,12 +435,34 @@ class EnvViewSet(viewsets.ModelViewSet):
             else:
                 TestCase.objects.filter(id=request.data['test_case_id']).update(test_result='测试完成')
 
-        # todo 因切换内网无法使用蓝信，暂时注释
-        # # 发送蓝信通知
-        # # 获取存储数据的url
-        # value_type = list(request.data.keys())[2].split('-')[0].lower()
-        # web_url = KYTUNING_WEB_URL + '/' + str(value_type) + '/' + str(request.data['env_id'])
-        # content = "您的测试已完成请及时查看：{}".format(web_url)
+        # 发送蓝信通知
         # send_lanxin_message(request.user.chinese_name, content)
+
+        if str(request.user) == 'root':
+            print('开始发送邮件')
+            project_list = Project.objects.filter(project_name=request.data['project_name'])
+            last_project_id = project_list.order_by('-id')[0].id
+            # 判断数据是否有两条及以上的数据
+            if len(project_list) > 1:
+                second_last_project_id = project_list.order_by('-id')[1].id
+                compar_url = '对比数据的url为\n' + KYTUNING_WEB_URL + '/stream/{}/{}'.format(last_project_id, second_last_project_id)
+                content = "测试已完成请及时查看：{}\n\n对比信息为：\n增加对比信息".format(compar_url)
+            else:
+                url = '对比数据的url为' + KYTUNING_WEB_URL + '/stream/{}'.format(last_project_id)
+                content = "测试已完成请及时查看：{}".format(url)
+
+            send_mail('Kytuning测试消息', content, 'wangqingzheng@kylinos.cn',
+                      ['wangqingzheng@kylinos.cn'], fail_silently=False)
+            print('邮件发送完成')
+        else:
+            print('开始发送邮件')
+            # 获取存储数据的url
+            value_type = list(request.data.keys())[2].split('-')[0].lower()
+            web_url = KYTUNING_WEB_URL + '/' + str(value_type) + '/' + str(request.data['env_id'])
+            content = "您的测试已完成请及时查看：{}".format(web_url)
+            user_mail = str(request.user) + '@kylinos.cn'
+            # 发送邮件(主题 消息 from-email to-email)
+            send_mail('Kytuning消息', content, 'wangqingzheng@kylinos.cn', [user_mail], fail_silently=False)
+            print(user_mail, '邮件发送完成')
 
         return json_response({}, status.HTTP_200_OK, '创建成功！')

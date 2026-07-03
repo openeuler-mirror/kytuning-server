@@ -172,6 +172,21 @@ PASSWORD_HASHERS = [
 ]
 
 ######################
+#      邮件          #
+######################
+# 邮件后端设置
+# settings.py
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mailgw.kylinos.cn'
+EMAIL_PORT = 465
+# 需要修改为自己的邮箱和密码
+EMAIL_HOST_USER = 'wangqingzheng@kylinos.cn'  # 个人邮箱
+EMAIL_HOST_PASSWORD = 'xxxxxx'  # 密钥
+# EMAIL_USE_TLS = True  # 使用TLS安全连接，kylin公司不用这个
+EMAIL_USE_SSL = True  # 使用SSL安全连接
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # 默认发件人邮箱
+
+######################
 #      认证          #
 ######################
 REST_FRAMEWORK = {
