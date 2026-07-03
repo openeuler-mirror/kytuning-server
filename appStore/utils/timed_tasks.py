@@ -51,6 +51,21 @@ def test_tasks(ip, username, password, koji_addr, user_config_path):
     return False
 
 
+def start_scheduler():
+    """
+    启动定时任务调度器
+    """
+
+    def run_scheduler():
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+    scheduler_thread = threading.Thread(target=run_scheduler)
+    scheduler_thread.daemon = True
+    scheduler_thread.start()
+
+
 def auto_install_system(test_machine_data, request, ip, iso_name, koji_addr, user_config_path):
     """
     自动化安装操作系统
@@ -97,21 +112,6 @@ def auto_install_system(test_machine_data, request, ip, iso_name, koji_addr, use
     return None
 
 
-def start_scheduler():
-    """
-    启动定时任务调度器
-    """
-
-    def run_scheduler():
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
-
-    scheduler_thread = threading.Thread(target=run_scheduler)
-    scheduler_thread.daemon = True
-    scheduler_thread.start()
-
-
 def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
     koji_md5_hash = None
     new_koji_md5_hash = get_kojifiles_md5(kojifile_addr)
@@ -125,15 +125,19 @@ def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
         for ip in ip_list:
             machine_data = TestMachine.objects.get(server_IP=ip)
             test_case = TestCase.objects.filter(test_type='迭代测试', kojifile_addr=kojifile_addr).order_by('-id').last()
-            test_case.test_result = '排队中'
-            test_case.save()
             # 判断机器是否有人使用或者是否有排队人员
             if machine_data.owner or machine_data.queue_user:
                 # 判断排队列表中是否存在root用户
-                if 'root' not in machine_data.queue_user.split(','):
+                if 'root' not in machine_data.queue_user.split(',') and machine_data.owner != 'root':
+                    test_case.test_result = '等待中'
+                    test_case.save()
                     machine_data.queue_user = machine_data.queue_user + ',' + request.user.chinese_name if machine_data.queue_user else request.user.chinese_name
                     machine_data.save()
+                else:
+                    print(f'排队人员中有root用户，或者使用人员是root用户')
             else:
+                test_case.test_result = '运行中'
+                test_case.save()
                 auto_install_system(machine_data, request, ip, test_case.iso_name, kojifile_addr, user_config_path)
 
 
@@ -172,6 +176,8 @@ def new_monitor_kojifiles():
     request.user = root_user
 
     for monitor_test in monitor_test_list:
+        if monitor_test.test_result == "运行中":
+            continue
         user_config_path = RUN_KYTUNING_CONFIG_TEMP + monitor_test.user_name
         # 创建对应的定时任务
         # install_system(monitor_test.kojifile_addr, monitor_test.kojifile_md5, request, user_config_path)
