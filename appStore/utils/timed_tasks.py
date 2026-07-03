@@ -34,8 +34,7 @@ def test_tasks(ip, username, password, koji_addr, user_config_path):
     :param user_config_path：用户配置地址
     :return:
     """
-    log.info("-----------自动化安装操作系统-----------")
-    print("-----------自动化安装操作系统-----------")
+    log.info("-----------检查系统是否安装完成-----------")
     if check_system_success(ip, username, password):
         log.info(f"任务 {ip} 的系统安装成功")
         print(f"任务 {ip} 的系统安装成功")
@@ -58,12 +57,11 @@ def start_scheduler():
     """
     启动定时任务调度器
     """
-
     def run_scheduler():
         while True:
             schedule.run_pending()
+            # 主线程等待一秒钟，然后开始执行其他操作
             time.sleep(1)
-
     scheduler_thread = threading.Thread(target=run_scheduler)
     scheduler_thread.daemon = True
     scheduler_thread.start()
@@ -171,9 +169,5 @@ def new_monitor_kojifiles():
     for monitor_test in monitor_test_list:
         print('运行监控测试的数据是', monitor_test)
         user_config_path = RUN_KYTUNING_CONFIG_TEMP + monitor_test.user_name
-        # 创建对应的定时任务
         install_system(monitor_test, request, user_config_path)
-        # schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, monitor_test, request, user_config_path)
-        # 启动定时任务调度器
-        start_scheduler()
     return None
