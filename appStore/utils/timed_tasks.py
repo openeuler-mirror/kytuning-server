@@ -18,7 +18,7 @@ from appStore.testMachine.models import TestMachine
 from appStore.userConfig.models import UserConfig
 from appStore.users.models import UserProfile
 from appStore.utils.constants import NEW_SERVER_PASSWORD, ROOT_SIZE, SWAP_SIZE, INTERVAL, START_TIME, CHECK_TIMEOUT, MONITOR_KOJIFILES_TIME, \
-    KOJIFILES_MD5, RUN_KYTUNING_CONFIG_TEMP
+    RUN_KYTUNING_CONFIG_TEMP
 from appStore.utils.subprocess import check_system_success, update_rpm, get_kojifiles_md5
 
 log = logging.getLogger('kytuninglog')
@@ -112,49 +112,30 @@ def auto_install_system(test_machine_data, request, ip, iso_name, koji_addr, use
     return None
 
 
-def install_system(kojifile_addr, koji_md5_hash, request, user_config_path):
-    koji_md5_hash = None
-    new_koji_md5_hash = get_kojifiles_md5(kojifile_addr)
-    if new_koji_md5_hash == koji_md5_hash:
+def install_system(monitor_test, request, user_config_path):
+    new_koji_md5 = get_kojifiles_md5(monitor_test.kojifile_addr)
+    if new_koji_md5 == monitor_test.kojifile_md5:
         log.info("kojifiles未发生改变，无需处理")
     else:
-        KOJIFILES_MD5[kojifile_addr] = new_koji_md5_hash
+        monitor_test.kojifile_md5 = new_koji_md5
         log.info("kojifiles地址发生改变,执行自动化性能测试")
         # 获取迭代测试的ip信息
-        ip_list = ast.literal_eval('[' + UserConfig.objects.filter(kojifile_addr=kojifile_addr).last().ip + ']')
-        for ip in ip_list:
-            machine_data = TestMachine.objects.get(server_IP=ip)
-            test_case = TestCase.objects.filter(test_type='迭代测试', kojifile_addr=kojifile_addr).order_by('-id').last()
-            # 判断机器是否有人使用或者是否有排队人员
-            if machine_data.owner or machine_data.queue_user:
-                # 判断排队列表中是否存在root用户
-                if 'root' not in machine_data.queue_user.split(',') and machine_data.owner != 'root':
-                    test_case.test_result = '等待中'
-                    test_case.save()
-                    machine_data.queue_user = machine_data.queue_user + ',' + request.user.chinese_name if machine_data.queue_user else request.user.chinese_name
-                    machine_data.save()
-                else:
-                    print(f'排队人员中有root用户，或者使用人员是root用户')
+
+        machine_data = TestMachine.objects.get(server_IP=monitor_test.ip)
+        # 判断机器是否有人使用或者是否有排队人员
+        if machine_data.owner or machine_data.queue_user:
+            # 判断排队列表中是否存在root用户
+            if 'root' not in machine_data.queue_user.split(',') and machine_data.owner != 'root':
+                monitor_test.test_result = '等待中'
+                monitor_test.save()
+                machine_data.queue_user = machine_data.queue_user + ',' + request.user.chinese_name if machine_data.queue_user else request.user.chinese_name
+                machine_data.save()
             else:
-                test_case.test_result = '运行中'
-                test_case.save()
-                auto_install_system(machine_data, request, ip, test_case.iso_name, kojifile_addr, user_config_path)
-
-
-def monitor_kojifiles(kojifile_addr, koji_md5_hash, request, user_config_path):
-    """
-    监控kojifile地址的定时任务
-    :param kojifile_addr: kojifiles地址
-    :param koji_md5_hash: kojifiles地址生成的md5值
-    :return:
-    """
-    # 设置定时任务，监控kojifiles地址
-    log.info('---------启动迭代测试-----------------')
-    schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, kojifile_addr, koji_md5_hash, request, user_config_path)
-    # install_system(kojifile_addr, koji_md5_hash, request, user_config_path)
-    # 启动定时任务调度器
-    start_scheduler()
-    return None
+                print(f'排队人员中有root用户，或者使用人员是root用户，IP机器为:', monitor_test.ip)
+        else:
+            monitor_test.test_result = '运行中'
+            monitor_test.save()
+            auto_install_system(machine_data, request, monitor_test.ip, monitor_test.iso_name, monitor_test.kojifile_addr, user_config_path)
 
 
 def new_monitor_kojifiles():
@@ -163,7 +144,7 @@ def new_monitor_kojifiles():
     :return:
     """
     # 获取所有监控任务
-    monitor_test_list = TestCase.objects.filter(is_it_monitored=True).order_by('-id')
+    monitor_test_list = TestCase.objects.filter(is_it_monitored=True).filter(test_result='等待中').order_by('-id')
 
     # 创建一个root的request对象
     from django.test import RequestFactory
@@ -174,14 +155,11 @@ def new_monitor_kojifiles():
     # 使用 RequestFactory 创建一个 GET 请求对象，并设置用户信息
     request = request_factory.get('/')
     request.user = root_user
-
     for monitor_test in monitor_test_list:
-        if monitor_test.test_result == "运行中":
-            continue
         user_config_path = RUN_KYTUNING_CONFIG_TEMP + monitor_test.user_name
         # 创建对应的定时任务
-        # install_system(monitor_test.kojifile_addr, monitor_test.kojifile_md5, request, user_config_path)
-        schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, monitor_test.kojifile_addr, monitor_test.kojifile_md5, request, user_config_path)
+        # install_system(monitor_test, request, user_config_path)
+        schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(install_system, monitor_test, request, user_config_path)
         # 启动定时任务调度器
         start_scheduler()
     return None

@@ -17,9 +17,9 @@ from django.http import HttpResponse, FileResponse, HttpRequest
 from appStore.testCase.models import TestCase
 from appStore.testCase.serializers import TestCaseSerializer
 from appStore.testMachine.models import TestMachine
-from appStore.utils.timed_tasks import auto_install_system, monitor_kojifiles
+from appStore.utils.timed_tasks import auto_install_system
 from appStore.utils.common import json_response
-from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL, SECRET, LANXIN_URL, KOJIFILES_MD5, PIP_URL
+from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL, SECRET, LANXIN_URL, PIP_URL
 from appStore.utils.subprocess import test_case, stop_test_task, get_kojifiles_md5
 from appStore.adaptISO.models import AdaptISO
 
@@ -145,8 +145,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 all_iso_name = request.data.get('iso_name')
                 ip_list = data_test_case['ip']
                 # 获取kojifiles地址的md5值
-                koji_md5_hash = get_kojifiles_md5(data_test_case['kojifile_addr'])
-                KOJIFILES_MD5[data_test_case['kojifile_addr']] = koji_md5_hash
+                data_test_case['kojifile_md5'] = get_kojifiles_md5(data_test_case['kojifile_addr'])
                 for ip in ip_list:
                     data_test_case['ip'] = ip
                     data_test_case['test_result'] = '等待中'
@@ -194,7 +193,6 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                         log.info('testCase数据存储错误 ：%s，' % (serializer_test_case.errors))
                         log.info('testCase存储数据为 ：%s，' % data_test_case)
                         return json_response(serializer_test_case.errors, status.HTTP_400_BAD_REQUEST, serializer_test_case.errors)
-                monitor_kojifiles(data_test_case['kojifile_addr'], koji_md5_hash, request, user_config_path)
                 return json_response('', status.HTTP_200_OK, '自动化安装任务发派成功')
             else:
                 return json_response('', status.HTTP_401_UNAUTHORIZED, '只有root用户才能创建迭代测试')
