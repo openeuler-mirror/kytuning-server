@@ -15,13 +15,15 @@ https://docs.djangoproject.com/en/4.1/howto/deployment/wsgi/
 """
 
 import os
+import schedule
 from django.core.wsgi import get_wsgi_application
+
 # 自定义启动定时监控任务
-from appStore.utils.timed_tasks import new_monitor_kojifiles
+from appStore.utils.constants import MONITOR_KOJIFILES_TIME
+from appStore.utils.timed_tasks import new_monitor_kojifiles, start_scheduler
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'kytuningProject.settings')
-
-new_monitor_kojifiles()
+schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(new_monitor_kojifiles)
+start_scheduler()
 
 application = get_wsgi_application()
-

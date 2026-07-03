@@ -12,6 +12,8 @@ import shutil
 import logging
 import tarfile
 import subprocess
+
+from appStore.testCase.models import TestCase
 from appStore.utils.constants import RESULT_LOG_FILE, TOOLS_URL
 
 log = logging.getLogger('kytuninglog')
@@ -258,6 +260,7 @@ def update_rpm(ip, server_name, password, koji_addr, user_config_path):
     :param koji_addr: koji仓库地址
     :return: 是否更新rpm包完成
     """
+    print('开始执行自动化更新系统')
     mv_ssh_keygen = "ssh-keygen -R " + ip
     subprocess.run(mv_ssh_keygen, shell=True)
     # 配置yum源
@@ -324,6 +327,19 @@ enabled = 1
         unzip_result.stderr = "unzip解压失败，请查看是否有unzip命令，以及run_kytuning-ffdev.zip是否下载成功"
         return unzip_result
 
+    # 修改kytuning.cfg中的test_case_id的值，在这里修改会比远程请求修改更节省资源。
+    file_path = user_config_path+'/conf/kytuning.cfg'
+    test_case_id = TestCase.objects.filter(ip=ip).last().id
+
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    with open(file_path, 'w') as file:
+        for line in lines:
+            if line.startswith('test_case_id='):
+                line = f'test_case_id={test_case_id}\n'
+            file.write(line)
+
     # 复制配置文件conf文件和yaml文件
     scp_command = f'sshpass -p {password} scp -r {user_config_path}/conf {user_config_path}/yaml-base {server_name}@{ip}:/root/run_kytuning-ffdev/'
     scp_result = subprocess.run(scp_command, shell=True)
@@ -360,8 +376,8 @@ def get_kojifiles_md5(kojifile_addr):
         koji_md5_command = 'curl -s {} | md5sum | awk "{{ print $1 }}"'.format(koji_base_url)
         koji_md5_result = subprocess.run(koji_md5_command, shell=True, capture_output=True, text=True)
         # 获取返回的MD5哈希值
-        koji_md5_hash = koji_md5_result.stdout.strip()
-        return koji_md5_hash
+        koji_md5 = koji_md5_result.stdout.strip()
+        return koji_md5
     else:
         log.info("关键词 'latest' 未找到")
         return None
