@@ -25,6 +25,9 @@ TOOLS_URL = 'http://localhost:9000/tools/'
 # kytuning web 网址
 KYTUNING_WEB_URL = 'https://localhost'
 
+# pip源
+PIP_URL = 'https://pypi.tuna.tsinghua.edu.cn/simple'
+
 # 蓝信机器人的密钥
 # 下面两个不要暴露出去，因为此处要测试暂时放这里！！！
 SECRET = "xxxxx"

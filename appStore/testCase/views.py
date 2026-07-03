@@ -19,7 +19,7 @@ from appStore.testCase.serializers import TestCaseSerializer
 from appStore.testMachine.models import TestMachine
 from appStore.utils.timed_tasks import auto_install_system, monitor_kojifiles
 from appStore.utils.common import json_response
-from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL, SECRET, LANXIN_URL, KOJIFILES_MD5
+from appStore.utils.constants import RESULT_LOG_FILE, RUN_KYTUNING_CONFIG_TEMP, TOOLS_URL, KYTUNING_WEB_URL, SECRET, LANXIN_URL, KOJIFILES_MD5, PIP_URL
 from appStore.utils.subprocess import test_case, stop_test_task, get_kojifiles_md5
 from appStore.adaptISO.models import AdaptISO
 
@@ -139,7 +139,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 fp.write(cpu2017_yaml)
 
         if data_test_case['test_type'] == '迭代测试':
-            # 迭代测试,一条迭代测试对应多条测试数据
+            # 监控测试,一条监控测试对应多条测试数据
             if request.user.is_staff:
                 data_test_case['kojifile_addr'] = request.data.get('kojifile_addr')
                 all_iso_name = request.data.get('iso_name')
@@ -169,6 +169,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                         with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
                             configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
                             configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
+                            configfile.write('pip_url="{}"\n'.format(PIP_URL))
                             configfile.write('project_name={}\n'.format(data_test_case['project_name']))
                             configfile.write('project_message={}\n'.format(request.data.get('project_message')))
                             configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
@@ -206,6 +207,7 @@ class TestCaseViewSet(viewsets.ModelViewSet):
                 with open(user_config_path + '/conf/kytuning.cfg', 'w') as configfile:
                     configfile.write('tools_server_url="{}"\n'.format(TOOLS_URL))
                     configfile.write('rk_benchmark="{}"\n'.format(' '.join(test_case_names)))
+                    configfile.write('pip_url="{}"\n'.format(PIP_URL))
                     configfile.write('project_name={}\n'.format(data_test_case['project_name']))
                     configfile.write('project_message={}\n'.format(request.data.get('project_message')))
                     configfile.write('kytuning_web_url={}\n'.format(KYTUNING_WEB_URL))
