@@ -1,3 +1,11 @@
+"""
+ * Copyright (c) KylinSoft  Co., Ltd. 2024.All rights reserved.
+ * PilotGo-plugin licensed under the Mulan Permissive Software License, Version 2.
+ * See LICENSE file for more details.
+ * Author: wangqingzheng <wangqingzheng@kylinos.cn>
+ * Date: Fri Mar 1 10:09:12 2024 +0800
+"""
+
 import logging
 from rest_framework import status, viewsets
 # Create your views here.
@@ -202,10 +210,11 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 if machine_data.queue_user.split(',')[0] == 'root':
                     # 执行自动化安装操作系统，自动化测试等。
                     user_config_path = RUN_KYTUNING_CONFIG_TEMP + 'root'
-                    test_case = TestCase.objects.filter(ip=machine_data.server_IP).filter(test_type='迭代测试').filter(test_result='排队中').last()
+                    test_case = TestCase.objects.filter(ip=machine_data.server_IP).filter(test_type='迭代测试').filter(test_result='等待中').last()
                     # 需要把request替换成root对象
                     request.user = UserProfile.objects.get(username='root')
-                    test_case.update(test_result='运行中')
+                    test_case.test_result = '运行中'
+                    test_case.save()
                     auto_install_system(machine_data, request, machine_data.server_IP, test_case.iso_name, test_case.kojifile_addr, user_config_path)
                 # todo 因切换内网无法使用蓝信，暂时注释
                 # content = "BMC设备IP为：{} 的机器已完成使用，请您确认".format(machine_data.BMC_IP)
