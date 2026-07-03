@@ -260,7 +260,6 @@ def update_rpm(ip, server_name, password, koji_addr, user_config_path):
     """
     mv_ssh_keygen = "ssh-keygen -R " + ip
     subprocess.run(mv_ssh_keygen, shell=True)
-
     # 配置yum源
     # 重命名 /etc/yum.repos.d/ 目录下所有 .repo 文件为 .repo-bak
     command_list_files = (
@@ -268,21 +267,18 @@ def update_rpm(ip, server_name, password, koji_addr, user_config_path):
         "'sudo ls /etc/yum.repos.d/*.repo'"
     )
     result_list_files = subprocess.run(command_list_files, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    if result_list_files.returncode != 0:
-        log.info("Error listing .repo files:", result_list_files.stderr)
-        return
-
-    repo_files = result_list_files.stdout.splitlines()
-    for repo_file in repo_files:
-        repo_file = repo_file.strip()
-        command_rename_file = (
-            f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
-            f"'sudo mv {repo_file} {repo_file}-bak'"
-        )
-        result_rename_file = subprocess.run(command_rename_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        if result_rename_file.returncode != 0:
-            log.info(f"Error renaming {repo_file}:", result_rename_file.stderr)
-            return
+    if result_list_files.returncode == 0:
+        repo_files = result_list_files.stdout.splitlines()
+        for repo_file in repo_files:
+            repo_file = repo_file.strip()
+            command_rename_file = (
+                f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
+                f"'sudo mv {repo_file} {repo_file}-bak'"
+            )
+            result_rename_file = subprocess.run(command_rename_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            if result_rename_file.returncode != 0:
+                log.info(f"Error renaming {repo_file}:", result_rename_file.stderr)
+                return
 
     # 新增 kojifile.repo 文件并写入指定的内容
     kojifiles_repo = f"""[kojifiles]
@@ -338,6 +334,7 @@ enabled = 1
 
     # 执行rpm更新脚本，更新完成后执行自动测试
     try:
+        print('运行自动化更新操作系统软件并执行性能测试')
         result = subprocess.run(
             f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'bash /root/run_kytuning-ffdev/monitor_test/update_system.sh'",
             shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
