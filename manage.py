@@ -23,6 +23,13 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+    # 自定义启动定时监控任务
+    import schedule
+    from appStore.utils.constants import MONITOR_KOJIFILES_TIME
+    from appStore.utils.timed_tasks import new_monitor_kojifiles, start_scheduler
+
+    schedule.every(MONITOR_KOJIFILES_TIME).minutes.do(new_monitor_kojifiles)
+    start_scheduler()
 
 
 if __name__ == '__main__':
