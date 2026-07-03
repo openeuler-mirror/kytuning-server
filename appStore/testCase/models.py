@@ -19,7 +19,7 @@ class TestCase(models.Model):
     test_type = models.CharField(max_length=50, verbose_name='测试类型', choices=testType)
     kojifile_addr = models.TextField(verbose_name='kojifei地址，用于自动化迭代测试', null=True, blank=True)
     is_it_monitored = models.BooleanField(default=False, verbose_name="是否监控")
-    kojifile_md5 = models.CharField(max_length=250,verbose_name='kojifei内容的md5值',default=None)
+    kojifile_md5 = models.CharField(max_length=250, verbose_name='kojifei内容的md5值', null=True, blank=True)
     iso_name = models.TextField(verbose_name='用于自动化迭代测试自动化安装操作系统', null=True, blank=True)
     compar_data = models.TextField(verbose_name='对比数据，用于自动化分析测试', null=True, blank=True)
     project_name = models.CharField(max_length=200, verbose_name='项目名称')
@@ -37,7 +37,6 @@ class TestCase(models.Model):
     result_log_name = models.CharField(max_length=255, verbose_name='日志文件路径的base部分')
     is_error = models.BooleanField(default=False, verbose_name="是否是错误列表所需要的")
     test_time = models.DateTimeField(verbose_name="记录时间", default=timezone.now)
-
 
     class Meta:
         db_table = 'test_case'
