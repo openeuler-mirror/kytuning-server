@@ -66,4 +66,3 @@ class Cpu2006(models.Model):
 
     class Meta:
         db_table = 'cpu_2006'
-
