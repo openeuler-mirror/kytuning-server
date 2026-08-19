@@ -5,7 +5,6 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Mar 1 10:09:12 2024 +0800
 """
-
 import logging
 from rest_framework import status, viewsets
 # Create your views here.
@@ -104,7 +103,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
         if request.user.chinese_name in machine_data.queue_user.split(','):
             # 删除当前人员
-            queue_names = [queue_name for queue_name in machine_data.queue_user.split(',') if queue_name != request.user.chinese_name]
+            queue_names = [queue_name for queue_name in machine_data.queue_user.split(',') if
+                           queue_name != request.user.chinese_name]
             machine_data.queue_user = ','.join(queue_names)
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '取消申请成功')
@@ -124,7 +124,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data.server_password = request.data.get('server_password')
         new_server_password = request.data.get('new_server_password')
         new_iso_name = request.data.get('new_iso_name')
-        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name, machine_data.BMC_password, machine_data.server_IP,
+        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
+                                                   machine_data.BMC_password, machine_data.server_IP,
                                                    machine_data.server_user_name, machine_data.server_password)
         replacements = {}
         # 补充需要替换脚本文件的内容
@@ -132,11 +133,13 @@ class TestMachineViewSet(viewsets.ModelViewSet):
             ISO = None
         else:
             # 检查磁盘空间是否充足
-            remaining_disk_space = check_disk_size(machine_data.server_IP, machine_data.server_user_name, machine_data.server_password)
+            remaining_disk_space = check_disk_size(machine_data.server_IP, machine_data.server_user_name,
+                                                   machine_data.server_password)
             if not remaining_disk_space:
                 return json_response({}, status.HTTP_205_RESET_CONTENT, '请更新服务器状态，查看账号密码是否正确')
             if not request.data.get('clear_part'):
-                if int(remaining_disk_space) <= int(request.data.get('root_size')) + int(request.data.get('swap_size')) + 1 + 1:
+                if int(remaining_disk_space) <= int(request.data.get('root_size')) + int(
+                        request.data.get('swap_size')) + 1 + 1:
                     return json_response({}, status.HTTP_205_RESET_CONTENT,
                                          '磁盘空间不足请重新设置;当前磁盘空间为：%sG;' % (int(remaining_disk_space) - 2))
             if not request.data.get('root_size') or not isinstance(request.data.get('root_size'), (int, float)):
@@ -168,7 +171,8 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 machine_data.iso_name = new_iso_name
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password,
+                update_system(request.user, machine_data.server_IP, machine_data.server_user_name,
+                              machine_data.server_password,
                               machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
                 machine_data.server_password = new_server_password
             machine_data.save()
@@ -176,19 +180,25 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         elif not machine_data.owner:
             # 判断是不是第一个申请人
             if machine_data.queue_user and (
-                    machine_data.queue_user.split(',')[0] != request.user.chinese_name and machine_data.queue_user.split(',')[0] != 'root'):
-                return json_response({}, status.HTTP_205_RESET_CONTENT, '当前申请人是 %s，请协商后在使用' % machine_data.queue_user)
+                    machine_data.queue_user.split(',')[0] != request.user.chinese_name and
+                    machine_data.queue_user.split(',')[0] != 'root'):
+                return json_response({}, status.HTTP_205_RESET_CONTENT,
+                                     '当前申请人是 %s，请协商后在使用' % machine_data.queue_user)
             machine_data.owner = request.user.chinese_name
             # 删除当前人员
             if machine_data.queue_user:
-                queue_names = [queue_name for queue_name in machine_data.queue_user.split(',') if queue_name != request.user.chinese_name]
+                queue_names = [queue_name for queue_name in machine_data.queue_user.split(',') if
+                               queue_name != request.user.chinese_name]
                 machine_data.queue_user = ','.join(queue_names)
             if new_iso_name:
                 machine_data.iso_name = new_iso_name
             if ISO:
                 update_auto_install(request.user, replacements)
-                update_system(request.user, machine_data.server_IP, machine_data.server_user_name, machine_data.server_password,
-                              machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
+                update_system_result = update_system(request.user, machine_data.server_IP,
+                                                     machine_data.server_user_name, machine_data.server_password,
+                                                     machine_data.machine_name, ISO.ISO_name, ISO.ks_file_name)
+                if update_system_result:
+                    return json_response({}, status.HTTP_400_BAD_REQUEST, update_system_result)
                 machine_data.server_password = new_server_password
             machine_data.save()
             return json_response({}, status.HTTP_200_OK, '修改成功')
@@ -210,12 +220,14 @@ class TestMachineViewSet(viewsets.ModelViewSet):
                 if machine_data.queue_user.split(',')[0] == 'root':
                     # 执行自动化安装操作系统，自动化测试等。
                     user_config_path = RUN_KYTUNING_CONFIG_TEMP + 'root'
-                    test_case = TestCase.objects.filter(ip=machine_data.server_IP).filter(test_type='迭代测试').filter(test_result='等待中').last()
+                    test_case = TestCase.objects.filter(ip=machine_data.server_IP).filter(test_type='迭代测试').filter(
+                        test_result='等待中').last()
                     # 需要把request替换成root对象
                     request.user = UserProfile.objects.get(username='root')
                     test_case.test_result = '运行中'
                     test_case.save()
-                    auto_install_system(machine_data, request, machine_data.server_IP, test_case.iso_name, test_case.kojifile_addr, user_config_path)
+                    auto_install_system(machine_data, request, machine_data.server_IP, test_case.iso_name,
+                                        test_case.kojifile_addr, user_config_path)
                 # todo 因切换内网无法使用蓝信，暂时注释
                 # content = "BMC设备IP为：{} 的机器已完成使用，请您确认".format(machine_data.BMC_IP)
                 # send_lanxin_message(machine_data.queue_user.split(',')[0], content)
@@ -228,8 +240,10 @@ class TestMachineViewSet(viewsets.ModelViewSet):
         machine_data = TestMachine.objects.get(id=machine_id)
         if not machine_id or not machine_data:
             return json_response({}, status.HTTP_205_RESET_CONTENT, '没有该数据')
-        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name, machine_data.BMC_password,
-                                                   machine_data.server_IP, machine_data.server_user_name, machine_data.server_password)
+        machine_data.link_status = get_link_status(machine_data.BMC_IP, machine_data.BMC_user_name,
+                                                   machine_data.BMC_password,
+                                                   machine_data.server_IP, machine_data.server_user_name,
+                                                   machine_data.server_password)
         machine_data.save()
         return json_response({}, status.HTTP_200_OK, '更新状态完成')
 

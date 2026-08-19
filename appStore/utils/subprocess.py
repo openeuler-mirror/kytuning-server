@@ -13,6 +13,7 @@ import logging
 import tarfile
 import subprocess
 
+from appStore.ksFile.models import KsFile
 from appStore.testCase.models import TestCase
 from appStore.utils.constants import RESULT_LOG_FILE, TOOLS_URL
 
@@ -181,8 +182,18 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
     :param ISO_name:
     :return:
     """
-    # 复制脚本至需要重置的系统
-    # todo 后期有时间做优化和排查根本原因
+    # 当没有ks文件时生成ks文件
+    if not os.path.exists('./appStore/utils/autoInstall/%s' % (ks_name)):
+        # 生成ks文件
+        ks_data = KsFile.objects.get(ks_name=ks_name)
+        print(ks_data)
+        if not ks_data:
+            return '没有获取到对应ks文件'
+        # 更新ks文件
+        with open('./appStore/utils/autoInstall/' + ks_data.ks_name, 'w') as file:
+            file.write(ks_data.ks_content)
+
+    # 不使用./appStore/utils/autoInstall/中的ks文件了，直接新生成一个ks文件，避免新环境中没有ks文件。
     if machine_name == 'intel' and ISO_name.startswith('openEuler'):
         # 先删除可能存在的旧的ifcfg-enP1p3s0f0文件
         rm_networkcfg_command = f'sshpass -p {server_password} ssh -o StrictHostKeyChecking=no {server_user_name}@{server_IP} "rm -rf /root/ifcfg-enP1p3s0f0"'
@@ -192,14 +203,17 @@ def update_system(user_name, server_IP, server_user_name, server_password, machi
     else:
         scp_command = f'sshpass -p {server_password} scp -r ./appStore/utils/autoInstall/%s.sh ./appStore/utils/autoInstall/%s ./appStore/utils/autoInstall/clear_kytuning_efibootmgr.sh {server_user_name}@{server_IP}:/root/' % (
             str(user_name), ks_name)
-    result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result = subprocess.run(scp_command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE, text=True)
     if result.returncode:
-        return '文件复制出错'
-    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "bash /root/%s.sh"' % (str(user_name))
+        print('scp_command命令执行出错')
+        return 'scp_command命令执行出错'
+    ssh_command = f'sshpass -p {server_password} ssh -o ServerAliveInterval=10 {server_user_name}@{server_IP} "bash /root/%s.sh"' % (
+        str(user_name))
     subprocess.Popen(ssh_command, shell=True)
     # 下方的方式是接受参数，但是接受的参数重定向到空文件中了。因为这个地方不需要等待返回结果，所以直接使用上面的方法。
     # ssh_process = subprocess.Popen(ssh_command, shell=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
-    return
+    return None
 
 
 def check_disk_size(test_ip, test_username, test_password):
@@ -241,8 +255,9 @@ def check_system_success(ip, server_name, password):
     mv_ssh_keygen = "ssh-keygen -R " + ip
     subprocess.run(mv_ssh_keygen, shell=True)
     try:
-        result = subprocess.run(f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'echo success'", shell=True,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        result = subprocess.run(
+            f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} 'echo success'", shell=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if "success" in result.stdout:
             log.info(f'系统安装成功(IP: {ip})')
             return True
@@ -269,7 +284,8 @@ def update_rpm(ip, server_name, password, koji_addr, user_config_path):
         f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
         "'sudo ls /etc/yum.repos.d/*.repo'"
     )
-    result_list_files = subprocess.run(command_list_files, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result_list_files = subprocess.run(command_list_files, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                       text=True)
     if result_list_files.returncode == 0:
         repo_files = result_list_files.stdout.splitlines()
         for repo_file in repo_files:
@@ -278,7 +294,8 @@ def update_rpm(ip, server_name, password, koji_addr, user_config_path):
                 f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
                 f"'sudo mv {repo_file} {repo_file}-bak'"
             )
-            result_rename_file = subprocess.run(command_rename_file, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            result_rename_file = subprocess.run(command_rename_file, shell=True, stdout=subprocess.PIPE,
+                                                stderr=subprocess.PIPE, text=True)
             if result_rename_file.returncode != 0:
                 log.info(f"Error renaming {repo_file}:", result_rename_file.stderr)
                 return
@@ -295,7 +312,8 @@ enabled = 1
         f"sshpass -p {password} ssh -o StrictHostKeyChecking=no {server_name}@{ip} "
         f"\"echo '{kojifiles_repo}' | sudo tee /etc/yum.repos.d/kojifile.repo\""
     )
-    result_add_repo = subprocess.run(command_add_repo, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result_add_repo = subprocess.run(command_add_repo, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                     text=True)
     if result_add_repo.returncode != 0:
         log.info("Error adding kojifiles repo:", result_add_repo.stderr)
         return
@@ -328,7 +346,7 @@ enabled = 1
         return unzip_result
 
     # 修改kytuning.cfg中的test_case_id的值，在这里修改会比远程请求修改更节省资源。
-    file_path = user_config_path+'/conf/kytuning.cfg'
+    file_path = user_config_path + '/conf/kytuning.cfg'
     test_case_id = TestCase.objects.filter(ip=ip).last().id
 
     with open(file_path, 'r') as file:
