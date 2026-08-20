@@ -74,7 +74,6 @@ class KsFileListViewSet(viewsets.ModelViewSet):
             return json_response({}, status.HTTP_204_NO_CONTENT, '未获取到数据')
         # 判断只有能删除自己的数据或者是管理员。
         if request.user.is_superuser or request.user.chinese_name == ks_file_data.user_name:
-            # todo 增加一个公共函数获取增加 装饰器 功能（因为有很多地方使用到了）
             KsFile.objects.filter(id=id).delete()
             try:
                 # 删除ks文件

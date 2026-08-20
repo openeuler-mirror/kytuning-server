@@ -5,8 +5,6 @@
  * Author: wangqingzheng <wangqingzheng@kylinos.cn>
  * Date: Fri Mar 1 09:53:11 2024 +0800
 """
-from datetime import datetime
-
 from django.db import models
 import django.utils.timezone as timezone
 
